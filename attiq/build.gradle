@@ -1,27 +1,109 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
+def VERSION_CODE = 10000
+def VERSION_NAME = "1.0.0"
 
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
+    publishNonDefault true
 
     defaultConfig {
         applicationId "im.ene.lab.attiq"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
+        manifestPlaceholders = [fabric_api_key: "${attiq_fabric_api_key}"]
     }
+
+    packagingOptions {
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+    }
+
     buildTypes {
         release {
+            debuggable false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    productFlavors {
+
+        stag21 {
+            minSdkVersion 21
+            applicationId "im.ene.lab.attiq_stag"
+            targetSdkVersion 23
+            versionName '0.9'
+        }
+
+        prod {
+            applicationId "im.ene.lab.attiq"
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+        disable 'InvalidPackage'
+        disable 'PrivateResource'
+    }
+}
+
+ext {
+    support_libraries_version = '23.1.1'
+    okhttp_version = "2.6.0"
+    retrofit_version = "2.0.0-beta2"
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:design:23.1.1'
+
+    compile "com.android.support:appcompat-v7:${support_libraries_version}"
+    compile "com.android.support:design:${support_libraries_version}"
+    compile "com.android.support:recyclerview-v7:${support_libraries_version}"
+
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.makeramen:roundedimageview:2.2.1'
+    compile 'com.google.code.gson:gson:2.5'
+    compile 'org.jsoup:jsoup:1.8.3'
+
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+        transitive = true;
+    }
+
+    compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.2@aar') {
+        transitive = true;
+    }
+}
+
+crashlytics {
+    enableNdk true
+    androidNdkOut 'src/main/obj'
+    androidNdkLibsOut 'src/main/libs'
 }
