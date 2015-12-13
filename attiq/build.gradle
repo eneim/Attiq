@@ -87,11 +87,21 @@ dependencies {
     compile "com.android.support:appcompat-v7:${support_libraries_version}"
     compile "com.android.support:design:${support_libraries_version}"
     compile "com.android.support:recyclerview-v7:${support_libraries_version}"
+    // compile "com.android.support:customtabs:${support_libraries_version}"
+
+    compile "com.squareup.retrofit:retrofit:${retrofit_version}"
+    compile "com.squareup.okhttp:okhttp:${okhttp_version}"
+    compile "com.squareup.retrofit:converter-gson:${retrofit_version}"
+    compile "com.jakewharton:butterknife:7.0.1"
 
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.makeramen:roundedimageview:2.2.1'
     compile 'com.google.code.gson:gson:2.5'
     compile 'org.jsoup:jsoup:1.8.3'
+
+    compile "de.greenrobot:eventbus:2.4.0"
+
+    compile "io.realm:realm-android:0.86.1"
 
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
