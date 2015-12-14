@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.BaseListAdapter;
 import im.ene.lab.attiq.data.event.EventWrapper;
 import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.widgets.EndlessScrollListener;
 import im.ene.lab.attiq.widgets.MultiSwipeRefreshLayout;
 import im.ene.lab.attiq.widgets.NonEmptyRecyclerView;
 import io.realm.Realm;
@@ -37,6 +39,7 @@ public abstract class RealmListFragment<E extends RealmObject>
     extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, Callback<List<E>>,
     Handler.Callback {
 
+  private static final String TAG = "RealmListFragment";
   /**
    *
    */
@@ -59,10 +62,16 @@ public abstract class RealmListFragment<E extends RealmObject>
 
   protected Realm mRealm;
   protected GridLayoutManager mLayoutManager;
+  /**
+   * UI components
+   */
   @Bind(R.id.recycler_view) NonEmptyRecyclerView mRecyclerView;
   @Bind(R.id.swipe_refresh_layout) MultiSwipeRefreshLayout mSwipeRefreshLayout;
   @Bind(R.id.view_empty) View mEmptyView;
   @Bind(R.id.view_error) View mErrorView;
+  /**
+   * Logic components
+   */
   private BaseListAdapter<E> mAdapter;
   private Handler mHandler = new Handler(this);
   private RealmChangeListener mDataChangeListener = new RealmChangeListener() {
@@ -71,6 +80,8 @@ public abstract class RealmListFragment<E extends RealmObject>
       mHandler.sendEmptyMessageDelayed(MESSAGE_UPDATE_DATA, 200);
     }
   };
+  private EndlessScrollListener mEndlessScrollListener;
+
   private int mPage = DEFAULT_FIRST_PAGE;
 
   @Override public boolean handleMessage(Message msg) {
@@ -83,6 +94,18 @@ public abstract class RealmListFragment<E extends RealmObject>
     }
 
     return false;
+  }
+
+  private void loadReload() {
+    Log.d(TAG, "loadReload() called with: " + "");
+    boolean isRefreshing = mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing();
+    boolean isLoadingMore = mAdapter.getItemCount() > 0 && !isRefreshing;
+    if (isLoadingMore) {
+      mPage++;
+    } else if (isRefreshing) {
+      mPage = DEFAULT_FIRST_PAGE;
+    }
+    mAdapter.loadItems(isLoadingMore, mPage, DEFAULT_THRESHOLD, null, this);
   }
 
   @Override public void onAttach(Context context) {
@@ -100,7 +123,7 @@ public abstract class RealmListFragment<E extends RealmObject>
   @Override public void onResume() {
     super.onResume();
     mHandler.removeMessages(MESSAGE_LOAD_RELOAD);
-    mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 200);
+    mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
   }
 
   @Override public void onDetach() {
@@ -108,24 +131,23 @@ public abstract class RealmListFragment<E extends RealmObject>
       mRealm.removeChangeListener(mDataChangeListener);
       mRealm.close();
     }
+    mDataChangeListener = null;
+    mEndlessScrollListener = null;
     super.onDetach();
-  }
-
-  private void loadReload() {
-    boolean isRefreshing = mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing();
-    boolean isLoadingMore = mAdapter.getItemCount() > 0 && !isRefreshing;
-    if (isLoadingMore) {
-      mPage++;
-    } else if (isRefreshing) {
-      mPage = DEFAULT_FIRST_PAGE;
-    }
-    mAdapter.loadItems(isLoadingMore, mPage, DEFAULT_THRESHOLD, null, this);
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mLayoutManager = new GridLayoutManager(getContext(), 1, LinearLayoutManager.VERTICAL, false);
+    mEndlessScrollListener = new EndlessScrollListener(mLayoutManager, DEFAULT_THRESHOLD) {
+      @Override protected void loadMore() {
+        mHandler.removeMessages(MESSAGE_LOAD_RELOAD);
+        mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
+      }
+    };
+
     mRecyclerView.setLayoutManager(mLayoutManager);
+    mRecyclerView.addOnScrollListener(mEndlessScrollListener);
 
     mSwipeRefreshLayout.setSwipeableChildren(
         mRecyclerView.getId(), mEmptyView.getId(), mErrorView.getId());
@@ -135,6 +157,11 @@ public abstract class RealmListFragment<E extends RealmObject>
     mRecyclerView.setAdapter(mAdapter);
     mRecyclerView.setErrorView(mErrorView);
     mRecyclerView.setEmptyView(mEmptyView);
+  }
+
+  @Override public void onDestroyView() {
+    mRecyclerView.removeOnScrollListener(mEndlessScrollListener);
+    super.onDestroyView();
   }
 
   @NonNull
