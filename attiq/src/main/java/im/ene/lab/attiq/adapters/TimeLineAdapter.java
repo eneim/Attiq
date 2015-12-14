@@ -1,6 +1,7 @@
 package im.ene.lab.attiq.adapters;
 
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.ApiClient;
 import im.ene.lab.attiq.data.vault.PublicItem;
 import im.ene.lab.attiq.data.vault.PublicTag;
+import im.ene.lab.attiq.data.vault.PublicUser;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
 import io.realm.Realm;
@@ -30,11 +32,11 @@ import java.util.List;
 /**
  * Created by eneim on 12/14/15.
  */
-public class PublicItemsAdapter extends BaseListAdapter<PublicItem> {
+public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
 
   private final RealmResults<PublicItem> mItems;
 
-  public PublicItemsAdapter(RealmResults<PublicItem> items) {
+  public TimeLineAdapter(RealmResults<PublicItem> items) {
     super();
     mItems = items;
     setHasStableIds(true);
@@ -44,7 +46,18 @@ public class PublicItemsAdapter extends BaseListAdapter<PublicItem> {
   public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(ViewHolder.LAYOUT_RES, parent, false);
-    return new ViewHolder(view);
+    final ViewHolder viewHolder = new ViewHolder(view);
+    viewHolder.setOnItemClickListener(new View.OnClickListener() {
+      @Override public void onClick(View view) {
+        int position = viewHolder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
+          mOnItemClickListener.onItemCLick(TimeLineAdapter.this, viewHolder, view,
+              position, getItemId(position));
+        }
+      }
+    });
+
+    return viewHolder;
   }
 
   @Override public long getItemId(int position) {
@@ -64,9 +77,8 @@ public class PublicItemsAdapter extends BaseListAdapter<PublicItem> {
   }
 
   @Override
-  public void loadItems(final boolean isLoadingMore, int page, int pageLimit, @Nullable String
-      query,
-                        final Callback<List<PublicItem>> callback) {
+  public void loadItems(final boolean isLoadingMore, int page, int pageLimit,
+                        @Nullable String query, final Callback<List<PublicItem>> callback) {
     Long id = null;
     if (isLoadingMore) {
       id = getBottomItem().getId();
@@ -99,6 +111,28 @@ public class PublicItemsAdapter extends BaseListAdapter<PublicItem> {
     }
   }
 
+  public static abstract class OnTimeLineItemClickListener
+      implements OnItemClickListener<PublicItem> {
+
+    public abstract void onUserClick(PublicUser user);
+
+    public abstract void onItemContentClick(PublicItem item);
+
+    @Override
+    public void onItemCLick(BaseListAdapter<PublicItem> adapter,
+                            BaseRecyclerAdapter.ViewHolder<PublicItem> viewHolder,
+                            View view, int adapterPos, long itemId) {
+      PublicItem item = adapter.getItem(adapterPos);
+      if (viewHolder instanceof ViewHolder) {
+        if (view == ((ViewHolder) viewHolder).mItemUserImage) {
+          onUserClick(item.getUser());
+        } else if (view == ((ViewHolder) viewHolder).itemView) {
+          onItemContentClick(item);
+        }
+      }
+    }
+  }
+
   public static class ViewHolder extends BaseRecyclerAdapter.ViewHolder<PublicItem> {
 
     static final int LAYOUT_RES = R.layout.post_item_view;
@@ -109,6 +143,7 @@ public class PublicItemsAdapter extends BaseListAdapter<PublicItem> {
     private final int mIconBorderWidth;
     private final int mIconBorderColor;
 
+    @Bind(R.id.item_content) View mItemContent;
     @Bind(R.id.item_user_icon) ImageView mItemUserImage;
     @Bind(R.id.item_title) TextView mItemTitle;
     @Bind(R.id.item_tags) FlowLayout mItemTags;
@@ -126,6 +161,11 @@ public class PublicItemsAdapter extends BaseListAdapter<PublicItem> {
       mItemUserInfo.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    @Override public void setOnItemClickListener(View.OnClickListener listener) {
+      mItemUserImage.setOnClickListener(listener);
+      itemView.setOnClickListener(listener);
+    }
+
     @Override public void bind(PublicItem item) {
       mItemInfo.setText(mContext.getString(R.string.item_info,
           item.getStockCount(), item.getCommentCount()));
@@ -139,7 +179,6 @@ public class PublicItemsAdapter extends BaseListAdapter<PublicItem> {
           mItemUserInfo.setText(Html.fromHtml(mContext.getString(R.string.item_user_info_edited,
               userName, userName, item.getCreatedAtInWords(), userName, item.getUuid())));
         }
-
         mItemUserInfo.setVisibility(View.VISIBLE);
       } else {
         mItemUserInfo.setVisibility(View.GONE);

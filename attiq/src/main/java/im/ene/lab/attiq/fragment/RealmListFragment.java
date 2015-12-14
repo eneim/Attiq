@@ -72,7 +72,7 @@ public abstract class RealmListFragment<E extends RealmObject>
   /**
    * Logic components
    */
-  private BaseListAdapter<E> mAdapter;
+  protected BaseListAdapter<E> mAdapter;
   private Handler mHandler = new Handler(this);
   private RealmChangeListener mDataChangeListener = new RealmChangeListener() {
     @Override public void onChange() {

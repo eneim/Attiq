@@ -21,4 +21,6 @@
     <dimen name="recycler_view_padding">0dp</dimen>
     <dimen name="item_padding">8dp</dimen>
     <dimen name="dimen_unit">0.5dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>

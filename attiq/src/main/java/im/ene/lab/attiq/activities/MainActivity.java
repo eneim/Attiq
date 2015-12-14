@@ -13,7 +13,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -235,8 +234,7 @@ public class MainActivity extends BaseActivity
       mHeaderDescription.setText(user.getDescription());
     }
 
-    if (mHeaderIcon != null && user.getProfileImageUrl() != null
-        && !TextUtils.isEmpty(user.getProfileImageUrl())) {
+    if (mHeaderIcon != null && !UIUtil.isEmpty(user.getProfileImageUrl())) {
       Attiq.picasso()
           .load(user.getProfileImageUrl())
           .placeholder(android.R.drawable.sym_def_app_icon)

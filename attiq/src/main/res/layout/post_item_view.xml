@@ -9,16 +9,18 @@
     android:orientation="horizontal"
     android:padding="@dimen/item_padding">
 
-    <ImageView
+    <ImageButton
         android:id="@+id/item_user_icon"
         android:layout_width="@dimen/item_icon_size"
         android:layout_height="@dimen/item_icon_size"
         android:layout_gravity="top|start"
         android:layout_margin="@dimen/item_padding"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:scaleType="centerInside"
         android:src="@android:drawable/sym_def_app_icon"/>
 
-    <LinearLayout
+    <android.support.design.internal.ForegroundLinearLayout
+        android:id="@+id/item_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/item_padding"
@@ -59,6 +61,6 @@
             android:singleLine="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
 
-    </LinearLayout>
+    </android.support.design.internal.ForegroundLinearLayout>
 
 </android.support.design.internal.ForegroundLinearLayout>

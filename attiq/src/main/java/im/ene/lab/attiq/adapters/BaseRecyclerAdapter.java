@@ -29,6 +29,16 @@ public abstract class BaseRecyclerAdapter<VH extends BaseRecyclerAdapter.ViewHol
       bind(item);
     }
 
+    /**
+     * This method is supposed to be override. And we don't call it everywhere. Some list doesn't
+     * need item click listener.
+     *
+     * @param listener
+     */
+    public void setOnItemClickListener(View.OnClickListener listener) {
+      itemView.setOnClickListener(listener);
+    }
+
     public abstract void bind(T item);
   }
 
