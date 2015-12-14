@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Attiq</string>
+
+    <string name="realm_name">attiq.realm</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="api_callback">attiq://lab.ene.im/qiita</string>
+
+    <string name="client_id">bfd0c62e1d881bf1eff108554cbc3cbb389bad6f</string>
+    <string name="client_secret">f2c8b222d0d77238e5ad7132a52ca4127c62a85a</string>
+
+</resources>

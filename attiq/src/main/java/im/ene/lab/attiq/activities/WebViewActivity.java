@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -30,6 +31,14 @@ public class WebViewActivity extends AppCompatActivity {
   private static final String TAG = "WebViewActivity";
 
   private WebViewClient mWebClient = new WebViewClient() {
+
+    @Override public void onPageFinished(WebView view, String url) {
+      super.onPageFinished(view, url);
+      if (url.startsWith(getString(R.string.api_callback))) {
+        String cookies = CookieManager.getInstance().getCookie(url);
+        Log.e(TAG, "onPageFinished: " + cookies);
+      }
+    }
 
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {

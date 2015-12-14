@@ -2,6 +2,9 @@ package im.ene.lab.attiq.util;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Build;
+import android.support.annotation.ColorRes;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.util.Collection;
@@ -33,4 +36,11 @@ public class UIUtil {
     return list == null || list.size() == 0;
   }
 
+  public static int getColor(@NonNull Context context, @ColorRes int colorId) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      return context.getResources().getColor(colorId, context.getTheme());
+    } else {
+      return context.getResources().getColor(colorId);
+    }
+  }
 }

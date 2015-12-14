@@ -28,7 +28,7 @@ import im.ene.lab.attiq.data.ApiClient;
 import im.ene.lab.attiq.data.Master;
 import im.ene.lab.attiq.data.event.FetchedMasterEvent;
 import im.ene.lab.attiq.data.response.AccessToken;
-import im.ene.lab.attiq.fragment.ItemListFragment;
+import im.ene.lab.attiq.fragment.PublicStreamFragment;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import io.realm.Realm;
@@ -46,6 +46,8 @@ public class MainActivity extends BaseActivity
   private View mHeaderView;
 
   DrawerLayout mDrawerLayout;
+
+  private Fragment mFragment;
 
   @Bind(R.id.header_account_background) View mHeaderBackground;
   @Bind(R.id.header_account_icon) ImageView mHeaderIcon;
@@ -111,11 +113,11 @@ public class MainActivity extends BaseActivity
     }
 
     // attach content
-    Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.container);
-    if (fragment == null) {
-      fragment = ItemListFragment.newInstance();
+    mFragment = getSupportFragmentManager().findFragmentById(R.id.container);
+    if (mFragment == null) {
+      mFragment = PublicStreamFragment.newInstance();
       getSupportFragmentManager().beginTransaction()
-          .replace(R.id.container, fragment).commit();
+          .replace(R.id.container, mFragment).commit();
     }
   }
 
@@ -202,7 +204,7 @@ public class MainActivity extends BaseActivity
   }
 
   private void getMasterUser(final String token) {
-    ApiClient.me(token).enqueue(new Callback<Master>() {
+    ApiClient.me().enqueue(new Callback<Master>() {
       @Override public void onResponse(Response<Master> response, Retrofit retrofit) {
         Master master = response.body();
         if (master != null) {
@@ -246,7 +248,6 @@ public class MainActivity extends BaseActivity
   public void onEventMainThread(final FetchedMasterEvent event) {
     if (event.isSuccess()) {
       mDrawerLayout.openDrawer(GravityCompat.START);
-
       if (event.getMaster() != null) {
         updateMasterUser(event.getMaster());
       }

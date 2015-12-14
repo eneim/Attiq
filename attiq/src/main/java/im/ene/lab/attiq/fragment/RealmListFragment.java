@@ -18,6 +18,7 @@ import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.BaseListAdapter;
 import im.ene.lab.attiq.data.event.EventWrapper;
+import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.MultiSwipeRefreshLayout;
 import im.ene.lab.attiq.widgets.NonEmptyRecyclerView;
 import io.realm.Realm;
@@ -153,11 +154,11 @@ public abstract class RealmListFragment<E extends RealmObject>
     }
 
     if (mRecyclerView != null) {
-      mRecyclerView.setErrorViewShown(false);
+      mRecyclerView.setErrorViewShown(response.code() != 200);
     }
 
     List<E> items = response.body();
-    if (items != null && items.size() > 0) {
+    if (!UIUtil.isEmpty(items)) {
       Realm realm = Attiq.realm();
       realm.beginTransaction();
       realm.copyToRealmOrUpdate(items);

@@ -23,7 +23,18 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/item_padding"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:divider="@drawable/post_item_divider_vertical_8dp"
+        android:orientation="vertical"
+        android:showDividers="middle">
+
+        <TextView
+            android:id="@+id/item_posted_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textStyle="italic"/>
 
         <TextView
             android:id="@+id/item_title"
@@ -32,17 +43,21 @@
             android:ellipsize="end"
             android:includeFontPadding="false"
             android:maxLines="2"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="8dp"/>
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
         <com.wefika.flowlayout.FlowLayout
             android:id="@+id/item_tags"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="start"/>
+
+        <TextView
+            android:id="@+id/item_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
 
     </LinearLayout>
 

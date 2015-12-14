@@ -20,7 +20,7 @@
             android:id="@+id/view_error"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:text="ERROR"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
@@ -28,7 +28,7 @@
             android:id="@+id/view_empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:text="EMPTY"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
     </FrameLayout>
