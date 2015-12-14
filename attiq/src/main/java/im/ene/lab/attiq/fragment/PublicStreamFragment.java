@@ -64,9 +64,9 @@ public class PublicStreamFragment extends RealmListFragment<PublicItem> {
     mAdapter.setOnItemClickListener(mItemClickListener);
   }
 
-  @Override public void onDetach() {
+  @Override public void onDestroyView() {
+    // no UI interaction after this point;
     mItemClickListener = null;
-    super.onDetach();
+    super.onDestroyView();
   }
-
 }

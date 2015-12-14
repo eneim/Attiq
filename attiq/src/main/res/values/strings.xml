@@ -2,7 +2,6 @@
     <string name="activity_login">ログイン</string>
     <string name="activity_profile">プロフィル</string>
 
-    <string name="item_info">%1$d stocked, %2$d comment(s)</string>
     <string name="item_posted_info">%1$s posted %2$s ago</string>
     <string name="item_user_info">
         &lt;a href="http://qiita.com/%1$s">%2$s&lt;/a> posted %3$s ago
@@ -12,6 +11,11 @@
         &lt;a href="http://qiita.com/%1$s">%2$s&lt;/a> posted %3$s ago,
         &lt;a href="http://qiita.com/%4$s/items/%5$s/revisions">edited&lt;/a>
     </string>
+    <plurals name="plural_item_info">
+        <item quantity="one">%1$d stocked, 1 comment</item>
+        <item quantity="other">%1$d stocked, %2$d comments</item>
+    </plurals>
+
     <string name="title_activity_item_detail">アイテム詳細</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"

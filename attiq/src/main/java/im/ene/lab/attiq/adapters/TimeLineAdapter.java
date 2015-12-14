@@ -143,7 +143,6 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
     private final int mIconBorderWidth;
     private final int mIconBorderColor;
 
-    @Bind(R.id.item_content) View mItemContent;
     @Bind(R.id.item_user_icon) ImageView mItemUserImage;
     @Bind(R.id.item_title) TextView mItemTitle;
     @Bind(R.id.item_tags) FlowLayout mItemTags;
@@ -167,8 +166,13 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
     }
 
     @Override public void bind(PublicItem item) {
-      mItemInfo.setText(mContext.getString(R.string.item_info,
-          item.getStockCount(), item.getCommentCount()));
+      String itemInfo = item.getCommentCount() != 1 ?
+          mContext.getResources().getQuantityString(R.plurals.plural_item_info,
+              item.getCommentCount(), // quantity
+              item.getStockCount(), item.getCommentCount()) :
+          mContext.getResources().getQuantityString(R.plurals.plural_item_info,
+              item.getCommentCount(), item.getStockCount());
+      mItemInfo.setText(itemInfo);
 
       if (item.getUser() != null) {
         String userName = item.getUser().getUrlName();
