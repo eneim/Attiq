@@ -36,8 +36,24 @@ public abstract class RealmListFragment<E extends RealmObject>
     extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, Callback<List<E>>,
     Handler.Callback {
 
-  private static final int MESSAGE_UPDATE_DATA = 0x11111111;
+  /**
+   *
+   */
+  private static final int MESSAGE_UPDATE_DATA = 0xffff;
+
+  /**
+   *
+   */
+  private static final int MESSAGE_LOAD_RELOAD = 0x0001;
+
+  /**
+   *
+   */
   private static final int DEFAULT_THRESHOLD = 20;
+
+  /**
+   *
+   */
   private static final int DEFAULT_FIRST_PAGE = 1;
 
   protected Realm mRealm;
@@ -60,6 +76,9 @@ public abstract class RealmListFragment<E extends RealmObject>
     if (msg.what == MESSAGE_UPDATE_DATA) {
       mAdapter.notifyDataSetChanged();
       return true;
+    } else if (msg.what == MESSAGE_LOAD_RELOAD) {
+      loadReload();
+      return true;
     }
 
     return false;
@@ -79,7 +98,8 @@ public abstract class RealmListFragment<E extends RealmObject>
 
   @Override public void onResume() {
     super.onResume();
-    loadReload();
+    mHandler.removeMessages(MESSAGE_LOAD_RELOAD);
+    mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 200);
   }
 
   @Override public void onDetach() {
@@ -93,9 +113,12 @@ public abstract class RealmListFragment<E extends RealmObject>
   private void loadReload() {
     boolean isRefreshing = mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing();
     boolean isLoadingMore = mAdapter.getItemCount() > 0 && !isRefreshing;
-    int page = isLoadingMore ? mPage + 1 : DEFAULT_FIRST_PAGE;
-    mPage = page;
-    mAdapter.loadItems(isLoadingMore, page, DEFAULT_THRESHOLD, null, this);
+    if (isLoadingMore) {
+      mPage++;
+    } else if (isRefreshing) {
+      mPage = DEFAULT_FIRST_PAGE;
+    }
+    mAdapter.loadItems(isLoadingMore, mPage, DEFAULT_THRESHOLD, null, this);
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -119,7 +142,8 @@ public abstract class RealmListFragment<E extends RealmObject>
   @Override public void onRefresh() {
     if (mSwipeRefreshLayout != null) {
       mSwipeRefreshLayout.setRefreshing(true);
-      loadReload();
+      mHandler.removeMessages(MESSAGE_LOAD_RELOAD);
+      mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 200);
     }
   }
 
@@ -138,7 +162,8 @@ public abstract class RealmListFragment<E extends RealmObject>
       realm.beginTransaction();
       realm.copyToRealmOrUpdate(items);
       realm.commitTransaction();
-      mEventBus.post(new EventWrapper<>(items.get(0), mPage));
+      realm.close();
+      mEventBus.post(new EventWrapper<>(true, items.get(0), mPage));
     }
   }
 

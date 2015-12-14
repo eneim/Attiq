@@ -9,9 +9,10 @@ public class EventWrapper<T> extends Event {
 
   private int mPage;
 
-  public EventWrapper(T lastItem, int page) {
-    this.mLastItem = lastItem;
-    this.mPage = page;
+  public EventWrapper(boolean isSuccess, T mLastItem, int mPage) {
+    super(isSuccess);
+    this.mLastItem = mLastItem;
+    this.mPage = mPage;
   }
 
   public T getmLastItem() {

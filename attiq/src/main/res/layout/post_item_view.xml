@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.internal.ForegroundLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="horizontal"
+    android:padding="@dimen/item_padding">
+
+    <ImageView
+        android:id="@+id/item_user_icon"
+        android:layout_width="@dimen/item_icon_size"
+        android:layout_height="@dimen/item_icon_size"
+        android:layout_gravity="top|start"
+        android:layout_margin="@dimen/item_padding"
+        android:scaleType="centerInside"
+        android:src="@android:drawable/sym_def_app_icon"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/item_padding"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/item_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="8dp"/>
+
+        <com.wefika.flowlayout.FlowLayout
+            android:id="@+id/item_tags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"/>
+
+    </LinearLayout>
+
+</android.support.design.internal.ForegroundLinearLayout>

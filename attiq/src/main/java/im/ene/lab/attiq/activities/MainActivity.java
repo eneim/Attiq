@@ -1,8 +1,10 @@
 package im.ene.lab.attiq.activities;
 
-import android.annotation.TargetApi;
-import android.os.Build;
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -10,22 +12,51 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.data.ApiClient;
+import im.ene.lab.attiq.data.Master;
+import im.ene.lab.attiq.data.event.FetchedMasterEvent;
+import im.ene.lab.attiq.data.response.AccessToken;
 import im.ene.lab.attiq.fragment.ItemListFragment;
+import im.ene.lab.attiq.util.PrefUtil;
+import im.ene.lab.attiq.util.UIUtil;
+import io.realm.Realm;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
     implements NavigationView.OnNavigationItemSelectedListener {
+
+  public static final int LOGIN_REQUEST_CODE = 0xa11d;
+  public static final String EXTRA_AUTH_CALLBACK = "extra_auth_callback";
+
+  private Realm mRealm;
+  private View mHeaderView;
+
+  DrawerLayout mDrawerLayout;
+
+  @Bind(R.id.header_account_background) View mHeaderBackground;
+  @Bind(R.id.header_account_icon) ImageView mHeaderIcon;
+  @Bind(R.id.header_account_name) TextView mHeaderName;
+  @Bind(R.id.header_account_description) TextView mHeaderDescription;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
@@ -38,15 +69,48 @@ public class MainActivity extends AppCompatActivity
       }
     });
 
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-        this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-    drawer.setDrawerListener(toggle);
+        this, mDrawerLayout, toolbar,
+        R.string.navigation_drawer_open,
+        R.string.navigation_drawer_close);
+    mDrawerLayout.setDrawerListener(toggle);
     toggle.syncState();
 
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
 
+    mRealm = Attiq.realm();
+
+    if (navigationView.getHeaderCount() > 0) {
+      mHeaderView = navigationView.getHeaderView(0);
+      // update padding top by status bar height.
+      // we expect 24dp, but in some on devices, it was 25dp.
+      if (mHeaderView != null) {
+        mHeaderView.setPadding(
+            mHeaderView.getPaddingLeft(),
+            mHeaderView.getPaddingTop() + UIUtil.getStatusBarHeight(this),
+            mHeaderView.getPaddingRight(),
+            mHeaderView.getPaddingBottom()
+        );
+      }
+    }
+
+    if (mHeaderView != null) {
+      ButterKnife.bind(this, mHeaderView);
+    }
+
+    Master user = mRealm.where(Master.class).findFirst();
+    if (user == null) {
+      user = mRealm.where(Master.class)
+          .equalTo("token", PrefUtil.getCurrentToken()).findFirst();
+    }
+
+    if (user != null) {
+      updateMasterUser(user);
+    }
+
+    // attach content
     Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.container);
     if (fragment == null) {
       fragment = ItemListFragment.newInstance();
@@ -57,12 +121,16 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public void onBackPressed() {
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-    if (drawer.isDrawerOpen(GravityCompat.START)) {
-      drawer.closeDrawer(GravityCompat.START);
+    if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+      mDrawerLayout.closeDrawer(GravityCompat.START);
     } else {
       super.onBackPressed();
     }
+  }
+
+  private void login() {
+    Intent intent = new Intent(this, WebViewActivity.class);
+    startActivityForResult(intent, LOGIN_REQUEST_CODE);
   }
 
   @Override
@@ -87,7 +155,6 @@ public class MainActivity extends AppCompatActivity
     return super.onOptionsItemSelected(item);
   }
 
-  @TargetApi(Build.VERSION_CODES.M)
   @SuppressWarnings("StatementWithEmptyBody")
   @Override public boolean onNavigationItemSelected(MenuItem item) {
     // Handle navigation view item clicks here.
@@ -95,6 +162,7 @@ public class MainActivity extends AppCompatActivity
 
     if (id == R.id.nav_camera) {
       // Handle the camera action
+      login();
     } else if (id == R.id.nav_gallery) {
 
     } else if (id == R.id.nav_slideshow) {
@@ -107,12 +175,89 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-    drawer.closeDrawer(GravityCompat.START);
+    mDrawerLayout.closeDrawer(GravityCompat.START);
     return true;
   }
 
+  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (resultCode == Activity.RESULT_OK && requestCode == LOGIN_REQUEST_CODE && data != null) {
+      String callback = data.getStringExtra(EXTRA_AUTH_CALLBACK);
+      Uri callbackUri = Uri.parse(callback);
+      final String code = callbackUri.getQueryParameter("code");
+      ApiClient.accessToken(code).enqueue(new Callback<AccessToken>() {
+        @Override public void onResponse(Response<AccessToken> response, Retrofit retrofit) {
+          AccessToken accessToken = response.body();
+          if (accessToken != null) {
+            PrefUtil.setCurrentToken(accessToken.getToken());
+            getMasterUser(accessToken.getToken());
+          }
+        }
+
+        @Override public void onFailure(Throwable t) {
+
+        }
+      });
+    }
+  }
+
+  private void getMasterUser(final String token) {
+    ApiClient.me(token).enqueue(new Callback<Master>() {
+      @Override public void onResponse(Response<Master> response, Retrofit retrofit) {
+        Master master = response.body();
+        if (master != null) {
+          master.setToken(token);
+          Realm realm = Attiq.realm();
+          realm.beginTransaction();
+          realm.copyToRealmOrUpdate(master);
+          realm.commitTransaction();
+          realm.close();
+          mEventBus.post(new FetchedMasterEvent(true, master));
+        } else {
+          mEventBus.post(new FetchedMasterEvent(false, null));
+        }
+      }
+
+      @Override public void onFailure(Throwable t) {
+        mEventBus.post(new FetchedMasterEvent(false, null));
+      }
+    });
+  }
+
+  private void updateMasterUser(@NonNull Master user) {
+    if (mHeaderName != null) {
+      mHeaderName.setText(user.getName());
+    }
+
+    if (mHeaderDescription != null) {
+      mHeaderDescription.setText(user.getDescription());
+    }
+
+    if (mHeaderIcon != null && user.getProfileImageUrl() != null
+        && !TextUtils.isEmpty(user.getProfileImageUrl())) {
+      Attiq.picasso()
+          .load(user.getProfileImageUrl())
+          .placeholder(android.R.drawable.sym_def_app_icon)
+          .fit().centerInside()
+          .into(mHeaderIcon);
+    }
+  }
+
+  public void onEventMainThread(final FetchedMasterEvent event) {
+    if (event.isSuccess()) {
+      mDrawerLayout.openDrawer(GravityCompat.START);
+
+      if (event.getMaster() != null) {
+        updateMasterUser(event.getMaster());
+      }
+    }
+  }
+
   @Override protected void onDestroy() {
+    if (mRealm != null) {
+      mRealm.close();
+    }
+    ButterKnife.unbind(this);
     super.onDestroy();
   }
 

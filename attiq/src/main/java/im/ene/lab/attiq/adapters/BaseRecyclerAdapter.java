@@ -1,5 +1,6 @@
 package im.ene.lab.attiq.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -11,8 +12,11 @@ public abstract class BaseRecyclerAdapter<VH extends BaseRecyclerAdapter.ViewHol
 
   public static abstract class ViewHolder<T> extends RecyclerView.ViewHolder {
 
+    protected final Context mContext;
+
     public ViewHolder(View itemView) {
       super(itemView);
+      mContext = itemView.getContext();
     }
 
     protected T mItem;

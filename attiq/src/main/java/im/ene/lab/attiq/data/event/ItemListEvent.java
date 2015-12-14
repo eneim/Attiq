@@ -11,6 +11,12 @@ public class ItemListEvent extends Event {
 
   private int mPage;
 
+  public ItemListEvent(boolean isSuccess, Item mTopItem, int mPage) {
+    super(isSuccess);
+    this.mTopItem = mTopItem;
+    this.mPage = mPage;
+  }
+
   public Item getmTopItem() {
     return mTopItem;
   }

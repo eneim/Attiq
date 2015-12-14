@@ -7,6 +7,10 @@ public class Event {
 
   private boolean isSuccess;
 
+  public Event(boolean isSuccess) {
+    this.isSuccess = isSuccess;
+  }
+
   public boolean isSuccess() {
     return isSuccess;
   }

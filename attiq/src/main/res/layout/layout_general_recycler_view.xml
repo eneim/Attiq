@@ -5,27 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <im.ene.lab.attiq.widgets.NonEmptyRecyclerView
-        android:id="@+id/recycler_view"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:padding="@dimen/recycler_view_padding"/>
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/view_error"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:text="ERROR"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+        <im.ene.lab.attiq.widgets.NonEmptyRecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="@dimen/recycler_view_padding"/>
 
-    <TextView
-        android:id="@+id/view_empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:text="EMPTY"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+        <TextView
+            android:id="@+id/view_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="ERROR"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+
+        <TextView
+            android:id="@+id/view_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="EMPTY"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+    </FrameLayout>
 
 </im.ene.lab.attiq.widgets.MultiSwipeRefreshLayout>

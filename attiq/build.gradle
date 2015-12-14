@@ -1,6 +1,9 @@
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
+        maven {
+            url 'https://github.com/uPhyca/stetho-realm/raw/master/maven-repo'
+        }
     }
 
     dependencies {
@@ -95,6 +98,7 @@ dependencies {
     compile "com.jakewharton:butterknife:7.0.1"
 
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile "com.wefika:flowlayout:0.4.1"
     compile 'com.makeramen:roundedimageview:2.2.1'
     compile 'com.google.code.gson:gson:2.5'
     compile 'org.jsoup:jsoup:1.8.3'
@@ -102,6 +106,10 @@ dependencies {
     compile "de.greenrobot:eventbus:2.4.0"
 
     compile "io.realm:realm-android:0.86.1"
+
+    compile "com.facebook.stetho:stetho:1.2.0"
+    compile "com.facebook.stetho:stetho-okhttp:1.2.0"
+    compile "com.uphyca:stetho_realm:0.7.2"
 
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;

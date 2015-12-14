@@ -7,6 +7,18 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <!-- Material Design key-lines -->
+    <dimen name="header_icon_size">56dp</dimen>
+    <dimen name="header_icon_padding">0dp</dimen>
+    <dimen name="header_icon_radius">28dp</dimen>
+    <dimen name="status_bar_height">24dp</dimen>
+
+    <dimen name="item_icon_size">48dp</dimen>
+    <dimen name="item_icon_size_half">24dp</dimen>
+    <dimen name="item_icon_padding">4dp</dimen>
+
     <!-- Attiq specific dimens -->
     <dimen name="recycler_view_padding">0dp</dimen>
+    <dimen name="item_padding">8dp</dimen>
+    <dimen name="dimen_unit">0.5dp</dimen>
 </resources>
