@@ -22,6 +22,8 @@ import im.ene.lab.attiq.widgets.RoundedTransformation;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 import java.util.List;
 
@@ -62,21 +64,39 @@ public class PublicItemsAdapter extends BaseListAdapter<PublicItem> {
   }
 
   @Override
-  public void loadItems(boolean isLoadingMore, int page, int pageLimit, @Nullable String query,
-                        Callback<List<PublicItem>> callback) {
-    if (!isLoadingMore) {
+  public void loadItems(final boolean isLoadingMore, int page, int pageLimit, @Nullable String
+      query,
+                        final Callback<List<PublicItem>> callback) {
+    Long id = null;
+    if (isLoadingMore) {
+      id = getBottomItem().getId();
+    }
+
+    ApiClient.stream(id).enqueue(new Callback<List<PublicItem>>() {
+      @Override public void onResponse(Response<List<PublicItem>> response, Retrofit retrofit) {
+        cleanup(!isLoadingMore);
+        if (callback != null) {
+          callback.onResponse(response, retrofit);
+        }
+      }
+
+      @Override public void onFailure(Throwable throwable) {
+        cleanup(!isLoadingMore);
+        if (callback != null) {
+          callback.onFailure(throwable);
+        }
+      }
+    });
+  }
+
+  private void cleanup(boolean shouldCleanup) {
+    if (shouldCleanup) {
       Realm realm = Attiq.realm();
       realm.beginTransaction();
       realm.clear(PublicItem.class);
       realm.commitTransaction();
       realm.close();
     }
-
-    Long id = null;
-    if (isLoadingMore) {
-      id = getBottomItem().getId();
-    }
-    ApiClient.stream(id).enqueue(callback);
   }
 
   public static class ViewHolder extends BaseRecyclerAdapter.ViewHolder<PublicItem> {
@@ -125,7 +145,7 @@ public class PublicItemsAdapter extends BaseListAdapter<PublicItem> {
         mItemUserInfo.setVisibility(View.GONE);
       }
 
-      mItemTitle.setText(item.getTitle());
+      mItemTitle.setText(Html.fromHtml(item.getTitle()));
       if (!UIUtil.isEmpty(item.getUser().getProfileImageUrl())) {
         mItemUserImage.setVisibility(View.VISIBLE);
         Attiq.picasso().load(item.getUser().getProfileImageUrl())

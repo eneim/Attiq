@@ -149,14 +149,6 @@ public abstract class RealmListFragment<E extends RealmObject>
   }
 
   @Override public void onResponse(Response<List<E>> response, Retrofit retrofit) {
-    if (mSwipeRefreshLayout != null) {
-      mSwipeRefreshLayout.setRefreshing(false);
-    }
-
-    if (mRecyclerView != null) {
-      mRecyclerView.setErrorViewShown(response.code() != 200);
-    }
-
     List<E> items = response.body();
     if (!UIUtil.isEmpty(items)) {
       Realm realm = Attiq.realm();
@@ -165,6 +157,14 @@ public abstract class RealmListFragment<E extends RealmObject>
       realm.commitTransaction();
       realm.close();
       mEventBus.post(new EventWrapper<>(true, items.get(0), mPage));
+    }
+
+    if (mSwipeRefreshLayout != null) {
+      mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    if (mRecyclerView != null) {
+      mRecyclerView.setErrorViewShown(response.code() != 200);
     }
   }
 
