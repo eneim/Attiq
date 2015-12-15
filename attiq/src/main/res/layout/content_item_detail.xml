@@ -9,10 +9,10 @@
     tools:context="im.ene.lab.attiq.activities.ItemDetailActivity"
     tools:showIn="@layout/activity_item_detail">
 
-    <TextView
+    <WebView
+        android:id="@+id/item_content_web"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:text="@string/large_text"/>
+        android:layout_margin="@dimen/text_margin"/>
 
 </android.support.v4.widget.NestedScrollView>

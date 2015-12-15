@@ -1,24 +1,24 @@
 package im.ene.lab.attiq.data.event;
 
-import im.ene.lab.attiq.data.Master;
+import im.ene.lab.attiq.data.Profile;
 
 /**
  * Created by eneim on 12/14/15.
  */
 public class FetchedMasterEvent extends Event {
 
-  private Master master;
+  private Profile profile;
 
-  public FetchedMasterEvent(boolean isSuccess, Master master) {
+  public FetchedMasterEvent(boolean isSuccess, Profile profile) {
     super(isSuccess);
-    this.master = master;
+    this.profile = profile;
   }
 
-  public Master getMaster() {
-    return master;
+  public Profile getProfile() {
+    return profile;
   }
 
-  public void setMaster(Master master) {
-    this.master = master;
+  public void setProfile(Profile profile) {
+    this.profile = profile;
   }
 }

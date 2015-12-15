@@ -12,7 +12,7 @@ import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.response.AccessToken;
 import im.ene.lab.attiq.data.response.Item;
 import im.ene.lab.attiq.data.vault.PublicItem;
-import im.ene.lab.attiq.util.JsonUtil;
+import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.PrefUtil;
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
@@ -39,7 +39,7 @@ public final class ApiClient {
     RETROFIT = new Retrofit.Builder()
         .baseUrl(Api.BASE_URL)
         .client(HTTP_CLIENT)
-        .addConverterFactory(GsonConverterFactory.create(JsonUtil.gson()))
+        .addConverterFactory(GsonConverterFactory.create(IOUtil.gson()))
         .build();
 
     PUBLIC = RETROFIT.create(Api.Public.class);
@@ -80,7 +80,7 @@ public final class ApiClient {
     );
   }
 
-  public static Call<Master> me() {
+  public static Call<Profile> me() {
     return SELF.me();
   }
 }

@@ -7,7 +7,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 
-public class Master extends RealmObject {
+public class Profile extends RealmObject {
 
   private String token;
 

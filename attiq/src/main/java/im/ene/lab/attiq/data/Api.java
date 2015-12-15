@@ -32,12 +32,14 @@ interface Api {
     @GET("/api/v2/items") Call<List<Item>> items(@Query("page") int page,
                                                  @Query("per_page") int limit,
                                                  @Query("query") String query);
+
+
   }
 
   interface Me {
 
     @POST("/api/v2/access_tokens") Call<AccessToken> accessToken(@Body AccessTokenRequest request);
 
-    @GET("/api/v2/authenticated_user") Call<Master> me();
+    @GET("/api/v2/authenticated_user") Call<Profile> me();
   }
 }

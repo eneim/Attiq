@@ -7,8 +7,7 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.*;
 
 import com.wefika.flowlayout.FlowLayout;
 
@@ -166,7 +165,7 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
     }
 
     @Override public void bind(PublicItem item) {
-      String itemInfo = item.getCommentCount() != 1 ?
+      String itemInfo = item.getCommentCount() == 1 ?
           mContext.getString(R.string.item_info_one, item.getStockCount()) :
           mContext.getString(R.string.item_info_many, item.getStockCount(), item.getCommentCount());
       mItemInfo.setText(itemInfo);

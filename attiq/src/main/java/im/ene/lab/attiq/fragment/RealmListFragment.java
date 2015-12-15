@@ -176,6 +176,8 @@ public abstract class RealmListFragment<E extends RealmObject>
   }
 
   @Override public void onResponse(Response<List<E>> response, Retrofit retrofit) {
+    Log.d(TAG, "onResponse() called with: " + "response = [" + response + "]");
+
     List<E> items = response.body();
     if (!UIUtil.isEmpty(items)) {
       Realm realm = Attiq.realm();
@@ -196,6 +198,7 @@ public abstract class RealmListFragment<E extends RealmObject>
   }
 
   @Override public void onFailure(Throwable t) {
+    Log.d(TAG, "onFailure() called with: " + "t = [" + t + "]");
     if (mSwipeRefreshLayout != null) {
       mSwipeRefreshLayout.setRefreshing(false);
     }

@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.ApiClient;
-import im.ene.lab.attiq.data.Master;
+import im.ene.lab.attiq.data.Profile;
 import im.ene.lab.attiq.data.event.FetchedMasterEvent;
 import im.ene.lab.attiq.data.response.AccessToken;
 import im.ene.lab.attiq.fragment.PublicStreamFragment;
@@ -101,9 +101,9 @@ public class MainActivity extends BaseActivity
       ButterKnife.bind(this, mHeaderView);
     }
 
-    Master user = mRealm.where(Master.class).findFirst();
+    Profile user = mRealm.where(Profile.class).findFirst();
     if (user == null) {
-      user = mRealm.where(Master.class)
+      user = mRealm.where(Profile.class)
           .equalTo("token", PrefUtil.getCurrentToken()).findFirst();
     }
 
@@ -203,17 +203,17 @@ public class MainActivity extends BaseActivity
   }
 
   private void getMasterUser(final String token) {
-    ApiClient.me().enqueue(new Callback<Master>() {
-      @Override public void onResponse(Response<Master> response, Retrofit retrofit) {
-        Master master = response.body();
-        if (master != null) {
-          master.setToken(token);
+    ApiClient.me().enqueue(new Callback<Profile>() {
+      @Override public void onResponse(Response<Profile> response, Retrofit retrofit) {
+        Profile profile = response.body();
+        if (profile != null) {
+          profile.setToken(token);
           Realm realm = Attiq.realm();
           realm.beginTransaction();
-          realm.copyToRealmOrUpdate(master);
+          realm.copyToRealmOrUpdate(profile);
           realm.commitTransaction();
           realm.close();
-          mEventBus.post(new FetchedMasterEvent(true, master));
+          mEventBus.post(new FetchedMasterEvent(true, profile));
         } else {
           mEventBus.post(new FetchedMasterEvent(false, null));
         }
@@ -225,7 +225,7 @@ public class MainActivity extends BaseActivity
     });
   }
 
-  private void updateMasterUser(@NonNull Master user) {
+  private void updateMasterUser(@NonNull Profile user) {
     if (mHeaderName != null) {
       mHeaderName.setText(user.getName());
     }
@@ -246,8 +246,8 @@ public class MainActivity extends BaseActivity
   public void onEventMainThread(final FetchedMasterEvent event) {
     if (event.isSuccess()) {
       mDrawerLayout.openDrawer(GravityCompat.START);
-      if (event.getMaster() != null) {
-        updateMasterUser(event.getMaster());
+      if (event.getProfile() != null) {
+        updateMasterUser(event.getProfile());
       }
     }
   }
