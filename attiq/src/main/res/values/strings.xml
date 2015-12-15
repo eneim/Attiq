@@ -11,10 +11,16 @@
         &lt;a href="http://qiita.com/%1$s">%2$s&lt;/a> posted %3$s ago,
         &lt;a href="http://qiita.com/%4$s/items/%5$s/revisions">edited&lt;/a>
     </string>
-    <plurals name="plural_item_info">
-        <item quantity="one">%1$d stocked, 1 comment</item>
-        <item quantity="other">%1$d stocked, %2$d comments</item>
-    </plurals>
+
+    <string name="item_info_one">%1$d stocked, 1 comment</string>
+    <string name="item_info_many">%1$d stocked, %2$d comments</string>
+
+    <!-- somehow doesn't work well, need help! -->
+
+    <!--<plurals name="plural_item_info">-->
+        <!--<item quantity="one">%1$d stocked, 1 comment</item>-->
+        <!--<item quantity="other">%1$d stocked, %2$d comments</item>-->
+    <!--</plurals>-->
 
     <string name="title_activity_item_detail">アイテム詳細</string>
     <string name="large_text">

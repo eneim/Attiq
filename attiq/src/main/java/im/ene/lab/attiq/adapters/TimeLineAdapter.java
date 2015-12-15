@@ -167,11 +167,8 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
 
     @Override public void bind(PublicItem item) {
       String itemInfo = item.getCommentCount() != 1 ?
-          mContext.getResources().getQuantityString(R.plurals.plural_item_info,
-              item.getCommentCount(), // quantity
-              item.getStockCount(), item.getCommentCount()) :
-          mContext.getResources().getQuantityString(R.plurals.plural_item_info,
-              item.getCommentCount(), item.getStockCount());
+          mContext.getString(R.string.item_info_one, item.getStockCount()) :
+          mContext.getString(R.string.item_info_many, item.getStockCount(), item.getCommentCount());
       mItemInfo.setText(itemInfo);
 
       if (item.getUser() != null) {
