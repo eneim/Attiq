@@ -19,6 +19,7 @@ public class BaseActivity extends AppCompatActivity {
     mEventBus.register(this);
   }
 
+  // placeholder for EventBus
   @SuppressWarnings("Unused")
   public void onEvent(Event event) {
   }

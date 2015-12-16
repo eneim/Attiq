@@ -69,6 +69,10 @@ public final class ApiClient {
     return ITEMS.items(page, pageLimit, query);
   }
 
+  public static Call<Item> itemDetail(String id) {
+    return ITEMS.itemDetail(id);
+  }
+
   public static Call<AccessToken> accessToken(String code) {
     Resources resources = Attiq.creator().getResources();
     return SELF.accessToken(

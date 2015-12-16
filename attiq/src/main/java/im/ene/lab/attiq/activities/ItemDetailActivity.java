@@ -4,11 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.webkit.WebView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,12 +12,21 @@ import org.jsoup.nodes.Element;
 
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.data.ApiClient;
+import im.ene.lab.attiq.data.event.Event;
+import im.ene.lab.attiq.data.event.ItemDetailEvent;
+import im.ene.lab.attiq.data.response.Item;
+import im.ene.lab.attiq.data.vault.PublicItem;
 import im.ene.lab.attiq.util.IOUtil;
 import io.realm.Realm;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
+import us.feras.mdv.MarkdownView;
 
 import java.io.IOException;
 
-public class ItemDetailActivity extends BaseActivity {
+public class ItemDetailActivity extends BaseActivity implements Callback<Item> {
 
   private static final String EXTRA_DETAIL_ITEM_ID = "attiq_item_detail_extra_id";
 
@@ -31,40 +36,36 @@ public class ItemDetailActivity extends BaseActivity {
     return new Intent(context, ItemDetailActivity.class);
   }
 
-  public static Intent creatIntent(Context context, @NonNull Integer itemId,
-                                   @NonNull String itemUUID) {
+  public static Intent createIntent(Context context, @NonNull PublicItem item) {
     Intent intent = createIntent(context);
-    intent.putExtra(EXTRA_DETAIL_ITEM_ID, itemId);
-    intent.putExtra(EXTRA_DETAIL_ITEM_UUID, itemUUID);
+    intent.putExtra(EXTRA_DETAIL_ITEM_ID, item.getId());
+    intent.putExtra(EXTRA_DETAIL_ITEM_UUID, item.getUuid());
     return intent;
   }
 
   private Realm mRealm;
-  private WebView mContentWebView;
+  private MarkdownView mContentWebView;
+
+  private PublicItem mPublicItem;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_item_detail);
-    mContentWebView = (WebView) findViewById(R.id.item_content_web);
+    mContentWebView = (MarkdownView) findViewById(R.id.item_content_web);
+    mContentWebView.setVerticalScrollBarEnabled(false);
+    mContentWebView.setHorizontalScrollBarEnabled(false);
 
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
-
-    FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-            .setAction("Action", null).show();
-      }
-    });
 
     if (getSupportActionBar() != null) {
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     mRealm = Attiq.realm();
+    long itemId = getIntent().getLongExtra(EXTRA_DETAIL_ITEM_ID, 0);
+    mPublicItem = mRealm.where(PublicItem.class).equalTo("id", itemId).findFirst();
   }
 
   @Override protected void onDestroy() {
@@ -76,17 +77,43 @@ public class ItemDetailActivity extends BaseActivity {
 
   @Override protected void onResume() {
     super.onResume();
-    try {
-      final String html = IOUtil.readAllFromAssets(this, "html/article.html");
+    if (mPublicItem != null) {
+      ApiClient.itemDetail(mPublicItem.getUuid()).enqueue(this);
+    }
+  }
 
-      Document doc = Jsoup.parse(html);
-      Element elem = doc.getElementById("content");
-      // elem.append(content.get());
+  @Override public void onResponse(Response<Item> response, Retrofit retrofit) {
+    Item item = response.body();
+    if (item != null) {
+      mEventBus.post(new ItemDetailEvent(true, null, item));
+    } else {
+      mEventBus.post(new ItemDetailEvent(false,
+          new Event.Error(response.code(), response.message()), null));
+    }
+  }
 
-      String result = doc.outerHtml();
-      mContentWebView.loadData(result, null, null);
-    } catch (IOException ioe) {
-      ioe.printStackTrace();
+  @Override public void onFailure(Throwable error) {
+    mEventBus.post(new ItemDetailEvent(false,
+        new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
+  }
+
+  public void onEventMainThread(ItemDetailEvent event) {
+    Item item = event.getItem();
+    if (item != null) {
+      final String html;
+      try {
+        html = IOUtil.readAllFromAssets(this, "html/article.html");
+
+        Document doc = Jsoup.parse(html);
+        Element elem = doc.getElementById("content");
+        elem.append(item.getRenderedBody());
+
+        String result = doc.outerHtml();
+        mContentWebView.loadDataWithBaseURL(
+            item.getUrl(), result, null, null, null);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 }

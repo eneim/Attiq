@@ -25,6 +25,7 @@ import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.ApiClient;
 import im.ene.lab.attiq.data.Profile;
+import im.ene.lab.attiq.data.event.Event;
 import im.ene.lab.attiq.data.event.FetchedMasterEvent;
 import im.ene.lab.attiq.data.response.AccessToken;
 import im.ene.lab.attiq.fragment.PublicStreamFragment;
@@ -213,14 +214,16 @@ public class MainActivity extends BaseActivity
           realm.copyToRealmOrUpdate(profile);
           realm.commitTransaction();
           realm.close();
-          mEventBus.post(new FetchedMasterEvent(true, profile));
+          mEventBus.post(new FetchedMasterEvent(true, null, profile));
         } else {
-          mEventBus.post(new FetchedMasterEvent(false, null));
+          mEventBus.post(new FetchedMasterEvent(false,
+              new Event.Error(response.code(), response.message()), null));
         }
       }
 
-      @Override public void onFailure(Throwable t) {
-        mEventBus.post(new FetchedMasterEvent(false, null));
+      @Override public void onFailure(Throwable error) {
+        mEventBus.post(new FetchedMasterEvent(false,
+            new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
     });
   }

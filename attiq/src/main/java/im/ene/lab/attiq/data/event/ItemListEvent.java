@@ -1,5 +1,7 @@
 package im.ene.lab.attiq.data.event;
 
+import android.support.annotation.Nullable;
+
 import im.ene.lab.attiq.data.response.Item;
 
 /**
@@ -11,8 +13,8 @@ public class ItemListEvent extends Event {
 
   private int mPage;
 
-  public ItemListEvent(boolean isSuccess, Item mTopItem, int mPage) {
-    super(isSuccess);
+  public ItemListEvent(boolean isSuccess, @Nullable Error error, Item mTopItem, int mPage) {
+    super(isSuccess, error);
     this.mTopItem = mTopItem;
     this.mPage = mPage;
   }

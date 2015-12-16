@@ -1,5 +1,7 @@
 package im.ene.lab.attiq.data.event;
 
+import android.support.annotation.Nullable;
+
 /**
  * Created by eneim on 12/13/15.
  */
@@ -9,8 +11,8 @@ public class EventWrapper<T> extends Event {
 
   private int mPage;
 
-  public EventWrapper(boolean isSuccess, T mLastItem, int mPage) {
-    super(isSuccess);
+  public EventWrapper(boolean isSuccess, @Nullable Error error, T mLastItem, int mPage) {
+    super(isSuccess, error);
     this.mLastItem = mLastItem;
     this.mPage = mPage;
   }

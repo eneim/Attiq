@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,9 +43,21 @@ public class IOUtil {
         sb.append(s).append("\n");
       }
     } finally {
-
+      closeQuietly(is);
+      closeQuietly(br);
     }
 
     return sb.toString();
+  }
+
+  public static void closeQuietly(Closeable closeable) {
+    if (closeable == null) {
+      return;
+    }
+    try {
+      closeable.close();
+    } catch (IOException ignore) {
+      //Do nothing
+    }
   }
 }

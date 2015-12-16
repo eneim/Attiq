@@ -9,10 +9,9 @@
     tools:context="im.ene.lab.attiq.activities.ItemDetailActivity"
     tools:showIn="@layout/activity_item_detail">
 
-    <WebView
+    <us.feras.mdv.MarkdownView
         android:id="@+id/item_content_web"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </android.support.v4.widget.NestedScrollView>

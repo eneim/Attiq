@@ -1,5 +1,7 @@
 package im.ene.lab.attiq.data.event;
 
+import android.support.annotation.Nullable;
+
 import im.ene.lab.attiq.data.response.AccessToken;
 
 /**
@@ -9,8 +11,8 @@ public class AccessTokenEvent extends Event {
 
   private AccessToken accessToken;
 
-  public AccessTokenEvent(boolean isSuccess, AccessToken accessToken) {
-    super(isSuccess);
+  public AccessTokenEvent(boolean isSuccess, @Nullable Error error, AccessToken accessToken) {
+    super(isSuccess, error);
     this.accessToken = accessToken;
   }
 

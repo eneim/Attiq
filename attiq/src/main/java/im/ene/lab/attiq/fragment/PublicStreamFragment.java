@@ -57,7 +57,7 @@ public class PublicStreamFragment extends RealmListFragment<PublicItem> {
       }
 
       @Override public void onItemContentClick(PublicItem item) {
-        startActivity(ItemDetailActivity.createIntent(getContext()));
+        startActivity(ItemDetailActivity.createIntent(getContext(), item));
       }
     };
 

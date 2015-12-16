@@ -18,6 +18,7 @@ import butterknife.Bind;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.BaseListAdapter;
+import im.ene.lab.attiq.data.event.Event;
 import im.ene.lab.attiq.data.event.EventWrapper;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.EndlessScrollListener;
@@ -178,14 +179,19 @@ public abstract class RealmListFragment<E extends RealmObject>
   @Override public void onResponse(Response<List<E>> response, Retrofit retrofit) {
     Log.d(TAG, "onResponse() called with: " + "response = [" + response + "]");
 
-    List<E> items = response.body();
-    if (!UIUtil.isEmpty(items)) {
-      Realm realm = Attiq.realm();
-      realm.beginTransaction();
-      realm.copyToRealmOrUpdate(items);
-      realm.commitTransaction();
-      realm.close();
-      mEventBus.post(new EventWrapper<>(true, items.get(0), mPage));
+    if (response.code() != 200) {
+      mEventBus.post(new EventWrapper<>(false,
+          new Event.Error(response.code(), response.message()), null, mPage));
+    } else {
+      List<E> items = response.body();
+      if (!UIUtil.isEmpty(items)) {
+        Realm realm = Attiq.realm();
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(items);
+        realm.commitTransaction();
+        realm.close();
+        mEventBus.post(new EventWrapper<>(true, null, items.get(0), mPage));
+      }
     }
 
     if (mSwipeRefreshLayout != null) {
@@ -199,6 +205,8 @@ public abstract class RealmListFragment<E extends RealmObject>
 
   @Override public void onFailure(Throwable t) {
     Log.d(TAG, "onFailure() called with: " + "t = [" + t + "]");
+    mEventBus.post(new EventWrapper<>(false,
+        new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null, mPage));
     if (mSwipeRefreshLayout != null) {
       mSwipeRefreshLayout.setRefreshing(false);
     }

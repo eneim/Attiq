@@ -8,6 +8,7 @@ import retrofit.Call;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.Path;
 import retrofit.http.Query;
 
 import java.util.List;
@@ -33,7 +34,7 @@ interface Api {
                                                  @Query("per_page") int limit,
                                                  @Query("query") String query);
 
-
+    @GET("/api/v2/items/{item_id}") Call<Item> itemDetail(@Path("item_id") String id);
   }
 
   interface Me {
