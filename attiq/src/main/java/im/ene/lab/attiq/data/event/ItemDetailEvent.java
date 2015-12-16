@@ -2,21 +2,21 @@ package im.ene.lab.attiq.data.event;
 
 import android.support.annotation.Nullable;
 
-import im.ene.lab.attiq.data.response.Item;
+import im.ene.lab.attiq.data.response.Article;
 
 /**
  * Created by eneim on 12/15/15.
  */
 public class ItemDetailEvent extends Event {
 
-  private Item item;
+  private Article article;
 
-  public ItemDetailEvent(boolean isSuccess, @Nullable Error error, Item item) {
+  public ItemDetailEvent(boolean isSuccess, @Nullable Error error, Article article) {
     super(isSuccess, error);
-    this.item = item;
+    this.article = article;
   }
 
-  public Item getItem() {
-    return item;
+  public Article getArticle() {
+    return article;
   }
 }

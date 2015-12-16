@@ -13,7 +13,7 @@ import butterknife.Bind;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.ApiClient;
-import im.ene.lab.attiq.data.response.Item;
+import im.ene.lab.attiq.data.response.Article;
 import im.ene.lab.attiq.data.response.ItemTag;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
@@ -25,13 +25,13 @@ import java.util.List;
 /**
  * Created by eneim on 12/13/15.
  */
-public class ItemListAdapter extends BaseListAdapter<Item> {
+public class ItemListAdapter extends BaseListAdapter<Article> {
 
-  private final RealmResults<Item> mItems;
+  private final RealmResults<Article> mArticles;
 
-  public ItemListAdapter(RealmResults<Item> items) {
+  public ItemListAdapter(RealmResults<Article> articles) {
     super();
-    mItems = items;
+    mArticles = articles;
     setHasStableIds(true);
   }
 
@@ -47,20 +47,20 @@ public class ItemListAdapter extends BaseListAdapter<Item> {
   }
 
   @Override public int getItemCount() {
-    return mItems.size();
+    return mArticles.size();
   }
 
-  @Override public Item getItem(int position) {
-    return mItems.get(position);
+  @Override public Article getItem(int position) {
+    return mArticles.get(position);
   }
 
   @Override
   public void loadItems(boolean isLoadingMore, int page, int pageLimit, @Nullable String query,
-                        Callback<List<Item>> callback) {
+                        Callback<List<Article>> callback) {
     ApiClient.items(page, pageLimit, query).enqueue(callback);
   }
 
-  public static class ViewHolder extends BaseRecyclerAdapter.ViewHolder<Item> {
+  public static class ViewHolder extends BaseRecyclerAdapter.ViewHolder<Article> {
 
     static final int LAYOUT_RES = R.layout.post_item_view;
 
@@ -84,13 +84,13 @@ public class ItemListAdapter extends BaseListAdapter<Item> {
       mIconBorderColor = UIUtil.getColor(mContext, R.color.colorPrimary);
     }
 
-    @Override public void bind(Item item) {
+    @Override public void bind(Article article) {
       mItemInfo.setVisibility(View.GONE);
 
-      mItemTitle.setText(item.getTitle());
-      if (!UIUtil.isEmpty(item.getUser().getProfileImageUrl())) {
+      mItemTitle.setText(article.getTitle());
+      if (!UIUtil.isEmpty(article.getUser().getProfileImageUrl())) {
         mItemUserImage.setVisibility(View.VISIBLE);
-        Attiq.picasso().load(item.getUser().getProfileImageUrl())
+        Attiq.picasso().load(article.getUser().getProfileImageUrl())
             .fit().centerInside()
             .transform(new RoundedTransformation(
                 mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
@@ -100,8 +100,8 @@ public class ItemListAdapter extends BaseListAdapter<Item> {
       }
 
       mItemTags.removeAllViews();
-      if (!UIUtil.isEmpty(item.getTags())) {
-        for (ItemTag tag : item.getTags()) {
+      if (!UIUtil.isEmpty(article.getTags())) {
+        for (ItemTag tag : article.getTags()) {
           TextView tagView = (TextView) mInflater.inflate(
               R.layout.widget_tag_textview, mItemTags, false);
           tagView.setText(tag.getName());

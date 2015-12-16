@@ -59,6 +59,12 @@ public class Attiq extends Application {
         })
         .build();
 
+    try {
+      Realm.deleteRealm(config);
+    } catch (IllegalStateException er) {
+      er.printStackTrace();
+    }
+
     Realm.setDefaultConfiguration(config);
 
     mPreference = getSharedPreferences(getPackageName() + "_pref", Context.MODE_PRIVATE);
