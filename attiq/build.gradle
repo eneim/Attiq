@@ -4,6 +4,7 @@ buildscript {
         maven {
             url 'https://github.com/uPhyca/stetho-realm/raw/master/maven-repo'
         }
+        mavenCentral()
     }
 
     dependencies {
@@ -104,7 +105,7 @@ dependencies {
     compile 'com.makeramen:roundedimageview:2.2.1'
     compile 'com.google.code.gson:gson:2.5'
     compile 'org.jsoup:jsoup:1.8.3'
-
+    compile "com.sothree.slidinguppanel:library:3.2.0"
     compile "us.feras.mdv:markdownview:1.1.0"
 
     compile "de.greenrobot:eventbus:2.4.0"

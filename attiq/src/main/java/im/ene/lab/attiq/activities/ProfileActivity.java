@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.webkit.WebView;
 
 import im.ene.lab.attiq.R;
 
@@ -17,10 +18,14 @@ public class ProfileActivity extends AppCompatActivity {
     return new Intent(context, ProfileActivity.class);
   }
 
+  WebView mContentView;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_profile);
+    mContentView = (WebView) findViewById(R.id.user_content);
+
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
@@ -36,5 +41,11 @@ public class ProfileActivity extends AppCompatActivity {
     if (getSupportActionBar() != null) {
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+  }
+
+  private String sample = "http://qiita.com/ksoichiro";
+
+  @Override protected void onResume() {
+    super.onResume();
   }
 }

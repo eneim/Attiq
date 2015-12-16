@@ -8,7 +8,7 @@
     app:layout_behavior="im.ene.support.design.widget.AppBarLayout$ScrollingViewBehavior"
     tools:showIn="@layout/activity_item_detail">
 
-    <us.feras.mdv.MarkdownView
+    <WebView
         android:id="@+id/item_content_web"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

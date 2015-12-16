@@ -3,6 +3,7 @@ package im.ene.lab.attiq.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
@@ -29,7 +30,6 @@ import io.realm.Realm;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
-import us.feras.mdv.MarkdownView;
 
 import java.io.IOException;
 
@@ -51,7 +51,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Item> {
   }
 
   private Realm mRealm;
-  private MarkdownView mContentWebView;
+  private WebView mContentView;
+  private WebView mComments;
 
   private PublicItem mPublicItem;
 
@@ -61,9 +62,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Item> {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_item_detail);
-    mContentWebView = (MarkdownView) findViewById(R.id.item_content_web);
-    mContentWebView.setVerticalScrollBarEnabled(false);
-    mContentWebView.setHorizontalScrollBarEnabled(false);
+    mContentView = (WebView) findViewById(R.id.item_content_web);
+    mContentView.setVerticalScrollBarEnabled(false);
+    mContentView.setHorizontalScrollBarEnabled(false);
 
     WebViewClient client = new WebViewClient() {
 
@@ -77,9 +78,18 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Item> {
         super.onPageFinished(view, url);
         Log.e(TAG, "onPageFinished() called with: " + "view = [" + view + "], url = [" + url + "]");
       }
+
+      @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
+        if (url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
+          startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+          return true;
+        } else {
+          return false;
+        }
+      }
     };
 
-    mContentWebView.setWebViewClient(client);
+    mContentView.setWebViewClient(client);
 
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
@@ -150,11 +160,21 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Item> {
         elem.append(item.getRenderedBody());
 
         String result = doc.outerHtml();
-        mContentWebView.loadDataWithBaseURL(
+        mContentView.loadDataWithBaseURL(
             item.getUrl(), result, null, null, null);
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
+  }
+
+  // TODO Item's comment webview
+  private void processComments() {
+
+  }
+
+  // TODO Item's menu by header tags
+  private void processMenu() {
+
   }
 }

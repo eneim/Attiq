@@ -23,4 +23,6 @@
     <dimen name="dimen_unit">0.5dp</dimen>
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="comment_container_expand">224dp</dimen>
+    <dimen name="comment_container_collapse">48dp</dimen>
 </resources>
