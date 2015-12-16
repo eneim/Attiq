@@ -105,4 +105,6 @@
     <color name="event_button_reserve">#EA5444</color>
     <color name="event_button_attend">#47BB3C</color>
     <color name="event_button_attended">#ABAAAA</color>
+
+    <color name="ripple_light">#99ffffff</color>
 </resources>

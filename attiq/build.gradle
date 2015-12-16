@@ -90,6 +90,7 @@ dependencies {
 
     compile "com.android.support:appcompat-v7:${support_libraries_version}"
     compile "com.android.support:design:${support_libraries_version}"
+    compile "com.android.support:palette-v7:${support_libraries_version}"
     compile "com.android.support:recyclerview-v7:${support_libraries_version}"
     // compile "com.android.support:customtabs:${support_libraries_version}"
 

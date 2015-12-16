@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,6 +19,8 @@ import im.ene.lab.attiq.data.event.ItemDetailEvent;
 import im.ene.lab.attiq.data.response.Item;
 import im.ene.lab.attiq.data.vault.PublicItem;
 import im.ene.lab.attiq.util.IOUtil;
+import im.ene.support.design.widget.AlphaForegroundColorSpan;
+import im.ene.support.design.widget.CollapsingToolbarLayout;
 import io.realm.Realm;
 import retrofit.Callback;
 import retrofit.Response;
@@ -66,6 +69,22 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Item> {
     mRealm = Attiq.realm();
     long itemId = getIntent().getLongExtra(EXTRA_DETAIL_ITEM_ID, 0);
     mPublicItem = mRealm.where(PublicItem.class).equalTo("id", itemId).findFirst();
+
+    CollapsingToolbarLayout toolbarLayout =
+        (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+
+    toolbarLayout.setTitle(mPublicItem.getTitle());
+    toolbar.setTitle(mPublicItem.getTitle());
+    toolbar.setSubtitle(mPublicItem.getUser().getUrlName());
+  }
+
+  // Title support
+  private AlphaForegroundColorSpan mAlphaForegroundColorSpan;
+  private SpannableString mSpannableTitle;
+  private SpannableString mSpannableSubtitle;
+
+  private void updateTitle() {
+
   }
 
   @Override protected void onDestroy() {

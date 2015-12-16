@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="im.ene.lab.attiq.activities.ItemDetailActivity"
+    app:layout_behavior="im.ene.support.design.widget.AppBarLayout$ScrollingViewBehavior"
     tools:showIn="@layout/activity_item_detail">
 
     <us.feras.mdv.MarkdownView
