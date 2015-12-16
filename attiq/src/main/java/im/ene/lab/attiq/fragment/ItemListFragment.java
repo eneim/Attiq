@@ -8,7 +8,7 @@ import android.view.View;
 import im.ene.lab.attiq.adapters.BaseListAdapter;
 import im.ene.lab.attiq.adapters.ItemListAdapter;
 import im.ene.lab.attiq.data.event.EventWrapper;
-import im.ene.lab.attiq.data.response.Item;
+import im.ene.lab.attiq.data.response.Article;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -16,7 +16,7 @@ import io.realm.Sort;
 /**
  * Created by eneim on 12/13/15.
  */
-public class ItemListFragment extends RealmListFragment<Item> {
+public class ItemListFragment extends RealmListFragment<Article> {
 
   public ItemListFragment() {
 
@@ -26,13 +26,13 @@ public class ItemListFragment extends RealmListFragment<Item> {
     return new ItemListFragment();
   }
 
-  @NonNull @Override protected BaseListAdapter<Item> createAdapter() {
-    RealmResults<Item> items = mRealm.where(Item.class)
+  @NonNull @Override protected BaseListAdapter<Article> createAdapter() {
+    RealmResults<Article> articles = mRealm.where(Article.class)
         .findAllSorted("updatedAt", Sort.DESCENDING);
-    return new ItemListAdapter(items);
+    return new ItemListAdapter(articles);
   }
 
-  @Override public void onEventMainThread(EventWrapper<Item> event) {
+  @Override public void onEventMainThread(EventWrapper<Article> event) {
 
   }
 

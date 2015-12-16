@@ -7,29 +7,29 @@ import android.support.annotation.Nullable;
  */
 public class EventWrapper<T> extends Event {
 
-  private T mLastItem;
+  private T lastItem;
 
-  private int mPage;
+  private int page;
 
-  public EventWrapper(boolean isSuccess, @Nullable Error error, T mLastItem, int mPage) {
+  public EventWrapper(boolean isSuccess, @Nullable Error error, T lastItem, int page) {
     super(isSuccess, error);
-    this.mLastItem = mLastItem;
-    this.mPage = mPage;
+    this.lastItem = lastItem;
+    this.page = page;
   }
 
-  public T getmLastItem() {
-    return mLastItem;
+  public T getLastItem() {
+    return lastItem;
   }
 
-  public void setmLastItem(T mLastItem) {
-    this.mLastItem = mLastItem;
+  public void setLastItem(T lastItem) {
+    this.lastItem = lastItem;
   }
 
-  public int getmPage() {
-    return mPage;
+  public int getPage() {
+    return page;
   }
 
-  public void setmPage(int mPage) {
-    this.mPage = mPage;
+  public void setPage(int page) {
+    this.page = page;
   }
 }

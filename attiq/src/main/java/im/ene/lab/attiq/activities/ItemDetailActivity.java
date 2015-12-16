@@ -20,10 +20,14 @@ import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.ApiClient;
 import im.ene.lab.attiq.data.event.Event;
+import im.ene.lab.attiq.data.event.ItemCommentsEvent;
 import im.ene.lab.attiq.data.event.ItemDetailEvent;
-import im.ene.lab.attiq.data.response.Item;
+import im.ene.lab.attiq.data.response.Article;
+import im.ene.lab.attiq.data.response.Comment;
 import im.ene.lab.attiq.data.vault.PublicItem;
 import im.ene.lab.attiq.util.IOUtil;
+import im.ene.lab.attiq.util.TimeUtil;
+import im.ene.lab.attiq.util.UIUtil;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
 import io.realm.Realm;
@@ -32,12 +36,15 @@ import retrofit.Response;
 import retrofit.Retrofit;
 
 import java.io.IOException;
+import java.util.List;
 
-public class ItemDetailActivity extends BaseActivity implements Callback<Item> {
+public class ItemDetailActivity extends BaseActivity implements Callback<Article> {
 
   private static final String EXTRA_DETAIL_ITEM_ID = "attiq_item_detail_extra_id";
 
   private static final String EXTRA_DETAIL_ITEM_UUID = "attiq_item_detail_extra_uuid";
+
+  private String GOOD_MOCK_ID = "b03556ceab5cec258c2c";
 
   public static Intent createIntent(Context context) {
     return new Intent(context, ItemDetailActivity.class);
@@ -65,6 +72,10 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Item> {
     mContentView = (WebView) findViewById(R.id.item_content_web);
     mContentView.setVerticalScrollBarEnabled(false);
     mContentView.setHorizontalScrollBarEnabled(false);
+
+    mComments = (WebView) findViewById(R.id.item_comments);
+    mComments.setVerticalScrollBarEnabled(false);
+    mComments.setHorizontalScrollBarEnabled(false);
 
     WebViewClient client = new WebViewClient() {
 
@@ -105,7 +116,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Item> {
     CollapsingToolbarLayout toolbarLayout =
         (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
 
-    toolbarLayout.setTitle(mPublicItem.getTitle());
+    // toolbarLayout.setTitle(mPublicItem.getTitle());
     toolbar.setTitle(mPublicItem.getTitle());
     toolbar.setSubtitle(mPublicItem.getUser().getUrlName());
   }
@@ -133,10 +144,10 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Item> {
     }
   }
 
-  @Override public void onResponse(Response<Item> response, Retrofit retrofit) {
-    Item item = response.body();
-    if (item != null) {
-      mEventBus.post(new ItemDetailEvent(true, null, item));
+  @Override public void onResponse(Response<Article> response, Retrofit retrofit) {
+    Article article = response.body();
+    if (article != null) {
+      mEventBus.post(new ItemDetailEvent(true, null, article));
     } else {
       mEventBus.post(new ItemDetailEvent(false,
           new Event.Error(response.code(), response.message()), null));
@@ -149,28 +160,76 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Item> {
   }
 
   public void onEventMainThread(ItemDetailEvent event) {
-    Item item = event.getItem();
-    if (item != null) {
+    Article article = event.getArticle();
+    if (article != null) {
+      processComments(article);
       final String html;
       try {
         html = IOUtil.readAllFromAssets(this, "html/article.html");
 
         Document doc = Jsoup.parse(html);
         Element elem = doc.getElementById("content");
-        elem.append(item.getRenderedBody());
+        elem.append(article.getRenderedBody());
 
         String result = doc.outerHtml();
         mContentView.loadDataWithBaseURL(
-            item.getUrl(), result, null, null, null);
+            article.getUrl(), result, null, null, null);
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
   }
 
-  // TODO Item's comment webview
-  private void processComments() {
+  public void onEventMainThread(ItemCommentsEvent event) {
+    if (event.isSuccess() && !UIUtil.isEmpty(event.getComments())) {
+      List<Comment> comments = event.getComments();
+      final String html;
+      try {
+        html = IOUtil.readAllFromAssets(this, "html/comments.html");
 
+        Document fullBody = Jsoup.parse(html);
+        Element content = fullBody.getElementById("content");
+
+        // TODO support comment ordering
+        for (Comment comment : comments) {
+          String commentHtml = IOUtil.readAllFromAssets(this, "html/comment.html");
+          commentHtml = commentHtml
+              .replace("{user_name}", comment.getUser().getId())
+              .replace("{comment_time}", TimeUtil.commentTime(comment.getUpdatedAt()))
+              .replace("{article_uuid}", mPublicItem.getUuid())
+              .replace("{comment_id}", comment.getId());
+
+          Document commentDoc = Jsoup.parse(commentHtml);
+          Element eComment = commentDoc.getElementsByClass("comment-box").first();
+          eComment.getElementsByClass("message").first().append(comment.getRenderedBody());
+          content.appendChild(eComment);
+        }
+
+        String result = fullBody.outerHtml();
+        mComments.loadDataWithBaseURL(
+            "http://qiita.com", result, null, null, null);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  private void processComments(@NonNull final Article article) {
+    ApiClient.itemComments(article.getId()).enqueue(new Callback<List<Comment>>() {
+      @Override public void onResponse(Response<List<Comment>> response, Retrofit retrofit) {
+        if (response.code() == 200) {
+          mEventBus.post(new ItemCommentsEvent(true, null, response.body()));
+        } else {
+          mEventBus.post(new ItemCommentsEvent(false,
+              new Event.Error(response.code(), response.message()), null));
+        }
+      }
+
+      @Override public void onFailure(Throwable error) {
+        mEventBus.post(new ItemCommentsEvent(false,
+            new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
+      }
+    });
   }
 
   // TODO Item's menu by header tags

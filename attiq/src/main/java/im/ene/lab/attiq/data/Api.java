@@ -2,7 +2,8 @@ package im.ene.lab.attiq.data;
 
 import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.response.AccessToken;
-import im.ene.lab.attiq.data.response.Item;
+import im.ene.lab.attiq.data.response.Comment;
+import im.ene.lab.attiq.data.response.Article;
 import im.ene.lab.attiq.data.vault.PublicItem;
 import retrofit.Call;
 import retrofit.http.Body;
@@ -30,11 +31,15 @@ interface Api {
 
   interface Items {
 
-    @GET("/api/v2/items") Call<List<Item>> items(@Query("page") int page,
+    @GET("/api/v2/items") Call<List<Article>> items(@Query("page") int page,
                                                  @Query("per_page") int limit,
                                                  @Query("query") String query);
 
-    @GET("/api/v2/items/{item_id}") Call<Item> itemDetail(@Path("item_id") String id);
+    @GET("/api/v2/items/{item_id}") Call<Article> itemDetail(@Path("item_id") String id);
+
+    @GET("/api/v2/items/{item_id}/comments") Call<List<Comment>> comments(
+        @Path("item_id") String id
+    );
   }
 
   interface Me {

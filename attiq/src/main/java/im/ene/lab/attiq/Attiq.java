@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
 import im.ene.lab.attiq.data.ApiClient;
+import im.ene.lab.attiq.util.TimeUtil;
 import io.fabric.sdk.android.Fabric;
 import io.realm.DynamicRealm;
 import io.realm.Realm;
@@ -49,6 +50,8 @@ public class Attiq extends Application {
     INSTANCE = this;
     Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
 
+    TimeUtil.init(this);
+
     RealmConfiguration config = new RealmConfiguration.Builder(this)
         .name(getString(R.string.realm_name))
         .schemaVersion(R.integer.realm_version)
@@ -58,6 +61,12 @@ public class Attiq extends Application {
           }
         })
         .build();
+
+    try {
+      Realm.deleteRealm(config);
+    } catch (IllegalStateException er) {
+      er.printStackTrace();
+    }
 
     Realm.setDefaultConfiguration(config);
 

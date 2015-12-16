@@ -10,7 +10,8 @@ import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.response.AccessToken;
-import im.ene.lab.attiq.data.response.Item;
+import im.ene.lab.attiq.data.response.Comment;
+import im.ene.lab.attiq.data.response.Article;
 import im.ene.lab.attiq.data.vault.PublicItem;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.PrefUtil;
@@ -65,12 +66,16 @@ public final class ApiClient {
     }
   }
 
-  public static Call<List<Item>> items(int page, int pageLimit, String query) {
+  public static Call<List<Article>> items(int page, int pageLimit, String query) {
     return ITEMS.items(page, pageLimit, query);
   }
 
-  public static Call<Item> itemDetail(String id) {
+  public static Call<Article> itemDetail(String id) {
     return ITEMS.itemDetail(id);
+  }
+
+  public static Call<List<Comment>> itemComments(String id) {
+    return ITEMS.comments(id);
   }
 
   public static Call<AccessToken> accessToken(String code) {

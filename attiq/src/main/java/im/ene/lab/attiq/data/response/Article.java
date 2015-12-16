@@ -10,7 +10,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by eneim on 12/13/15.
  */
-public class Item extends RealmObject {
+public class Article extends RealmObject {
 
   @SerializedName("rendered_body")
   @Expose
