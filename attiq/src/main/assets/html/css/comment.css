@@ -1,0 +1,46 @@
+.comment-box .comment-body {
+  background: rgba(255,255,255,0.3);
+  max-width: 100%;
+  height: auto;
+  padding: 10px 10px 10px 10px;
+  box-shadow: 0 0 2px 0 rgba(0,0,0,0.2),  inset 0 0 1px 0 rgba(255,255,255,1);
+  margin:  0px 0px 20px 0px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+p {
+  margin: 0;
+}
+
+.message .comment-body {
+  font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  background-color: white;
+  word-wrap: break-word;
+}
+
+.user {
+  background: rgba(0,0,0,0.8);
+  max-width: 100%;
+  height: auto;
+  padding: 6px 10px 4px 10px;
+  margin:  0 0 10px 0;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+.user-description {
+  font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;
+  font-size: 14px;
+  // line-height: 1.6;
+  color: white;
+  word-wrap: break-word;
+}
+
+.user-description > p > a {
+  color: #ffffee;
+}

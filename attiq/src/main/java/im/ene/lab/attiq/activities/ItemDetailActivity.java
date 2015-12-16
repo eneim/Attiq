@@ -22,10 +22,11 @@ import im.ene.lab.attiq.data.ApiClient;
 import im.ene.lab.attiq.data.event.Event;
 import im.ene.lab.attiq.data.event.ItemCommentsEvent;
 import im.ene.lab.attiq.data.event.ItemDetailEvent;
-import im.ene.lab.attiq.data.response.Comment;
 import im.ene.lab.attiq.data.response.Article;
+import im.ene.lab.attiq.data.response.Comment;
 import im.ene.lab.attiq.data.vault.PublicItem;
 import im.ene.lab.attiq.util.IOUtil;
+import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
@@ -42,6 +43,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private static final String EXTRA_DETAIL_ITEM_ID = "attiq_item_detail_extra_id";
 
   private static final String EXTRA_DETAIL_ITEM_UUID = "attiq_item_detail_extra_uuid";
+
+  private String GOOD_MOCK_ID = "b03556ceab5cec258c2c";
 
   public static Intent createIntent(Context context) {
     return new Intent(context, ItemDetailActivity.class);
@@ -69,6 +72,10 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mContentView = (WebView) findViewById(R.id.item_content_web);
     mContentView.setVerticalScrollBarEnabled(false);
     mContentView.setHorizontalScrollBarEnabled(false);
+
+    mComments = (WebView) findViewById(R.id.item_comments);
+    mComments.setVerticalScrollBarEnabled(false);
+    mComments.setHorizontalScrollBarEnabled(false);
 
     WebViewClient client = new WebViewClient() {
 
@@ -109,7 +116,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     CollapsingToolbarLayout toolbarLayout =
         (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
 
-    toolbarLayout.setTitle(mPublicItem.getTitle());
+    // toolbarLayout.setTitle(mPublicItem.getTitle());
     toolbar.setTitle(mPublicItem.getTitle());
     toolbar.setSubtitle(mPublicItem.getUser().getUrlName());
   }
@@ -155,6 +162,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   public void onEventMainThread(ItemDetailEvent event) {
     Article article = event.getArticle();
     if (article != null) {
+      processComments(article);
       final String html;
       try {
         html = IOUtil.readAllFromAssets(this, "html/article.html");
@@ -174,11 +182,38 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   public void onEventMainThread(ItemCommentsEvent event) {
     if (event.isSuccess() && !UIUtil.isEmpty(event.getComments())) {
+      List<Comment> comments = event.getComments();
+      final String html;
+      try {
+        html = IOUtil.readAllFromAssets(this, "html/comments.html");
 
+        Document fullBody = Jsoup.parse(html);
+        Element content = fullBody.getElementById("content");
+
+        // TODO support comment ordering
+        for (Comment comment : comments) {
+          String commentHtml = IOUtil.readAllFromAssets(this, "html/comment.html");
+          commentHtml = commentHtml
+              .replace("{user_name}", comment.getUser().getId())
+              .replace("{comment_time}", TimeUtil.commentTime(comment.getUpdatedAt()))
+              .replace("{article_uuid}", mPublicItem.getUuid())
+              .replace("{comment_id}", comment.getId());
+
+          Document commentDoc = Jsoup.parse(commentHtml);
+          Element eComment = commentDoc.getElementsByClass("comment-box").first();
+          eComment.getElementsByClass("message").first().append(comment.getRenderedBody());
+          content.appendChild(eComment);
+        }
+
+        String result = fullBody.outerHtml();
+        mComments.loadDataWithBaseURL(
+            "http://qiita.com", result, null, null, null);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 
-  // TODO Item's comment webview
   private void processComments(@NonNull final Article article) {
     ApiClient.itemComments(article.getId()).enqueue(new Callback<List<Comment>>() {
       @Override public void onResponse(Response<List<Comment>> response, Retrofit retrofit) {
