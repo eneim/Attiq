@@ -2,10 +2,14 @@ package im.ene.lab.attiq.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
+import android.util.Log;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -51,6 +55,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Item> {
 
   private PublicItem mPublicItem;
 
+  private static final String TAG = "ItemDetailActivity";
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -58,6 +64,22 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Item> {
     mContentWebView = (MarkdownView) findViewById(R.id.item_content_web);
     mContentWebView.setVerticalScrollBarEnabled(false);
     mContentWebView.setHorizontalScrollBarEnabled(false);
+
+    WebViewClient client = new WebViewClient() {
+
+      @Override public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        super.onPageStarted(view, url, favicon);
+        Log.e(TAG, "onPageStarted() called with: " + "view = [" + view + "], url = [" + url + "]," +
+            " favicon = [" + favicon + "]");
+      }
+
+      @Override public void onPageFinished(WebView view, String url) {
+        super.onPageFinished(view, url);
+        Log.e(TAG, "onPageFinished() called with: " + "view = [" + view + "], url = [" + url + "]");
+      }
+    };
+
+    mContentWebView.setWebViewClient(client);
 
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
