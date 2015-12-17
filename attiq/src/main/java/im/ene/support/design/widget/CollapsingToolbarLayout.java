@@ -53,9 +53,6 @@ public class CollapsingToolbarLayout extends FrameLayout {
   private boolean mCollapsingTitleEnabled;
   private boolean mDrawCollapsingTitle;
 
-  private final TypedValue mTypedValue = new TypedValue();
-  private int mTitleColorId;
-
   private Drawable mContentScrim;
   private Drawable mStatusBarScrim;
   private int mScrimAlpha;
@@ -174,9 +171,10 @@ public class CollapsingToolbarLayout extends FrameLayout {
 
     a.recycle();
 
-    context.getTheme().resolveAttribute(android.R.attr.textColorPrimary, mTypedValue, true);
-    mTitleColorId = mTypedValue.resourceId;
-    mTitleColorSpan = new AlphaForegroundColorSpan(UIUtil.getColor(context, mTitleColorId));
+    TypedValue typedValue = new TypedValue();
+    context.getTheme().resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
+    int titleColorId = typedValue.resourceId;
+    mTitleColorSpan = new AlphaForegroundColorSpan(UIUtil.getColor(context, titleColorId));
 
     setWillNotDraw(false);
 
@@ -991,9 +989,12 @@ public class CollapsingToolbarLayout extends FrameLayout {
     mTitleColorSpan.setAlpha(alpha);
     mSpannableTitle.setSpan(mTitleColorSpan, 0, mSpannableTitle.length(),
         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-    mSpannableSubtitle.setSpan(mTitleColorSpan, 0, mSpannableSubtitle.length(),
-        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     mToolbar.setTitle(mSpannableTitle);
-    mToolbar.setSubtitle(mSpannableSubtitle);
+
+    if (mSpannableSubtitle != null) {
+      mSpannableSubtitle.setSpan(mTitleColorSpan, 0, mSpannableSubtitle.length(),
+          Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+      mToolbar.setSubtitle(mSpannableSubtitle);
+    }
   }
 }

@@ -6,17 +6,24 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.util.Log;
+import android.util.TypedValue;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.ApiClient;
@@ -30,6 +37,7 @@ import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
+import im.ene.support.design.widget.AppBarLayout;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
 import io.realm.Realm;
 import retrofit.Callback;
@@ -44,10 +52,32 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private static final String EXTRA_DETAIL_ITEM_ID = "attiq_item_detail_extra_id";
 
   private static final String EXTRA_DETAIL_ITEM_UUID = "attiq_item_detail_extra_uuid";
-
-  public static Intent createIntent(Context context) {
-    return new Intent(context, ItemDetailActivity.class);
-  }
+  private static final String TAG = "ItemDetailActivity";
+  @Bind(R.id.toolbar) Toolbar mToolbar;
+  @Bind(R.id.item_content_web) WebView mContentView;
+  @Bind(R.id.item_comments) WebView mComments;
+  @Bind(R.id.item_title) TextView mOverLayView;
+  @Bind(R.id.app_bar) AppBarLayout mAppBarLayout;
+  @Bind(R.id.toolbar_layout) CollapsingToolbarLayout mToolBarLayout;
+  private Realm mRealm;
+  private PublicItem mPublicItem;
+  // Title support
+  private AlphaForegroundColorSpan mTitleColorSpan;
+  private SpannableString mSpannableTitle;
+  private SpannableString mSpannableSubtitle;
+  private int mCurrentVerticalOffset;
+  private AppBarLayout.OnOffsetChangedListener mOffsetChangedListener =
+      new AppBarLayout.OnOffsetChangedListener() {
+        @Override public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+          mCurrentVerticalOffset = verticalOffset;
+          float maxOffset = mToolBarLayout.getHeight() -
+              ViewCompat.getMinimumHeight(mToolBarLayout) - mToolBarLayout.getInsetTop();
+          if (maxOffset > 0) {
+            float offsetFraction = Math.abs(verticalOffset) / maxOffset;
+            mOverLayView.setAlpha(1.f - offsetFraction);
+          }
+        }
+      };
 
   public static Intent createIntent(Context context, @NonNull PublicItem item) {
     Intent intent = createIntent(context);
@@ -56,24 +86,36 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     return intent;
   }
 
-  private Realm mRealm;
-
-  private Toolbar mToolbar;
-  private WebView mContentView;
-  private WebView mComments;
-
-  private PublicItem mPublicItem;
-
-  private static final String TAG = "ItemDetailActivity";
+  public static Intent createIntent(Context context) {
+    return new Intent(context, ItemDetailActivity.class);
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_item_detail);
-    mContentView = (WebView) findViewById(R.id.item_content_web);
+    ButterKnife.bind(this);
+    setSupportActionBar(mToolbar);
+
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    // empty title at start
+    setTitle("");
+
     mContentView.setVerticalScrollBarEnabled(false);
     mContentView.setHorizontalScrollBarEnabled(false);
     mContentView.setWebViewClient(new WebViewClient() {
+
+      @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
+        if (url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
+          startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+          return true;
+        } else {
+          return false;
+        }
+      }
 
       @Override public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
@@ -87,54 +129,27 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         // TODO dismiss loading dialog here
         Log.e(TAG, "onPageFinished() called with: " + "view = [" + view + "], url = [" + url + "]");
       }
-
-      @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        if (url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
-          startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-          return true;
-        } else {
-          return false;
-        }
-      }
     });
 
-    mComments = (WebView) findViewById(R.id.item_comments);
     mComments.setVerticalScrollBarEnabled(false);
     mComments.setHorizontalScrollBarEnabled(false);
+    // TODO implement this
     mComments.setWebViewClient(new WebViewClient() {
-
       @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
-
         return super.shouldOverrideUrlLoading(view, url);
       }
     });
 
-    mToolbar = (Toolbar) findViewById(R.id.toolbar);
-    setSupportActionBar(mToolbar);
+    mAppBarLayout.addOnOffsetChangedListener(mOffsetChangedListener);
 
-    if (getSupportActionBar() != null) {
-      getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
+    TypedValue typedValue = new TypedValue();
+    getTheme().resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
+    int titleColorId = typedValue.resourceId;
+    mTitleColorSpan = new AlphaForegroundColorSpan(UIUtil.getColor(this, titleColorId));
 
     mRealm = Attiq.realm();
     long itemId = getIntent().getLongExtra(EXTRA_DETAIL_ITEM_ID, 0);
     mPublicItem = mRealm.where(PublicItem.class).equalTo("id", itemId).findFirst();
-
-    CollapsingToolbarLayout toolbarLayout =
-        (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
-
-    // toolbarLayout.setTitle(mPublicItem.getTitle());
-    mToolbar.setTitle(mPublicItem.getTitle());
-    mToolbar.setSubtitle(mPublicItem.getUser().getUrlName());
-  }
-
-  // Title support
-  private AlphaForegroundColorSpan mAlphaForegroundColorSpan;
-  private SpannableString mSpannableTitle;
-  private SpannableString mSpannableSubtitle;
-
-  private void updateTitle() {
-
   }
 
   @Override protected void onDestroy() {
@@ -153,23 +168,22 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   @Override public void onResponse(Response<Article> response, Retrofit retrofit) {
     Article article = response.body();
-    if (article != null) {
-      mEventBus.post(new ItemDetailEvent(true, null, article));
-    } else {
-      mEventBus.post(new ItemDetailEvent(false,
-          new Event.Error(response.code(), response.message()), null));
+    if (mEventBus != null) {
+      if (article != null) {
+        mEventBus.post(new ItemDetailEvent(true, null, article));
+      } else {
+        mEventBus.post(new ItemDetailEvent(false,
+            new Event.Error(response.code(), response.message()), null));
+      }
     }
-  }
-
-  @Override public void onFailure(Throwable error) {
-    mEventBus.post(new ItemDetailEvent(false,
-        new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
   }
 
   public void onEventMainThread(ItemDetailEvent event) {
     Article article = event.getArticle();
     if (article != null) {
-      mToolbar.setTitle(article.getTitle());
+      mOverLayView.setText(article.getTitle());
+      mSpannableTitle = new SpannableString(article.getTitle());
+      updateTitle();
       processComments(article);
       final String html;
       try {
@@ -185,6 +199,52 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       } catch (IOException e) {
         e.printStackTrace();
       }
+    }
+  }
+
+  private void updateTitle() {
+    float titleAlpha =
+        mToolBarLayout.shouldTriggerScrimOffset(mCurrentVerticalOffset) ? 1.f : 0.f;
+    mTitleColorSpan.setAlpha(titleAlpha);
+    // title
+    mSpannableTitle.setSpan(mTitleColorSpan, 0, mSpannableTitle.length(),
+        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    mToolbar.setTitle(mSpannableTitle);
+
+    // subtitle
+    if (mSpannableSubtitle != null) {
+      mSpannableSubtitle.setSpan(mTitleColorSpan, 0, mSpannableSubtitle.length(),
+          Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+      mToolbar.setSubtitle(mSpannableSubtitle);
+    }
+  }
+
+  private void processComments(@NonNull final Article article) {
+    ApiClient.itemComments(article.getId()).enqueue(new Callback<List<Comment>>() {
+      @Override public void onResponse(Response<List<Comment>> response, Retrofit retrofit) {
+        if (mEventBus != null) {
+          if (response.code() == 200) {
+            mEventBus.post(new ItemCommentsEvent(true, null, response.body()));
+          } else {
+            mEventBus.post(new ItemCommentsEvent(false,
+                new Event.Error(response.code(), response.message()), null));
+          }
+        }
+      }
+
+      @Override public void onFailure(Throwable error) {
+        if (mEventBus != null) {
+          mEventBus.post(new ItemCommentsEvent(false,
+              new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
+        }
+      }
+    });
+  }
+
+  @Override public void onFailure(Throwable error) {
+    if (mEventBus != null) {
+      mEventBus.post(new ItemDetailEvent(false,
+          new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
     }
   }
 
@@ -224,26 +284,10 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     NestedScrollView test;
   }
 
-  private void processComments(@NonNull final Article article) {
-    ApiClient.itemComments(article.getId()).enqueue(new Callback<List<Comment>>() {
-      @Override public void onResponse(Response<List<Comment>> response, Retrofit retrofit) {
-        if (response.code() == 200) {
-          mEventBus.post(new ItemCommentsEvent(true, null, response.body()));
-        } else {
-          mEventBus.post(new ItemCommentsEvent(false,
-              new Event.Error(response.code(), response.message()), null));
-        }
-      }
-
-      @Override public void onFailure(Throwable error) {
-        mEventBus.post(new ItemCommentsEvent(false,
-            new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
-      }
-    });
-  }
-
   // TODO Item's menu by header tags
   private void processMenu() {
 
   }
+
+
 }

@@ -7,7 +7,8 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.wefika.flowlayout.FlowLayout;
 
@@ -154,7 +155,7 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
       mIconCornerRadius = mContext.getResources()
           .getDimensionPixelSize(R.dimen.item_icon_size_half);
       mIconBorderWidth = mContext.getResources().getDimensionPixelSize(R.dimen.dimen_unit);
-      mIconBorderColor = UIUtil.getColor(mContext, R.color.colorPrimary);
+      mIconBorderColor = UIUtil.getColor(mContext, R.color.colorAccent);
       mItemUserInfo.setClickable(true);
       mItemUserInfo.setMovementMethod(LinkMovementMethod.getInstance());
     }
@@ -188,6 +189,8 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
       if (!UIUtil.isEmpty(item.getUser().getProfileImageUrl())) {
         mItemUserImage.setVisibility(View.VISIBLE);
         Attiq.picasso().load(item.getUser().getProfileImageUrl())
+            .placeholder(R.drawable.blank_profile_icon)
+            .error(R.drawable.blank_profile_icon)
             .fit().centerInside()
             .transform(new RoundedTransformation(
                 mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
