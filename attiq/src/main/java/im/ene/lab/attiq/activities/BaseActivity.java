@@ -11,12 +11,9 @@ import im.ene.lab.attiq.data.event.Event;
  */
 public class BaseActivity extends AppCompatActivity {
 
-  protected EventBus mEventBus;
-
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    mEventBus = new EventBus();
-    mEventBus.register(this);
+    EventBus.getDefault().register(this);
   }
 
   // placeholder for EventBus
@@ -25,8 +22,7 @@ public class BaseActivity extends AppCompatActivity {
   }
 
   @Override protected void onDestroy() {
-    mEventBus.unregister(this);
-    mEventBus = null;
+    EventBus.getDefault().unregister(this);
     super.onDestroy();
   }
 }

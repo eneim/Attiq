@@ -16,6 +16,8 @@ public class PrefUtil {
 
   private static final String PREF_CURRENT_TOKEN = "attiq_preference_current_token";
 
+  private static final String PREF_FIRST_START_FLAG = "attiq_preference_flag_first_start";
+
   private static final AuthInterceptor sInterceptor = new AuthInterceptor();
 
   public static Interceptor authInterceptor() {
@@ -28,6 +30,14 @@ public class PrefUtil {
 
   public static String getCurrentToken() {
     return Attiq.pref().getString(PREF_CURRENT_TOKEN, null);
+  }
+
+  public static boolean isFirstStart() {
+    return Attiq.pref().getBoolean(PREF_FIRST_START_FLAG, true);
+  }
+
+  public static void setFirstStart(boolean isFirstStart) {
+    Attiq.pref().edit().putBoolean(PREF_FIRST_START_FLAG, isFirstStart).apply();
   }
 
   /**

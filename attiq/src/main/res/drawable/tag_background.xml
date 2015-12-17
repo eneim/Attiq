@@ -7,7 +7,7 @@
             <stroke android:width="0.5dp"
                     android:color="@color/colorAccent"/>
 
-            <solid android:color="?attr/colorControlActivated"/>
+            <!--<solid android:color="?attr/colorControlActivated"/>-->
         </shape>
     </item>
 

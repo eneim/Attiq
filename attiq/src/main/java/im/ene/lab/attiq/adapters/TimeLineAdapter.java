@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.RequestCreator;
 import com.wefika.flowlayout.FlowLayout;
 
 import butterknife.Bind;
@@ -65,6 +66,9 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
   }
 
   @Override public int getItemCount() {
+    if (mItems == null || !mItems.isValid()) {
+      return 0;
+    }
     return mItems.size();
   }
 
@@ -186,18 +190,20 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
       }
 
       mItemTitle.setText(Html.fromHtml(item.getTitle()));
+      final RequestCreator requestCreator;
       if (!UIUtil.isEmpty(item.getUser().getProfileImageUrl())) {
-        mItemUserImage.setVisibility(View.VISIBLE);
-        Attiq.picasso().load(item.getUser().getProfileImageUrl())
-            .placeholder(R.drawable.blank_profile_icon)
-            .error(R.drawable.blank_profile_icon)
-            .fit().centerInside()
-            .transform(new RoundedTransformation(
-                mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
-            .into(mItemUserImage);
+        requestCreator = Attiq.picasso().load(item.getUser().getProfileImageUrl());
       } else {
-        mItemUserImage.setVisibility(View.GONE);
+        requestCreator = Attiq.picasso().load(R.drawable.blank_profile_icon);
       }
+
+      requestCreator
+          .placeholder(R.drawable.blank_profile_icon)
+          .error(R.drawable.blank_profile_icon)
+          .fit().centerInside()
+          .transform(new RoundedTransformation(
+              mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
+          .into(mItemUserImage);
 
       mItemTags.removeAllViews();
       if (!UIUtil.isEmpty(item.getTags())) {

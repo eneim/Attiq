@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.ApiClient;
@@ -214,15 +215,15 @@ public class MainActivity extends BaseActivity
           realm.copyToRealmOrUpdate(profile);
           realm.commitTransaction();
           realm.close();
-          mEventBus.post(new FetchedMasterEvent(true, null, profile));
+          EventBus.getDefault().post(new FetchedMasterEvent(true, null, profile));
         } else {
-          mEventBus.post(new FetchedMasterEvent(false,
+          EventBus.getDefault().post(new FetchedMasterEvent(false,
               new Event.Error(response.code(), response.message()), null));
         }
       }
 
       @Override public void onFailure(Throwable error) {
-        mEventBus.post(new FetchedMasterEvent(false,
+        EventBus.getDefault().post(new FetchedMasterEvent(false,
             new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
     });
@@ -246,9 +247,17 @@ public class MainActivity extends BaseActivity
     }
   }
 
+  @Override protected void onResume() {
+    super.onResume();
+    getMasterUser(PrefUtil.getCurrentToken());
+  }
+
   public void onEventMainThread(final FetchedMasterEvent event) {
     if (event.isSuccess()) {
-      mDrawerLayout.openDrawer(GravityCompat.START);
+      if (PrefUtil.isFirstStart()) {
+        PrefUtil.setFirstStart(false);
+        mDrawerLayout.openDrawer(GravityCompat.START);
+      }
       if (event.getProfile() != null) {
         updateMasterUser(event.getProfile());
       }

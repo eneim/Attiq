@@ -24,6 +24,7 @@ import org.jsoup.nodes.Element;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.ApiClient;
@@ -143,7 +144,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mAppBarLayout.addOnOffsetChangedListener(mOffsetChangedListener);
 
     TypedValue typedValue = new TypedValue();
-    getTheme().resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
+    mToolbar.getContext().getTheme()
+        .resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
     int titleColorId = typedValue.resourceId;
     mTitleColorSpan = new AlphaForegroundColorSpan(UIUtil.getColor(this, titleColorId));
 
@@ -168,13 +170,11 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   @Override public void onResponse(Response<Article> response, Retrofit retrofit) {
     Article article = response.body();
-    if (mEventBus != null) {
-      if (article != null) {
-        mEventBus.post(new ItemDetailEvent(true, null, article));
-      } else {
-        mEventBus.post(new ItemDetailEvent(false,
-            new Event.Error(response.code(), response.message()), null));
-      }
+    if (article != null) {
+      EventBus.getDefault().post(new ItemDetailEvent(true, null, article));
+    } else {
+      EventBus.getDefault().post(new ItemDetailEvent(false,
+          new Event.Error(response.code(), response.message()), null));
     }
   }
 
@@ -183,6 +183,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     if (article != null) {
       mOverLayView.setText(article.getTitle());
       mSpannableTitle = new SpannableString(article.getTitle());
+      mSpannableSubtitle = new SpannableString(article.getUser().getId());
       updateTitle();
       processComments(article);
       final String html;
@@ -222,30 +223,24 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private void processComments(@NonNull final Article article) {
     ApiClient.itemComments(article.getId()).enqueue(new Callback<List<Comment>>() {
       @Override public void onResponse(Response<List<Comment>> response, Retrofit retrofit) {
-        if (mEventBus != null) {
-          if (response.code() == 200) {
-            mEventBus.post(new ItemCommentsEvent(true, null, response.body()));
-          } else {
-            mEventBus.post(new ItemCommentsEvent(false,
-                new Event.Error(response.code(), response.message()), null));
-          }
+        if (response.code() == 200) {
+          EventBus.getDefault().post(new ItemCommentsEvent(true, null, response.body()));
+        } else {
+          EventBus.getDefault().post(new ItemCommentsEvent(false,
+              new Event.Error(response.code(), response.message()), null));
         }
       }
 
       @Override public void onFailure(Throwable error) {
-        if (mEventBus != null) {
-          mEventBus.post(new ItemCommentsEvent(false,
-              new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
-        }
+        EventBus.getDefault().post(new ItemCommentsEvent(false,
+            new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
     });
   }
 
   @Override public void onFailure(Throwable error) {
-    if (mEventBus != null) {
-      mEventBus.post(new ItemDetailEvent(false,
-          new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
-    }
+    EventBus.getDefault().post(new ItemDetailEvent(false,
+        new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
   }
 
   public void onEventMainThread(ItemCommentsEvent event) {

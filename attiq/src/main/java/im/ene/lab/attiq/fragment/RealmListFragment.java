@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import butterknife.Bind;
+import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.BaseListAdapter;
@@ -37,7 +38,8 @@ import java.util.List;
  * Created by eneim on 12/13/15.
  */
 public abstract class RealmListFragment<E extends RealmObject>
-    extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, Handler.Callback {
+    extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, Handler.Callback,
+    Callback<List<E>> {
 
   private static final String TAG = "RealmListFragment";
   /**
@@ -74,10 +76,7 @@ public abstract class RealmListFragment<E extends RealmObject>
   @Bind(R.id.swipe_refresh_layout) MultiSwipeRefreshLayout mSwipeRefreshLayout;
   @Bind(R.id.view_empty) View mEmptyView;
   @Bind(R.id.view_error) View mErrorView;
-  /**
-   * Call back from API
-   */
-  private Callback<List<E>> mApiCallback;
+
   protected BaseListAdapter<E> mAdapter;
 
   // User a handler to prevent too frequently calling of methods. For example Realm may trigger
@@ -119,7 +118,7 @@ public abstract class RealmListFragment<E extends RealmObject>
       mPage = DEFAULT_FIRST_PAGE;
     }
 
-    mAdapter.loadItems(isLoadingMore, mPage, DEFAULT_THRESHOLD, null, mApiCallback);
+    mAdapter.loadItems(isLoadingMore, mPage, DEFAULT_THRESHOLD, null, this);
   }
 
   @Override public void onAttach(Context context) {
@@ -151,48 +150,6 @@ public abstract class RealmListFragment<E extends RealmObject>
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    mApiCallback = new Callback<List<E>>() {
-      @Override public void onResponse(Response<List<E>> response, Retrofit retrofit) {
-        Log.d(TAG, "onResponse() called with: " + "response = [" + response + "]");
-
-        if (response.code() != 200) {
-          mEventBus.post(new EventWrapper<>(false,
-              new Event.Error(response.code(), response.message()), null, mPage));
-        } else {
-          List<E> items = response.body();
-          if (!UIUtil.isEmpty(items)) {
-            Realm realm = Attiq.realm();
-            realm.beginTransaction();
-            realm.copyToRealmOrUpdate(items);
-            realm.commitTransaction();
-            realm.close();
-            mEventBus.post(new EventWrapper<>(true, null, items.get(0), mPage));
-          }
-        }
-
-        if (mSwipeRefreshLayout != null) {
-          mSwipeRefreshLayout.setRefreshing(false);
-        }
-
-        if (mRecyclerView != null) {
-          mRecyclerView.setErrorViewShown(response.code() != 200);
-        }
-      }
-
-      @Override public void onFailure(Throwable t) {
-        Log.d(TAG, "onFailure() called with: " + "t = [" + t + "]");
-        mEventBus.post(new EventWrapper<>(false,
-            new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null, mPage));
-        if (mSwipeRefreshLayout != null) {
-          mSwipeRefreshLayout.setRefreshing(false);
-        }
-
-        if (mRecyclerView != null) {
-          mRecyclerView.setErrorViewShown(true);
-        }
-      }
-    };
-
     mLayoutManager = new GridLayoutManager(getContext(), 1, LinearLayoutManager.VERTICAL, false);
     mEndlessScrollListener = new EndlessScrollListener(mLayoutManager, DEFAULT_THRESHOLD) {
       @Override protected void loadMore() {
@@ -215,7 +172,6 @@ public abstract class RealmListFragment<E extends RealmObject>
   }
 
   @Override public void onDestroyView() {
-    mApiCallback = null;
     mRecyclerView.removeOnScrollListener(mEndlessScrollListener);
     mEndlessScrollListener = null;
     super.onDestroyView();
@@ -233,4 +189,45 @@ public abstract class RealmListFragment<E extends RealmObject>
   }
 
   public abstract void onEventMainThread(EventWrapper<E> event);
+
+  @Override public void onResponse(Response<List<E>> response, Retrofit retrofit) {
+    Log.d(TAG, "onResponse() called with: " + "response = [" + response + "]");
+
+    if (response.code() != 200) {
+      EventBus.getDefault().post(new EventWrapper<>(false,
+          new Event.Error(response.code(), response.message()), null, mPage));
+    } else {
+      List<E> items = response.body();
+      if (!UIUtil.isEmpty(items)) {
+        Realm realm = Attiq.realm();
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(items);
+        realm.commitTransaction();
+        realm.close();
+        EventBus.getDefault().post(new EventWrapper<>(true, null, items.get(0), mPage));
+      }
+    }
+
+    if (mSwipeRefreshLayout != null) {
+      mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    if (mRecyclerView != null) {
+      mRecyclerView.setErrorViewShown(response.code() != 200);
+    }
+  }
+
+  @Override public void onFailure(Throwable t) {
+    Log.d(TAG, "onFailure() called with: " + "t = [" + t + "]");
+    EventBus.getDefault().post(new EventWrapper<>(false,
+        new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null, mPage));
+
+    if (mSwipeRefreshLayout != null) {
+      mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    if (mRecyclerView != null) {
+      mRecyclerView.setErrorViewShown(true);
+    }
+  }
 }

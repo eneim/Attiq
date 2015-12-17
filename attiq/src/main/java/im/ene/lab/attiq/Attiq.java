@@ -8,11 +8,9 @@ import android.graphics.Bitmap;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.facebook.stetho.Stetho;
-import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
-import im.ene.lab.attiq.data.ApiClient;
 import im.ene.lab.attiq.util.TimeUtil;
 import io.fabric.sdk.android.Fabric;
 import io.realm.DynamicRealm;
@@ -72,7 +70,6 @@ public class Attiq extends Application {
 
     mPreference = getSharedPreferences(getPackageName() + "_pref", Context.MODE_PRIVATE);
     mPicasso = new Picasso.Builder(this)
-        .downloader(new OkHttpDownloader(ApiClient.client()))
         .defaultBitmapConfig(Bitmap.Config.RGB_565)
         .build();
 
