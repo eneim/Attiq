@@ -1,4 +1,4 @@
-# Attiq
+# Attiq (アッタック)
 Kinda cool Android app :v
 
 # LICENSE
