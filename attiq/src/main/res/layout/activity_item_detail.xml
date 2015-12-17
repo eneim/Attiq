@@ -8,6 +8,7 @@
     android:gravity="bottom"
     app:umanoFadeColor="#20000000"
     app:umanoPanelHeight="@dimen/comment_container_collapse"
+    app:umanoScrollableView="@+id/comments_container"
     app:umanoShadowHeight="2dp">
 
     <android.support.design.widget.CoordinatorLayout
@@ -59,7 +60,8 @@
             android:background="@android:color/white"
             android:elevation="1dp"/>
 
-        <android.support.v4.widget.NestedScrollView
+        <ScrollView
+            android:id="@id/comments_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
@@ -68,7 +70,7 @@
                 android:id="@+id/item_comments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-        </android.support.v4.widget.NestedScrollView>
+        </ScrollView>
 
     </LinearLayout>
 
