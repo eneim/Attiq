@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/eneim/Documents/Workspace/Android/Attiq/slidinguppanel/build/intermediates/res/merged/release/drawable/above_shadow.xml",
+        "source": "/Users/eneim/Documents/Workspace/Android/Attiq/slidinguppanel/res/drawable/above_shadow.xml"
+    },
+    {
+        "merged": "/Users/eneim/Documents/Workspace/Android/AndroidSlidingUpPanel/library/build/intermediates/res/merged/release/drawable/above_shadow.xml",
+        "source": "/Users/eneim/Documents/Workspace/Android/AndroidSlidingUpPanel/library/res/drawable/above_shadow.xml"
+    },
+    {
+        "merged": "/Users/eneim/Documents/Workspace/Android/Attiq/slidinguppanel/build/intermediates/res/merged/release/drawable/below_shadow.xml",
+        "source": "/Users/eneim/Documents/Workspace/Android/Attiq/slidinguppanel/res/drawable/below_shadow.xml"
+    },
+    {
+        "merged": "/Users/eneim/Documents/Workspace/Android/AndroidSlidingUpPanel/library/build/intermediates/res/merged/release/drawable/below_shadow.xml",
+        "source": "/Users/eneim/Documents/Workspace/Android/AndroidSlidingUpPanel/library/res/drawable/below_shadow.xml"
+    }
+]

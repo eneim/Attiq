@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.util.Log;
@@ -44,8 +45,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   private static final String EXTRA_DETAIL_ITEM_UUID = "attiq_item_detail_extra_uuid";
 
-  private String GOOD_MOCK_ID = "b03556ceab5cec258c2c";
-
   public static Intent createIntent(Context context) {
     return new Intent(context, ItemDetailActivity.class);
   }
@@ -58,6 +57,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   }
 
   private Realm mRealm;
+
+  private Toolbar mToolbar;
   private WebView mContentView;
   private WebView mComments;
 
@@ -72,21 +73,18 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mContentView = (WebView) findViewById(R.id.item_content_web);
     mContentView.setVerticalScrollBarEnabled(false);
     mContentView.setHorizontalScrollBarEnabled(false);
-
-    mComments = (WebView) findViewById(R.id.item_comments);
-    mComments.setVerticalScrollBarEnabled(false);
-    mComments.setHorizontalScrollBarEnabled(false);
-
-    WebViewClient client = new WebViewClient() {
+    mContentView.setWebViewClient(new WebViewClient() {
 
       @Override public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
+        // TODO show loading dialog here
         Log.e(TAG, "onPageStarted() called with: " + "view = [" + view + "], url = [" + url + "]," +
             " favicon = [" + favicon + "]");
       }
 
       @Override public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
+        // TODO dismiss loading dialog here
         Log.e(TAG, "onPageFinished() called with: " + "view = [" + view + "], url = [" + url + "]");
       }
 
@@ -98,12 +96,21 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
           return false;
         }
       }
-    };
+    });
 
-    mContentView.setWebViewClient(client);
+    mComments = (WebView) findViewById(R.id.item_comments);
+    mComments.setVerticalScrollBarEnabled(false);
+    mComments.setHorizontalScrollBarEnabled(false);
+    mComments.setWebViewClient(new WebViewClient() {
 
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
+      @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
+
+        return super.shouldOverrideUrlLoading(view, url);
+      }
+    });
+
+    mToolbar = (Toolbar) findViewById(R.id.toolbar);
+    setSupportActionBar(mToolbar);
 
     if (getSupportActionBar() != null) {
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -117,8 +124,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
 
     // toolbarLayout.setTitle(mPublicItem.getTitle());
-    toolbar.setTitle(mPublicItem.getTitle());
-    toolbar.setSubtitle(mPublicItem.getUser().getUrlName());
+    mToolbar.setTitle(mPublicItem.getTitle());
+    mToolbar.setSubtitle(mPublicItem.getUser().getUrlName());
   }
 
   // Title support
@@ -162,6 +169,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   public void onEventMainThread(ItemDetailEvent event) {
     Article article = event.getArticle();
     if (article != null) {
+      mToolbar.setTitle(article.getTitle());
       processComments(article);
       final String html;
       try {
@@ -212,6 +220,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         e.printStackTrace();
       }
     }
+
+    NestedScrollView test;
   }
 
   private void processComments(@NonNull final Article article) {

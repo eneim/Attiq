@@ -18,4 +18,8 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+    <style name="Attiq.Widget.Toolbar.Subtitle"
+           parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textStyle">italic</item>
+    </style>
 </resources>

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    app:umanoFadeColor="#20000000"
+    app:umanoFadeColor="#24000000"
     app:umanoPanelHeight="@dimen/comment_container_collapse"
     app:umanoScrollableView="@+id/comments_container"
     app:umanoShadowHeight="2dp">
@@ -39,6 +39,7 @@
                     android:id="@id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
+                    android:subtitleTextAppearance="@style/Attiq.Widget.Toolbar.Subtitle"
                     app:layout_collapseMode="pin"
                     app:popupTheme="@style/AppTheme.AppBarOverlay"/>
 
@@ -49,29 +50,29 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/comment_container_expand"
-        android:orientation="vertical">
+        android:layout_height="@dimen/comment_container_expand">
 
         <View
+            android:id="@+id/actions_container"
             android:layout_width="match_parent"
             android:layout_height="@dimen/comment_container_collapse"
             android:background="@android:color/white"
             android:elevation="1dp"/>
 
-        <ScrollView
+        <android.support.v4.widget.NestedScrollView
             android:id="@id/comments_container"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_height="match_parent"
+            android:layout_below="@id/actions_container">
 
             <WebView
                 android:id="@+id/item_comments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-        </ScrollView>
+        </android.support.v4.widget.NestedScrollView>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>
