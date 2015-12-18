@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.internal.ForegroundLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:minHeight="?attr/listPreferredItemHeightSmall"
+    android:paddingLeft="?attr/listPreferredItemPaddingLeft"
+    android:paddingRight="?attr/listPreferredItemPaddingRight">
+
+    <CheckedTextView
+        android:id="@+id/header_content"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:drawablePadding="@dimen/design_navigation_icon_padding"
+        android:gravity="center_vertical|start"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+</android.support.design.internal.ForegroundLinearLayout>

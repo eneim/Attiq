@@ -25,4 +25,9 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="comment_container_expand">224dp</dimen>
     <dimen name="comment_container_collapse">48dp</dimen>
+
+    <dimen name="html_header_height">48dp</dimen>
+
+    <dimen name="header_depth_width">12dp</dimen>
+    <dimen name="header_depth_gap">0dp</dimen>
 </resources>

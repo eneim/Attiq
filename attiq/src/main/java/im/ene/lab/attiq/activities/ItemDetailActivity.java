@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -18,11 +19,15 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.CheckedTextView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -30,8 +35,10 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import butterknife.Bind;
+import butterknife.BindDimen;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
@@ -43,9 +50,11 @@ import im.ene.lab.attiq.data.event.ItemDetailEvent;
 import im.ene.lab.attiq.data.response.Article;
 import im.ene.lab.attiq.data.response.Comment;
 import im.ene.lab.attiq.data.vault.PublicItem;
+import im.ene.lab.attiq.util.HtmlUtil;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.widgets.drawable.ThreadedCommentDrawable;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AppBarLayout;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
@@ -55,6 +64,7 @@ import retrofit.Response;
 import retrofit.Retrofit;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 public class ItemDetailActivity extends BaseActivity implements Callback<Article> {
@@ -74,6 +84,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Bind(R.id.app_bar) AppBarLayout mAppBarLayout;
   @Bind(R.id.toolbar_layout) CollapsingToolbarLayout mToolBarLayout;
   @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+  @Bind(R.id.html_headers_container) LinearLayout mHeadersContainer;
 
   private Realm mRealm;
   private PublicItem mPublicItem;
@@ -174,6 +185,11 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private void trySetupContentView() {
     mContentView.setVerticalScrollBarEnabled(false);
     mContentView.setHorizontalScrollBarEnabled(false);
+    mContentView.getSettings().setJavaScriptEnabled(true);
+    mContentView.setWebChromeClient(new WebChromeClient() {
+
+    });
+
     mContentView.setWebViewClient(new WebViewClient() {
 
       @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -198,6 +214,27 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         Log.e(TAG, "onPageFinished() called with: " + "view = [" + view + "], url = [" + url + "]");
       }
     });
+
+    mContentView.setFindListener(new WebView.FindListener() {
+      @Override
+      public void onFindResultReceived(int activeMatchOrdinal, int numberOfMatches, boolean
+          isDoneCounting) {
+        Log.d(TAG, "onFindResultReceived() called with: " + "activeMatchOrdinal = [" +
+            activeMatchOrdinal + "], numberOfMatches = [" + numberOfMatches + "], isDoneCounting " +
+            "= [" + isDoneCounting + "]");
+
+        if (mDrawerLayout != null) {
+          mDrawerLayout.closeDrawer(GravityCompat.END);
+        }
+
+        // TODO FIXME
+        if (numberOfMatches > 0 && mSelectedElement != null && mContentView != null) {
+          mContentView.clearMatches();
+          mContentView.loadUrl("javascript:scrollToElement(\"" + mSelectedElement.text() + "\");");
+        }
+      }
+    });
+
   }
 
   private void trySetupCommentView() {
@@ -205,6 +242,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mComments.setHorizontalScrollBarEnabled(false);
     // TODO implement this
   }
+
+  private Element mSelectedElement;
 
   @Override public void onResponse(Response<Article> response, Retrofit retrofit) {
     Article article = response.body();
@@ -287,9 +326,51 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     });
   }
 
+  @BindDimen(R.dimen.header_depth_width) int mHeaderDepthWidth;
+  @BindDimen(R.dimen.header_depth_gap) int mHeaderDepthGap;
+
   // TODO Item's menu by header tags
   private void processMenu(@NonNull Article article) {
+    String articleHtml = article.getRenderedBody();
+    Elements headers = Jsoup.parse(articleHtml).select("h0, h1, h2, h3, h4, h5, h6");
 
+    mHeadersContainer.removeAllViews();
+    final LayoutInflater inflater = LayoutInflater.from(mHeadersContainer.getContext());
+    if (!UIUtil.isEmpty(headers)) {
+      Iterator<Element> items = headers.iterator();
+      int topLevel = HtmlUtil.getHeaderLevel(items.next().tagName());
+      while (items.hasNext()) {
+        int level = HtmlUtil.getHeaderLevel(items.next().tagName());
+        if (topLevel > level) {
+          topLevel = level;
+        }
+      }
+
+      Log.d(TAG, "processMenu: " + topLevel);
+
+      for (final Element item : headers) {
+        View headerView = inflater.inflate(R.layout.item_detail_menu_row, mHeadersContainer, false);
+        CheckedTextView headerContent = (CheckedTextView) headerView.findViewById(R.id
+            .header_content);
+
+        int currentLevel = HtmlUtil.getHeaderLevel(item.tagName());
+        if (currentLevel - topLevel > 0) {
+          headerContent.setCompoundDrawables(new ThreadedCommentDrawable(
+              mHeaderDepthWidth, mHeaderDepthGap, currentLevel - topLevel
+          ), null, null, null);
+        }
+
+        headerContent.setText(item.text());
+        headerView.setOnClickListener(new View.OnClickListener() {
+          @Override public void onClick(View v) {
+            mSelectedElement = item;
+            mContentView.findAllAsync(item.text());
+          }
+        });
+
+        mHeadersContainer.addView(headerView);
+      }
+    }
   }
 
   public void onEventMainThread(ItemCommentsEvent event) {
@@ -319,12 +400,14 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
         String result = fullBody.outerHtml();
         mComments.loadDataWithBaseURL(
-            "http://qiita.com", result, null, null, null);
+            "http://qiita.com/", result, null, null, null);
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
-  }  @Override public void onFailure(Throwable error) {
+  }
+
+  @Override public void onFailure(Throwable error) {
     EventBus.getDefault().post(new ItemDetailEvent(false,
         new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
   }
@@ -367,12 +450,5 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
     return super.onOptionsItemSelected(item);
   }
-
-  private void trySetupToolbarMenu() {
-
-  }
-
-
-
 
 }

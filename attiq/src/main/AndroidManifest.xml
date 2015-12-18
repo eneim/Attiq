@@ -68,6 +68,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="im.ene.lab.attiq.activities.MainActivity"/>
         </activity>
+
         <activity
             android:name=".activities.ProfileActivity"
             android:label="@string/title_activity_profile"
