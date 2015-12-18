@@ -44,12 +44,12 @@
 
                 <data
                     android:host="qiita.com"
-                    android:pathPattern="/.*"
+                    android:pathPattern="/.*/items/.*"
                     android:scheme="http"/>
 
                 <data
                     android:host="qiita.com"
-                    android:pathPattern="/.*"
+                    android:pathPattern="/.*/items/.*"
                     android:scheme="https"/>
             </intent-filter>
         </activity>

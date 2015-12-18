@@ -46,7 +46,7 @@ public class MainActivity extends BaseActivity
   private Realm mRealm;
   private View mHeaderView;
 
-  DrawerLayout mDrawerLayout;
+  private DrawerLayout mDrawerLayout;
 
   private Fragment mFragment;
 

@@ -6,7 +6,10 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spannable;
@@ -15,6 +18,8 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -68,10 +73,10 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Bind(R.id.item_subtitle) TextView mItemSubtitle;
   @Bind(R.id.app_bar) AppBarLayout mAppBarLayout;
   @Bind(R.id.toolbar_layout) CollapsingToolbarLayout mToolBarLayout;
+  @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
 
   private Realm mRealm;
   private PublicItem mPublicItem;
-
   // Title support
   private AlphaForegroundColorSpan mTitleColorSpan;
   private SpannableString mSpannableTitle;
@@ -89,6 +94,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
           }
         }
       };
+  private String mItemUUID;
 
   public static Intent createIntent(Context context, @NonNull PublicItem item) {
     Intent intent = createIntent(context);
@@ -97,14 +103,14 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     return intent;
   }
 
+  public static Intent createIntent(Context context) {
+    return new Intent(context, ItemDetailActivity.class);
+  }
+
   public static Intent createIntent(Context context, String uuid) {
     Intent intent = createIntent(context);
     intent.putExtra(EXTRA_DETAIL_ITEM_UUID, uuid);
     return intent;
-  }
-
-  public static Intent createIntent(Context context) {
-    return new Intent(context, ItemDetailActivity.class);
   }
 
   @Override
@@ -120,6 +126,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
     // empty title at start
     setTitle("");
+
+    trySetupDrawerLayout();
 
     trySetupContentView();
 
@@ -148,7 +156,20 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mPublicItem = mRealm.where(PublicItem.class).equalTo("uuid", mItemUUID).findFirst();
   }
 
-  private String mItemUUID;
+  @Override protected void onDestroy() {
+    if (mRealm != null) {
+      mRealm.close();
+    }
+    super.onDestroy();
+  }
+
+  private void trySetupDrawerLayout() {
+    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        this, mDrawerLayout, null,
+        R.string.navigation_drawer_open,
+        R.string.navigation_drawer_close);
+    mDrawerLayout.setDrawerListener(toggle);
+  }
 
   private void trySetupContentView() {
     mContentView.setVerticalScrollBarEnabled(false);
@@ -185,13 +206,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     // TODO implement this
   }
 
-  @Override protected void onDestroy() {
-    if (mRealm != null) {
-      mRealm.close();
-    }
-    super.onDestroy();
-  }
-
   @Override public void onResponse(Response<Article> response, Retrofit retrofit) {
     Article article = response.body();
     if (article != null) {
@@ -213,13 +227,14 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
             userName, userName, mPublicItem.getCreatedAtInWords()));
         mItemSubtitle.setText(subTitle);
       } else {
-        mItemSubtitle.setText("posted by " + userName);
+        mItemSubtitle.setText(getString(R.string.item_detail_subtitle, userName));
       }
 
       mSpannableSubtitle = new SpannableString("posted by " + userName);
 
       updateTitle();
       processComments(article);
+      processMenu(article);
       final String html;
       try {
         html = IOUtil.readAllFromAssets(this, "html/article.html");
@@ -272,6 +287,11 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     });
   }
 
+  // TODO Item's menu by header tags
+  private void processMenu(@NonNull Article article) {
+
+  }
+
   public void onEventMainThread(ItemCommentsEvent event) {
     if (event.isSuccess() && !UIUtil.isEmpty(event.getComments())) {
       List<Comment> comments = event.getComments();
@@ -304,14 +324,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         e.printStackTrace();
       }
     }
-  }
-
-  // TODO Item's menu by header tags
-  private void processMenu() {
-
-  }
-
-  @Override public void onFailure(Throwable error) {
+  }  @Override public void onFailure(Throwable error) {
     EventBus.getDefault().post(new ItemDetailEvent(false,
         new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
   }
@@ -331,5 +344,35 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       ApiClient.itemDetail(mItemUUID).enqueue(this);
     }
   }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    // Inflate the menu; this adds items to the action bar if it is present.
+    getMenuInflater().inflate(R.menu.menu_item_detail, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    // Handle action bar item clicks here. The action bar will
+    // automatically handle clicks on the Home/Up button, so long
+    // as you specify a parent activity in AndroidManifest.xml.
+    int id = item.getItemId();
+
+    //noinspection SimplifiableIfStatement
+    if (id == R.id.action_item_menu) {
+      mDrawerLayout.openDrawer(GravityCompat.END);
+      return true;
+    }
+
+    return super.onOptionsItemSelected(item);
+  }
+
+  private void trySetupToolbarMenu() {
+
+  }
+
+
+
 
 }

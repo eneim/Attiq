@@ -4,15 +4,7 @@
         "source": "/Users/eneim/Documents/Workspace/Android/Attiq/slidinguppanel/build/intermediates/bundles/debug/res/drawable/above_shadow.xml"
     },
     {
-        "merged": "/Users/eneim/Documents/Workspace/Android/AndroidSlidingUpPanel/library/build/intermediates/res/merged/androidTest/debug/drawable/above_shadow.xml",
-        "source": "/Users/eneim/Documents/Workspace/Android/AndroidSlidingUpPanel/library/build/intermediates/bundles/debug/res/drawable/above_shadow.xml"
-    },
-    {
         "merged": "/Users/eneim/Documents/Workspace/Android/Attiq/slidinguppanel/build/intermediates/res/merged/androidTest/debug/drawable/below_shadow.xml",
         "source": "/Users/eneim/Documents/Workspace/Android/Attiq/slidinguppanel/build/intermediates/bundles/debug/res/drawable/below_shadow.xml"
-    },
-    {
-        "merged": "/Users/eneim/Documents/Workspace/Android/AndroidSlidingUpPanel/library/build/intermediates/res/merged/androidTest/debug/drawable/below_shadow.xml",
-        "source": "/Users/eneim/Documents/Workspace/Android/AndroidSlidingUpPanel/library/build/intermediates/bundles/debug/res/drawable/below_shadow.xml"
     }
 ]
