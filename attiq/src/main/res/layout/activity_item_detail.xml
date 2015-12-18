@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.sothree.slidinguppanel.SlidingUpPanelLayout
+    android:id="@+id/sliding_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -20,14 +21,14 @@
         <im.ene.support.design.widget.AppBarLayout
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/app_bar_height"
+            android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             android:theme="@style/Attiq.Theme.AppBarOverlay">
 
             <im.ene.support.design.widget.CollapsingToolbarLayout
                 android:id="@+id/toolbar_layout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:fitsSystemWindows="true"
                 android:theme="@style/Attiq.Theme.AppBarOverlay"
                 app:contentScrim="?attr/colorPrimary"
@@ -40,10 +41,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
+                    android:layout_marginTop="?attr/actionBarSize"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/item_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/activity_vertical_margin"
+                        android:layout_marginLeft="?attr/actionBarSize"
+                        android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:layout_marginStart="?attr/actionBarSize"
+                        android:gravity="left|start"
+                        android:padding="2dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"/>
+
+                    <TextView
+                        android:id="@+id/item_subtitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/activity_vertical_margin"
@@ -52,12 +66,9 @@
                         android:layout_marginRight="@dimen/activity_vertical_margin"
                         android:layout_marginStart="?attr/actionBarSize"
                         android:gravity="left|start"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"/>
-
-                    <TextView
-                        android:id="@+id/item_subtitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:maxLines="2"
+                        android:padding="2dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"/>
                 </LinearLayout>
 
                 <android.support.v7.widget.Toolbar

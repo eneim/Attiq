@@ -7,16 +7,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
+
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -54,14 +58,20 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   private static final String EXTRA_DETAIL_ITEM_UUID = "attiq_item_detail_extra_uuid";
   private static final String TAG = "ItemDetailActivity";
+
   @Bind(R.id.toolbar) Toolbar mToolbar;
+  @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingLayout;
   @Bind(R.id.item_content_web) WebView mContentView;
   @Bind(R.id.item_comments) WebView mComments;
-  @Bind(R.id.item_title) TextView mOverLayView;
+  @Bind(R.id.toolbar_overlay) View mOverLayView;
+  @Bind(R.id.item_title) TextView mItemTitle;
+  @Bind(R.id.item_subtitle) TextView mItemSubtitle;
   @Bind(R.id.app_bar) AppBarLayout mAppBarLayout;
   @Bind(R.id.toolbar_layout) CollapsingToolbarLayout mToolBarLayout;
+
   private Realm mRealm;
   private PublicItem mPublicItem;
+
   // Title support
   private AlphaForegroundColorSpan mTitleColorSpan;
   private SpannableString mSpannableTitle;
@@ -87,6 +97,12 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     return intent;
   }
 
+  public static Intent createIntent(Context context, String uuid) {
+    Intent intent = createIntent(context);
+    intent.putExtra(EXTRA_DETAIL_ITEM_UUID, uuid);
+    return intent;
+  }
+
   public static Intent createIntent(Context context) {
     return new Intent(context, ItemDetailActivity.class);
   }
@@ -105,6 +121,36 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     // empty title at start
     setTitle("");
 
+    trySetupContentView();
+
+    trySetupCommentView();
+
+    mAppBarLayout.addOnOffsetChangedListener(mOffsetChangedListener);
+
+    mItemSubtitle.setClickable(true);
+    mItemSubtitle.setMovementMethod(LinkMovementMethod.getInstance());
+    // dynamically update padding
+    mItemTitle.setPadding(
+        mItemTitle.getPaddingLeft(),
+        mItemTitle.getPaddingTop() + UIUtil.getStatusBarHeight(this),
+        mItemTitle.getPaddingRight(),
+        mItemTitle.getPaddingBottom()
+    );
+
+    TypedValue typedValue = new TypedValue();
+    mToolbar.getContext().getTheme()
+        .resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
+    int titleColorId = typedValue.resourceId;
+    mTitleColorSpan = new AlphaForegroundColorSpan(UIUtil.getColor(this, titleColorId));
+
+    mRealm = Attiq.realm();
+    mItemUUID = getIntent().getStringExtra(EXTRA_DETAIL_ITEM_UUID);
+    mPublicItem = mRealm.where(PublicItem.class).equalTo("uuid", mItemUUID).findFirst();
+  }
+
+  private String mItemUUID;
+
+  private void trySetupContentView() {
     mContentView.setVerticalScrollBarEnabled(false);
     mContentView.setHorizontalScrollBarEnabled(false);
     mContentView.setWebViewClient(new WebViewClient() {
@@ -131,27 +177,12 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         Log.e(TAG, "onPageFinished() called with: " + "view = [" + view + "], url = [" + url + "]");
       }
     });
+  }
 
+  private void trySetupCommentView() {
     mComments.setVerticalScrollBarEnabled(false);
     mComments.setHorizontalScrollBarEnabled(false);
     // TODO implement this
-    mComments.setWebViewClient(new WebViewClient() {
-      @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        return super.shouldOverrideUrlLoading(view, url);
-      }
-    });
-
-    mAppBarLayout.addOnOffsetChangedListener(mOffsetChangedListener);
-
-    TypedValue typedValue = new TypedValue();
-    mToolbar.getContext().getTheme()
-        .resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
-    int titleColorId = typedValue.resourceId;
-    mTitleColorSpan = new AlphaForegroundColorSpan(UIUtil.getColor(this, titleColorId));
-
-    mRealm = Attiq.realm();
-    long itemId = getIntent().getLongExtra(EXTRA_DETAIL_ITEM_ID, 0);
-    mPublicItem = mRealm.where(PublicItem.class).equalTo("id", itemId).findFirst();
   }
 
   @Override protected void onDestroy() {
@@ -159,13 +190,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       mRealm.close();
     }
     super.onDestroy();
-  }
-
-  @Override protected void onResume() {
-    super.onResume();
-    if (mPublicItem != null) {
-      ApiClient.itemDetail(mPublicItem.getUuid()).enqueue(this);
-    }
   }
 
   @Override public void onResponse(Response<Article> response, Retrofit retrofit) {
@@ -181,9 +205,19 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   public void onEventMainThread(ItemDetailEvent event) {
     Article article = event.getArticle();
     if (article != null) {
-      mOverLayView.setText(article.getTitle());
+      mItemTitle.setText(article.getTitle());
       mSpannableTitle = new SpannableString(article.getTitle());
-      mSpannableSubtitle = new SpannableString(article.getUser().getId());
+      String userName = article.getUser().getId();
+      if (mPublicItem != null) {
+        final Spanned subTitle = Html.fromHtml(getString(R.string.item_user_info,
+            userName, userName, mPublicItem.getCreatedAtInWords()));
+        mItemSubtitle.setText(subTitle);
+      } else {
+        mItemSubtitle.setText("posted by " + userName);
+      }
+
+      mSpannableSubtitle = new SpannableString("posted by " + userName);
+
       updateTitle();
       processComments(article);
       final String html;
@@ -238,11 +272,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     });
   }
 
-  @Override public void onFailure(Throwable error) {
-    EventBus.getDefault().post(new ItemDetailEvent(false,
-        new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
-  }
-
   public void onEventMainThread(ItemCommentsEvent event) {
     if (event.isSuccess() && !UIUtil.isEmpty(event.getComments())) {
       List<Comment> comments = event.getComments();
@@ -275,8 +304,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         e.printStackTrace();
       }
     }
-
-    NestedScrollView test;
   }
 
   // TODO Item's menu by header tags
@@ -284,5 +311,25 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   }
 
+  @Override public void onFailure(Throwable error) {
+    EventBus.getDefault().post(new ItemDetailEvent(false,
+        new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
+  }
+
+  @Override public void onBackPressed() {
+    if (mSlidingLayout != null
+        && mSlidingLayout.getPanelState() != SlidingUpPanelLayout.PanelState.COLLAPSED) {
+      mSlidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+    } else {
+      super.onBackPressed();
+    }
+  }
+
+  @Override protected void onResume() {
+    super.onResume();
+    if (mItemUUID != null) {
+      ApiClient.itemDetail(mItemUUID).enqueue(this);
+    }
+  }
 
 }
