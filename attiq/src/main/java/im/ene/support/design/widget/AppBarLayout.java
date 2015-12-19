@@ -14,7 +14,6 @@ import android.support.v4.view.ScrollingView;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.WindowInsetsCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
@@ -842,9 +841,6 @@ public class AppBarLayout extends LinearLayout {
     @Override
     public boolean onNestedPreFling(CoordinatorLayout coordinatorLayout, AppBarLayout child, View
         target, float velocityX, float velocityY) {
-      Log.d(TAG, "onNestedPreFling() called with: " + "coordinatorLayout = [" + coordinatorLayout
-          + "], child = [" + child + "], target = [" + target + "], velocityX = [" + velocityX +
-          "], velocityY = [" + velocityY + "]");
       return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY);
     }
 
@@ -915,7 +911,6 @@ public class AppBarLayout extends LinearLayout {
         targetScrollingOffset = ((ScrollingView) target).computeVerticalScrollOffset();
       }
 
-      Log.e(TAG, "onNestedFling: " + targetScrollingOffset);
       boolean flung = false;
       if (!consumed) {
         // It has been consumed so let's fling ourselves
@@ -1095,10 +1090,6 @@ public class AppBarLayout extends LinearLayout {
         setTopAndBottomOffset(dependency.getHeight() + offset
             - getOverlapForOffset(dependency, offset));
 
-        Log.i(TAG, "updateOffset(): offset = [" + offset + "] "
-            + "parent = [" + parent.getClass().getSimpleName()
-            + "], child = [" + child.getClass().getSimpleName()
-            + "], dependency = [" + dependency.getClass().getSimpleName() + "]");
         return true;
       }
       return false;

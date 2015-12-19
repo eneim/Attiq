@@ -53,6 +53,7 @@ import im.ene.lab.attiq.util.HtmlUtil;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.widgets.ScrollingWebView;
 import im.ene.lab.attiq.widgets.drawable.ThreadedCommentDrawable;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AppBarLayout;
@@ -76,7 +77,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   @Bind(R.id.sliding_layout)              SlidingUpPanelLayout mSlidingLayout;
   @Bind(R.id.toolbar)                     Toolbar mToolbar;
-  @Bind(R.id.item_content_web)            WebView mContentView;
+  @Bind(R.id.item_content_web)            ScrollingWebView mContentView;
   @Bind(R.id.item_comments)               WebView mComments;
   @Bind(R.id.toolbar_overlay)             View mOverLayView;
   @Bind(R.id.item_title)                  TextView mArticleName;
@@ -213,6 +214,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         super.onPageFinished(view, url);
         // TODO dismiss loading dialog here
         Log.e(TAG, "onPageFinished() called with: " + "view = [" + view + "], url = [" + url + "]");
+        // Log.d(TAG, "onPageFinished: " + view.getScrollY() + " | " + view.getTop());
       }
     });
 
@@ -220,16 +222,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       @Override
       public void onFindResultReceived(int activeMatchOrdinal, int numberOfMatches, boolean
           isDoneCounting) {
-        Log.d(TAG, "onFindResultReceived() called with: " + "activeMatchOrdinal = [" +
-            activeMatchOrdinal + "], numberOfMatches = [" + numberOfMatches + "], isDoneCounting " +
-            "= [" + isDoneCounting + "]");
-
         if (mMenuLayout != null) {
           mMenuLayout.closeDrawer(GravityCompat.END);
         }
-
-        // TODO FIXME WebView could not scroll to an anchor if it's attached to a NestScrollView
-        // parent
         if (numberOfMatches > 0 && mMenuAnchor != null && mContentView != null) {
           mContentView.clearMatches();
           mContentView.loadUrl("javascript:scrollToElement(\"" + mMenuAnchor.text() + "\");");
