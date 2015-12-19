@@ -6,11 +6,15 @@ import com.google.gson.GsonBuilder;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import okio.BufferedSource;
+import okio.Okio;
+
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 /**
  * Created by eneim on 12/13/15.
@@ -25,6 +29,12 @@ public class IOUtil {
 
   public static Gson gson() {
     return GSON;
+  }
+
+  public static String readRaw(Context context, int rawFile) throws IOException {
+    InputStream stream = context.getResources().openRawResource(rawFile);
+    BufferedSource buffer = Okio.buffer(Okio.source(stream));
+    return buffer.readString(Charset.forName("utf-8"));
   }
 
   public static String readAllFromAssets(Context context, String target) throws IOException {

@@ -33,4 +33,7 @@
     <dimen name="header_depth_width">16dp</dimen>
     <dimen name="header_depth_gap">0dp</dimen>
     <dimen name="menu_container_top_free_space">96dp</dimen>
+
+    <dimen name="detail_bar_height">144dp</dimen>
+    <dimen name="detail_title_margin_top">56dp</dimen>
 </resources>

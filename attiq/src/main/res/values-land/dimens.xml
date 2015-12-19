@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="detail_bar_height">80dp</dimen>
+    <dimen name="detail_title_margin_top">24dp</dimen>
+</resources>

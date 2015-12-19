@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="end">
+
+    <include layout="@layout/item_detail_content_main_v2"/>
+
+    <im.ene.lab.attiq.widgets.NotBadNavView
+        android:layout_width="@dimen/menu_container_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="end|right"
+        android:background="#e5e5e5"
+        android:fitsSystemWindows="true">
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/html_headers_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:paddingTop="?attr/actionBarSize">
+
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </im.ene.lab.attiq.widgets.NotBadNavView>
+
+</android.support.v4.widget.DrawerLayout>
