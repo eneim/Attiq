@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -72,31 +71,35 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private static final String EXTRA_DETAIL_ITEM_ID = "attiq_item_detail_extra_id";
 
   private static final String EXTRA_DETAIL_ITEM_UUID = "attiq_item_detail_extra_uuid";
+
   private static final String TAG = "ItemDetailActivity";
 
-  @Bind(R.id.toolbar) Toolbar mToolbar;
-  @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingLayout;
-  @Bind(R.id.item_content_web) WebView mContentView;
-  @Bind(R.id.item_comments) WebView mComments;
-  @Bind(R.id.toolbar_overlay) View mOverLayView;
-  @Bind(R.id.item_title) TextView mItemTitle;
-  @Bind(R.id.item_subtitle) TextView mItemSubtitle;
-  @Bind(R.id.app_bar) AppBarLayout mAppBarLayout;
-  @Bind(R.id.toolbar_layout) CollapsingToolbarLayout mToolBarLayout;
-  @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-  @Bind(R.id.html_headers_container) LinearLayout mHeadersContainer;
+  @Bind(R.id.sliding_layout)              SlidingUpPanelLayout mSlidingLayout;
+  @Bind(R.id.toolbar)                     Toolbar mToolbar;
+  @Bind(R.id.item_content_web)            WebView mContentView;
+  @Bind(R.id.item_comments)               WebView mComments;
+  @Bind(R.id.toolbar_overlay)             View mOverLayView;
+  @Bind(R.id.item_title)                  TextView mArticleName;
+  @Bind(R.id.item_subtitle)               TextView mArticleDescription;
+  @Bind(R.id.app_bar)                     AppBarLayout mAppBarLayout;
+  @Bind(R.id.toolbar_layout)              CollapsingToolbarLayout mToolBarLayout;
+  @Bind(R.id.drawer_layout)               DrawerLayout mMenuLayout;
+  @Bind(R.id.html_headers_container)      LinearLayout mMenuContainer;
+  @BindDimen(R.dimen.header_depth_width)  int mHeaderDepthWidth;
+  @BindDimen(R.dimen.header_depth_gap)    int mHeaderDepthGap;
 
   private Realm mRealm;
   private PublicItem mPublicItem;
+  private Element mMenuAnchor;
   // Title support
   private AlphaForegroundColorSpan mTitleColorSpan;
   private SpannableString mSpannableTitle;
   private SpannableString mSpannableSubtitle;
-  private int mCurrentVerticalOffset;
+  private int mToolbarLayoutOffset;
   private AppBarLayout.OnOffsetChangedListener mOffsetChangedListener =
       new AppBarLayout.OnOffsetChangedListener() {
         @Override public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-          mCurrentVerticalOffset = verticalOffset;
+          mToolbarLayoutOffset = verticalOffset;
           float maxOffset = mToolBarLayout.getHeight() -
               ViewCompat.getMinimumHeight(mToolBarLayout) - mToolBarLayout.getInsetTop();
           if (maxOffset > 0) {
@@ -105,7 +108,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
           }
         }
       };
-  private String mItemUUID;
+  private String mItemUuid;
 
   public static Intent createIntent(Context context, @NonNull PublicItem item) {
     Intent intent = createIntent(context);
@@ -114,7 +117,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     return intent;
   }
 
-  public static Intent createIntent(Context context) {
+  private static Intent createIntent(Context context) {
     return new Intent(context, ItemDetailActivity.class);
   }
 
@@ -146,14 +149,14 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
     mAppBarLayout.addOnOffsetChangedListener(mOffsetChangedListener);
 
-    mItemSubtitle.setClickable(true);
-    mItemSubtitle.setMovementMethod(LinkMovementMethod.getInstance());
+    mArticleDescription.setClickable(true);
+    mArticleDescription.setMovementMethod(LinkMovementMethod.getInstance());
     // dynamically update padding
-    mItemTitle.setPadding(
-        mItemTitle.getPaddingLeft(),
-        mItemTitle.getPaddingTop() + UIUtil.getStatusBarHeight(this),
-        mItemTitle.getPaddingRight(),
-        mItemTitle.getPaddingBottom()
+    mArticleName.setPadding(
+        mArticleName.getPaddingLeft(),
+        mArticleName.getPaddingTop() + UIUtil.getStatusBarHeight(this),
+        mArticleName.getPaddingRight(),
+        mArticleName.getPaddingBottom()
     );
 
     TypedValue typedValue = new TypedValue();
@@ -162,9 +165,10 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     int titleColorId = typedValue.resourceId;
     mTitleColorSpan = new AlphaForegroundColorSpan(UIUtil.getColor(this, titleColorId));
 
+    mItemUuid = getIntent().getStringExtra(EXTRA_DETAIL_ITEM_UUID);
     mRealm = Attiq.realm();
-    mItemUUID = getIntent().getStringExtra(EXTRA_DETAIL_ITEM_UUID);
-    mPublicItem = mRealm.where(PublicItem.class).equalTo("uuid", mItemUUID).findFirst();
+    mPublicItem = mRealm.where(PublicItem.class).equalTo("uuid", mItemUuid).findFirst();
+
   }
 
   @Override protected void onDestroy() {
@@ -176,20 +180,17 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   private void trySetupDrawerLayout() {
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-        this, mDrawerLayout, null,
+        this, mMenuLayout, null,
         R.string.navigation_drawer_open,
         R.string.navigation_drawer_close);
-    mDrawerLayout.setDrawerListener(toggle);
+    mMenuLayout.setDrawerListener(toggle);
   }
 
   private void trySetupContentView() {
     mContentView.setVerticalScrollBarEnabled(false);
     mContentView.setHorizontalScrollBarEnabled(false);
     mContentView.getSettings().setJavaScriptEnabled(true);
-    mContentView.setWebChromeClient(new WebChromeClient() {
-
-    });
-
+    mContentView.setWebChromeClient(new WebChromeClient());
     mContentView.setWebViewClient(new WebViewClient() {
 
       @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -223,14 +224,15 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
             activeMatchOrdinal + "], numberOfMatches = [" + numberOfMatches + "], isDoneCounting " +
             "= [" + isDoneCounting + "]");
 
-        if (mDrawerLayout != null) {
-          mDrawerLayout.closeDrawer(GravityCompat.END);
+        if (mMenuLayout != null) {
+          mMenuLayout.closeDrawer(GravityCompat.END);
         }
 
-        // TODO FIXME
-        if (numberOfMatches > 0 && mSelectedElement != null && mContentView != null) {
+        // TODO FIXME WebView could not scroll to an anchor if it's attached to a NestScrollView
+        // parent
+        if (numberOfMatches > 0 && mMenuAnchor != null && mContentView != null) {
           mContentView.clearMatches();
-          mContentView.loadUrl("javascript:scrollToElement(\"" + mSelectedElement.text() + "\");");
+          mContentView.loadUrl("javascript:scrollToElement(\"" + mMenuAnchor.text() + "\");");
         }
       }
     });
@@ -240,10 +242,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private void trySetupCommentView() {
     mComments.setVerticalScrollBarEnabled(false);
     mComments.setHorizontalScrollBarEnabled(false);
-    // TODO implement this
   }
-
-  private Element mSelectedElement;
 
   @Override public void onResponse(Response<Article> response, Retrofit retrofit) {
     Article article = response.body();
@@ -258,22 +257,24 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   public void onEventMainThread(ItemDetailEvent event) {
     Article article = event.getArticle();
     if (article != null) {
-      mItemTitle.setText(article.getTitle());
+      mArticleName.setText(article.getTitle());
       mSpannableTitle = new SpannableString(article.getTitle());
       String userName = article.getUser().getId();
+      final CharSequence subTitle;
+
       if (mPublicItem != null) {
-        final Spanned subTitle = Html.fromHtml(getString(R.string.item_user_info,
-            userName, userName, mPublicItem.getCreatedAtInWords()));
-        mItemSubtitle.setText(subTitle);
+        subTitle = Html.fromHtml(getString(R.string.item_user_info,
+            userName, userName, TimeUtil.beautify(article.getCreatedAt())));
       } else {
-        mItemSubtitle.setText(getString(R.string.item_detail_subtitle, userName));
+        subTitle = getString(R.string.item_detail_subtitle, userName);
       }
 
-      mSpannableSubtitle = new SpannableString("posted by " + userName);
+      mArticleDescription.setText(subTitle);
+      mSpannableSubtitle = new SpannableString(subTitle);
 
       updateTitle();
-      processComments(article);
-      processMenu(article);
+      buildArticleComments(article);
+      buildArticleMenu(article);
       final String html;
       try {
         html = IOUtil.readAllFromAssets(this, "html/article.html");
@@ -293,7 +294,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   private void updateTitle() {
     float titleAlpha =
-        mToolBarLayout.shouldTriggerScrimOffset(mCurrentVerticalOffset) ? 1.f : 0.f;
+        mToolBarLayout.shouldTriggerScrimOffset(mToolbarLayoutOffset) ? 1.f : 0.f;
     mTitleColorSpan.setAlpha(titleAlpha);
     // title
     mSpannableTitle.setSpan(mTitleColorSpan, 0, mSpannableTitle.length(),
@@ -308,7 +309,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   }
 
-  private void processComments(@NonNull final Article article) {
+  private void buildArticleComments(@NonNull final Article article) {
     ApiClient.itemComments(article.getId()).enqueue(new Callback<List<Comment>>() {
       @Override public void onResponse(Response<List<Comment>> response, Retrofit retrofit) {
         if (response.code() == 200) {
@@ -326,17 +327,14 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     });
   }
 
-  @BindDimen(R.dimen.header_depth_width) int mHeaderDepthWidth;
-  @BindDimen(R.dimen.header_depth_gap) int mHeaderDepthGap;
-
-  // TODO Item's menu by header tags
-  private void processMenu(@NonNull Article article) {
+  private void buildArticleMenu(@NonNull Article article) {
     String articleHtml = article.getRenderedBody();
     Elements headers = Jsoup.parse(articleHtml).select("h0, h1, h2, h3, h4, h5, h6");
 
-    mHeadersContainer.removeAllViews();
-    final LayoutInflater inflater = LayoutInflater.from(mHeadersContainer.getContext());
+    mMenuContainer.removeAllViews();
+    final LayoutInflater inflater = LayoutInflater.from(mMenuContainer.getContext());
     if (!UIUtil.isEmpty(headers)) {
+      // 1. Find the top level (lowest level)
       Iterator<Element> items = headers.iterator();
       int topLevel = HtmlUtil.getHeaderLevel(items.next().tagName());
       while (items.hasNext()) {
@@ -346,29 +344,30 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         }
       }
 
-      Log.d(TAG, "processMenu: " + topLevel);
-
+      Log.e(TAG, "buildArticleMenu: " + topLevel);
+      // 2. Build the menu for headers
       for (final Element item : headers) {
-        View headerView = inflater.inflate(R.layout.item_detail_menu_row, mHeadersContainer, false);
-        CheckedTextView headerContent = (CheckedTextView) headerView.findViewById(R.id
-            .header_content);
+        View menuItemView = inflater.inflate(R.layout.item_detail_menu_row, mMenuContainer, false);
+        CheckedTextView menuContent =
+            (CheckedTextView) menuItemView.findViewById(R.id.header_content);
+        menuContent.setText(item.text());
 
         int currentLevel = HtmlUtil.getHeaderLevel(item.tagName());
         if (currentLevel - topLevel > 0) {
-          headerContent.setCompoundDrawables(new ThreadedCommentDrawable(
+          menuContent.setCompoundDrawablesWithIntrinsicBounds(new ThreadedCommentDrawable(
               mHeaderDepthWidth, mHeaderDepthGap, currentLevel - topLevel
           ), null, null, null);
         }
 
-        headerContent.setText(item.text());
-        headerView.setOnClickListener(new View.OnClickListener() {
+        menuItemView.setOnClickListener(new View.OnClickListener() {
           @Override public void onClick(View v) {
-            mSelectedElement = item;
+            mMenuAnchor = item;
+            mContentView.clearMatches();
             mContentView.findAllAsync(item.text());
           }
         });
 
-        mHeadersContainer.addView(headerView);
+        mMenuContainer.addView(menuItemView);
       }
     }
   }
@@ -423,8 +422,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   @Override protected void onResume() {
     super.onResume();
-    if (mItemUUID != null) {
-      ApiClient.itemDetail(mItemUUID).enqueue(this);
+    if (mItemUuid != null) {
+      ApiClient.itemDetail(mItemUuid).enqueue(this);
     }
   }
 
@@ -444,7 +443,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
     //noinspection SimplifiableIfStatement
     if (id == R.id.action_item_menu) {
-      mDrawerLayout.openDrawer(GravityCompat.END);
+      mMenuLayout.openDrawer(GravityCompat.END);
       return true;
     }
 

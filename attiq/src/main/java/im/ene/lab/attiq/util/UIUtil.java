@@ -18,7 +18,13 @@ public class UIUtil {
     throw new AssertionError("Not supported");
   }
 
-  public static int getStatusBarHeight(Context context) {
+  /**
+   * Get status bar of devices. Old devices have the 25dp of that height, but new ones have 24dp
+   *
+   * @param context from Hosted Activity
+   * @return current status bar height
+   */
+  public static int getStatusBarHeight(@NonNull Context context) {
     Resources resources = context.getResources();
     int result = 0;
     int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");

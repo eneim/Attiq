@@ -12,11 +12,11 @@
 
     <CheckedTextView
         android:id="@+id/header_content"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:drawablePadding="@dimen/design_navigation_icon_padding"
         android:gravity="center_vertical|start"
+        android:paddingBottom="@dimen/header_text_padding"
+        android:paddingTop="@dimen/header_text_padding"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
 </android.support.design.internal.ForegroundLinearLayout>

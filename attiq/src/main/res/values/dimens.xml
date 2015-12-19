@@ -28,6 +28,9 @@
 
     <dimen name="html_header_height">48dp</dimen>
 
-    <dimen name="header_depth_width">12dp</dimen>
+    <dimen name="menu_container_width">280dp</dimen>
+    <dimen name="header_text_padding">8dp</dimen>
+    <dimen name="header_depth_width">16dp</dimen>
     <dimen name="header_depth_gap">0dp</dimen>
+    <dimen name="menu_container_top_free_space">96dp</dimen>
 </resources>

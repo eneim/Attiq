@@ -11,9 +11,9 @@
     <include layout="@layout/item_detail_content_main"/>
 
     <im.ene.lab.attiq.widgets.NotBadNavView
-        android:layout_width="240dp"
+        android:layout_width="@dimen/menu_container_width"
         android:layout_height="match_parent"
-        android:layout_gravity="right"
+        android:layout_gravity="end|right"
         android:background="#e5e5e5"
         android:fitsSystemWindows="true">
 
@@ -22,21 +22,13 @@
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/html_headers_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:paddingTop="?attr/actionBarSize">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/app_bar_height"/>
-
-                <LinearLayout
-                    android:id="@+id/html_headers_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                </LinearLayout>
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
     </im.ene.lab.attiq.widgets.NotBadNavView>
