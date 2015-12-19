@@ -15,13 +15,14 @@
     tools:context=".activities.ItemDetailActivity"
     tools:showIn="@layout/activity_item_detail">
 
-    <FrameLayout
+    <im.ene.support.design.widget.CoordinatorLayout
+        android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         tools:context="im.ene.lab.attiq.activities.ItemDetailActivity">
 
-        <WebView
+        <im.ene.lab.attiq.widgets.ObservableWebView
             android:id="@+id/item_content_web"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -86,6 +87,7 @@
                         android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"/>
                 </LinearLayout>
 
+
                 <android.support.v7.widget.Toolbar
                     android:id="@id/toolbar"
                     android:layout_width="match_parent"
@@ -95,9 +97,10 @@
                     app:subtitleTextAppearance="@style/Attiq.Widget.Toolbar.Subtitle"/>
 
             </im.ene.support.design.widget.CollapsingToolbarLayout>
+
         </im.ene.support.design.widget.AppBarLayout>
 
-    </FrameLayout>
+    </im.ene.support.design.widget.CoordinatorLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

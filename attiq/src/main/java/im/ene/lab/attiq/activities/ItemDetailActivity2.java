@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -54,6 +55,7 @@ import im.ene.lab.attiq.util.HtmlUtil;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.widgets.ObservableWebView;
 import im.ene.lab.attiq.widgets.drawable.ThreadedCommentDrawable;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AppBarLayout;
@@ -67,7 +69,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-public class ItemDetailActivity2 extends BaseActivity implements Callback<Article> {
+public class ItemDetailActivity2 extends BaseActivity
+    implements Callback<Article>, ObservableWebView.OnScrollListener {
 
   private static final String EXTRA_DETAIL_ITEM_ID = "attiq_item_detail_extra_id";
 
@@ -75,24 +78,25 @@ public class ItemDetailActivity2 extends BaseActivity implements Callback<Articl
 
   private static final String TAG = "ItemDetailActivity";
 
-  @Bind(R.id.sliding_layout)              SlidingUpPanelLayout mSlidingLayout;
-  @Bind(R.id.toolbar)                     Toolbar mToolbar;
-  @Bind(R.id.item_content_web)            WebView mContentView;
-  @Bind(R.id.item_comments)               WebView mComments;
-  @Bind(R.id.toolbar_overlay)             View mOverLayView;
-  @Bind(R.id.item_title)                  TextView mArticleName;
-  @Bind(R.id.item_subtitle)               TextView mArticleDescription;
-  // @Bind(R.id.app_bar)                     AppBarLayout mAppBarLayout;
-  @Bind(R.id.toolbar_layout)              CollapsingToolbarLayout mToolBarLayout;
-  @Bind(R.id.drawer_layout)               DrawerLayout mMenuLayout;
-  @Bind(R.id.html_headers_container)      LinearLayout mMenuContainer;
-  @BindDimen(R.dimen.header_depth_width)  int mHeaderDepthWidth;
-  @BindDimen(R.dimen.header_depth_gap)    int mHeaderDepthGap;
+  @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingLayout;
+  @Bind(R.id.toolbar) Toolbar mToolbar;
+  @Bind(R.id.item_content_web) ObservableWebView mContentView;
+  @Bind(R.id.item_comments) WebView mComments;
+  @Bind(R.id.toolbar_overlay) View mOverLayView;
+  @Bind(R.id.item_title) TextView mArticleName;
+  @Bind(R.id.item_subtitle) TextView mArticleDescription;
+  @Bind(R.id.app_bar) AppBarLayout mAppBarLayout;
+  @Bind(R.id.toolbar_layout) CollapsingToolbarLayout mToolBarLayout;
+  @Bind(R.id.drawer_layout) DrawerLayout mMenuLayout;
+  @Bind(R.id.html_headers_container) LinearLayout mMenuContainer;
+  @BindDimen(R.dimen.header_depth_width) int mHeaderDepthWidth;
+  @BindDimen(R.dimen.header_depth_gap) int mHeaderDepthGap;
 
   private Realm mRealm;
   private PublicItem mPublicItem;
   private Element mMenuAnchor;
   // Title support
+  private AppBarLayout.Behavior mAppBarBehavior;
   private AlphaForegroundColorSpan mTitleColorSpan;
   private SpannableString mSpannableTitle;
   private SpannableString mSpannableSubtitle;
@@ -148,7 +152,7 @@ public class ItemDetailActivity2 extends BaseActivity implements Callback<Articl
 
     trySetupCommentView();
 
-    // mAppBarLayout.addOnOffsetChangedListener(mOffsetChangedListener);
+    mAppBarLayout.addOnOffsetChangedListener(mOffsetChangedListener);
 
     mArticleDescription.setClickable(true);
     mArticleDescription.setMovementMethod(LinkMovementMethod.getInstance());
@@ -212,16 +216,10 @@ public class ItemDetailActivity2 extends BaseActivity implements Callback<Articl
 
       @Override public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
-        // TODO show loading dialog here
-        Log.e(TAG, "onPageStarted() called with: " + "view = [" + view + "], url = [" + url + "]," +
-            " favicon = [" + favicon + "]");
       }
 
       @Override public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
-        // TODO dismiss loading dialog here
-        Log.e(TAG, "onPageFinished() called with: " + "view = [" + view + "], url = [" + url + "]");
-        // Log.d(TAG, "onPageFinished: " + view.getScrollY() + " | " + view.getTop());
       }
     });
 
@@ -238,7 +236,7 @@ public class ItemDetailActivity2 extends BaseActivity implements Callback<Articl
         }
       }
     });
-
+    mContentView.setOnScrollListener(this);
   }
 
   private void trySetupCommentView() {
@@ -445,4 +443,20 @@ public class ItemDetailActivity2 extends BaseActivity implements Callback<Articl
     return super.onOptionsItemSelected(item);
   }
 
+  @Bind(R.id.main_container) CoordinatorLayout mMainContainer;
+  @BindDimen(R.dimen.app_bar_min_offset) int mMinOffset;
+
+  @Override public void onScrolled(View view, int scrollX, int scrollY, int oldX, int oldY) {
+    int diffY = scrollY - oldY;
+    float oldTransY = mToolbarLayoutOffset;
+    mAppBarBehavior = (AppBarLayout.Behavior) ((CoordinatorLayout.LayoutParams)
+        mAppBarLayout.getLayoutParams()).getBehavior();
+    if (mAppBarBehavior != null) {
+      mAppBarBehavior.setHeaderTopBottomOffset(mMainContainer,
+          mAppBarLayout, (int) (oldTransY - diffY), -mMinOffset, Math.min(0, mMinOffset - scrollY));
+    }
+
+    mToolBarLayout.setScrimsShown(mToolBarLayout
+        .shouldTriggerScrimOffset(mToolbarLayoutOffset));
+  }
 }

@@ -712,9 +712,10 @@ public class AppBarLayout extends LinearLayout {
       }
     }
 
-    @Override int setHeaderTopBottomOffset(CoordinatorLayout coordinatorLayout,
-                                           AppBarLayout header, int newOffset, int minOffset, int
-                                               maxOffset) {
+    @Override
+    public int setHeaderTopBottomOffset(CoordinatorLayout coordinatorLayout,
+                                        AppBarLayout header, int newOffset, int minOffset, int
+                                            maxOffset) {
       final int curOffset = getTopBottomOffsetForScrollingSibling();
       int consumed = 0;
 

@@ -36,4 +36,5 @@
 
     <dimen name="detail_bar_height">144dp</dimen>
     <dimen name="detail_title_margin_top">56dp</dimen>
+    <dimen name="app_bar_min_offset">144dp</dimen>
 </resources>

@@ -175,7 +175,7 @@ public class HeaderBehavior<V extends View> extends ViewOffsetBehavior<V> {
     return true;
   }
 
-  int setHeaderTopBottomOffset(CoordinatorLayout parent, V header, int newOffset) {
+  public int setHeaderTopBottomOffset(CoordinatorLayout parent, V header, int newOffset) {
     return setHeaderTopBottomOffset(parent, header, newOffset,
         Integer.MIN_VALUE, Integer.MAX_VALUE);
   }

@@ -73,6 +73,7 @@
             android:name=".activities.ItemDetailActivity2"
             android:label="@string/title_activity_item_detail"
             android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Attiq.Theme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

@@ -964,6 +964,10 @@ public class CollapsingToolbarLayout extends FrameLayout {
       return;
     }
 
+    if (mToolbar == null) {
+      return;
+    }
+
     mLastTitleAlpha = alpha;
     CharSequence title = mToolbar.getTitle();
     CharSequence subTitle = mToolbar.getSubtitle();
