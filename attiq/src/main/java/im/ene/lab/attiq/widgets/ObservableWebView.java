@@ -39,4 +39,5 @@ public class ObservableWebView extends WebView {
 
     void onScrolled(View view, int scrollX, int scrollY, int oldX, int oldY);
   }
+
 }

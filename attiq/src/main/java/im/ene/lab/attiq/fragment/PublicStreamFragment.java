@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import im.ene.lab.attiq.activities.ItemDetailActivity2;
+import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
 import im.ene.lab.attiq.adapters.BaseListAdapter;
 import im.ene.lab.attiq.adapters.TimeLineAdapter;
@@ -57,7 +57,7 @@ public class PublicStreamFragment extends RealmListFragment<PublicItem> {
       }
 
       @Override public void onItemContentClick(PublicItem item) {
-        startActivity(ItemDetailActivity2.createIntent(getContext(), item));
+        startActivity(ItemDetailActivity.createIntent(getContext(), item));
       }
     };
 

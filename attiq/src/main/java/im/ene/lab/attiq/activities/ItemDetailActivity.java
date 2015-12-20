@@ -53,7 +53,6 @@ import im.ene.lab.attiq.util.HtmlUtil;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
-import im.ene.lab.attiq.widgets.ScrollingWebView;
 import im.ene.lab.attiq.widgets.drawable.ThreadedCommentDrawable;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AppBarLayout;
@@ -77,7 +76,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   @Bind(R.id.sliding_layout)              SlidingUpPanelLayout mSlidingLayout;
   @Bind(R.id.toolbar)                     Toolbar mToolbar;
-  @Bind(R.id.item_content_web)            ScrollingWebView mContentView;
+  @Bind(R.id.item_content_web)            WebView mContentView;
   @Bind(R.id.item_comments)               WebView mComments;
   @Bind(R.id.toolbar_overlay)             View mOverLayView;
   @Bind(R.id.item_title)                  TextView mArticleName;
@@ -226,7 +225,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
           mMenuLayout.closeDrawer(GravityCompat.END);
         }
         if (numberOfMatches > 0 && mMenuAnchor != null && mContentView != null) {
-          mContentView.clearMatches();
+          // mContentView.clearMatches();
           mContentView.loadUrl("javascript:scrollToElement(\"" + mMenuAnchor.text() + "\");");
         }
       }

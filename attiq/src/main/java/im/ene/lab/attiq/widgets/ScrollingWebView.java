@@ -311,7 +311,7 @@ public class ScrollingWebView extends WebView
 
   /**
    * @return The maximum amount this scroll view will scroll in response to
-   *   an arrow event.
+   * an arrow event.
    */
   public int getMaxScrollAmount() {
     return (int) (MAX_SCROLL_FACTOR * getHeight());
@@ -352,7 +352,6 @@ public class ScrollingWebView extends WebView
    * Indicates whether this ScrollView's content is stretched to fill the viewport.
    *
    * @return True if the content fills the viewport, false otherwise.
-   *
    * @attr ref android.R.styleable#ScrollView_fillViewport
    */
   public boolean isFillViewport() {
@@ -364,8 +363,7 @@ public class ScrollingWebView extends WebView
    * the viewport or not.
    *
    * @param fillViewport True to stretch the content's height to the viewport's
-   *        boundaries, false otherwise.
-   *
+   *                     boundaries, false otherwise.
    * @attr ref android.R.styleable#ScrollView_fillViewport
    */
   public void setFillViewport(boolean fillViewport) {
@@ -384,6 +382,7 @@ public class ScrollingWebView extends WebView
 
   /**
    * Set whether arrow scrolling will animate its transition.
+   *
    * @param smoothScrollingEnabled whether arrow scrolling will animate its transition
    */
   public void setSmoothScrollingEnabled(boolean smoothScrollingEnabled) {
@@ -616,7 +615,7 @@ public class ScrollingWebView extends WebView
     vtev.offsetLocation(0, mNestedYOffset);
 
     switch (actionMasked) {
-      case MotionEvent.ACTION_DOWN: {
+      case MotionEvent.ACTION_DOWN:
         if ((mIsBeingDragged = !mScroller.isFinished())) {
           final ViewParent parent = getParent();
           if (parent != null) {
@@ -637,7 +636,6 @@ public class ScrollingWebView extends WebView
         mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
         startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
         break;
-      }
       case MotionEvent.ACTION_MOVE:
         final int activePointerIndex = MotionEventCompat.findPointerIndex(ev,
             mActivePointerId);
@@ -908,7 +906,7 @@ public class ScrollingWebView extends WebView
    * @param bottom   the bottom offset of the bounds in which a focusable must
    *                 be found
    * @return the next focusable component in the bounds or null if none can
-   *         be found
+   * be found
    */
   private View findFocusableViewInBounds(boolean topFocus, int top, int bottom) {
 
@@ -1132,7 +1130,7 @@ public class ScrollingWebView extends WebView
 
   /**
    * @return whether the descendant of this scroll view is scrolled off
-   *  screen.
+   * screen.
    */
   private boolean isOffScreen(View descendant) {
     return !isWithinDeltaOfScreen(descendant, 0, getHeight());
@@ -1140,7 +1138,7 @@ public class ScrollingWebView extends WebView
 
   /**
    * @return whether the descendant of this scroll view is within delta
-   *  pixels of being on the screen.
+   * pixels of being on the screen.
    */
   private boolean isWithinDeltaOfScreen(View descendant, int delta, int height) {
     descendant.getDrawingRect(mTempRect);
@@ -1204,6 +1202,7 @@ public class ScrollingWebView extends WebView
   /**
    * <p>The scroll range of a scroll view is the overall height of all of its
    * children.</p>
+   *
    * @hide
    */
   @Override
@@ -1211,31 +1210,41 @@ public class ScrollingWebView extends WebView
     return super.computeVerticalScrollRange();
   }
 
-  /** @hide */
+  /**
+   * @hide
+   */
   @Override
   public int computeVerticalScrollOffset() {
     return Math.max(0, super.computeVerticalScrollOffset());
   }
 
-  /** @hide */
+  /**
+   * @hide
+   */
   @Override
   public int computeVerticalScrollExtent() {
     return super.computeVerticalScrollExtent();
   }
 
-  /** @hide */
+  /**
+   * @hide
+   */
   @Override
   public int computeHorizontalScrollRange() {
     return super.computeHorizontalScrollRange();
   }
 
-  /** @hide */
+  /**
+   * @hide
+   */
   @Override
   public int computeHorizontalScrollOffset() {
     return super.computeHorizontalScrollOffset();
   }
 
-  /** @hide */
+  /**
+   * @hide
+   */
   @Override
   public int computeHorizontalScrollExtent() {
     return super.computeHorizontalScrollExtent();
@@ -1417,7 +1426,7 @@ public class ScrollingWebView extends WebView
   /**
    * When looking for focus in children of a scroll view, need to be a little
    * more careful not to give focus to something that is scrolled off screen.
-   *
+   * <p/>
    * This is more expensive than the default {@link android.view.ViewGroup}
    * implementation, otherwise this behavior might have been made the default.
    */
@@ -1544,7 +1553,7 @@ public class ScrollingWebView extends WebView
     int height = getHeight() - getPaddingBottom() - getPaddingTop();
 
     mScroller.fling(getScrollX(), getScrollY(), 0, velocityY, 0, 0, 0,
-        Math.max(0, getScrollRange()), 0, height/2);
+        Math.max(0, getScrollRange()), 0, height / 2);
 
     ViewCompat.postInvalidateOnAnimation(this);
   }
@@ -1575,7 +1584,7 @@ public class ScrollingWebView extends WebView
 
   /**
    * {@inheritDoc}
-   *
+   * <p/>
    * <p>This version also clamps the scrolling to the bounds of our child.
    */
   @Override
@@ -1654,13 +1663,13 @@ public class ScrollingWebView extends WebView
              */
       return 0;
     }
-    if ((my+n) > child) {
+    if ((my + n) > child) {
             /* this case:
              *                    |------ me ------|
              *     |------ child ------|
              *     |-- mScrollX --|
              */
-      return child-my;
+      return child - my;
     }
     return n;
   }

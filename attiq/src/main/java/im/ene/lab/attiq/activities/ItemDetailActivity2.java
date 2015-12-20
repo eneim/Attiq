@@ -113,6 +113,7 @@ public class ItemDetailActivity2 extends BaseActivity
           }
         }
       };
+
   private String mItemUuid;
 
   public static Intent createIntent(Context context, @NonNull PublicItem item) {
@@ -447,13 +448,15 @@ public class ItemDetailActivity2 extends BaseActivity
   @BindDimen(R.dimen.app_bar_min_offset) int mMinOffset;
 
   @Override public void onScrolled(View view, int scrollX, int scrollY, int oldX, int oldY) {
-    int diffY = scrollY - oldY;
-    float oldTransY = mToolbarLayoutOffset;
     mAppBarBehavior = (AppBarLayout.Behavior) ((CoordinatorLayout.LayoutParams)
         mAppBarLayout.getLayoutParams()).getBehavior();
+
+    // Other use case:
+    // Max offset by scroll flag:
+    // enterAlways --> Math.min(0, mMinOffset - diffY)
     if (mAppBarBehavior != null) {
       mAppBarBehavior.setHeaderTopBottomOffset(mMainContainer,
-          mAppBarLayout, (int) (oldTransY - diffY), -mMinOffset, Math.min(0, mMinOffset - scrollY));
+          mAppBarLayout, -scrollY, -mMinOffset, Math.min(0, mMinOffset - scrollY));
     }
 
     mToolBarLayout.setScrimsShown(mToolBarLayout
