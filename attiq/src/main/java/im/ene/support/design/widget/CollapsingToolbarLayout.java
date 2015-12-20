@@ -23,7 +23,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -892,7 +891,6 @@ public class CollapsingToolbarLayout extends FrameLayout {
     @Override
     public void onOffsetChanged(AppBarLayout layout, int verticalOffset) {
       mCurrentOffset = verticalOffset;
-      Log.d(TAG, "onOffsetChanged: " + verticalOffset);
       final int insetTop = getInsetTop();
       final int scrollRange = layout.getTotalScrollRange();
 
@@ -963,6 +961,10 @@ public class CollapsingToolbarLayout extends FrameLayout {
 
   private void setTitleAlpha(float alpha) {
     if (alpha == mLastTitleAlpha) {
+      return;
+    }
+
+    if (mToolbar == null) {
       return;
     }
 

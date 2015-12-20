@@ -20,6 +20,7 @@ import im.ene.lab.attiq.data.ApiClient;
 import im.ene.lab.attiq.data.vault.PublicItem;
 import im.ene.lab.attiq.data.vault.PublicTag;
 import im.ene.lab.attiq.data.vault.PublicUser;
+import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
 import io.realm.Realm;
@@ -179,10 +180,14 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
         String userName = item.getUser().getUrlName();
         if (item.getCreatedAt().equals(item.getUpdatedAt())) {
           mItemUserInfo.setText(Html.fromHtml(mContext.getString(R.string.item_user_info,
-              userName, userName, item.getCreatedAtInWords())));
+              userName, userName,
+              TimeUtil.beautify(item.getCreatedAtAsSeconds())
+          )));
         } else {
           mItemUserInfo.setText(Html.fromHtml(mContext.getString(R.string.item_user_info_edited,
-              userName, userName, item.getCreatedAtInWords(), userName, item.getUuid())));
+              userName, userName,
+              TimeUtil.beautify(item.getCreatedAtAsSeconds()),
+              userName, item.getUuid())));
         }
         mItemUserInfo.setVisibility(View.VISIBLE);
       } else {

@@ -713,12 +713,14 @@ public class AppBarLayout extends LinearLayout {
       }
     }
 
-    @Override int setHeaderTopBottomOffset(CoordinatorLayout coordinatorLayout,
-                                           AppBarLayout header, int newOffset, int minOffset, int
-                                               maxOffset) {
+    @Override
+    public int setHeaderTopBottomOffset(CoordinatorLayout coordinatorLayout,
+                                        AppBarLayout header, int newOffset, int minOffset, int
+                                            maxOffset) {
       final int curOffset = getTopBottomOffsetForScrollingSibling();
+      Log.d(TAG, "curOffset = [" + curOffset +  "], newOffset = [" + newOffset + "], " +
+          "minOffset = [" + minOffset + "], maxOffset = [" + maxOffset + "]");
       int consumed = 0;
-
       if (minOffset != 0 && curOffset >= minOffset
           && curOffset <= maxOffset) {
         // If we have some scrolling range, and we're currently within the min and max
@@ -842,9 +844,6 @@ public class AppBarLayout extends LinearLayout {
     @Override
     public boolean onNestedPreFling(CoordinatorLayout coordinatorLayout, AppBarLayout child, View
         target, float velocityX, float velocityY) {
-      Log.d(TAG, "onNestedPreFling() called with: " + "coordinatorLayout = [" + coordinatorLayout
-          + "], child = [" + child + "], target = [" + target + "], velocityX = [" + velocityX +
-          "], velocityY = [" + velocityY + "]");
       return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY);
     }
 
@@ -915,7 +914,6 @@ public class AppBarLayout extends LinearLayout {
         targetScrollingOffset = ((ScrollingView) target).computeVerticalScrollOffset();
       }
 
-      Log.e(TAG, "onNestedFling: " + targetScrollingOffset);
       boolean flung = false;
       if (!consumed) {
         // It has been consumed so let's fling ourselves
@@ -1095,10 +1093,6 @@ public class AppBarLayout extends LinearLayout {
         setTopAndBottomOffset(dependency.getHeight() + offset
             - getOverlapForOffset(dependency, offset));
 
-        Log.i(TAG, "updateOffset(): offset = [" + offset + "] "
-            + "parent = [" + parent.getClass().getSimpleName()
-            + "], child = [" + child.getClass().getSimpleName()
-            + "], dependency = [" + dependency.getClass().getSimpleName() + "]");
         return true;
       }
       return false;

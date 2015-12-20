@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="end">
 
-    <include layout="@layout/item_detail_content_main"/>
+    <include layout="@layout/item_detail_content_main_v2"/>
 
     <im.ene.lab.attiq.widgets.NotBadNavView
         android:layout_width="@dimen/menu_container_width"

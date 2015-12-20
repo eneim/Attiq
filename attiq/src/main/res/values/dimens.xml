@@ -25,4 +25,16 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="comment_container_expand">224dp</dimen>
     <dimen name="comment_container_collapse">48dp</dimen>
+
+    <dimen name="html_header_height">48dp</dimen>
+
+    <dimen name="menu_container_width">280dp</dimen>
+    <dimen name="header_text_padding">8dp</dimen>
+    <dimen name="header_depth_width">16dp</dimen>
+    <dimen name="header_depth_gap">0dp</dimen>
+    <dimen name="menu_container_top_free_space">96dp</dimen>
+
+    <dimen name="detail_bar_height">144dp</dimen>
+    <dimen name="detail_title_margin_top">56dp</dimen>
+    <dimen name="app_bar_min_offset">144dp</dimen>
 </resources>

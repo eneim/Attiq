@@ -7,7 +7,6 @@ import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ScrollerCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -88,8 +87,6 @@ public class HeaderBehavior<V extends View> extends ViewOffsetBehavior<V> {
               -VelocityTrackerCompat.getYVelocity(mVelocityTracker, mActivePointerId);
           mVelocityTracker.recycle();
           mVelocityTracker = null;
-
-          Log.e(TAG, "onInterceptTouchEvent() returned: " + yvel);
         }
         mActivePointerId = INVALID_POINTER;
         break;
@@ -178,7 +175,7 @@ public class HeaderBehavior<V extends View> extends ViewOffsetBehavior<V> {
     return true;
   }
 
-  int setHeaderTopBottomOffset(CoordinatorLayout parent, V header, int newOffset) {
+  public int setHeaderTopBottomOffset(CoordinatorLayout parent, V header, int newOffset) {
     return setHeaderTopBottomOffset(parent, header, newOffset,
         Integer.MIN_VALUE, Integer.MAX_VALUE);
   }
@@ -213,7 +210,6 @@ public class HeaderBehavior<V extends View> extends ViewOffsetBehavior<V> {
                    int dy, int minOffset, int maxOffset) {
     int offset = setHeaderTopBottomOffset(coordinatorLayout, header,
         getTopBottomOffsetForScrollingSibling() - dy, minOffset, maxOffset);
-    Log.d(TAG, "scroll() returned: " + offset);
     return offset;
   }
 
