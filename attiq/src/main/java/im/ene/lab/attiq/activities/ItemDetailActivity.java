@@ -42,13 +42,13 @@ import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.data.ApiClient;
+import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.event.Event;
 import im.ene.lab.attiq.data.event.ItemCommentsEvent;
 import im.ene.lab.attiq.data.event.ItemDetailEvent;
-import im.ene.lab.attiq.data.response.Article;
-import im.ene.lab.attiq.data.response.Comment;
-import im.ene.lab.attiq.data.vault.PublicItem;
+import im.ene.lab.attiq.data.api.v2.response.Article;
+import im.ene.lab.attiq.data.api.v2.response.Comment;
+import im.ene.lab.attiq.data.api.open.PublicItem;
 import im.ene.lab.attiq.util.HtmlUtil;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
@@ -249,7 +249,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   }
 
   public void onEventMainThread(ItemDetailEvent event) {
-    Article article = event.getArticle();
+    Article article = event.article;
     if (article != null) {
       mArticleName.setText(article.getTitle());
       mSpannableTitle = new SpannableString(article.getTitle());
@@ -367,8 +367,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   }
 
   public void onEventMainThread(ItemCommentsEvent event) {
-    if (event.isSuccess() && !UIUtil.isEmpty(event.getComments())) {
-      List<Comment> comments = event.getComments();
+    if (event.success && !UIUtil.isEmpty(event.comments)) {
+      List<Comment> comments = event.comments;
       final String html;
       try {
         html = IOUtil.readAllFromAssets(this, "html/comments.html");

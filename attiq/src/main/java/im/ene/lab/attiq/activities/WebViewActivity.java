@@ -9,7 +9,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.data.ApiClient;
+import im.ene.lab.attiq.data.api.ApiClient;
 
 /**
  * Created by eneim on 12/13/15.
@@ -24,8 +24,7 @@ public class WebViewActivity extends AppCompatActivity {
     mWebView = new WebView(this);
     setContentView(mWebView);
     mWebView.setWebViewClient(mWebClient);
-
-    mWebView.loadUrl(ApiClient.authCallback());
+    mWebView.loadUrl(ApiClient.authCallback(this));
   }
 
   private static final String TAG = "WebViewActivity";

@@ -25,11 +25,11 @@ import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.data.ApiClient;
-import im.ene.lab.attiq.data.Profile;
+import im.ene.lab.attiq.data.api.ApiClient;
+import im.ene.lab.attiq.data.api.open.Profile;
+import im.ene.lab.attiq.data.api.v2.response.AccessToken;
 import im.ene.lab.attiq.data.event.Event;
-import im.ene.lab.attiq.data.event.FetchedMasterEvent;
-import im.ene.lab.attiq.data.response.AccessToken;
+import im.ene.lab.attiq.data.event.ProfileFetchedEvent;
 import im.ene.lab.attiq.fragment.PublicStreamFragment;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
@@ -218,15 +218,15 @@ public class MainActivity extends BaseActivity
           realm.copyToRealmOrUpdate(profile);
           realm.commitTransaction();
           realm.close();
-          EventBus.getDefault().post(new FetchedMasterEvent(true, null, profile));
+          EventBus.getDefault().post(new ProfileFetchedEvent(true, null, profile));
         } else {
-          EventBus.getDefault().post(new FetchedMasterEvent(false,
+          EventBus.getDefault().post(new ProfileFetchedEvent(false,
               new Event.Error(response.code(), response.message()), null));
         }
       }
 
       @Override public void onFailure(Throwable error) {
-        EventBus.getDefault().post(new FetchedMasterEvent(false,
+        EventBus.getDefault().post(new ProfileFetchedEvent(false,
             new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
     });
@@ -255,14 +255,14 @@ public class MainActivity extends BaseActivity
     getMasterUser(PrefUtil.getCurrentToken());
   }
 
-  public void onEventMainThread(final FetchedMasterEvent event) {
-    if (event.isSuccess()) {
+  public void onEventMainThread(final ProfileFetchedEvent event) {
+    if (event.success) {
       if (PrefUtil.isFirstStart()) {
         PrefUtil.setFirstStart(false);
         mDrawerLayout.openDrawer(GravityCompat.START);
       }
-      if (event.getProfile() != null) {
-        updateMasterUser(event.getProfile());
+      if (event.profile != null) {
+        updateMasterUser(event.profile);
       }
     }
   }

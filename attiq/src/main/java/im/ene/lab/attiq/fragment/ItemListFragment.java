@@ -8,7 +8,7 @@ import android.view.View;
 import im.ene.lab.attiq.adapters.BaseListAdapter;
 import im.ene.lab.attiq.adapters.ItemListAdapter;
 import im.ene.lab.attiq.data.event.EventWrapper;
-import im.ene.lab.attiq.data.response.Article;
+import im.ene.lab.attiq.data.api.v2.response.Article;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import io.realm.RealmResults;
 import io.realm.Sort;

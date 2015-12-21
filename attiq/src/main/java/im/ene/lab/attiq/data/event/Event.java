@@ -7,21 +7,13 @@ import android.support.annotation.Nullable;
  */
 public class Event {
 
-  private boolean isSuccess;
+  public final boolean success;
 
-  @Nullable private Error error;
+  @Nullable public final Error error;
 
-  public Event(boolean isSuccess, @Nullable Error error) {
-    this.isSuccess = isSuccess;
+  public Event(boolean success, @Nullable Error error) {
+    this.success = success;
     this.error = error;
-  }
-
-  public boolean isSuccess() {
-    return isSuccess;
-  }
-
-  @Nullable public Error getError() {
-    return error;
   }
 
   public static class Error {

@@ -2,9 +2,8 @@ package im.ene.lab.attiq.data.event;
 
 import android.support.annotation.Nullable;
 
-import im.ene.lab.attiq.data.response.Comment;
+import im.ene.lab.attiq.data.api.v2.response.Comment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,14 +11,10 @@ import java.util.List;
  */
 public class ItemCommentsEvent extends Event {
 
-  private List<Comment> comments = new ArrayList<>();
+  public final List<Comment> comments;
 
   public ItemCommentsEvent(boolean isSuccess, @Nullable Error error, List<Comment> comments) {
     super(isSuccess, error);
     this.comments = comments;
-  }
-
-  public List<Comment> getComments() {
-    return comments;
   }
 }

@@ -5,7 +5,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import im.ene.lab.attiq.Attiq;
-import im.ene.lab.attiq.data.request.BaseRequest;
+import im.ene.lab.attiq.data.api.base.Header;
 
 import java.io.IOException;
 
@@ -48,8 +48,8 @@ public class PrefUtil {
     @Override public Response intercept(Chain chain) throws IOException {
       Request.Builder requestBuilder = chain.request().newBuilder();
       if (!UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
-        requestBuilder.addHeader(BaseRequest.Headers.AUTHORIZATION,
-            BaseRequest.Headers.authorization(PrefUtil.getCurrentToken()));
+        requestBuilder.addHeader(Header.Request.AUTHORIZATION,
+            Header.Request.authorization(PrefUtil.getCurrentToken()));
       }
 
       return chain.proceed(requestBuilder.build());
