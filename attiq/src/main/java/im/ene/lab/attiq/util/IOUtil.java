@@ -5,15 +5,13 @@ import com.google.gson.GsonBuilder;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.support.annotation.NonNull;
 
 import okio.BufferedSource;
 import okio.Okio;
 
-import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
 /**
@@ -31,43 +29,17 @@ public class IOUtil {
     return GSON;
   }
 
-  public static String readRaw(Context context, int rawFile) throws IOException {
+  public static String readRaw(@NonNull Context context, int rawFile) throws IOException {
     InputStream stream = context.getResources().openRawResource(rawFile);
     BufferedSource buffer = Okio.buffer(Okio.source(stream));
     return buffer.readString(Charset.forName("utf-8"));
   }
 
-  public static String readAllFromAssets(Context context, String target) throws IOException {
-    AssetManager as = context.getApplicationContext().getResources().getAssets();
-
-    StringBuilder sb = new StringBuilder();
-
-    InputStream is = null;
-    BufferedReader br = null;
-    try {
-      is = as.open(target);
-      br = new BufferedReader(new InputStreamReader(is));
-
-      String s;
-      while ((s = br.readLine()) != null) {
-        sb.append(s).append("\n");
-      }
-    } finally {
-      closeQuietly(is);
-      closeQuietly(br);
-    }
-
-    return sb.toString();
+  public static String readAssets(@NonNull Context context, String fileName) throws IOException {
+    AssetManager assetManager = context.getResources().getAssets();
+    InputStream stream = assetManager.open(fileName);
+    BufferedSource buffer = Okio.buffer(Okio.source(stream));
+    return buffer.readString(Charset.forName("utf-8"));
   }
 
-  public static void closeQuietly(Closeable closeable) {
-    if (closeable == null) {
-      return;
-    }
-    try {
-      closeable.close();
-    } catch (IOException ignore) {
-      //Do nothing
-    }
-  }
 }

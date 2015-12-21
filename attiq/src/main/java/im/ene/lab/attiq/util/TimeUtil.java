@@ -60,4 +60,5 @@ public class TimeUtil {
   private static String beautify(long time, @NonNull TimeUnit unit) {
     return PRETTY_TIME.format(new Date(unit.toMillis(time)));
   }
+
 }

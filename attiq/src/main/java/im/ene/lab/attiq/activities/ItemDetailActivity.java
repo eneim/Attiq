@@ -267,11 +267,14 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       mSpannableSubtitle = new SpannableString(subTitle);
 
       updateTitle();
+
       buildArticleComments(article);
+
       buildArticleMenu(article);
+
       final String html;
       try {
-        html = IOUtil.readAllFromAssets(this, "html/article.html");
+        html = IOUtil.readAssets(this, "html/article.html");
 
         Document doc = Jsoup.parse(html);
         Element elem = doc.getElementById("content");
@@ -371,14 +374,14 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       List<Comment> comments = event.comments;
       final String html;
       try {
-        html = IOUtil.readAllFromAssets(this, "html/comments.html");
+        html = IOUtil.readAssets(this, "html/comments.html");
 
         Document fullBody = Jsoup.parse(html);
         Element content = fullBody.getElementById("content");
 
         // TODO support comment ordering
         for (Comment comment : comments) {
-          String commentHtml = IOUtil.readAllFromAssets(this, "html/comment.html");
+          String commentHtml = IOUtil.readAssets(this, "html/comment.html");
           commentHtml = commentHtml
               .replace("{user_name}", comment.getUser().getId())
               .replace("{comment_time}", TimeUtil.commentTime(comment.getUpdatedAt()))

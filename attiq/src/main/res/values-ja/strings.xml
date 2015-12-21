@@ -9,8 +9,10 @@
     <string name="action_settings">設定</string>
     <string name="action_item_menu">メーニュー</string>
     <string name="item_posted_info">%1$s さんが%2$s投稿した</string>
-    <string name="item_user_info"><![CDATA[<a href="http://qiita.com/%1$s">%2$s</a> さんが%3$s投稿した]]></string>
-    <string name="item_user_info_edited"><![CDATA[<a href="http://qiita.com/%1$s">%2$s</a> さんが%3$s投稿した、<a href="http://qiita.com/%4$s/items/%5$s/revisions">修正あり</a>]]></string>
+    <string name="item_user_info"><![CDATA[<a href="http://qiita.com/%1$s">%2$s</a>、%3$s]]></string>
+    <string name="item_user_info_edited">
+        <![CDATA[<a href="http://qiita.com/%1$s">%2$s</a>、%3$s、<a href="http://qiita.com/%4$s/items/%5$s/revisions">修正あり</a>]]>
+    </string>
     <string name="title_activity_item_detail">アイテム詳細</string>
     <string name="title_activity_profile">プロフィル</string>
 </resources>
