@@ -1,5 +1,6 @@
 package im.ene.lab.attiq.activities;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -43,12 +44,12 @@ import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
+import im.ene.lab.attiq.data.api.open.PublicItem;
+import im.ene.lab.attiq.data.api.v2.response.Article;
+import im.ene.lab.attiq.data.api.v2.response.Comment;
 import im.ene.lab.attiq.data.event.Event;
 import im.ene.lab.attiq.data.event.ItemCommentsEvent;
 import im.ene.lab.attiq.data.event.ItemDetailEvent;
-import im.ene.lab.attiq.data.api.v2.response.Article;
-import im.ene.lab.attiq.data.api.v2.response.Comment;
-import im.ene.lab.attiq.data.api.open.PublicItem;
 import im.ene.lab.attiq.util.HtmlUtil;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
@@ -74,19 +75,20 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   private static final String TAG = "ItemDetailActivity";
 
-  @Bind(R.id.sliding_layout)              SlidingUpPanelLayout mSlidingLayout;
-  @Bind(R.id.toolbar)                     Toolbar mToolbar;
-  @Bind(R.id.item_content_web)            WebView mContentView;
-  @Bind(R.id.item_comments)               WebView mComments;
-  @Bind(R.id.toolbar_overlay)             View mOverLayView;
-  @Bind(R.id.item_title)                  TextView mArticleName;
-  @Bind(R.id.item_subtitle)               TextView mArticleDescription;
-  @Bind(R.id.app_bar)                     AppBarLayout mAppBarLayout;
-  @Bind(R.id.toolbar_layout)              CollapsingToolbarLayout mToolBarLayout;
-  @Bind(R.id.drawer_layout)               DrawerLayout mMenuLayout;
-  @Bind(R.id.html_headers_container)      LinearLayout mMenuContainer;
-  @BindDimen(R.dimen.header_depth_width)  int mHeaderDepthWidth;
-  @BindDimen(R.dimen.header_depth_gap)    int mHeaderDepthGap;
+  @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingLayout;
+  @Bind(R.id.toolbar) Toolbar mToolbar;
+  @Bind(R.id.item_content_web) WebView mContentView;
+  @Bind(R.id.item_comments) WebView mComments;
+  @Bind(R.id.toolbar_overlay) View mOverLayView;
+  @Bind(R.id.item_title) TextView mArticleName;
+  @Bind(R.id.item_subtitle) TextView mArticleDescription;
+  @Bind(R.id.app_bar) AppBarLayout mAppBarLayout;
+  @Bind(R.id.toolbar_layout) CollapsingToolbarLayout mToolBarLayout;
+  @Bind(R.id.drawer_layout) DrawerLayout mMenuLayout;
+  @Bind(R.id.html_headers_container) LinearLayout mMenuContainer;
+  @Bind(R.id.loading_container) View mLoadingView;
+  @BindDimen(R.dimen.header_depth_width) int mHeaderDepthWidth;
+  @BindDimen(R.dimen.header_depth_gap) int mHeaderDepthGap;
 
   private Realm mRealm;
   private PublicItem mPublicItem;
@@ -190,9 +192,14 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mContentView.setVerticalScrollBarEnabled(false);
     mContentView.setHorizontalScrollBarEnabled(false);
     mContentView.getSettings().setJavaScriptEnabled(true);
-    mContentView.setWebChromeClient(new WebChromeClient());
-    mContentView.setWebViewClient(new WebViewClient() {
+    mContentView.setWebChromeClient(new WebChromeClient() {
+      @Override public void onProgressChanged(WebView view, int newProgress) {
+        super.onProgressChanged(view, newProgress);
+        Log.d(TAG, "newProgress = [" + newProgress + "]");
+      }
+    });
 
+    mContentView.setWebViewClient(new WebViewClient() {
       @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
         if (url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
           startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
@@ -204,16 +211,24 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
       @Override public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
-        // TODO show loading dialog here
-        Log.e(TAG, "onPageStarted() called with: " + "view = [" + view + "], url = [" + url + "]," +
-            " favicon = [" + favicon + "]");
+        if (mLoadingView != null) {
+          mLoadingView.setAlpha(1.f);
+          mLoadingView.setVisibility(View.VISIBLE);
+        }
       }
 
       @Override public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
-        // TODO dismiss loading dialog here
-        Log.e(TAG, "onPageFinished() called with: " + "view = [" + view + "], url = [" + url + "]");
-        // Log.d(TAG, "onPageFinished: " + view.getScrollY() + " | " + view.getTop());
+        if (mLoadingView != null) {
+          mLoadingView.animate().alpha(0.f).setDuration(300)
+              .setListener(new UIUtil.AnimationEndListener() {
+                @Override public void onAnimationEnd(Animator animation) {
+                  if (mLoadingView != null) {
+                    mLoadingView.setVisibility(View.GONE);
+                  }
+                }
+              }).start();
+        }
       }
     });
 

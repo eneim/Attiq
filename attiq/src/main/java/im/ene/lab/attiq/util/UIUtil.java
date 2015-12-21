@@ -1,5 +1,6 @@
 package im.ene.lab.attiq.util;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
@@ -47,6 +48,17 @@ public class UIUtil {
       return context.getResources().getColor(colorId, context.getTheme());
     } else {
       return context.getResources().getColor(colorId);
+    }
+  }
+
+  public static abstract class AnimationEndListener implements Animator.AnimatorListener {
+    @Override public void onAnimationStart(Animator animation) {
+    }
+
+    @Override public void onAnimationCancel(Animator animation) {
+    }
+
+    @Override public void onAnimationRepeat(Animator animation) {
     }
   }
 }

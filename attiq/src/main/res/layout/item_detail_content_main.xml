@@ -1,116 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.sothree.slidinguppanel.SlidingUpPanelLayout
-    android:id="@+id/sliding_layout"
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="bottom"
-    app:umanoFadeColor="#24000000"
-    app:umanoPanelHeight="@dimen/comment_container_collapse"
-    app:umanoScrollableView="@+id/comments_container"
-    app:umanoShadowHeight="2dp"
-    tools:context=".activities.ItemDetailActivity"
-    tools:showIn="@layout/activity_item_detail">
+    android:fitsSystemWindows="true">
 
-    <android.support.design.widget.CoordinatorLayout
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        tools:context="im.ene.lab.attiq.activities.ItemDetailActivity">
+        android:gravity="bottom"
+        app:umanoFadeColor="#24000000"
+        app:umanoPanelHeight="@dimen/comment_container_collapse"
+        app:umanoScrollableView="@+id/comments_container"
+        app:umanoShadowHeight="2dp"
+        tools:context=".activities.ItemDetailActivity"
+        tools:showIn="@layout/activity_item_detail">
 
-        <im.ene.support.design.widget.AppBarLayout
-            android:id="@+id/app_bar"
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            android:theme="@style/Attiq.Theme.AppBarOverlay">
+            tools:context="im.ene.lab.attiq.activities.ItemDetailActivity">
 
-            <im.ene.support.design.widget.CollapsingToolbarLayout
-                android:id="@+id/toolbar_layout"
+            <im.ene.support.design.widget.AppBarLayout
+                android:id="@+id/app_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fitsSystemWindows="true"
-                android:theme="@style/Attiq.Theme.AppBarOverlay"
-                app:contentScrim="?attr/colorPrimary"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                app:titleEnabled="false"
-                app:toolbarId="@+id/toolbar">
+                android:theme="@style/Attiq.Theme.AppBarOverlay">
 
-                <LinearLayout
-                    android:id="@+id/toolbar_overlay"
+                <im.ene.support.design.widget.CollapsingToolbarLayout
+                    android:id="@+id/toolbar_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginTop="?attr/actionBarSize"
-                    android:orientation="vertical">
+                    android:fitsSystemWindows="true"
+                    android:theme="@style/Attiq.Theme.AppBarOverlay"
+                    app:contentScrim="?attr/colorPrimary"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                    app:titleEnabled="false"
+                    app:toolbarId="@+id/toolbar">
 
-                    <TextView
-                        android:id="@+id/item_title"
+                    <LinearLayout
+                        android:id="@+id/toolbar_overlay"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/activity_vertical_margin"
-                        android:layout_marginLeft="?attr/actionBarSize"
-                        android:layout_marginRight="@dimen/activity_vertical_margin"
-                        android:layout_marginStart="?attr/actionBarSize"
-                        android:gravity="left|start"
-                        android:padding="2dp"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"/>
+                        android:layout_gravity="bottom"
+                        android:layout_marginTop="?attr/actionBarSize"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/item_subtitle"
+                        <TextView
+                            android:id="@+id/item_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/activity_vertical_margin"
+                            android:layout_marginLeft="?attr/actionBarSize"
+                            android:layout_marginRight="@dimen/activity_vertical_margin"
+                            android:layout_marginStart="?attr/actionBarSize"
+                            android:gravity="left|start"
+                            android:padding="2dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"/>
+
+                        <TextView
+                            android:id="@+id/item_subtitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/activity_vertical_margin"
+                            android:layout_marginEnd="@dimen/activity_vertical_margin"
+                            android:layout_marginLeft="?attr/actionBarSize"
+                            android:layout_marginRight="@dimen/activity_vertical_margin"
+                            android:layout_marginStart="?attr/actionBarSize"
+                            android:gravity="left|start"
+                            android:maxLines="2"
+                            android:padding="2dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"/>
+                    </LinearLayout>
+
+                    <android.support.v7.widget.Toolbar
+                        android:id="@id/toolbar"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/activity_vertical_margin"
-                        android:layout_marginEnd="@dimen/activity_vertical_margin"
-                        android:layout_marginLeft="?attr/actionBarSize"
-                        android:layout_marginRight="@dimen/activity_vertical_margin"
-                        android:layout_marginStart="?attr/actionBarSize"
-                        android:gravity="left|start"
-                        android:maxLines="2"
-                        android:padding="2dp"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"/>
-                </LinearLayout>
+                        android:layout_height="?attr/actionBarSize"
+                        app:layout_collapseMode="pin"
+                        app:popupTheme="@style/Attiq.Theme.AppBarOverlay"
+                        app:subtitleTextAppearance="@style/Attiq.Widget.Toolbar.Subtitle"/>
 
-                <android.support.v7.widget.Toolbar
-                    android:id="@id/toolbar"
+                </im.ene.support.design.widget.CollapsingToolbarLayout>
+            </im.ene.support.design.widget.AppBarLayout>
+
+            <include layout="@layout/content_item_detail"/>
+
+        </android.support.design.widget.CoordinatorLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/comment_container_expand">
+
+            <View
+                android:id="@+id/actions_container"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/comment_container_collapse"
+                android:background="@android:color/white"
+                android:elevation="1dp"/>
+
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/comments_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/actions_container">
+
+                <WebView
+                    android:id="@+id/item_comments"
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    app:layout_collapseMode="pin"
-                    app:popupTheme="@style/Attiq.Theme.AppBarOverlay"
-                    app:subtitleTextAppearance="@style/Attiq.Widget.Toolbar.Subtitle"/>
+                    android:layout_height="wrap_content"/>
+            </android.support.v4.widget.NestedScrollView>
 
-            </im.ene.support.design.widget.CollapsingToolbarLayout>
-        </im.ene.support.design.widget.AppBarLayout>
+        </RelativeLayout>
 
-        <include layout="@layout/content_item_detail"/>
-
-    </android.support.design.widget.CoordinatorLayout>
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
     <RelativeLayout
+        android:id="@+id/loading_container"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/comment_container_expand">
+        android:layout_height="match_parent"
+        android:background="#f2f2f2">
 
-        <View
-            android:id="@+id/actions_container"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/comment_container_collapse"
-            android:background="@android:color/white"
-            android:elevation="1dp"/>
-
-        <android.support.v4.widget.NestedScrollView
-            android:id="@+id/comments_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/actions_container">
-
-            <WebView
-                android:id="@+id/item_comments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </android.support.v4.widget.NestedScrollView>
+        <ProgressBar
+            style="?attr/progressBarStyle"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_centerInParent="true"/>
 
     </RelativeLayout>
-
-</com.sothree.slidinguppanel.SlidingUpPanelLayout>
+</FrameLayout>
