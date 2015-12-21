@@ -415,6 +415,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       } catch (IOException e) {
         e.printStackTrace();
       }
+      mSlidingLayout.setTouchEnabled(true);
+    } else {
+      mSlidingLayout.setTouchEnabled(false);
     }
   }
 
