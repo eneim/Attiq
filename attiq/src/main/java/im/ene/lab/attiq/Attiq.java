@@ -57,14 +57,7 @@ public class Attiq extends Application {
           @Override public void migrate(DynamicRealm dynamicRealm, long oldVer, long newVer) {
 
           }
-        })
-        .build();
-
-    try {
-    //  Realm.deleteRealm(config);
-    } catch (IllegalStateException er) {
-      er.printStackTrace();
-    }
+        }).build();
 
     Realm.setDefaultConfiguration(config);
 
