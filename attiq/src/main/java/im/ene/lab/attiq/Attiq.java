@@ -3,11 +3,7 @@ package im.ene.lab.attiq;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
@@ -65,7 +61,7 @@ public class Attiq extends Application {
         .build();
 
     try {
-      Realm.deleteRealm(config);
+    //  Realm.deleteRealm(config);
     } catch (IllegalStateException er) {
       er.printStackTrace();
     }

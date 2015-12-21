@@ -74,6 +74,7 @@ public abstract class RealmListFragment<E extends RealmObject>
    */
   @Bind(R.id.recycler_view) NonEmptyRecyclerView mRecyclerView;
   @Bind(R.id.swipe_refresh_layout) MultiSwipeRefreshLayout mSwipeRefreshLayout;
+  @Bind(R.id.loading_container) View mLoadingView;
   @Bind(R.id.view_empty) View mEmptyView;
   @Bind(R.id.view_error) View mErrorView;
 
@@ -116,6 +117,10 @@ public abstract class RealmListFragment<E extends RealmObject>
       mPage++;
     } else if (isRefreshing) {
       mPage = DEFAULT_FIRST_PAGE;
+    }
+
+    if (isRefreshing) {
+      mLoadingView.setVisibility(View.VISIBLE);
     }
 
     mAdapter.loadItems(isLoadingMore, mPage, DEFAULT_THRESHOLD, null, this);
@@ -215,6 +220,10 @@ public abstract class RealmListFragment<E extends RealmObject>
     if (mRecyclerView != null) {
       mRecyclerView.setErrorViewShown(response.code() != 200);
     }
+
+    if (mLoadingView != null) {
+      mLoadingView.setVisibility(View.GONE);
+    }
   }
 
   @Override public void onFailure(Throwable t) {
@@ -228,6 +237,10 @@ public abstract class RealmListFragment<E extends RealmObject>
 
     if (mRecyclerView != null) {
       mRecyclerView.setErrorViewShown(true);
+    }
+
+    if (mLoadingView != null) {
+      mLoadingView.setVisibility(View.GONE);
     }
   }
 }
