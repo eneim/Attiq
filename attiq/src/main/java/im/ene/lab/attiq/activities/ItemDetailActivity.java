@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -76,6 +78,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private static final String TAG = "ItemDetailActivity";
 
   @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingLayout;
+  @Bind(R.id.content_container) CoordinatorLayout mContentContainer;
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.item_content_web) WebView mContentView;
   @Bind(R.id.item_comments) WebView mComments;
@@ -381,6 +384,23 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
         mMenuContainer.addView(menuItemView);
       }
+      mMenuLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+      mArticleHeaderMenu.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        @Override public boolean onMenuItemClick(MenuItem item) {
+          mMenuLayout.openDrawer(GravityCompat.END);
+          return true;
+        }
+      });
+    } else {
+      mMenuLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+      mArticleHeaderMenu.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        @Override public boolean onMenuItemClick(MenuItem item) {
+          if (!isFinishing() && mContentContainer != null) {
+            Snackbar.make(mContentContainer, "メニューがありません!", Snackbar.LENGTH_LONG).show();
+          }
+          return true;
+        }
+      });
     }
   }
 
@@ -446,23 +466,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.menu_item_detail, menu);
+    mArticleHeaderMenu = menu.findItem(R.id.action_item_menu);
     return true;
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    int id = item.getItemId();
-
-    //noinspection SimplifiableIfStatement
-    if (id == R.id.action_item_menu) {
-      mMenuLayout.openDrawer(GravityCompat.END);
-      return true;
-    }
-
-    return super.onOptionsItemSelected(item);
-  }
-
+  private MenuItem mArticleHeaderMenu;
 }
