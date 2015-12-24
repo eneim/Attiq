@@ -17,6 +17,8 @@
 
     <style name="Attiq.Theme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
+    <style name="Attiq.Theme.ActionBar" parent="Theme.AppCompat.Light"/>
+
     <style name="Attiq.Theme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
     <style name="Attiq.Widget.Toolbar.Subtitle"

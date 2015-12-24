@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="im.ene.lab.attiq.activities.ItemDetailActivity">
+
+    <item
+        android:id="@+id/action_item_stock"
+        android:icon="@drawable/ic_action_stock"
+        android:orderInCategory="1"
+        android:title="Stock"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_item_comment"
+        android:icon="@drawable/ic_action_comment"
+        android:orderInCategory="2"
+        android:title="Comment"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_item_share"
+        android:icon="@drawable/ic_action_share"
+        android:orderInCategory="3"
+        android:title="Share"
+        app:showAsAction="always"/>
+
+</menu>

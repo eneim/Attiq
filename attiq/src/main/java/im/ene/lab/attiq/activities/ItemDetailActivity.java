@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,12 +31,13 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.CheckedTextView;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
+import com.squareup.picasso.Target;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -96,7 +99,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Bind(R.id.drawer_layout) DrawerLayout mMenuLayout;
   @Bind(R.id.html_headers_container) LinearLayout mMenuContainer;
   @Bind(R.id.loading_container) View mLoadingView;
-  @Bind(R.id.detail_author_icon) ImageButton mAuthorIcon;
+  // @Bind(R.id.detail_author_icon) ImageButton mAuthorIcon;
+
+  @Bind(R.id.actions_bar) Toolbar mActionBar;
 
   @BindDimen(R.dimen.item_icon_size_small) int mIconSize;
   @BindDimen(R.dimen.item_icon_size_small_half) int mIconCornerRadius;
@@ -158,6 +163,13 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     if (getSupportActionBar() != null) {
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
+    mActionBar.inflateMenu(R.menu.menu_item_detail_actions);
+    mActionBar.setNavigationOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+
+      }
+    });
 
     // empty title at start
     setTitle("");
@@ -304,7 +316,23 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
           .resize(mIconSize, 0)
           .transform(new RoundedTransformation(
               mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
-          .into(mAuthorIcon);
+          .into(new Target() {
+            @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+              mActionBar.setNavigationIcon(
+                  new BitmapDrawable(mActionBar.getContext().getResources(), bitmap));
+            }
+
+            @Override public void onBitmapFailed(Drawable errorDrawable) {
+              mActionBar.setNavigationIcon(R.mipmap.ic_launcher);
+            }
+
+            @Override public void onPrepareLoad(Drawable placeHolderDrawable) {
+              mActionBar.setNavigationIcon(R.drawable.blank_profile_icon);
+            }
+          });
+
+      mActionBar.setTitle(user.getId());
+      mActionBar.setSubtitle(user.getItemsCount() + "");
 
       mArticleName.setText(article.getTitle());
       mSpannableTitle = new SpannableString(article.getTitle());
