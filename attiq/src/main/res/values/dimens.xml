@@ -17,6 +17,9 @@
     <dimen name="item_icon_size_half">24dp</dimen>
     <dimen name="item_icon_padding">4dp</dimen>
 
+    <dimen name="item_icon_size_small">36dp</dimen>
+    <dimen name="item_icon_size_small_half">18dp</dimen>
+
     <!-- Attiq specific dimens -->
     <dimen name="recycler_view_padding">0dp</dimen>
     <dimen name="item_padding">8dp</dimen>
@@ -24,7 +27,7 @@
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="comment_container_expand">224dp</dimen>
-    <dimen name="comment_container_collapse">48dp</dimen>
+    <dimen name="comment_container_collapse">56dp</dimen>
 
     <dimen name="html_header_height">48dp</dimen>
 

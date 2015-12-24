@@ -8,7 +8,9 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 import org.ocpsoft.prettytime.PrettyTime;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
+import org.threeten.bp.chrono.IsoChronology;
 import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.DateTimeFormatterBuilder;
 
 import java.util.Date;
 import java.util.Locale;
@@ -26,6 +28,11 @@ public class TimeUtil {
       DateTimeFormatter.ofPattern("YYYY年M月dd日(EEE) HH:mm", Locale.getDefault());
   private static final DateTimeFormatter M_DD_EEE_HH_mm =
       DateTimeFormatter.ofPattern("M月dd日(EEE) HH:mm", Locale.getDefault());
+  private static final DateTimeFormatter API_V1_TIME_FORMAT =
+      new DateTimeFormatterBuilder()
+          .append(DateTimeFormatter.ofPattern("yyyy-M-dd HH:mm:ss ", Locale.getDefault()))
+          .appendOffsetId()
+          .toFormatter().withChronology(IsoChronology.INSTANCE);
 
   private TimeUtil() {
     throw new AssertionError("Illegal");

@@ -28,7 +28,7 @@ android {
 
     defaultConfig {
         applicationId "im.ene.lab.attiq"
-        minSdkVersion 19
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode VERSION_CODE
         versionName VERSION_NAME
@@ -60,7 +60,7 @@ android {
     productFlavors {
 
         stag21 {
-            minSdkVersion 19
+            minSdkVersion 16
             applicationId "im.ene.lab.attiq_stag"
             targetSdkVersion 23
             versionName '0.9'

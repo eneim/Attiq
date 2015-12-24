@@ -11,11 +11,12 @@ import com.squareup.okhttp.OkHttpClient;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.open.Profile;
-import im.ene.lab.attiq.data.api.open.PublicItem;
+import im.ene.lab.attiq.data.api.v1.response.PublicItem;
 import im.ene.lab.attiq.data.api.v2.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.api.v2.response.AccessToken;
 import im.ene.lab.attiq.data.api.v2.response.Article;
 import im.ene.lab.attiq.data.api.v2.response.Comment;
+import im.ene.lab.attiq.data.api.v2.response.Tag;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.PrefUtil;
 import retrofit.Call;
@@ -33,7 +34,7 @@ public final class ApiClient {
   private static final OkHttpClient HTTP_CLIENT;
   private static final Retrofit RETROFIT;
 
-  private static final Api.Public PUBLIC;
+  private static final Api.Open OPEN;
   private static final Api.Items ITEMS;
   private static final Api.Me SELF;
 
@@ -47,7 +48,7 @@ public final class ApiClient {
         .addConverterFactory(GsonConverterFactory.create(IOUtil.gson()))
         .build();
 
-    PUBLIC = RETROFIT.create(Api.Public.class);
+    OPEN = RETROFIT.create(Api.Open.class);
     ITEMS = RETROFIT.create(Api.Items.class);
     SELF = RETROFIT.create(Api.Me.class);
   }
@@ -61,18 +62,16 @@ public final class ApiClient {
         context.getString(R.string.client_id), UUID.randomUUID().toString());
   }
 
-  public static String authCallback() {
-    return "https://qiita" +
-        ".com/api/v2/oauth/authorize?client_id=bfd0c62e1d881bf1eff108554cbc3cbb389bad6f&scope" +
-        "=read_qiita+write_qiita&state=299792459";
-  }
-
   public static Call<List<PublicItem>> stream(@Nullable Long bottomId) {
     if (bottomId != null) {
-      return PUBLIC.stream(bottomId, "id");
+      return OPEN.stream(bottomId, "id");
     } else {
-      return PUBLIC.stream();
+      return OPEN.stream();
     }
+  }
+
+  public static Call<List<PublicItem>> stream(int page, int limit) {
+    return ITEMS.stream(page, limit);
   }
 
   public static Call<List<Article>> items(int page, int pageLimit, String query) {
@@ -81,6 +80,12 @@ public final class ApiClient {
 
   public static Call<Article> itemDetail(String id) {
     return ITEMS.itemDetail(id);
+  }
+
+  public static Call<List<Tag>> tags(int page) {
+    // default page limit: 99
+    // default sort type: count
+    return ITEMS.tags(page, 99, "count");
   }
 
   public static Call<List<Comment>> itemComments(String id) {
@@ -100,5 +105,9 @@ public final class ApiClient {
 
   public static Call<Profile> me() {
     return SELF.me();
+  }
+
+  public static Call<List<Tag>> myTags(int page, int limit) {
+    return SELF.myTags("", page, limit);
   }
 }

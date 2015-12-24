@@ -1,12 +1,12 @@
 package im.ene.lab.attiq.util;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import java.util.Collection;
 
@@ -51,14 +51,9 @@ public class UIUtil {
     }
   }
 
-  public static abstract class AnimationEndListener implements Animator.AnimatorListener {
-    @Override public void onAnimationStart(Animator animation) {
-    }
-
-    @Override public void onAnimationCancel(Animator animation) {
-    }
-
-    @Override public void onAnimationRepeat(Animator animation) {
+  public static void commingSoon(Context context) {
+    if (context != null) {
+      Toast.makeText(context, "Coming Soon! ^^", Toast.LENGTH_SHORT).show();
     }
   }
 }

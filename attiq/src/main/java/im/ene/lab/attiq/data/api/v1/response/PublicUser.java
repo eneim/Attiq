@@ -1,5 +1,5 @@
 
-package im.ene.lab.attiq.data.api.open;
+package im.ene.lab.attiq.data.api.v1.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

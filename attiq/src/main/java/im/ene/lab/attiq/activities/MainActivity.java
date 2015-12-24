@@ -5,18 +5,21 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.internal.NavigationMenuItemView;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -48,6 +51,8 @@ public class MainActivity extends BaseActivity
   private View mHeaderView;
 
   private DrawerLayout mDrawerLayout;
+  private TabLayout mMainTabs;
+  private MainPagerAdapter mPagerAdapter;
 
   private Fragment mFragment;
 
@@ -56,26 +61,22 @@ public class MainActivity extends BaseActivity
   @Bind(R.id.header_account_name) TextView mHeaderName;
   @Bind(R.id.header_account_description) TextView mHeaderDescription;
 
+  // No ButterKnife
+  Toolbar mToolBar;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
+    mToolBar = (Toolbar) findViewById(R.id.toolbar);
+    setSupportActionBar(mToolBar);
 
-    FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-    fab.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-            .setAction("Action", null).show();
-      }
-    });
+    trySetupToolBarTabs();
 
     mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-        this, mDrawerLayout, toolbar,
+        this, mDrawerLayout, mToolBar,
         R.string.navigation_drawer_open,
         R.string.navigation_drawer_close);
     mDrawerLayout.setDrawerListener(toggle);
@@ -83,8 +84,6 @@ public class MainActivity extends BaseActivity
 
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
-
-    NavigationMenuItemView test;
 
     mRealm = Attiq.realm();
 
@@ -261,10 +260,42 @@ public class MainActivity extends BaseActivity
         PrefUtil.setFirstStart(false);
         mDrawerLayout.openDrawer(GravityCompat.START);
       }
+
+      trySetupToolBarTabs();
+
       if (event.profile != null) {
         updateMasterUser(event.profile);
       }
     }
+  }
+
+  private void trySetupToolBarTabs() {
+    if (mMainTabs != null) {
+      mToolBar.removeView(mMainTabs);
+    }
+
+    if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
+      if (getSupportActionBar() != null) {
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+      }
+
+      return;
+    }
+
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setDisplayShowTitleEnabled(false);
+    }
+
+    mMainTabs = (TabLayout) LayoutInflater.from(mToolBar.getContext())
+        .inflate(R.layout.toolbar_tab_layout, mToolBar, false);
+    ActionBar.LayoutParams lp = new ActionBar.LayoutParams(
+        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    lp.gravity = GravityCompat.START;
+
+    mPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
+    mMainTabs.setTabsFromPagerAdapter(mPagerAdapter);
+
+    mToolBar.addView(mMainTabs, lp);
   }
 
   @Override protected void onDestroy() {
@@ -275,6 +306,26 @@ public class MainActivity extends BaseActivity
     super.onDestroy();
   }
 
-  private static final String TAG = "MainActivity";
+  private static class MainPagerAdapter extends FragmentStatePagerAdapter {
 
+    private static final String TITLES[] = {
+        "Feed", "Public"
+    };
+
+    public MainPagerAdapter(FragmentManager fm) {
+      super(fm);
+    }
+
+    @Override public Fragment getItem(int position) {
+      return PublicStreamFragment.newInstance();
+    }
+
+    @Override public int getCount() {
+      return TITLES.length;
+    }
+
+    @Override public CharSequence getPageTitle(int position) {
+      return TITLES[position];
+    }
+  }
 }

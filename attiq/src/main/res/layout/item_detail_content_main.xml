@@ -98,12 +98,63 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/comment_container_expand">
 
-            <View
+            <RelativeLayout
                 android:id="@+id/actions_container"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/comment_container_collapse"
                 android:background="@android:color/white"
-                android:elevation="1dp"/>
+                android:elevation="1dp"
+                android:gravity="center_vertical|end"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/detail_author_icon"
+                    android:layout_width="@dimen/comment_container_collapse"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:adjustViewBounds="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerInside"/>
+
+                <ImageButton
+                    android:id="@+id/detail_action_share"
+                    android:layout_width="@dimen/comment_container_collapse"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:adjustViewBounds="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_action_share"/>
+
+                <ImageButton
+                    android:id="@+id/detail_action_comment"
+                    android:layout_width="@dimen/comment_container_collapse"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/detail_action_share"
+                    android:layout_toStartOf="@id/detail_action_share"
+                    android:adjustViewBounds="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_action_comment"/>
+
+                <ImageButton
+                    android:id="@+id/detail_action_stock"
+                    android:layout_width="@dimen/comment_container_collapse"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/detail_action_comment"
+                    android:layout_toStartOf="@id/detail_action_comment"
+                    android:adjustViewBounds="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_action_stock"/>
+
+            </RelativeLayout>
 
             <android.support.v4.widget.NestedScrollView
                 android:id="@+id/comments_container"

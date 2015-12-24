@@ -14,17 +14,21 @@ import com.squareup.picasso.RequestCreator;
 import com.wefika.flowlayout.FlowLayout;
 
 import butterknife.Bind;
+import butterknife.BindColor;
+import butterknife.BindDimen;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.data.api.open.PublicItem;
-import im.ene.lab.attiq.data.api.open.PublicTag;
-import im.ene.lab.attiq.data.api.open.PublicUser;
+import im.ene.lab.attiq.data.api.v1.response.PublicItem;
+import im.ene.lab.attiq.data.api.v1.response.PublicTag;
+import im.ene.lab.attiq.data.api.v1.response.PublicUser;
+import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
@@ -84,12 +88,19 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
   @Override
   public void loadItems(final boolean isLoadingMore, int page, int pageLimit,
                         @Nullable String query, final Callback<List<PublicItem>> callback) {
-    Long id = null;
-    if (isLoadingMore) {
-      id = getBottomItem().getId();
+    final Call<List<PublicItem>> data;
+    if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
+      data = ApiClient.stream(page, pageLimit);
+    } else {
+      Long id = null;
+      if (isLoadingMore) {
+        id = getBottomItem().getId();
+      }
+
+      data = ApiClient.stream(id);
     }
 
-    ApiClient.stream(id).enqueue(new Callback<List<PublicItem>>() {
+    data.enqueue(new Callback<List<PublicItem>>() {
       @Override public void onResponse(Response<List<PublicItem>> response, Retrofit retrofit) {
         cleanup(!isLoadingMore);
         if (callback != null) {
@@ -144,23 +155,21 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
 
     private final LayoutInflater mInflater;
 
-    private final int mIconCornerRadius;
-    private final int mIconBorderWidth;
-    private final int mIconBorderColor;
-
+    // Views
     @Bind(R.id.item_user_icon) ImageView mItemUserImage;
     @Bind(R.id.item_title) TextView mItemTitle;
     @Bind(R.id.item_tags) FlowLayout mItemTags;
     @Bind(R.id.item_info) TextView mItemInfo;
     @Bind(R.id.item_posted_info) TextView mItemUserInfo;
 
+    // Others
+    @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
+    @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
+    @BindColor(R.color.colorAccent) int mIconBorderColor;
+
     public ViewHolder(View view) {
       super(view);
       mInflater = LayoutInflater.from(mContext);
-      mIconCornerRadius = mContext.getResources()
-          .getDimensionPixelSize(R.dimen.item_icon_size_half);
-      mIconBorderWidth = mContext.getResources().getDimensionPixelSize(R.dimen.dimen_unit);
-      mIconBorderColor = UIUtil.getColor(mContext, R.color.colorAccent);
       mItemUserInfo.setClickable(true);
       mItemUserInfo.setMovementMethod(LinkMovementMethod.getInstance());
     }

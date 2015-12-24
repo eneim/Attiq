@@ -4,12 +4,14 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by eneim on 12/21/15.
  */
 public class Tag extends RealmObject {
 
+  @PrimaryKey
   @SerializedName("id")
   @Expose
   private String id;

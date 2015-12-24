@@ -119,7 +119,8 @@ public abstract class RealmListFragment<E extends RealmObject>
       mPage = DEFAULT_FIRST_PAGE;
     }
 
-    if (isRefreshing) {
+    // Show loading view only when we don't have any item and we want to renew the list
+    if (isRefreshing && mAdapter.getItemCount() == 0) {
       mLoadingView.setVisibility(View.VISIBLE);
     }
 
@@ -193,7 +194,8 @@ public abstract class RealmListFragment<E extends RealmObject>
     }
   }
 
-  public abstract void onEventMainThread(EventWrapper<E> event);
+  // Just do nothing here
+  public void onEventMainThread(EventWrapper<E> event) {}
 
   @Override public void onResponse(Response<List<E>> response, Retrofit retrofit) {
     Log.d(TAG, "onResponse() called with: " + "response = [" + response + "]");

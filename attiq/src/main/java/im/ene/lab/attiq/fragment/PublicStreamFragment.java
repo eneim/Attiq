@@ -10,9 +10,8 @@ import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
 import im.ene.lab.attiq.adapters.BaseListAdapter;
 import im.ene.lab.attiq.adapters.TimeLineAdapter;
-import im.ene.lab.attiq.data.event.EventWrapper;
-import im.ene.lab.attiq.data.api.open.PublicItem;
-import im.ene.lab.attiq.data.api.open.PublicUser;
+import im.ene.lab.attiq.data.api.v1.response.PublicItem;
+import im.ene.lab.attiq.data.api.v1.response.PublicUser;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -34,10 +33,6 @@ public class PublicStreamFragment extends RealmListFragment<PublicItem> {
     RealmResults<PublicItem> items = mRealm.where(PublicItem.class)
         .findAllSorted("createdAtAsSeconds", Sort.DESCENDING);
     return new TimeLineAdapter(items);
-  }
-
-  @Override public void onEventMainThread(EventWrapper<PublicItem> event) {
-
   }
 
   private TimeLineAdapter.OnTimeLineItemClickListener mItemClickListener;

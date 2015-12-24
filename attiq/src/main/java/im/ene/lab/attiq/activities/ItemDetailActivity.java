@@ -29,10 +29,12 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.CheckedTextView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.squareup.picasso.RequestCreator;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -40,22 +42,26 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import butterknife.Bind;
+import butterknife.BindColor;
 import butterknife.BindDimen;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.data.api.open.PublicItem;
+import im.ene.lab.attiq.data.api.v1.response.PublicItem;
 import im.ene.lab.attiq.data.api.v2.response.Article;
 import im.ene.lab.attiq.data.api.v2.response.Comment;
+import im.ene.lab.attiq.data.api.v2.response.User;
 import im.ene.lab.attiq.data.event.Event;
 import im.ene.lab.attiq.data.event.ItemCommentsEvent;
 import im.ene.lab.attiq.data.event.ItemDetailEvent;
+import im.ene.lab.attiq.util.AnimUtils;
 import im.ene.lab.attiq.util.HtmlUtil;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.widgets.RoundedTransformation;
 import im.ene.lab.attiq.widgets.drawable.ThreadedCommentDrawable;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AppBarLayout;
@@ -90,11 +96,21 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Bind(R.id.drawer_layout) DrawerLayout mMenuLayout;
   @Bind(R.id.html_headers_container) LinearLayout mMenuContainer;
   @Bind(R.id.loading_container) View mLoadingView;
+  @Bind(R.id.detail_author_icon) ImageButton mAuthorIcon;
+
+  @BindDimen(R.dimen.item_icon_size_small) int mIconSize;
+  @BindDimen(R.dimen.item_icon_size_small_half) int mIconCornerRadius;
+  @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
+  @BindColor(R.color.colorPrimary) int mIconBorderColor;
+
   @BindDimen(R.dimen.header_depth_width) int mHeaderDepthWidth;
   @BindDimen(R.dimen.header_depth_gap) int mHeaderDepthGap;
 
+  private MenuItem mArticleHeaderMenu;
+
   private Realm mRealm;
   private PublicItem mPublicItem;
+  private boolean mIsFirstTimeLoaded = false;
   private Element mMenuAnchor;
   // Title support
   private AlphaForegroundColorSpan mTitleColorSpan;
@@ -146,7 +162,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     // empty title at start
     setTitle("");
 
-    trySetupDrawerLayout();
+    trySetupMenuDrawerLayout();
 
     trySetupContentView();
 
@@ -183,12 +199,15 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     super.onDestroy();
   }
 
-  private void trySetupDrawerLayout() {
+  private void trySetupMenuDrawerLayout() {
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
         this, mMenuLayout, null,
         R.string.navigation_drawer_open,
         R.string.navigation_drawer_close);
     mMenuLayout.setDrawerListener(toggle);
+    // !IMPORTANT Don't call this.
+    // It will change Toolbar's navi icon position, which is not what I want to do
+    // toggle.syncState();
   }
 
   private void trySetupContentView() {
@@ -214,7 +233,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
       @Override public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
-        if (mLoadingView != null) {
+        if (!mIsFirstTimeLoaded && mLoadingView != null) {
           mLoadingView.setAlpha(1.f);
           mLoadingView.setVisibility(View.VISIBLE);
         }
@@ -222,9 +241,10 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
       @Override public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
+        mIsFirstTimeLoaded = true;
         if (mLoadingView != null) {
           mLoadingView.animate().alpha(0.f).setDuration(300)
-              .setListener(new UIUtil.AnimationEndListener() {
+              .setListener(new AnimUtils.AnimationEndListener() {
                 @Override public void onAnimationEnd(Animator animation) {
                   if (mLoadingView != null) {
                     mLoadingView.setVisibility(View.GONE);
@@ -244,6 +264,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         }
         if (numberOfMatches > 0 && mMenuAnchor != null && mContentView != null) {
           // mContentView.clearMatches();
+          // FIXME Doesn't work now, because WebView is included inside ScrollView
           mContentView.loadUrl("javascript:scrollToElement(\"" + mMenuAnchor.text() + "\");");
         }
       }
@@ -252,7 +273,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   }
 
   private void trySetupCommentView() {
-    mComments.setVerticalScrollBarEnabled(false);
+    mComments.setVerticalScrollBarEnabled(true);
     mComments.setHorizontalScrollBarEnabled(false);
   }
 
@@ -269,9 +290,25 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   public void onEventMainThread(ItemDetailEvent event) {
     Article article = event.article;
     if (article != null) {
+      User user = article.getUser();
+      final RequestCreator requestCreator;
+      if (!UIUtil.isEmpty(user.getProfileImageUrl())) {
+        requestCreator = Attiq.picasso().load(user.getProfileImageUrl());
+      } else {
+        requestCreator = Attiq.picasso().load(R.drawable.blank_profile_icon);
+      }
+
+      requestCreator
+          .placeholder(R.drawable.blank_profile_icon)
+          .error(R.drawable.blank_profile_icon)
+          .resize(mIconSize, 0)
+          .transform(new RoundedTransformation(
+              mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
+          .into(mAuthorIcon);
+
       mArticleName.setText(article.getTitle());
       mSpannableTitle = new SpannableString(article.getTitle());
-      String userName = article.getUser().getId();
+      String userName = user.getId();
       final CharSequence subTitle;
 
       if (mPublicItem != null) {
@@ -282,7 +319,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       }
 
       mArticleDescription.setText(subTitle);
-      mSpannableSubtitle = new SpannableString(subTitle);
+      mSpannableSubtitle = new SpannableString(userName);
 
       updateTitle();
 
@@ -470,5 +507,4 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     return true;
   }
 
-  private MenuItem mArticleHeaderMenu;
 }
