@@ -100,8 +100,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Bind(R.id.html_headers_container) LinearLayout mMenuContainer;
   @Bind(R.id.loading_container) View mLoadingView;
   // @Bind(R.id.detail_author_icon) ImageButton mAuthorIcon;
-
-  @Bind(R.id.actions_bar) Toolbar mActionBar;
+  // !IMPORTANT Bottom Toolbar, setup specially for an Article
+  @Bind(R.id.actions_bar) Toolbar mArticleBar;
 
   @BindDimen(R.dimen.item_icon_size_small) int mIconSize;
   @BindDimen(R.dimen.item_icon_size_small_half) int mIconCornerRadius;
@@ -111,10 +111,31 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @BindDimen(R.dimen.header_depth_width) int mHeaderDepthWidth;
   @BindDimen(R.dimen.header_depth_gap) int mHeaderDepthGap;
 
+  private Toolbar.OnMenuItemClickListener mArticleBarItemClickListener =
+      new Toolbar.OnMenuItemClickListener() {
+        @Override public boolean onMenuItemClick(MenuItem item) {
+          int id = item.getItemId();
+          switch (id) {
+            case R.id.action_item_share:
+              shareArticle();
+              return true;
+            case R.id.action_item_comment:
+              commentArticle();
+              return true;
+            case R.id.action_item_stock:
+              stockArticle();
+              return true;
+            default:
+              return false;
+          }
+        }
+      };
+
   private MenuItem mArticleHeaderMenu;
 
   private Realm mRealm;
   private PublicItem mPublicItem;
+  private Article mArticle;
   private boolean mIsFirstTimeLoaded = false;
   private Element mMenuAnchor;
   // Title support
@@ -164,12 +185,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    mActionBar.inflateMenu(R.menu.menu_item_detail_actions);
-    mActionBar.setNavigationOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-
-      }
-    });
+    mArticleBar.inflateMenu(R.menu.menu_item_detail_actions);
+    mArticleBar.setOnMenuItemClickListener(mArticleBarItemClickListener);
 
     // empty title at start
     setTitle("");
@@ -208,7 +225,29 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     if (mRealm != null) {
       mRealm.close();
     }
+    mArticleBarItemClickListener = null;
     super.onDestroy();
+  }
+
+  private void shareArticle() {
+    if (mArticle == null) {
+      return;
+    }
+
+    String shareUrl = mArticle.getUrl();
+    Intent intent = new Intent(Intent.ACTION_SEND);
+    intent.setType("text/plain");
+    intent.putExtra(Intent.EXTRA_SUBJECT, mArticle.getTitle());
+    intent.putExtra(Intent.EXTRA_TEXT, shareUrl);
+    startActivity(intent);
+  }
+
+  private void commentArticle() {
+
+  }
+
+  private void stockArticle() {
+
   }
 
   private void trySetupMenuDrawerLayout() {
@@ -301,6 +340,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   public void onEventMainThread(ItemDetailEvent event) {
     Article article = event.article;
+    mArticle = article;
     if (article != null) {
       User user = article.getUser();
       final RequestCreator requestCreator;
@@ -318,21 +358,21 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
               mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
           .into(new Target() {
             @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-              mActionBar.setNavigationIcon(
-                  new BitmapDrawable(mActionBar.getContext().getResources(), bitmap));
+              mArticleBar.setNavigationIcon(
+                  new BitmapDrawable(mArticleBar.getContext().getResources(), bitmap));
             }
 
             @Override public void onBitmapFailed(Drawable errorDrawable) {
-              mActionBar.setNavigationIcon(R.mipmap.ic_launcher);
+              mArticleBar.setNavigationIcon(R.mipmap.ic_launcher);
             }
 
             @Override public void onPrepareLoad(Drawable placeHolderDrawable) {
-              mActionBar.setNavigationIcon(R.drawable.blank_profile_icon);
+              mArticleBar.setNavigationIcon(R.drawable.blank_profile_icon);
             }
           });
 
-      mActionBar.setTitle(user.getId());
-      mActionBar.setSubtitle(user.getItemsCount() + "");
+      mArticleBar.setTitle(user.getId());
+      mArticleBar.setSubtitle(user.getItemsCount() + "");
 
       mArticleName.setText(article.getTitle());
       mSpannableTitle = new SpannableString(article.getTitle());
