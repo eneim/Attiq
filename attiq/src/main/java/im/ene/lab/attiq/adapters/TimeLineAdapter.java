@@ -1,5 +1,6 @@
 package im.ene.lab.attiq.adapters;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -38,7 +39,7 @@ import java.util.List;
 /**
  * Created by eneim on 12/14/15.
  */
-public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
+public class TimeLineAdapter extends AttiqListAdapter<PublicItem> {
 
   private final RealmResults<PublicItem> mItems;
 
@@ -53,12 +54,12 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(ViewHolder.LAYOUT_RES, parent, false);
     final ViewHolder viewHolder = new ViewHolder(view);
-    viewHolder.setOnItemClickListener(new View.OnClickListener() {
+    viewHolder.setOnViewHolderClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         int position = viewHolder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-          mOnItemClickListener.onItemCLick(TimeLineAdapter.this, viewHolder, view,
-              position, getItemId(position));
+          mOnItemClickListener.onItemClick(TimeLineAdapter.this, viewHolder, view, position,
+              getItemId(position));
         }
       }
     });
@@ -128,18 +129,24 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
   }
 
   public static abstract class OnTimeLineItemClickListener
-      implements OnItemClickListener<PublicItem> {
+      implements BaseAdapter.OnItemClickListener {
 
     public abstract void onUserClick(PublicUser user);
 
     public abstract void onItemContentClick(PublicItem item);
 
     @Override
-    public void onItemCLick(BaseListAdapter<PublicItem> adapter,
-                            BaseRecyclerAdapter.ViewHolder<PublicItem> viewHolder,
+    public void onItemClick(BaseAdapter adapter,
+                            BaseAdapter.ViewHolder viewHolder,
                             View view, int adapterPos, long itemId) {
-      PublicItem item = adapter.getItem(adapterPos);
-      if (viewHolder instanceof ViewHolder) {
+      final PublicItem item;
+      if (adapter instanceof BaseListAdapter) {
+        item = (PublicItem) ((BaseListAdapter) adapter).getItem(adapterPos);
+      } else {
+        item = null;
+      }
+
+      if (item != null && viewHolder instanceof ViewHolder) {
         if (view == ((ViewHolder) viewHolder).mItemUserImage) {
           onUserClick(item.getUser());
         } else if (view == ((ViewHolder) viewHolder).itemView) {
@@ -149,7 +156,7 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
     }
   }
 
-  public static class ViewHolder extends BaseRecyclerAdapter.ViewHolder<PublicItem> {
+  public static class ViewHolder extends BaseListAdapter.ViewHolder<PublicItem> {
 
     static final int LAYOUT_RES = R.layout.post_item_view;
 
@@ -167,14 +174,17 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
     @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
     @BindColor(R.color.colorAccent) int mIconBorderColor;
 
+    private final Context mContext;
+
     public ViewHolder(View view) {
       super(view);
+      mContext = itemView.getContext();
       mInflater = LayoutInflater.from(mContext);
       mItemUserInfo.setClickable(true);
       mItemUserInfo.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
-    @Override public void setOnItemClickListener(View.OnClickListener listener) {
+    @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {
       mItemUserImage.setOnClickListener(listener);
       itemView.setOnClickListener(listener);
     }

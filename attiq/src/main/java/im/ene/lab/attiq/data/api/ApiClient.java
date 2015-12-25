@@ -10,6 +10,7 @@ import com.squareup.okhttp.OkHttpClient;
 
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.data.api.open.FeedItem;
 import im.ene.lab.attiq.data.api.open.Profile;
 import im.ene.lab.attiq.data.api.v1.response.PublicItem;
 import im.ene.lab.attiq.data.api.v2.request.AccessTokenRequest;
@@ -63,11 +64,11 @@ public final class ApiClient {
   }
 
   public static Call<List<PublicItem>> stream(@Nullable Long bottomId) {
-    if (bottomId != null) {
-      return OPEN.stream(bottomId, "id");
-    } else {
-      return OPEN.stream();
-    }
+    return OPEN.stream(bottomId, "id");
+  }
+
+  public static Call<List<FeedItem>> feed(@Nullable Long maxCreatedAt) {
+    return OPEN.feed(maxCreatedAt);
   }
 
   public static Call<List<PublicItem>> stream(int page, int limit) {

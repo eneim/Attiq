@@ -1,9 +1,9 @@
 package im.ene.lab.attiq.data.api.v2.response;
 
-import im.ene.lab.attiq.data.api.base.Base;
+import im.ene.lab.attiq.data.api.base.Response;
 
 /**
  * Created by eneim on 12/21/15.
  */
-public class V2Response extends Base {
+public class V2Response extends Response {
 }

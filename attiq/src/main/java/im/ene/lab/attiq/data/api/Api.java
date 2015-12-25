@@ -1,5 +1,6 @@
 package im.ene.lab.attiq.data.api;
 
+import im.ene.lab.attiq.data.api.open.FeedItem;
 import im.ene.lab.attiq.data.api.open.Profile;
 import im.ene.lab.attiq.data.api.v1.response.PublicItem;
 import im.ene.lab.attiq.data.api.v2.request.AccessTokenRequest;
@@ -25,11 +26,16 @@ interface Api {
 
   interface Open {
 
-    @GET("api/public") Call<List<PublicItem>> stream(@Query("before") long id,
-                                                     @Query("type") String type);
+    @GET("/api/public") Call<List<PublicItem>> stream(
+        @Query("before") Long id,
+        @Query("type") String type
+    );
 
-    @GET("api/public") Call<List<PublicItem>> stream();
+    @GET("/api/public") Call<List<PublicItem>> stream();
 
+    @GET("/api/track") Call<List<FeedItem>> feed(
+        @Query("max_created_at") Long maxCreatedAt
+    );
   }
 
   interface Items {

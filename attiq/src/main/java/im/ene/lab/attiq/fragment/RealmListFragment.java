@@ -18,7 +18,7 @@ import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.adapters.BaseListAdapter;
+import im.ene.lab.attiq.adapters.AttiqListAdapter;
 import im.ene.lab.attiq.data.event.Event;
 import im.ene.lab.attiq.data.event.EventWrapper;
 import im.ene.lab.attiq.util.UIUtil;
@@ -78,7 +78,7 @@ public abstract class RealmListFragment<E extends RealmObject>
   @Bind(R.id.view_empty) View mEmptyView;
   @Bind(R.id.view_error) View mErrorView;
 
-  protected BaseListAdapter<E> mAdapter;
+  protected AttiqListAdapter<E> mAdapter;
 
   // User a handler to prevent too frequently calling of methods. For example Realm may trigger
   // #onChange a lot of time, since it doesn't support type-specific change event now. So we
@@ -184,7 +184,7 @@ public abstract class RealmListFragment<E extends RealmObject>
   }
 
   @NonNull
-  protected abstract BaseListAdapter<E> createAdapter();
+  protected abstract AttiqListAdapter<E> createAdapter();
 
   @Override public void onRefresh() {
     if (mSwipeRefreshLayout != null) {

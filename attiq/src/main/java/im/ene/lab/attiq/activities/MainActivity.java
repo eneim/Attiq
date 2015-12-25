@@ -56,7 +56,6 @@ public class MainActivity extends BaseActivity
 
   private DrawerLayout mDrawerLayout;
   private TabLayout mMainTabs;
-  private MainPagerAdapter mPagerAdapter;
 
   private Fragment mFragment;
 
@@ -317,9 +316,12 @@ public class MainActivity extends BaseActivity
     mNavigationView.getMenu().setGroupVisible(R.id.group_post, true);
     // Hide User manage button visibility
     mAuthMenu.setVisibility(View.VISIBLE);
+    // Check home button at startup
+    mNavigationView.setCheckedItem(R.id.nav_home);
 
     mViewPager.setVisibility(View.VISIBLE);
     mContainer.setVisibility(View.GONE);
+    // On first logging in, this Fragment has been initialized. We need to release it.
     if (mFragment != null) {
       getSupportFragmentManager().beginTransaction().remove(mFragment).commit();
     }
@@ -334,8 +336,8 @@ public class MainActivity extends BaseActivity
         ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
     lp.gravity = GravityCompat.START;
 
-    mPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
-    mViewPager.setAdapter(mPagerAdapter);
+    MainPagerAdapter pagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
+    mViewPager.setAdapter(pagerAdapter);
     mMainTabs.setupWithViewPager(mViewPager);
 
     mToolBar.addView(mMainTabs, lp);
