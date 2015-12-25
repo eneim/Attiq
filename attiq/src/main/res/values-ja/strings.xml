@@ -15,4 +15,5 @@
     </string>
     <string name="title_activity_item_detail">アイテム詳細</string>
     <string name="title_activity_profile">プロフィル</string>
+    <string name="auth_add_account">アカウント追加</string>
 </resources>

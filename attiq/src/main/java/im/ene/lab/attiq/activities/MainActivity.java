@@ -21,11 +21,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
@@ -62,6 +64,17 @@ public class MainActivity extends BaseActivity
   @Bind(R.id.header_account_icon) ImageView mHeaderIcon;
   @Bind(R.id.header_account_name) TextView mHeaderName;
   @Bind(R.id.header_account_description) TextView mHeaderDescription;
+  @Bind(R.id.header_auth_menu) ImageButton mAuthMenu;
+
+  @OnClick(R.id.header_auth_menu) void toggleAuthMenu() {
+    if (mAuthMenuItem != null) {
+      if (mAuthMenuItem.isVisible()) {
+        mAuthMenuItem.setVisible(false);
+      } else {
+        mAuthMenuItem.setVisible(true);
+      }
+    }
+  }
 
   int mIconCornerRadius;
   int mIconBorderWidth;
@@ -71,6 +84,10 @@ public class MainActivity extends BaseActivity
   Toolbar mToolBar;
   View mContainer;
   ViewPager mViewPager;
+
+  private NavigationView mNavigationView;
+
+  MenuItem mAuthMenuItem;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -94,11 +111,12 @@ public class MainActivity extends BaseActivity
     mDrawerLayout.setDrawerListener(toggle);
     toggle.syncState();
 
-    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-    navigationView.setNavigationItemSelectedListener(this);
+    mNavigationView = (NavigationView) findViewById(R.id.nav_actions);
+    mAuthMenuItem = mNavigationView.getMenu().findItem(R.id.nav_login);
+    mNavigationView.setNavigationItemSelectedListener(this);
 
-    if (navigationView.getHeaderCount() > 0) {
-      mHeaderView = navigationView.getHeaderView(0);
+    if (mNavigationView.getHeaderCount() > 0) {
+      mHeaderView = mNavigationView.getHeaderView(0);
       // update padding top by status bar height.
       // we expect 24dp, but in some on devices, it was 25dp.
       if (mHeaderView != null) {
@@ -127,7 +145,8 @@ public class MainActivity extends BaseActivity
       updateMasterUser(user);
     }
 
-    // trySetupToolBarTabs();
+    trySetupToolBarTabs();
+
     getMasterUser(PrefUtil.getCurrentToken());
   }
 
@@ -171,20 +190,9 @@ public class MainActivity extends BaseActivity
   @Override public boolean onNavigationItemSelected(MenuItem item) {
     // Handle navigation view item clicks here.
     int id = item.getItemId();
-
-    if (id == R.id.nav_camera) {
-      // Handle the camera action
+    // TODO navigation
+    if (id == R.id.nav_login) {
       login();
-    } else if (id == R.id.nav_gallery) {
-
-    } else if (id == R.id.nav_slideshow) {
-
-    } else if (id == R.id.nav_manage) {
-
-    } else if (id == R.id.nav_share) {
-
-    } else if (id == R.id.nav_send) {
-
     }
 
     mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -279,6 +287,13 @@ public class MainActivity extends BaseActivity
     }
 
     if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
+      // We need an user, so inflate auth menu
+      mNavigationView.getMenu().setGroupVisible(R.id.group_auth, true);
+      mNavigationView.getMenu().setGroupVisible(R.id.group_navigation, false);
+      mNavigationView.getMenu().setGroupVisible(R.id.group_post, false);
+      // Hide User manage button visibility
+      mAuthMenu.setVisibility(View.GONE);
+
       if (getSupportActionBar() != null) {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
       }
@@ -295,6 +310,13 @@ public class MainActivity extends BaseActivity
       }
       return;
     }
+
+    // Change menu visibility
+    mNavigationView.getMenu().setGroupVisible(R.id.group_auth, false);
+    mNavigationView.getMenu().setGroupVisible(R.id.group_navigation, true);
+    mNavigationView.getMenu().setGroupVisible(R.id.group_post, true);
+    // Hide User manage button visibility
+    mAuthMenu.setVisibility(View.VISIBLE);
 
     mViewPager.setVisibility(View.VISIBLE);
     mContainer.setVisibility(View.GONE);

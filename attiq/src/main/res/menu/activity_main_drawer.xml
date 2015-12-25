@@ -1,31 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/group_auth"
+        android:visible="true">
+
         <item
-            android:id="@+id/nav_camera"
-            android:title="Home"/>
-        <item
-            android:id="@+id/nav_gallery"
-            android:title="Gallery"/>
-        <item
-            android:id="@+id/nav_slideshow"
-            android:title="Slideshow"/>
-        <item
-            android:id="@+id/nav_manage"
-            android:title="Tools"/>
+            android:id="@+id/nav_login"
+            android:title="@string/activity_login"/>
+
     </group>
 
-    <item android:title="Communicate">
+    <group
+        android:id="@+id/group_navigation"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:title="Home"/>
+        <item
+            android:id="@+id/nav_bookmark"
+            android:title="Bookmark"/>
+    </group>
+
+    <group
+        android:id="@+id/group_post"
+        android:visible="false">
+        <item
+            android:id="@+id/nav_draft"
+            android:title="Draft"/>
+    </group>
+
+    <item
+        android:title="Application">
         <menu>
             <item
                 android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share"/>
+                android:title="Settings"/>
             <item
                 android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send"/>
+                android:title="About"/>
         </menu>
     </item>
 

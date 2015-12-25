@@ -24,6 +24,7 @@
         <!--<item quantity="other">%1$d stocked, %2$d comments</item>-->
     <!--</plurals>-->
 
+    <string name="auth_add_account">Add Account</string>
     <string name="title_activity_item_detail">Article</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
@@ -116,6 +117,6 @@
     </string>
     <string name="action_settings">Settings</string>
     <string name="action_item_menu">Menu</string>
-    <string name="title_activity_profile">Profiel</string>
+    <string name="title_activity_profile">Profile</string>
     <string name="item_detail_subtitle">posted by %1$s</string>
 </resources>
