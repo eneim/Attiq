@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.support.annotation.ColorRes;
+import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -49,6 +50,10 @@ public class UIUtil {
     } else {
       return context.getResources().getColor(colorId);
     }
+  }
+
+  public static int getDimen(Context context, @DimenRes int dimenId) {
+    return context.getResources().getDimensionPixelSize(dimenId);
   }
 
   public static void commingSoon(Context context) {

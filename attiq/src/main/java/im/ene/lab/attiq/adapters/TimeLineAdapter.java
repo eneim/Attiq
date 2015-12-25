@@ -208,12 +208,12 @@ public class TimeLineAdapter extends BaseListAdapter<PublicItem> {
       if (!UIUtil.isEmpty(item.getUser().getProfileImageUrl())) {
         requestCreator = Attiq.picasso().load(item.getUser().getProfileImageUrl());
       } else {
-        requestCreator = Attiq.picasso().load(R.drawable.blank_profile_icon);
+        requestCreator = Attiq.picasso().load(R.drawable.blank_profile_icon_medium);
       }
 
       requestCreator
-          .placeholder(R.drawable.blank_profile_icon)
-          .error(R.drawable.blank_profile_icon)
+          .placeholder(R.drawable.blank_profile_icon_medium)
+          .error(R.drawable.blank_profile_icon_medium)
           .fit().centerInside()
           .transform(new RoundedTransformation(
               mIconBorderWidth, mIconBorderColor, mIconCornerRadius))

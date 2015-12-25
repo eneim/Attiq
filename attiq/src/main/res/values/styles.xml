@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="Attiq.Theme" parent="Theme.AppCompat.Light">
+    <style name="Attiq.Theme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -13,16 +13,28 @@
     <style name="Attiq.Theme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="toolbarNavigationButtonStyle">
+            @style/Attiq.Widget.Toolbar.Button.Navigation
+        </item>
     </style>
 
     <style name="Attiq.Theme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-    <style name="Attiq.Theme.ActionBar" parent="Theme.AppCompat.Light"/>
+    <style name="Attiq.Theme.ActionBar" parent="Theme.AppCompat.Light">
+        <item name="toolbarNavigationButtonStyle">
+            @style/Attiq.Widget.Toolbar.Button.Navigation
+        </item>
+    </style>
 
     <style name="Attiq.Theme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
     <style name="Attiq.Widget.Toolbar.Subtitle"
            parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
         <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="Attiq.Widget.Toolbar.Button.Navigation"
+           parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
     </style>
 </resources>

@@ -9,6 +9,7 @@
 
     <!-- Material Design key-lines -->
     <dimen name="header_icon_size">56dp</dimen>
+    <dimen name="header_icon_size_half">28dp</dimen>
     <dimen name="header_icon_padding">0dp</dimen>
     <dimen name="header_icon_radius">28dp</dimen>
     <dimen name="status_bar_height">24dp</dimen>

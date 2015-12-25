@@ -15,6 +15,6 @@
     </item>
 
     <item
-        android:drawable="@drawable/ic_blank_logo">
+        android:drawable="@drawable/ic_smile_ninja_48dp">
     </item>
 </layer-list>

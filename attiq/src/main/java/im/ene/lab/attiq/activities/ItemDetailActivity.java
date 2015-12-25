@@ -265,6 +265,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mContentView.setVerticalScrollBarEnabled(false);
     mContentView.setHorizontalScrollBarEnabled(false);
     mContentView.getSettings().setJavaScriptEnabled(true);
+
     mContentView.setWebChromeClient(new WebChromeClient() {
       @Override public void onProgressChanged(WebView view, int newProgress) {
         super.onProgressChanged(view, newProgress);
@@ -315,7 +316,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         }
         if (numberOfMatches > 0 && mMenuAnchor != null && mContentView != null) {
           // mContentView.clearMatches();
-          // FIXME Doesn't work now, because WebView is included inside ScrollView
+          // FIXME Doesn't work now, because WebView is staying inside ScrollView
           mContentView.loadUrl("javascript:scrollToElement(\"" + mMenuAnchor.text() + "\");");
         }
       }
@@ -347,12 +348,12 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       if (!UIUtil.isEmpty(user.getProfileImageUrl())) {
         requestCreator = Attiq.picasso().load(user.getProfileImageUrl());
       } else {
-        requestCreator = Attiq.picasso().load(R.drawable.blank_profile_icon);
+        requestCreator = Attiq.picasso().load(R.drawable.blank_profile_icon_medium);
       }
 
       requestCreator
-          .placeholder(R.drawable.blank_profile_icon)
-          .error(R.drawable.blank_profile_icon)
+          .placeholder(R.drawable.blank_profile_icon_medium)
+          .error(R.drawable.blank_profile_icon_medium)
           .resize(mIconSize, 0)
           .transform(new RoundedTransformation(
               mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
@@ -367,7 +368,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
             }
 
             @Override public void onPrepareLoad(Drawable placeHolderDrawable) {
-              mArticleBar.setNavigationIcon(R.drawable.blank_profile_icon);
+              mArticleBar.setNavigationIcon(R.drawable.blank_profile_icon_small);
             }
           });
 

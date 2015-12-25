@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -36,6 +37,7 @@ import im.ene.lab.attiq.data.event.ProfileFetchedEvent;
 import im.ene.lab.attiq.fragment.PublicStreamFragment;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.widgets.RoundedTransformation;
 import io.realm.Realm;
 import retrofit.Callback;
 import retrofit.Response;
@@ -61,18 +63,28 @@ public class MainActivity extends BaseActivity
   @Bind(R.id.header_account_name) TextView mHeaderName;
   @Bind(R.id.header_account_description) TextView mHeaderDescription;
 
+  int mIconCornerRadius;
+  int mIconBorderWidth;
+  int mIconBorderColor;
+
   // No ButterKnife
   Toolbar mToolBar;
+  View mContainer;
+  ViewPager mViewPager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    mContainer = findViewById(R.id.container);
+    mViewPager = (ViewPager) findViewById(R.id.view_pager);
+
+    mIconCornerRadius = UIUtil.getDimen(this, R.dimen.header_icon_size_half);
+    mIconBorderWidth = UIUtil.getDimen(this, R.dimen.dimen_unit);
+    mIconBorderColor = UIUtil.getColor(this, R.color.colorPrimary);
 
     mToolBar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(mToolBar);
-
-    trySetupToolBarTabs();
 
     mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -84,8 +96,6 @@ public class MainActivity extends BaseActivity
 
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
-
-    mRealm = Attiq.realm();
 
     if (navigationView.getHeaderCount() > 0) {
       mHeaderView = navigationView.getHeaderView(0);
@@ -105,6 +115,8 @@ public class MainActivity extends BaseActivity
       ButterKnife.bind(this, mHeaderView);
     }
 
+    mRealm = Attiq.realm();
+
     Profile user = mRealm.where(Profile.class).findFirst();
     if (user == null) {
       user = mRealm.where(Profile.class)
@@ -115,13 +127,8 @@ public class MainActivity extends BaseActivity
       updateMasterUser(user);
     }
 
-    // attach content
-    mFragment = getSupportFragmentManager().findFragmentById(R.id.container);
-    if (mFragment == null) {
-      mFragment = PublicStreamFragment.newInstance();
-      getSupportFragmentManager().beginTransaction()
-          .replace(R.id.container, mFragment).commit();
-    }
+    // trySetupToolBarTabs();
+    getMasterUser(PrefUtil.getCurrentToken());
   }
 
   @Override
@@ -243,15 +250,12 @@ public class MainActivity extends BaseActivity
     if (mHeaderIcon != null && !UIUtil.isEmpty(user.getProfileImageUrl())) {
       Attiq.picasso()
           .load(user.getProfileImageUrl())
-          .placeholder(android.R.drawable.sym_def_app_icon)
+          .placeholder(R.drawable.blank_profile_icon_large)
           .fit().centerInside()
+          .transform(new RoundedTransformation(
+              mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
           .into(mHeaderIcon);
     }
-  }
-
-  @Override protected void onResume() {
-    super.onResume();
-    getMasterUser(PrefUtil.getCurrentToken());
   }
 
   public void onEventMainThread(final ProfileFetchedEvent event) {
@@ -279,8 +283,21 @@ public class MainActivity extends BaseActivity
         getSupportActionBar().setDisplayShowTitleEnabled(true);
       }
 
+      // There is no current active User, show Public Timeline Fragment
+      mViewPager.setVisibility(View.GONE);
+      mContainer.setVisibility(View.VISIBLE);
+      // attach content
+      mFragment = getSupportFragmentManager().findFragmentById(R.id.container);
+      if (mFragment == null) {
+        mFragment = PublicStreamFragment.newInstance();
+        getSupportFragmentManager().beginTransaction()
+            .replace(R.id.container, mFragment).commit();
+      }
       return;
     }
+
+    mViewPager.setVisibility(View.VISIBLE);
+    mContainer.setVisibility(View.GONE);
 
     if (getSupportActionBar() != null) {
       getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -293,7 +310,8 @@ public class MainActivity extends BaseActivity
     lp.gravity = GravityCompat.START;
 
     mPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
-    mMainTabs.setTabsFromPagerAdapter(mPagerAdapter);
+    mViewPager.setAdapter(mPagerAdapter);
+    mMainTabs.setupWithViewPager(mViewPager);
 
     mToolBar.addView(mMainTabs, lp);
   }
