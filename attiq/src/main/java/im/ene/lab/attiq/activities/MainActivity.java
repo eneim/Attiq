@@ -320,6 +320,9 @@ public class MainActivity extends BaseActivity
 
     mViewPager.setVisibility(View.VISIBLE);
     mContainer.setVisibility(View.GONE);
+    if (mFragment != null) {
+      getSupportFragmentManager().beginTransaction().remove(mFragment).commit();
+    }
 
     if (getSupportActionBar() != null) {
       getSupportActionBar().setDisplayShowTitleEnabled(false);
