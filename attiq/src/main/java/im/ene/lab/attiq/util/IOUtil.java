@@ -8,13 +8,17 @@ import com.google.gson.GsonBuilder;
 import android.content.res.AssetManager;
 
 import im.ene.lab.attiq.Attiq;
+import im.ene.lab.attiq.data.api.open.FeedItem;
 import io.realm.RealmObject;
 import okio.BufferedSource;
 import okio.Okio;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by eneim on 12/13/15.
@@ -56,4 +60,44 @@ public class IOUtil {
     return buffer.readString(Charset.forName("utf-8"));
   }
 
+  public static String toString(FeedItem item) {
+    return "FeedItem{" +
+        "createdAtInUnixtime=" + item.getCreatedAtInUnixtime() +
+        ", createdAtInWords='" + item.getCreatedAtInWords() + '\'' +
+        ", followableImageUrl='" + item.getFollowableImageUrl() + '\'' +
+        ", followableName='" + item.getFollowableName() + '\'' +
+        ", followableType='" + item.getFollowableType() + '\'' +
+        ", followableUrl='" + item.getFollowableUrl() + '\'' +
+        ", mentionedObjectBody='" + item.getMentionedObjectBody() + '\'' +
+        ", mentionedObjectCommentsCount=" + item.getMentionedObjectCommentsCount() +
+        ", mentionedObjectImageUrl='" + item.getMentionedObjectImageUrl() + '\'' +
+        ", mentionedObjectName='" + item.getMentionedObjectName() + '\'' +
+        ", mentionedObjectStocksCount=" + item.getMentionedObjectStocksCount() +
+        ", mentionedObjectUrl='" + item.getMentionedObjectUrl() + '\'' +
+        // ", mentionedObjectUuid='" + item.getMentionedObjectUuid() + '\'' +
+        ", trackableType='" + item.getTrackableType() + '\'' +
+        '}';
+  }
+
+  public static String sha1(String text) throws NoSuchAlgorithmException,
+      UnsupportedEncodingException {
+    MessageDigest digest = MessageDigest.getInstance("SHA-1");
+    byte[] bytes = text.getBytes("UTF-8");
+    digest.update(bytes, 0, bytes.length);
+    bytes = digest.digest();
+    // This is ~55x faster than looping and String.formating()
+    return bytesToHex(bytes);
+  }
+
+  final private static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+  private static String bytesToHex(byte[] bytes) {
+    char[] hexChars = new char[bytes.length * 2];
+    for (int j = 0; j < bytes.length; j++) {
+      int v = bytes[j] & 0xFF;
+      hexChars[j * 2] = hexArray[v >>> 4];
+      hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+    }
+    return new String(hexChars);
+  }
 }

@@ -19,7 +19,6 @@ import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.AttiqListAdapter;
-import im.ene.lab.attiq.data.api.open.FeedItem;
 import im.ene.lab.attiq.data.event.Event;
 import im.ene.lab.attiq.data.event.TypedEvent;
 import im.ene.lab.attiq.util.UIUtil;
@@ -202,7 +201,6 @@ public abstract class RealmListFragment<E extends RealmObject>
 
   @Override public void onResponse(Response<List<E>> response, Retrofit retrofit) {
     Log.d(TAG, "onResponse() called with: " + "response = [" + response + "]");
-
     if (response.code() != 200) {
       EventBus.getDefault().post(new TypedEvent<>(false,
           new Event.Error(response.code(), response.message()), null, mPage));
@@ -211,17 +209,7 @@ public abstract class RealmListFragment<E extends RealmObject>
       if (!UIUtil.isEmpty(items)) {
         Realm realm = Attiq.realm();
         realm.beginTransaction();
-        for (E item : items) {
-          try {
-            realm.copyToRealmOrUpdate(item);
-          } catch (IllegalArgumentException er) {
-            er.printStackTrace();
-            if (item instanceof FeedItem) {
-              Log.e(TAG, "onResponse: " + ((FeedItem) item).getMentionedObjectUuid() + " | " +
-                  ((FeedItem) item).getMentionedObjectUrl());
-            }
-          }
-        }
+        realm.copyToRealmOrUpdate(items);
         realm.commitTransaction();
         realm.close();
         EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), mPage));

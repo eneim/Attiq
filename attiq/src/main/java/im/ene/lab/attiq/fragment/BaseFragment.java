@@ -28,7 +28,7 @@ public class BaseFragment extends Fragment {
     super.onDestroyView();
   }
 
-  @SuppressWarnings("Unused")
+  @SuppressWarnings("unused")
   public void onEvent(Event event) {
   }
 }

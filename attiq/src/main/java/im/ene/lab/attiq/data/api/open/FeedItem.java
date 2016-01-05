@@ -189,4 +189,5 @@ public class FeedItem extends RealmObject {
   public void setTrackableType(String trackableType) {
     this.trackableType = trackableType;
   }
+
 }
