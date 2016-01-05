@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.internal.ForegroundLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="2dp"
+    android:background="@drawable/tag_background"
+    android:foreground="?attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="@dimen/item_icon_padding">
+
+    <ImageView
+        android:id="@+id/tag_icon"
+        android:layout_width="@dimen/tag_icon_size"
+        android:layout_height="@dimen/tag_icon_size"
+        tools:src="@mipmap/ic_launcher"/>
+
+    <TextView
+        android:id="@+id/tag_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingEnd="@dimen/item_icon_padding"
+        android:paddingLeft="@dimen/item_icon_padding"
+        android:paddingRight="@dimen/item_icon_padding"
+        android:paddingStart="@dimen/item_icon_padding"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+</android.support.design.internal.ForegroundLinearLayout>

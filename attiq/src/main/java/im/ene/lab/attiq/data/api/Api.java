@@ -24,6 +24,9 @@ interface Api {
 
   String BASE_URL = "https://qiita.com";
 
+  /**
+   * APIs directly get from qiita.com website.
+   */
   interface Open {
 
     @GET("/api/public") Call<List<PublicItem>> stream(
@@ -31,9 +34,7 @@ interface Api {
         @Query("type") String type
     );
 
-    @GET("/api/public") Call<List<PublicItem>> stream();
-
-    @GET("/api/track") Call<List<FeedItem>> feed(
+    @GET("/api/tracks") Call<List<FeedItem>> feed(
         @Query("max_created_at") Long maxCreatedAt
     );
   }

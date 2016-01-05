@@ -23,7 +23,7 @@ def VERSION_NAME = "1.0.0"
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion '23.0.2'
     publishNonDefault true
 
     defaultConfig {
@@ -81,7 +81,8 @@ android {
 
 ext {
     support_libraries_version = '23.1.1'
-    okhttp_version = "2.7.0"
+    okhttp_version = "2.7.1"
+    okhttp3_version = "3.0.0-RC1"
     retrofit_version = "2.0.0-beta2"
 }
 
@@ -97,15 +98,18 @@ dependencies {
 
     compile "com.squareup.retrofit:retrofit:${retrofit_version}"
     compile "com.squareup.okhttp:okhttp:${okhttp_version}"
+    compile "com.squareup.okhttp3:okhttp:${okhttp3_version}"
     compile "com.squareup.retrofit:converter-gson:${retrofit_version}"
     compile "com.jakewharton:butterknife:7.0.1"
 
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile "com.wefika:flowlayout:0.4.1"
+    compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.1'
+
+    compile 'com.wefika:flowlayout:0.4.1'
     compile 'com.makeramen:roundedimageview:2.2.1'
     compile 'com.google.code.gson:gson:2.5'
     compile 'org.jsoup:jsoup:1.8.3'
-    compile "com.sothree.slidinguppanel:library:3.2.1"
+    compile 'com.sothree.slidinguppanel:library:3.2.1'
     // compile project(":RVP:rvp")
     compile "us.feras.mdv:markdownview:1.1.0"
 
@@ -113,7 +117,7 @@ dependencies {
     compile "de.greenrobot:eventbus:2.4.0"
     compile 'com.jakewharton.threetenabp:threetenabp:1.0.3'
 
-    compile "io.realm:realm-android:0.86.1"
+    compile "io.realm:realm-android:0.87.1"
 
     compile "com.facebook.stetho:stetho:1.2.0"
     compile "com.facebook.stetho:stetho-okhttp:1.2.0"

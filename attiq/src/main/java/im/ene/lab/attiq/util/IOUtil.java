@@ -1,12 +1,14 @@
 package im.ene.lab.attiq.util;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import android.content.Context;
 import android.content.res.AssetManager;
-import android.support.annotation.NonNull;
 
+import im.ene.lab.attiq.Attiq;
+import io.realm.RealmObject;
 import okio.BufferedSource;
 import okio.Okio;
 
@@ -22,21 +24,33 @@ public class IOUtil {
   private static final Gson GSON;
 
   static {
-    GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+    GSON = new GsonBuilder()
+        .setExclusionStrategies(new ExclusionStrategy() {
+          @Override
+          public boolean shouldSkipField(FieldAttributes f) {
+            return f.getDeclaringClass().equals(RealmObject.class);
+          }
+
+          @Override
+          public boolean shouldSkipClass(Class<?> clazz) {
+            return false;
+          }
+        })
+        .excludeFieldsWithoutExposeAnnotation().create();
   }
 
   public static Gson gson() {
     return GSON;
   }
 
-  public static String readRaw(@NonNull Context context, int rawFile) throws IOException {
-    InputStream stream = context.getResources().openRawResource(rawFile);
+  public static String readRaw(int rawFileId) throws IOException {
+    InputStream stream = Attiq.creator().getResources().openRawResource(rawFileId);
     BufferedSource buffer = Okio.buffer(Okio.source(stream));
     return buffer.readString(Charset.forName("utf-8"));
   }
 
-  public static String readAssets(@NonNull Context context, String fileName) throws IOException {
-    AssetManager assetManager = context.getResources().getAssets();
+  public static String readAssets(String fileName) throws IOException {
+    AssetManager assetManager = Attiq.creator().getResources().getAssets();
     InputStream stream = assetManager.open(fileName);
     BufferedSource buffer = Okio.buffer(Okio.source(stream));
     return buffer.readString(Charset.forName("utf-8"));

@@ -36,6 +36,7 @@ import im.ene.lab.attiq.data.api.open.Profile;
 import im.ene.lab.attiq.data.api.v2.response.AccessToken;
 import im.ene.lab.attiq.data.event.Event;
 import im.ene.lab.attiq.data.event.ProfileFetchedEvent;
+import im.ene.lab.attiq.fragment.FeedListFragment;
 import im.ene.lab.attiq.fragment.PublicStreamFragment;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
@@ -362,6 +363,10 @@ public class MainActivity extends BaseActivity
     }
 
     @Override public Fragment getItem(int position) {
+      if (position == 0) {
+        return FeedListFragment.newInstance();
+      }
+
       return PublicStreamFragment.newInstance();
     }
 

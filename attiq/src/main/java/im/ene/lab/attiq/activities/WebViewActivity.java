@@ -24,7 +24,7 @@ public class WebViewActivity extends AppCompatActivity {
     mWebView = new WebView(this);
     setContentView(mWebView);
     mWebView.setWebViewClient(mWebClient);
-    mWebView.loadUrl(ApiClient.authCallback(this));
+    mWebView.loadUrl(ApiClient.authCallback());
   }
 
   private static final String TAG = "WebViewActivity";

@@ -6,15 +6,26 @@ import com.google.gson.annotations.SerializedName;
 import im.ene.lab.attiq.data.api.v1.response.PublicTag;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by eneim on 12/25/15.
  */
 public class FeedItem extends RealmObject {
 
+  public static final String FOLLOWABLE_TYPE_TAG = "Tag";
+
+  public static final String FOLLOWABLE_TYPE_USER = "User";
+
+  public static final String TRACKABLE_TYPE_STOCK = "StockItem";
+
+  public static final String TRACKABLE_TYPE_TAG = "Tagging";
+
+  public static final String TRACKABLE_TYPE_TAG_FOLLOW = "TagFollowlist";
+
   @SerializedName("created_at_in_unixtime")
   @Expose
-  private Integer createdAtInUnixtime;
+  private Long createdAtInUnixtime;
   @SerializedName("created_at_in_words")
   @Expose
   private String createdAtInWords;
@@ -51,6 +62,7 @@ public class FeedItem extends RealmObject {
   @SerializedName("mentioned_object_url")
   @Expose
   private String mentionedObjectUrl;
+  @PrimaryKey
   @SerializedName("mentioned_object_uuid")
   @Expose
   private String mentionedObjectUuid;
@@ -58,11 +70,11 @@ public class FeedItem extends RealmObject {
   @Expose
   private String trackableType;
 
-  public Integer getCreatedAtInUnixtime() {
+  public Long getCreatedAtInUnixtime() {
     return createdAtInUnixtime;
   }
 
-  public void setCreatedAtInUnixtime(Integer createdAtInUnixtime) {
+  public void setCreatedAtInUnixtime(Long createdAtInUnixtime) {
     this.createdAtInUnixtime = createdAtInUnixtime;
   }
 

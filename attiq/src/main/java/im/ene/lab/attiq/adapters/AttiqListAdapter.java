@@ -13,4 +13,5 @@ public abstract class AttiqListAdapter<T> extends BaseListAdapter<T> {
 
   public abstract void loadItems(boolean isLoadingMore, int page, int pageLimit,
                                  @Nullable String query, Callback<List<T>> callback);
+
 }

@@ -91,14 +91,14 @@ public class TimeLineAdapter extends AttiqListAdapter<PublicItem> {
                         @Nullable String query, final Callback<List<PublicItem>> callback) {
     final Call<List<PublicItem>> data;
     if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
-      data = ApiClient.stream(page, pageLimit);
+      data = ApiClient.openStream(page, pageLimit);
     } else {
       Long id = null;
       if (isLoadingMore) {
         id = getBottomItem().getId();
       }
 
-      data = ApiClient.stream(id);
+      data = ApiClient.publicStream(id);
     }
 
     data.enqueue(new Callback<List<PublicItem>>() {

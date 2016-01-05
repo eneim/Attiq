@@ -19,8 +19,9 @@ import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.AttiqListAdapter;
+import im.ene.lab.attiq.data.api.open.FeedItem;
 import im.ene.lab.attiq.data.event.Event;
-import im.ene.lab.attiq.data.event.EventWrapper;
+import im.ene.lab.attiq.data.event.TypedEvent;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.EndlessScrollListener;
 import im.ene.lab.attiq.widgets.MultiSwipeRefreshLayout;
@@ -195,23 +196,35 @@ public abstract class RealmListFragment<E extends RealmObject>
   }
 
   // Just do nothing here
-  public void onEventMainThread(EventWrapper<E> event) {}
+  @SuppressWarnings("unused")
+  public void onEventMainThread(TypedEvent<E> event) {
+  }
 
   @Override public void onResponse(Response<List<E>> response, Retrofit retrofit) {
     Log.d(TAG, "onResponse() called with: " + "response = [" + response + "]");
 
     if (response.code() != 200) {
-      EventBus.getDefault().post(new EventWrapper<>(false,
+      EventBus.getDefault().post(new TypedEvent<>(false,
           new Event.Error(response.code(), response.message()), null, mPage));
     } else {
       List<E> items = response.body();
       if (!UIUtil.isEmpty(items)) {
         Realm realm = Attiq.realm();
         realm.beginTransaction();
-        realm.copyToRealmOrUpdate(items);
+        for (E item : items) {
+          try {
+            realm.copyToRealmOrUpdate(item);
+          } catch (IllegalArgumentException er) {
+            er.printStackTrace();
+            if (item instanceof FeedItem) {
+              Log.e(TAG, "onResponse: " + ((FeedItem) item).getMentionedObjectUuid() + " | " +
+                  ((FeedItem) item).getMentionedObjectUrl());
+            }
+          }
+        }
         realm.commitTransaction();
         realm.close();
-        EventBus.getDefault().post(new EventWrapper<>(true, null, items.get(0), mPage));
+        EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), mPage));
       }
     }
 
@@ -230,7 +243,7 @@ public abstract class RealmListFragment<E extends RealmObject>
 
   @Override public void onFailure(Throwable t) {
     Log.d(TAG, "onFailure() called with: " + "t = [" + t + "]");
-    EventBus.getDefault().post(new EventWrapper<>(false,
+    EventBus.getDefault().post(new TypedEvent<>(false,
         new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null, mPage));
 
     if (mSwipeRefreshLayout != null) {

@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.ocpsoft.prettytime.PrettyTime;
-import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.chrono.IsoChronology;
 import org.threeten.bp.format.DateTimeFormatter;
@@ -51,8 +50,12 @@ public class TimeUtil {
     return parsedTime.format(YYYY_M_DD_EEE_HH_mm);
   }
 
+  public static long nowSecond() {
+    return ZonedDateTime.now().toEpochSecond();
+  }
+
   private static int thisYear() {
-    return ZonedDateTime.now(ZoneId.systemDefault()).getYear();
+    return ZonedDateTime.now().getYear();
   }
 
   public static String beautify(@NonNull String apiV2TimeString) {

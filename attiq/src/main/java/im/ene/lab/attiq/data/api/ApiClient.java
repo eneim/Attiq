@@ -1,8 +1,6 @@
 package im.ene.lab.attiq.data.api;
 
-import android.content.Context;
 import android.content.res.Resources;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.facebook.stetho.okhttp.StethoInterceptor;
@@ -54,16 +52,12 @@ public final class ApiClient {
     SELF = RETROFIT.create(Api.Me.class);
   }
 
-  public static OkHttpClient client() {
-    return HTTP_CLIENT;
+  public static String authCallback() {
+    return Attiq.creator().getString(R.string.api_token_auth,
+        Attiq.creator().getString(R.string.client_id), UUID.randomUUID().toString());
   }
 
-  public static String authCallback(@NonNull Context context) {
-    return context.getString(R.string.api_token_auth,
-        context.getString(R.string.client_id), UUID.randomUUID().toString());
-  }
-
-  public static Call<List<PublicItem>> stream(@Nullable Long bottomId) {
+  public static Call<List<PublicItem>> publicStream(@Nullable Long bottomId) {
     return OPEN.stream(bottomId, "id");
   }
 
@@ -71,7 +65,7 @@ public final class ApiClient {
     return OPEN.feed(maxCreatedAt);
   }
 
-  public static Call<List<PublicItem>> stream(int page, int limit) {
+  public static Call<List<PublicItem>> openStream(int page, int limit) {
     return ITEMS.stream(page, limit);
   }
 
@@ -97,6 +91,7 @@ public final class ApiClient {
     Resources resources = Attiq.creator().getResources();
     return SELF.accessToken(
         new AccessTokenRequest(
+            false,
             resources.getString(R.string.client_id),
             resources.getString(R.string.client_secret),
             code
