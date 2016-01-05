@@ -20,7 +20,8 @@
     <string name="user_stocked">&lt;a href="http://qiita.com/%1$s">%2$s&lt;/a> stocked</string>
     <string name="user_follow">&lt;a href="http://qiita.com/%1$s">%2$s&lt;/a> followed </string>
     <string name="user_name">&lt;a href="http://qiita.com/%1$s">%2$s&lt;/a></string>
-    <string name="tag_new_post">new post</string>
+    <string name="tag_new_post">has new post</string>
+
     <!-- somehow doesn't work well, need help! -->
 
     <!--<plurals name="plural_item_info">-->

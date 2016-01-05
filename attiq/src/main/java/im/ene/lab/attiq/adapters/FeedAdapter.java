@@ -146,7 +146,7 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
 
       mItemUserInfo.setVisibility(View.GONE);
 
-      mItemTitle.setText(Html.fromHtml(item.getMentionedObjectName()));
+      mItemTitle.setText(item.getMentionedObjectName());
       final RequestCreator requestCreator;
       if (!UIUtil.isEmpty(item.getMentionedObjectImageUrl())) {
         requestCreator = Attiq.picasso().load(item.getMentionedObjectImageUrl());
@@ -168,6 +168,7 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
         final View tagView = mInflater.inflate(R.layout.widget_tag_view, mItemIdentity, false);
         final TextView tagName = ButterKnife.findById(tagView, R.id.tag_name);
         final ImageView tagIcon = ButterKnife.findById(tagView, R.id.tag_icon);
+        mItemIdentity.addView(tagView);
 
         tagName.setText(item.getFollowableName());
 
@@ -178,16 +179,14 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
             .into(tagIcon, new com.squareup.picasso.Callback() {
               @Override public void onSuccess() {
                 tagIcon.setVisibility(View.VISIBLE);
-                mItemIdentity.addView(tagView);
               }
 
               @Override public void onError() {
                 tagIcon.setVisibility(View.GONE);
-                mItemIdentity.addView(tagView);
               }
             });
 
-        TextView infoText = (TextView) mInflater.inflate(R.layout.single_line_text_tiny,
+        final TextView infoText = (TextView) mInflater.inflate(R.layout.single_line_text_tiny,
             mItemIdentity, false);
         infoText.setText(R.string.tag_new_post);
         mItemIdentity.addView(infoText);
