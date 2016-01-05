@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.internal.ForegroundLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="?attr/actionBarSize"
+    android:orientation="horizontal"
+    android:padding="@dimen/item_padding">
+
+    <View
+        android:layout_width="@dimen/empty_view_size"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|start"
+        android:background="@android:color/transparent"/>
+
+    <TextView
+        android:id="@+id/item_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="@dimen/item_padding"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+
+</android.support.design.internal.ForegroundLinearLayout>

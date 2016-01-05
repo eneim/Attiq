@@ -21,7 +21,9 @@ public class FeedItem extends RealmObject {
 
   public static final String TRACKABLE_TYPE_TAG = "Tagging";
 
-  public static final String TRACKABLE_TYPE_TAG_FOLLOW = "TagFollowlist";
+  public static final String TRACKABLE_TYPE_FOLLOW_TAG = "TagFollowlist";
+
+  public static final String TRACKABLE_TYPE_FOLLOW_USER = "FollowingUser";
 
   @SerializedName("created_at_in_unixtime")
   @Expose

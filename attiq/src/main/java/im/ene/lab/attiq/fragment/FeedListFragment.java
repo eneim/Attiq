@@ -1,6 +1,8 @@
 package im.ene.lab.attiq.fragment;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 
 import de.greenrobot.event.EventBus;
@@ -12,6 +14,7 @@ import im.ene.lab.attiq.data.event.Event;
 import im.ene.lab.attiq.data.event.TypedEvent;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -33,6 +36,12 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
 
   public static FeedListFragment newInstance() {
     return new FeedListFragment();
+  }
+
+  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+        DividerItemDecoration.VERTICAL_LIST));
   }
 
   @NonNull @Override protected AttiqListAdapter<FeedItem> createAdapter() {
