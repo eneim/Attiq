@@ -6,6 +6,8 @@
     android:layout_height="wrap_content"
     android:layout_margin="2dp"
     android:background="@drawable/tag_background"
+    android:clickable="true"
+    android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"

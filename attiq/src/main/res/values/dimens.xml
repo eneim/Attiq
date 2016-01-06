@@ -21,7 +21,7 @@
     <dimen name="item_icon_size_small">36dp</dimen>
     <dimen name="item_icon_size_small_half">18dp</dimen>
 
-    <dimen name="feed_item_identity_size">30dp</dimen>
+    <dimen name="feed_item_identity_size">28dp</dimen>
 
     <dimen name="empty_view_size">64dp</dimen>
 

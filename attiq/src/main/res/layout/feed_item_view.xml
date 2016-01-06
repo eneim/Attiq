@@ -26,7 +26,7 @@
             android:layout_height="@dimen/feed_item_identity_size"
             android:layout_gravity="top|start"
             android:layout_weight="1"
-            android:divider="@drawable/post_item_divider_horizontal_4dp"
+            android:divider="@drawable/post_item_divider_horizontal_2dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingEnd="@dimen/item_padding"
