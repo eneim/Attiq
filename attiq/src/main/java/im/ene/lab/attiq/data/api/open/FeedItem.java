@@ -25,6 +25,8 @@ public class FeedItem extends RealmObject {
 
   public static final String TRACKABLE_TYPE_FOLLOW_USER = "FollowingUser";
 
+  public static final String TRACKABLE_TYPE_COMMENT = "Comment";
+
   @SerializedName("created_at_in_unixtime")
   @Expose
   private Long createdAtInUnixtime;

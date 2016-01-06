@@ -38,11 +38,11 @@ import java.util.List;
 /**
  * Created by eneim on 12/14/15.
  */
-public class TimeLineAdapter extends AttiqListAdapter<PublicItem> {
+public class PublicAdapter extends AttiqListAdapter<PublicItem> {
 
   private final RealmResults<PublicItem> mItems;
 
-  public TimeLineAdapter(RealmResults<PublicItem> items) {
+  public PublicAdapter(RealmResults<PublicItem> items) {
     super();
     mItems = items;
     setHasStableIds(true);
@@ -57,7 +57,7 @@ public class TimeLineAdapter extends AttiqListAdapter<PublicItem> {
       @Override public void onClick(View view) {
         int position = viewHolder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-          mOnItemClickListener.onItemClick(TimeLineAdapter.this, viewHolder, view, position,
+          mOnItemClickListener.onItemClick(PublicAdapter.this, viewHolder, view, position,
               getItemId(position));
         }
       }
@@ -127,7 +127,7 @@ public class TimeLineAdapter extends AttiqListAdapter<PublicItem> {
     }
   }
 
-  public static abstract class OnTimeLineItemClickListener
+  public static abstract class OnPublicItemClickListener
       implements BaseAdapter.OnItemClickListener {
 
     public abstract void onUserClick(PublicUser user);

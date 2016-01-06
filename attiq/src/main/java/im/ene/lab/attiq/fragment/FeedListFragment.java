@@ -3,10 +3,12 @@ package im.ene.lab.attiq.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
+import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.adapters.AttiqListAdapter;
 import im.ene.lab.attiq.adapters.FeedAdapter;
 import im.ene.lab.attiq.data.api.open.FeedItem;
@@ -37,10 +39,36 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     return new FeedListFragment();
   }
 
+  private static final String TAG = "FeedListFragment";
+
+  private FeedAdapter.OnFeedItemClickListener mOnItemClickListener;
+
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
         DividerItemDecoration.VERTICAL_LIST));
+
+    mOnItemClickListener = new FeedAdapter.OnFeedItemClickListener() {
+      @Override public void onUserClick(FeedItem host) {
+        Log.d(TAG, "onUserClick() called with: " + "host = [" + host + "]");
+      }
+
+      @Override public void onItemContentClick(FeedItem item) {
+        Log.d(TAG, "onItemContentClick() called with: " + "item = [" + item + "]");
+        startActivity(ItemDetailActivity.createIntent(getContext(), item));
+      }
+
+      @Override public void onTagClick(FeedItem host) {
+        Log.d(TAG, "onTagClick() called with: " + "host = [" + host + "]");
+      }
+    };
+
+    mAdapter.setOnItemClickListener(mOnItemClickListener);
+  }
+
+  @Override public void onDestroyView() {
+    mOnItemClickListener = null;
+    super.onDestroyView();
   }
 
   @NonNull @Override protected AttiqListAdapter<FeedItem> createAdapter() {
