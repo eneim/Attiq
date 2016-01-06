@@ -37,8 +37,8 @@ import java.util.List;
  * Created by eneim on 12/13/15.
  */
 public abstract class RealmListFragment<E extends RealmObject>
-    extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, Handler.Callback,
-    Callback<List<E>> {
+    extends BaseFragment
+    implements SwipeRefreshLayout.OnRefreshListener, Handler.Callback, Callback<List<E>> {
 
   private static final String TAG = "RealmListFragment";
   /**

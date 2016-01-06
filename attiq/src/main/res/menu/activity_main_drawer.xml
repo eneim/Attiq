@@ -32,17 +32,16 @@
                     android:id="@+id/nav_draft"
                     android:icon="@drawable/ic_draft"
                     android:title="Draft"/>
-
-                <item
-                    android:id="@+id/nav_my_post"
-                    android:icon="@drawable/ic_list_24dp_60"
-                    android:title="My items"/>
-
-                <item
-                    android:id="@+id/nav_stocked"
-                    android:icon="@drawable/ic_folder_24dp_60"
-                    android:title="Stocked items"/>
             </group>
+        </menu>
+    </item>
+
+    <item
+        android:title="Profile">
+        <menu>
+            <item
+                android:id="@+id/nav_profile"
+                android:title="My page"/>
         </menu>
     </item>
 

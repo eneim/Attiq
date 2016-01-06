@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -38,6 +39,10 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
 
   private final RealmResults<FeedItem> mItems;
 
+  private static final int VIEW_TYPE_ITEM = 1 << 1;
+
+  private static final int VIEW_TYPE_FOLLOW = 1 << 2;
+
   public FeedAdapter(RealmResults<FeedItem> items) {
     super();
     this.mItems = items;
@@ -47,7 +52,7 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
   @Override
   public ViewHolder<FeedItem> onCreateViewHolder(ViewGroup parent, int viewType) {
     final ViewHolder<FeedItem> viewHolder;
-    if (viewType == 0) {
+    if (viewType == VIEW_TYPE_ITEM) {
       View view = LayoutInflater.from(parent.getContext())
           .inflate(FeedViewHolder.LAYOUT_RES, parent, false);
       viewHolder = new FeedViewHolder(view);
@@ -57,7 +62,16 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
       viewHolder = new FollowingViewHolder(view);
     }
 
-    // TODO setup click listener
+    viewHolder.setOnViewHolderClickListener(new View.OnClickListener() {
+      @Override public void onClick(View view) {
+        int position = viewHolder.getAdapterPosition();
+        if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
+          mOnItemClickListener.onItemClick(FeedAdapter.this, viewHolder, view, position,
+              getItemId(position));
+        }
+      }
+    });
+
     return viewHolder;
   }
 
@@ -80,10 +94,10 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
     FeedItem item = getItem(position);
     if (FeedItem.TRACKABLE_TYPE_FOLLOW_TAG.equals(item.getTrackableType()) ||
         FeedItem.TRACKABLE_TYPE_FOLLOW_USER.equals(item.getTrackableType())) {
-      return 1;
+      return VIEW_TYPE_FOLLOW;
     }
 
-    return 0;
+    return VIEW_TYPE_ITEM;
   }
 
   @Override
@@ -121,6 +135,9 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
     @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
     @BindColor(R.color.colorAccent) int mIconBorderColor;
 
+    // TODO take care of memory leak
+    private View.OnClickListener mListener;
+
     private final Context mContext;
 
     public FeedViewHolder(View view) {
@@ -132,7 +149,19 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
       mItemTags.setVisibility(View.GONE);
     }
 
+    void setupItemClick(FeedViewHolder vh, View view, FeedItem item,
+                        @NonNull OnFeedItemClickListener listener) {
+      if (view == vh.itemView) {
+        listener.onItemContentClick(item);
+      } else if (view == vh.mItemUserImage) {
+        listener.onUserClick(item);
+      } else if (view.getId() == R.id.feed_view_id_tag) {
+        listener.onTagClick(item);
+      }
+    }
+
     @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {
+      mListener = listener;
       mItemUserImage.setOnClickListener(listener);
       itemView.setOnClickListener(listener);
     }
@@ -168,6 +197,9 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
         final View tagView = mInflater.inflate(R.layout.widget_tag_view, mItemIdentity, false);
         final TextView tagName = ButterKnife.findById(tagView, R.id.tag_name);
         final ImageView tagIcon = ButterKnife.findById(tagView, R.id.tag_icon);
+
+        tagView.setId(R.id.feed_view_id_tag);
+        tagView.setOnClickListener(mListener);
         mItemIdentity.addView(tagView);
 
         tagName.setText(item.getFollowableName());
@@ -197,6 +229,17 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
         infoText.setMovementMethod(LinkMovementMethod.getInstance());
         infoText.setText(Html.fromHtml(mContext.getString(R.string.user_stocked,
             item.getFollowableName(), item.getFollowableName())));
+
+        infoText.setId(R.id.feed_view_id_info);
+        mItemIdentity.addView(infoText);
+      } else if (FeedItem.TRACKABLE_TYPE_COMMENT.equals(item.getTrackableType())){
+        TextView infoText = (TextView) mInflater.inflate(R.layout.single_line_text_tiny,
+            mItemIdentity, false);
+        infoText.setClickable(true);
+        infoText.setMovementMethod(LinkMovementMethod.getInstance());
+        infoText.setText(Html.fromHtml(mContext.getString(R.string.user_commented,
+            item.getFollowableName(), item.getFollowableName())));
+        infoText.setId(R.id.feed_view_id_info);
         mItemIdentity.addView(infoText);
       } else {
         mItemIdentity.setVisibility(View.GONE);
@@ -226,6 +269,11 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
       mInflater = LayoutInflater.from(itemView.getContext());
       mItemInfo.setClickable(true);
       mItemInfo.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    void setupItemClick(FollowingViewHolder vh, View view, FeedItem item,
+                        OnFeedItemClickListener listener) {
+
     }
 
     @Override public void bind(FeedItem item) {
@@ -290,6 +338,39 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
 
       mentionedItem.setId(R.id.feed_view_id_mentioned_item);
       container.addView(mentionedItem);
+    }
+  }
+
+  public static abstract class OnFeedItemClickListener
+      implements BaseAdapter.OnItemClickListener {
+
+    public abstract void onUserClick(FeedItem host);
+
+    public abstract void onItemContentClick(FeedItem item);
+
+    public abstract void onTagClick(FeedItem host);
+
+    @Override
+    public void onItemClick(BaseAdapter adapter, BaseAdapter.ViewHolder viewHolder,
+                            View view, int adapterPosition, long itemId) {
+      final FeedItem item;
+      if (adapter instanceof BaseListAdapter) {
+        item = (FeedItem) ((BaseListAdapter) adapter).getItem(adapterPosition);
+      } else {
+        item = null;
+      }
+
+      if (item == null) {
+        return;
+      }
+
+      if (viewHolder instanceof FeedViewHolder) {
+        ((FeedViewHolder) viewHolder)
+            .setupItemClick((FeedViewHolder) viewHolder, view, item, this);
+      } else if (viewHolder instanceof FollowingViewHolder) {
+        ((FollowingViewHolder) viewHolder)
+            .setupItemClick((FollowingViewHolder) viewHolder, view, item, this);
+      }
     }
   }
 }

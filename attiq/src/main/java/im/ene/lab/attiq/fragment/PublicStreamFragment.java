@@ -9,7 +9,7 @@ import android.view.View;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
 import im.ene.lab.attiq.adapters.AttiqListAdapter;
-import im.ene.lab.attiq.adapters.TimeLineAdapter;
+import im.ene.lab.attiq.adapters.PublicAdapter;
 import im.ene.lab.attiq.data.api.v1.response.PublicItem;
 import im.ene.lab.attiq.data.api.v1.response.PublicUser;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
@@ -32,10 +32,10 @@ public class PublicStreamFragment extends RealmListFragment<PublicItem> {
   @NonNull @Override protected AttiqListAdapter<PublicItem> createAdapter() {
     RealmResults<PublicItem> items = mRealm.where(PublicItem.class)
         .findAllSorted("createdAtAsSeconds", Sort.DESCENDING);
-    return new TimeLineAdapter(items);
+    return new PublicAdapter(items);
   }
 
-  private TimeLineAdapter.OnTimeLineItemClickListener mItemClickListener;
+  private PublicAdapter.OnPublicItemClickListener mItemClickListener;
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
@@ -46,7 +46,7 @@ public class PublicStreamFragment extends RealmListFragment<PublicItem> {
     mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
         DividerItemDecoration.VERTICAL_LIST));
 
-    mItemClickListener = new TimeLineAdapter.OnTimeLineItemClickListener() {
+    mItemClickListener = new PublicAdapter.OnPublicItemClickListener() {
       @Override public void onUserClick(PublicUser user) {
         startActivity(ProfileActivity.createIntent(getContext()));
       }
