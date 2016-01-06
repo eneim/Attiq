@@ -2,7 +2,7 @@ package im.ene.lab.attiq.adapters;
 
 import android.support.annotation.Nullable;
 
-import retrofit.Callback;
+import retrofit2.Callback;
 
 import java.util.List;
 

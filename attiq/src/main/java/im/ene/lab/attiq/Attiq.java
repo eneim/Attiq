@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.facebook.stetho.Stetho;
+import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
@@ -73,6 +74,7 @@ public class Attiq extends Application {
     mPreference = getSharedPreferences(getPackageName() + "_pref", Context.MODE_PRIVATE);
     mPicasso = new Picasso.Builder(this)
         .defaultBitmapConfig(Bitmap.Config.RGB_565)
+        .downloader(new OkHttp3Downloader(this))  // a separated client
         .build();
 
     Stetho.initialize(

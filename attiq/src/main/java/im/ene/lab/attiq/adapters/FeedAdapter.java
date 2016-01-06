@@ -27,7 +27,7 @@ import im.ene.lab.attiq.data.api.open.FeedItem;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
 import io.realm.RealmResults;
-import retrofit.Callback;
+import retrofit2.Callback;
 
 import java.util.List;
 

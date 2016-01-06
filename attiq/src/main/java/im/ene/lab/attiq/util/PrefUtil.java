@@ -20,8 +20,14 @@ public class PrefUtil {
 
   private static final AuthInterceptor sInterceptor = new AuthInterceptor();
 
+  private static final Ok3AuthInterceptor sOk3Auth = new Ok3AuthInterceptor();
+
   public static Interceptor authInterceptor() {
     return sInterceptor;
+  }
+
+  public static okhttp3.Interceptor ok3Auth() {
+    return sOk3Auth;
   }
 
   public static void setCurrentToken(String token) {
@@ -47,6 +53,19 @@ public class PrefUtil {
 
     @Override public Response intercept(Chain chain) throws IOException {
       Request.Builder requestBuilder = chain.request().newBuilder();
+      if (!UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
+        requestBuilder.addHeader(Header.Request.AUTHORIZATION,
+            Header.Request.authorization(PrefUtil.getCurrentToken()));
+      }
+
+      return chain.proceed(requestBuilder.build());
+    }
+  }
+
+  static class Ok3AuthInterceptor implements okhttp3.Interceptor {
+
+    @Override public okhttp3.Response intercept(Chain chain) throws IOException {
+      okhttp3.Request.Builder requestBuilder = chain.request().newBuilder();
       if (!UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
         requestBuilder.addHeader(Header.Request.AUTHORIZATION,
             Header.Request.authorization(PrefUtil.getCurrentToken()));
