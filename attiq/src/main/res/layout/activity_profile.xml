@@ -29,7 +29,7 @@
             <FrameLayout
                 android:id="@+id/toolbar_overlay"
                 android:layout_width="match_parent"
-                android:layout_height="224dp"
+                android:layout_height="200dp"
                 android:layout_gravity="bottom"
                 android:fitsSystemWindows="true"
                 app:layout_collapseMode="parallax">
@@ -46,14 +46,6 @@
                     android:layout_height="match_parent"
                     android:background="#80000000"/>
 
-                <ImageView
-                    android:id="@+id/profile_image"
-                    android:layout_width="@dimen/profile_image_size"
-                    android:layout_height="@dimen/profile_image_size"
-                    android:layout_gravity="start|bottom"
-                    android:layout_margin="@dimen/profile_image_margin"
-                    android:src="@drawable/ic_smile_ninja_48dp"/>
-
             </FrameLayout>
 
             <android.support.v7.widget.Toolbar
@@ -65,6 +57,15 @@
                 app:subtitleTextAppearance="@style/Attiq.Widget.Toolbar.Subtitle"/>
 
         </im.ene.support.design.widget.CollapsingToolbarLayout>
+
+        <android.support.v7.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/item_icon_size_small"
+            android:background="@color/colorPrimaryDark"
+            android:orientation="horizontal"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+        </android.support.v7.widget.LinearLayoutCompat>
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"
@@ -78,11 +79,12 @@
 
     <include layout="@layout/content_profile"/>
 
-    <android.support.design.widget.FloatingActionButton
+    <im.ene.support.design.widget.FabImageView
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
+        app:exFabSize="big"
         app:layout_anchor="@id/toolbar_layout"
         app:layout_anchorGravity="bottom|end"/>
 

@@ -3,4 +3,18 @@
     <declare-styleable name="MultiSwipeRefreshLayout">
         <attr name="foreground" format="reference"/>
     </declare-styleable>
+
+    <declare-styleable name="FloatingActionButton">
+        <attr name="backgroundTint"/>
+        <attr name="backgroundTintMode"/>
+        <attr name="rippleColor" format="color"/>
+        <attr name="exFabSize">
+            <enum name="normal" value="0"/>
+            <enum name="mini" value="1"/>
+            <enum name="big" value="2"/>
+        </attr>
+        <attr name="elevation"/>
+        <attr name="pressedTranslationZ" format="dimension"/>
+        <attr name="borderWidth" format="dimension"/>
+    </declare-styleable>
 </resources>

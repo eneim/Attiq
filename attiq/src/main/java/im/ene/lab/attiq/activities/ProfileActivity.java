@@ -3,7 +3,6 @@ package im.ene.lab.attiq.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -39,6 +38,7 @@ import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AnimationUtils;
 import im.ene.support.design.widget.AppBarLayout;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
+import im.ene.support.design.widget.FabImageView;
 import io.realm.Realm;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -62,11 +62,11 @@ public class ProfileActivity extends BaseActivity {
   @Bind(R.id.toolbar_layout) CollapsingToolbarLayout mToolBarLayout;
   @Bind(R.id.toolbar_overlay) View mOverLayContainer;
   @Bind(R.id.toolbar_overlay_image) ImageView mOverLayView;
-  @Bind(R.id.profile_image) ImageView mProfileImage;
+  // @Bind(R.id.profile_image) ImageView mProfileImage;
 
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.tab_layout) TabLayout mTabLayout;
-  @Bind(R.id.fab) FloatingActionButton mFab;
+  @Bind(R.id.fab) FabImageView mFab;
 
   // Others
   // @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
@@ -206,12 +206,12 @@ public class ProfileActivity extends BaseActivity {
     if (mProfile != null) {
       Attiq.picasso()
           .load(mProfile.getProfileImageUrl())
-          .placeholder(R.drawable.ic_smile_ninja_48dp)
-          .error(R.drawable.ic_smile_ninja_48dp)
+          .placeholder(R.mipmap.ic_launcher)
+          .error(R.mipmap.ic_launcher)
           .resize(mProfileImageSize, 0)
           .transform(new RoundedTransformation(
               mImageBorderWidth, mImageBorderColor, mProfileImageSizeHalf))
-          .into(mProfileImage);
+          .into(mFab);
 
       mSpannableTitle = new SpannableString(mProfile.getId());
       updateTitle();
