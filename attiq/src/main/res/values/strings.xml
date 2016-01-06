@@ -121,6 +121,7 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
+    <string name="action_filter">Filter</string>
     <string name="action_item_menu">Menu</string>
     <string name="title_activity_profile">Profile</string>
     <string name="item_detail_subtitle">posted by %1$s</string>

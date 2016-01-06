@@ -4,11 +4,9 @@
     <group
         android:id="@+id/group_auth"
         android:visible="true">
-
         <item
             android:id="@+id/nav_login"
             android:title="@string/activity_login"/>
-
     </group>
 
     <group
@@ -17,18 +15,36 @@
         <item
             android:id="@+id/nav_home"
             android:title="Home"/>
+
         <item
-            android:id="@+id/nav_bookmark"
-            android:title="Bookmark"/>
+            android:id="@+id/nav_history"
+            android:title="History"/>
     </group>
 
-    <group
-        android:id="@+id/group_post"
-        android:visible="false">
-        <item
-            android:id="@+id/nav_draft"
-            android:title="Draft"/>
-    </group>
+    <item
+        android:title="Post">
+        <menu>
+            <group
+                android:id="@+id/group_post"
+                android:checkableBehavior="single"
+                android:visible="true">
+                <item
+                    android:id="@+id/nav_draft"
+                    android:icon="@drawable/ic_draft"
+                    android:title="Draft"/>
+
+                <item
+                    android:id="@+id/nav_my_post"
+                    android:icon="@drawable/ic_list_24dp_60"
+                    android:title="My items"/>
+
+                <item
+                    android:id="@+id/nav_stocked"
+                    android:icon="@drawable/ic_folder_24dp_60"
+                    android:title="Stocked items"/>
+            </group>
+        </menu>
+    </item>
 
     <item
         android:title="Application">

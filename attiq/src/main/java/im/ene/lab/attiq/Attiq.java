@@ -46,10 +46,11 @@ public class Attiq extends Application {
   @Override public void onCreate() {
     super.onCreate();
     INSTANCE = this;
+    // Fabric, Answer, Crashlytics, ...
     Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
-
+    // Date, Time, ...
     TimeUtil.init(this);
-
+    // Realm
     RealmConfiguration config = new RealmConfiguration.Builder(this)
         .name(getString(R.string.realm_name))
         .schemaVersion(R.integer.realm_version)
@@ -58,11 +59,13 @@ public class Attiq extends Application {
 
           }
         }).build();
-
-    try {
-      Realm.deleteRealm(config);
-    } catch (IllegalStateException er) {
-      er.printStackTrace();
+    // Delete old data by default
+    if (BuildConfig.DEBUG) {
+      try {
+        Realm.deleteRealm(config);
+      } catch (IllegalStateException er) {
+        er.printStackTrace();
+      }
     }
 
     Realm.setDefaultConfiguration(config);
