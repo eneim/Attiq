@@ -18,7 +18,7 @@ import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.adapters.RealmListAdapter;
+import im.ene.lab.attiq.adapters.ListAdapter;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.TypedEvent;
 import im.ene.lab.attiq.util.UIUtil;
@@ -27,20 +27,19 @@ import im.ene.lab.attiq.widgets.MultiSwipeRefreshLayout;
 import im.ene.lab.attiq.widgets.NonEmptyRecyclerView;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmObject;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.util.List;
 
 /**
- * Created by eneim on 12/13/15.
+ * Created by eneim on 1/6/16.
  */
-public abstract class RealmListFragment<E extends RealmObject>
+public abstract class ListFragment<E>
     extends BaseFragment
     implements SwipeRefreshLayout.OnRefreshListener, Handler.Callback, Callback<List<E>> {
 
-  private static final String TAG = "RealmListFragment";
+  private static final String TAG = "ListFragment";
   /**
    * Message sent from #onChange, used to update current list by change event from Realm
    */
@@ -77,7 +76,7 @@ public abstract class RealmListFragment<E extends RealmObject>
   @Bind(R.id.view_empty) View mEmptyView;
   @Bind(R.id.view_error) View mErrorView;
 
-  protected RealmListAdapter<E> mAdapter;
+  protected ListAdapter<E> mAdapter;
 
   // User a handler to prevent too frequently calling of methods. For example Realm may trigger
   // #onChange a lot of time, since it doesn't support type-specific change event now. So we
@@ -183,7 +182,7 @@ public abstract class RealmListFragment<E extends RealmObject>
   }
 
   @NonNull
-  protected abstract RealmListAdapter<E> createAdapter();
+  protected abstract ListAdapter<E> createAdapter();
 
   @Override public void onRefresh() {
     if (mSwipeRefreshLayout != null) {
@@ -206,11 +205,6 @@ public abstract class RealmListFragment<E extends RealmObject>
     } else {
       List<E> items = response.body();
       if (!UIUtil.isEmpty(items)) {
-        Realm realm = Attiq.realm();
-        realm.beginTransaction();
-        realm.copyToRealmOrUpdate(items);
-        realm.commitTransaction();
-        realm.close();
         EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), mPage));
       }
     }

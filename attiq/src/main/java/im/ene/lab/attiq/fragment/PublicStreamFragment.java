@@ -8,10 +8,10 @@ import android.view.View;
 
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
-import im.ene.lab.attiq.adapters.AttiqListAdapter;
-import im.ene.lab.attiq.adapters.PublicAdapter;
-import im.ene.lab.attiq.data.api.v1.response.PublicItem;
-import im.ene.lab.attiq.data.api.v1.response.PublicUser;
+import im.ene.lab.attiq.adapters.PublicItemsAdapter;
+import im.ene.lab.attiq.adapters.RealmListAdapter;
+import im.ene.lab.attiq.data.zero.PublicItem;
+import im.ene.lab.attiq.data.one.PublicUser;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -29,13 +29,13 @@ public class PublicStreamFragment extends RealmListFragment<PublicItem> {
     return new PublicStreamFragment();
   }
 
-  @NonNull @Override protected AttiqListAdapter<PublicItem> createAdapter() {
+  @NonNull @Override protected RealmListAdapter<PublicItem> createAdapter() {
     RealmResults<PublicItem> items = mRealm.where(PublicItem.class)
         .findAllSorted("createdAtAsSeconds", Sort.DESCENDING);
-    return new PublicAdapter(items);
+    return new PublicItemsAdapter(items);
   }
 
-  private PublicAdapter.OnPublicItemClickListener mItemClickListener;
+  private PublicItemsAdapter.OnPublicItemClickListener mItemClickListener;
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
@@ -46,9 +46,9 @@ public class PublicStreamFragment extends RealmListFragment<PublicItem> {
     mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
         DividerItemDecoration.VERTICAL_LIST));
 
-    mItemClickListener = new PublicAdapter.OnPublicItemClickListener() {
+    mItemClickListener = new PublicItemsAdapter.OnPublicItemClickListener() {
       @Override public void onUserClick(PublicUser user) {
-        startActivity(ProfileActivity.createIntent(getContext()));
+        startActivity(ProfileActivity.createIntent(getContext(), user.getUrlName()));
       }
 
       @Override public void onItemContentClick(PublicItem item) {

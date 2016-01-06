@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.data.api.open.FeedItem;
+import im.ene.lab.attiq.data.zero.FeedItem;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
 import io.realm.RealmResults;
@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * Created by eneim on 12/25/15.
  */
-public class FeedAdapter extends AttiqListAdapter<FeedItem> {
+public class FeedAdapter extends RealmListAdapter<FeedItem> {
 
   private final RealmResults<FeedItem> mItems;
 

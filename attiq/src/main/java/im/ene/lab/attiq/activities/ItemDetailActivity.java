@@ -52,19 +52,20 @@ import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.data.api.open.FeedItem;
-import im.ene.lab.attiq.data.api.v1.response.PublicItem;
-import im.ene.lab.attiq.data.api.v2.response.Article;
-import im.ene.lab.attiq.data.api.v2.response.Comment;
-import im.ene.lab.attiq.data.api.v2.response.User;
-import im.ene.lab.attiq.data.event.Event;
-import im.ene.lab.attiq.data.event.ItemCommentsEvent;
-import im.ene.lab.attiq.data.event.ItemDetailEvent;
+import im.ene.lab.attiq.data.one.UserOwnItem;
+import im.ene.lab.attiq.data.two.Article;
+import im.ene.lab.attiq.data.two.Comment;
+import im.ene.lab.attiq.data.two.User;
+import im.ene.lab.attiq.data.zero.FeedItem;
+import im.ene.lab.attiq.data.zero.PublicItem;
 import im.ene.lab.attiq.util.AnimUtils;
 import im.ene.lab.attiq.util.HtmlUtil;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.util.event.Event;
+import im.ene.lab.attiq.util.event.ItemCommentsEvent;
+import im.ene.lab.attiq.util.event.ItemDetailEvent;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
 import im.ene.lab.attiq.widgets.drawable.ThreadedCommentDrawable;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
@@ -157,18 +158,23 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       };
   private String mItemUuid;
 
-  public static Intent createIntent(Context context, @NonNull PublicItem item) {
+  public static Intent createIntent(Context context, Long itemId, String itemUuid) {
     Intent intent = createIntent(context);
-    intent.putExtra(EXTRA_DETAIL_ITEM_ID, item.getId());
-    intent.putExtra(EXTRA_DETAIL_ITEM_UUID, item.getUuid());
+    intent.putExtra(EXTRA_DETAIL_ITEM_ID, itemId);
+    intent.putExtra(EXTRA_DETAIL_ITEM_UUID, itemUuid);
     return intent;
   }
 
+  public static Intent createIntent(Context context, @NonNull PublicItem item) {
+    return createIntent(context, item.getId(), item.getUuid());
+  }
+
+  public static Intent createIntent(Context context, @NonNull UserOwnItem item) {
+    return createIntent(context, item.getId(), item.getUuid());
+  }
+
   public static Intent createIntent(Context context, @NonNull FeedItem item) {
-    Intent intent = createIntent(context);
-    // intent.putExtra(EXTRA_DETAIL_ITEM_ID, item.getId());
-    intent.putExtra(EXTRA_DETAIL_ITEM_UUID, item.getMentionedObjectUuid());
-    return intent;
+    return createIntent(context, null, item.getMentionedObjectUuid());
   }
 
   private static Intent createIntent(Context context) {
@@ -421,8 +427,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   }
 
   private void updateTitle() {
-    float titleAlpha =
-        mToolBarLayout.shouldTriggerScrimOffset(mToolbarLayoutOffset) ? 1.f : 0.f;
+    float titleAlpha = mToolBarLayout.shouldTriggerScrimOffset(mToolbarLayoutOffset) ? 1.f : 0.f;
     mTitleColorSpan.setAlpha(titleAlpha);
     // title
     mSpannableTitle.setSpan(mTitleColorSpan, 0, mSpannableTitle.length(),

@@ -7,7 +7,7 @@ import android.view.View;
 
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
-import im.ene.lab.attiq.data.event.Event;
+import im.ene.lab.attiq.util.event.Event;
 
 /**
  * Created by eneim on 12/13/15.

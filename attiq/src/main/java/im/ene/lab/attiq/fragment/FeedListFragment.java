@@ -10,16 +10,16 @@ import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
-import im.ene.lab.attiq.adapters.AttiqListAdapter;
 import im.ene.lab.attiq.adapters.FeedAdapter;
+import im.ene.lab.attiq.adapters.RealmListAdapter;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.data.api.open.FeedItem;
-import im.ene.lab.attiq.data.api.v2.response.Article;
-import im.ene.lab.attiq.data.event.Event;
-import im.ene.lab.attiq.data.event.ItemDetailEvent;
-import im.ene.lab.attiq.data.event.TypedEvent;
+import im.ene.lab.attiq.data.two.Article;
+import im.ene.lab.attiq.data.zero.FeedItem;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.util.event.Event;
+import im.ene.lab.attiq.util.event.ItemDetailEvent;
+import im.ene.lab.attiq.util.event.TypedEvent;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -97,12 +97,12 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
 
   public void onEventMainThread(ItemDetailEvent event) {
     Article article = event.article;
-    if (article != null) {
-      startActivity(ProfileActivity.createIntent(getContext()));
+    if (article != null && article.getUser() != null) {
+      startActivity(ProfileActivity.createIntent(getContext(), article.getUser().getId()));
     }
   }
 
-  @NonNull @Override protected AttiqListAdapter<FeedItem> createAdapter() {
+  @NonNull @Override protected RealmListAdapter<FeedItem> createAdapter() {
     RealmResults<FeedItem> items = mRealm.where(FeedItem.class)
         .findAllSorted("createdAtInUnixtime", Sort.DESCENDING);
     return new FeedAdapter(items);
