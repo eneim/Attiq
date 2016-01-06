@@ -3,9 +3,6 @@ package im.ene.lab.attiq.data.api;
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
 
-import com.facebook.stetho.okhttp.StethoInterceptor;
-import com.squareup.okhttp.OkHttpClient;
-
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.open.FeedItem;
@@ -30,7 +27,6 @@ import java.util.UUID;
  */
 public final class ApiClient {
 
-  private static final OkHttpClient HTTP_CLIENT;
   private static final okhttp3.OkHttpClient OK3_CLIENT;
   private static final Retrofit RETROFIT;
 
@@ -42,10 +38,7 @@ public final class ApiClient {
     OK3_CLIENT = new okhttp3.OkHttpClient.Builder()
         .addInterceptor(PrefUtil.ok3Auth())
         .build();
-
-    HTTP_CLIENT = new OkHttpClient();
-    HTTP_CLIENT.networkInterceptors().add(new StethoInterceptor());
-    HTTP_CLIENT.interceptors().add(PrefUtil.authInterceptor());
+    
     RETROFIT = new Retrofit.Builder()
         .baseUrl(Api.BASE_URL)
         .client(OK3_CLIENT)
