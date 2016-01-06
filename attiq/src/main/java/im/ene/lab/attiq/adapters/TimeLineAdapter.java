@@ -29,10 +29,9 @@ import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.util.List;
 
@@ -102,10 +101,10 @@ public class TimeLineAdapter extends AttiqListAdapter<PublicItem> {
     }
 
     data.enqueue(new Callback<List<PublicItem>>() {
-      @Override public void onResponse(Response<List<PublicItem>> response, Retrofit retrofit) {
+      @Override public void onResponse(Response<List<PublicItem>> response) {
         cleanup(!isLoadingMore);
         if (callback != null) {
-          callback.onResponse(response, retrofit);
+          callback.onResponse(response);
         }
       }
 

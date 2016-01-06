@@ -18,8 +18,7 @@ import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Response;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -54,7 +53,7 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     super.onFailure(t);
   }
 
-  @Override public void onResponse(Response<List<FeedItem>> response, Retrofit retrofit) {
+  @Override public void onResponse(Response<List<FeedItem>> response) {
     if (response.code() != 200) {
       EventBus.getDefault().post(new TypedEvent<>(false,
           new Event.Error(response.code(), response.message()), null, 1));

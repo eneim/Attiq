@@ -8,12 +8,12 @@ import im.ene.lab.attiq.data.api.v2.response.AccessToken;
 import im.ene.lab.attiq.data.api.v2.response.Article;
 import im.ene.lab.attiq.data.api.v2.response.Comment;
 import im.ene.lab.attiq.data.api.v2.response.Tag;
-import retrofit.Call;
-import retrofit.http.Body;
-import retrofit.http.GET;
-import retrofit.http.POST;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 import java.util.List;
 

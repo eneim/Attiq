@@ -42,9 +42,8 @@ import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
 import io.realm.Realm;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends BaseActivity
     implements NavigationView.OnNavigationItemSelectedListener {
@@ -206,7 +205,7 @@ public class MainActivity extends BaseActivity
       Uri callbackUri = Uri.parse(callback);
       final String code = callbackUri.getQueryParameter("code");
       ApiClient.accessToken(code).enqueue(new Callback<AccessToken>() {
-        @Override public void onResponse(Response<AccessToken> response, Retrofit retrofit) {
+        @Override public void onResponse(Response<AccessToken> response) {
           AccessToken accessToken = response.body();
           if (accessToken != null) {
             PrefUtil.setCurrentToken(accessToken.getToken());
@@ -223,7 +222,7 @@ public class MainActivity extends BaseActivity
 
   private void getMasterUser(final String token) {
     ApiClient.me().enqueue(new Callback<Profile>() {
-      @Override public void onResponse(Response<Profile> response, Retrofit retrofit) {
+      @Override public void onResponse(Response<Profile> response) {
         Profile profile = response.body();
         if (profile != null) {
           profile.setToken(token);

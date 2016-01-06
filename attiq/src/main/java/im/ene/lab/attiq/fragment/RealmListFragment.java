@@ -28,9 +28,8 @@ import im.ene.lab.attiq.widgets.NonEmptyRecyclerView;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmObject;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.util.List;
 
@@ -199,7 +198,7 @@ public abstract class RealmListFragment<E extends RealmObject>
   public void onEventMainThread(TypedEvent<E> event) {
   }
 
-  @Override public void onResponse(Response<List<E>> response, Retrofit retrofit) {
+  @Override public void onResponse(Response<List<E>> response) {
     Log.d(TAG, "onResponse() called with: " + "response = [" + response + "]");
     if (response.code() != 200) {
       EventBus.getDefault().post(new TypedEvent<>(false,

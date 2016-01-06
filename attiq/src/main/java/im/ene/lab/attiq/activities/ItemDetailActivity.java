@@ -70,9 +70,8 @@ import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AppBarLayout;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
 import io.realm.Realm;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -329,7 +328,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mComments.setHorizontalScrollBarEnabled(false);
   }
 
-  @Override public void onResponse(Response<Article> response, Retrofit retrofit) {
+  @Override public void onResponse(Response<Article> response) {
     Article article = response.body();
     if (article != null) {
       EventBus.getDefault().post(new ItemDetailEvent(true, null, article));
@@ -432,7 +431,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   private void buildArticleComments(@NonNull final Article article) {
     ApiClient.itemComments(article.getId()).enqueue(new Callback<List<Comment>>() {
-      @Override public void onResponse(Response<List<Comment>> response, Retrofit retrofit) {
+      @Override public void onResponse(Response<List<Comment>> response) {
         if (response.code() == 200) {
           EventBus.getDefault().post(new ItemCommentsEvent(true, null, response.body()));
         } else {
