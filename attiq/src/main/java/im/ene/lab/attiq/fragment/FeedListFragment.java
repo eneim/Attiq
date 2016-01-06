@@ -1,5 +1,6 @@
 package im.ene.lab.attiq.fragment;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -71,9 +72,10 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
         DividerItemDecoration.VERTICAL_LIST));
 
     mOnItemClickListener = new FeedAdapter.OnFeedItemClickListener() {
-      @Override public void onUserClick(FeedItem host) {
-        Log.d(TAG, "onUserClick() called with: " + "host = [" + host + "]");
-        ApiClient.itemDetail(host.getMentionedObjectUuid()).enqueue(mOnArticleLoaded);
+      @Override public void onMentionedUserClick(FeedItem host) {
+        Log.d(TAG, "onMentionedUserClick() called with: " + "host = [" + host + "]");
+        Uri itemUri = Uri.parse(host.getMentionedObjectUrl());
+        ApiClient.itemDetail(itemUri.getLastPathSegment()).enqueue(mOnArticleLoaded);
       }
 
       @Override public void onItemContentClick(FeedItem item) {
@@ -81,8 +83,8 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
         startActivity(ItemDetailActivity.createIntent(getContext(), item));
       }
 
-      @Override public void onTagClick(FeedItem host) {
-        Log.d(TAG, "onTagClick() called with: " + "host = [" + host + "]");
+      @Override public void onMentionedTagClick(FeedItem host) {
+        Log.d(TAG, "onMentionedTagClick() called with: " + "host = [" + host + "]");
       }
     };
 
