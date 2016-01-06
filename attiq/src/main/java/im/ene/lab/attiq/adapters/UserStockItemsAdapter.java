@@ -22,29 +22,30 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.one.PublicTag;
 import im.ene.lab.attiq.data.one.PublicUser;
-import im.ene.lab.attiq.data.one.UserStockItem;
+import im.ene.lab.attiq.data.one.UserOwnItem;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
-import io.realm.Realm;
-import io.realm.RealmResults;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by eneim on 1/6/16.
  */
-public class UserStockItemsAdapter extends RealmListAdapter<UserStockItem> {
+public class UserStockItemsAdapter extends ListAdapter<UserOwnItem> {
+
+  private final Object LOCK = new Object();
 
   private final String mUserId;
-  private final RealmResults<UserStockItem> mItems;
+  private final ArrayList<UserOwnItem> mItems;
 
-  public UserStockItemsAdapter(String userId, RealmResults<UserStockItem> items) {
+  public UserStockItemsAdapter(String userId) {
     super();
     this.mUserId = userId;
-    mItems = items;
+    mItems = new ArrayList<>();
     setHasStableIds(true);
   }
 
@@ -71,25 +72,25 @@ public class UserStockItemsAdapter extends RealmListAdapter<UserStockItem> {
   }
 
   @Override public int getItemCount() {
-    if (mItems == null || !mItems.isValid()) {
+    if (mItems == null) {
       return 0;
     }
     return mItems.size();
   }
 
-  @Override public UserStockItem getItem(int position) {
+  @Override public UserOwnItem getItem(int position) {
     return mItems.get(position);
   }
 
-  private UserStockItem getBottomItem() {
+  private UserOwnItem getBottomItem() {
     return getItem(getItemCount() - 1);
   }
 
   @Override
   public void loadItems(final boolean isLoadingMore, int page, int pageLimit,
-                        @Nullable String query, final Callback<List<UserStockItem>> callback) {
-    ApiClient.userStockedItems(mUserId, page).enqueue(new Callback<List<UserStockItem>>() {
-      @Override public void onResponse(Response<List<UserStockItem>> response) {
+                        @Nullable String query, final Callback<List<UserOwnItem>> callback) {
+    ApiClient.userStockedItems(mUserId, page).enqueue(new Callback<List<UserOwnItem>>() {
+      @Override public void onResponse(Response<List<UserOwnItem>> response) {
         cleanup(!isLoadingMore);
         if (callback != null) {
           callback.onResponse(response);
@@ -105,13 +106,27 @@ public class UserStockItemsAdapter extends RealmListAdapter<UserStockItem> {
     });
   }
 
+  @Override public void addItem(UserOwnItem item) {
+    synchronized (LOCK) {
+      mItems.add(item);
+      notifyItemInserted(getItemCount() - 1);
+    }
+  }
+
+  @Override public void addItems(List<UserOwnItem> items) {
+    synchronized (LOCK) {
+      int oldLen = getItemCount();
+      mItems.addAll(items);
+      notifyItemRangeInserted(oldLen, items.size());
+    }
+  }
+
   private void cleanup(boolean shouldCleanup) {
     if (shouldCleanup) {
-      Realm realm = Attiq.realm();
-      realm.beginTransaction();
-      realm.clear(UserStockItem.class);
-      realm.commitTransaction();
-      realm.close();
+      synchronized (LOCK) {
+        mItems.clear();
+        notifyDataSetChanged();
+      }
     }
   }
 
@@ -120,15 +135,15 @@ public class UserStockItemsAdapter extends RealmListAdapter<UserStockItem> {
 
     public abstract void onUserClick(PublicUser user);
 
-    public abstract void onItemContentClick(UserStockItem item);
+    public abstract void onItemContentClick(UserOwnItem item);
 
     @Override
     public void onItemClick(BaseAdapter adapter,
                             BaseAdapter.ViewHolder viewHolder,
                             View view, int adapterPos, long itemId) {
-      final UserStockItem item;
+      final UserOwnItem item;
       if (adapter instanceof BaseListAdapter) {
-        item = (UserStockItem) ((BaseListAdapter) adapter).getItem(adapterPos);
+        item = (UserOwnItem) ((BaseListAdapter) adapter).getItem(adapterPos);
       } else {
         item = null;
       }
@@ -143,7 +158,7 @@ public class UserStockItemsAdapter extends RealmListAdapter<UserStockItem> {
     }
   }
 
-  public static class ViewHolder extends BaseListAdapter.ViewHolder<UserStockItem> {
+  public static class ViewHolder extends BaseListAdapter.ViewHolder<UserOwnItem> {
 
     static final int LAYOUT_RES = R.layout.post_item_view;
 
@@ -176,7 +191,7 @@ public class UserStockItemsAdapter extends RealmListAdapter<UserStockItem> {
       itemView.setOnClickListener(listener);
     }
 
-    @Override public void bind(UserStockItem item) {
+    @Override public void bind(UserOwnItem item) {
       String itemInfo = item.getCommentCount() == 1 ?
           mContext.getString(R.string.item_info_one, item.getStockCount()) :
           mContext.getString(R.string.item_info_many, item.getStockCount(), item.getCommentCount());

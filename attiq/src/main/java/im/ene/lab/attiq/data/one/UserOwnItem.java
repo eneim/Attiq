@@ -5,10 +5,11 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import io.realm.RealmList;
-import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class UserOwnItem extends RealmObject {
+import java.util.List;
+
+public class UserOwnItem {
 
   @SerializedName("body")
   @Expose
@@ -41,7 +42,7 @@ public class UserOwnItem extends RealmObject {
   @SerializedName("stock_count")
   @Expose
   private Integer stockCount;
-//  @SerializedName("stock_users")
+  //  @SerializedName("stock_users")
 //  @Expose
 //  private RealmList<PublicUser> stockUsers;
   @SerializedName("stocked")
@@ -49,7 +50,7 @@ public class UserOwnItem extends RealmObject {
   private Boolean stocked;
   @SerializedName("tags")
   @Expose
-  private RealmList<PublicTag> tags;
+  private List<PublicTag> tags;
   @SerializedName("title")
   @Expose
   private String title;
@@ -168,10 +169,6 @@ public class UserOwnItem extends RealmObject {
     this.stocked = stocked;
   }
 
-  public RealmList<PublicTag> getTags() {
-    return tags;
-  }
-
   public void setTags(RealmList<PublicTag> tags) {
     this.tags = tags;
   }
@@ -232,4 +229,7 @@ public class UserOwnItem extends RealmObject {
     this.uuid = uuid;
   }
 
+  public List<PublicTag> getTags() {
+    return tags;
+  }
 }

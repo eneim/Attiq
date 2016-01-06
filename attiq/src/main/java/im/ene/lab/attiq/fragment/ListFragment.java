@@ -19,9 +19,9 @@ import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.ListAdapter;
+import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.TypedEvent;
-import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.EndlessScrollListener;
 import im.ene.lab.attiq.widgets.MultiSwipeRefreshLayout;
 import im.ene.lab.attiq.widgets.NonEmptyRecyclerView;
@@ -205,6 +205,7 @@ public abstract class ListFragment<E>
     } else {
       List<E> items = response.body();
       if (!UIUtil.isEmpty(items)) {
+        mAdapter.addItems(items);
         EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), mPage));
       }
     }

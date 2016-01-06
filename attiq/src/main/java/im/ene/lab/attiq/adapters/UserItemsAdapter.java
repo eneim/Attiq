@@ -26,25 +26,26 @@ import im.ene.lab.attiq.data.one.UserOwnItem;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
-import io.realm.Realm;
-import io.realm.RealmResults;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by eneim on 1/6/16.
  */
-public class UserItemsAdapter extends RealmListAdapter<UserOwnItem> {
+public class UserItemsAdapter extends ListAdapter<UserOwnItem> {
+
+  private final Object LOCK = new Object();
 
   private final String mUserId;
-  private final RealmResults<UserOwnItem> mItems;
+  private final ArrayList<UserOwnItem> mItems;
 
-  public UserItemsAdapter(String userId, RealmResults<UserOwnItem> items) {
+  public UserItemsAdapter(String userId) {
     super();
     this.mUserId = userId;
-    mItems = items;
+    mItems = new ArrayList<>();
     setHasStableIds(true);
   }
 
@@ -71,9 +72,10 @@ public class UserItemsAdapter extends RealmListAdapter<UserOwnItem> {
   }
 
   @Override public int getItemCount() {
-    if (mItems == null || !mItems.isValid()) {
+    if (mItems == null) {
       return 0;
     }
+
     return mItems.size();
   }
 
@@ -105,13 +107,27 @@ public class UserItemsAdapter extends RealmListAdapter<UserOwnItem> {
     });
   }
 
+  @Override public void addItem(UserOwnItem item) {
+    synchronized (LOCK) {
+      mItems.add(item);
+      notifyItemInserted(getItemCount() - 1);
+    }
+  }
+
+  @Override public void addItems(List<UserOwnItem> items) {
+    synchronized (LOCK) {
+      int oldLen = getItemCount();
+      mItems.addAll(items);
+      notifyItemRangeInserted(oldLen, items.size());
+    }
+  }
+
   private void cleanup(boolean shouldCleanup) {
     if (shouldCleanup) {
-      Realm realm = Attiq.realm();
-      realm.beginTransaction();
-      realm.clear(UserOwnItem.class);
-      realm.commitTransaction();
-      realm.close();
+      synchronized (LOCK) {
+        mItems.clear();
+        notifyDataSetChanged();
+      }
     }
   }
 

@@ -9,18 +9,16 @@ import android.view.View;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
 import im.ene.lab.attiq.adapters.BaseAdapter;
-import im.ene.lab.attiq.adapters.RealmListAdapter;
+import im.ene.lab.attiq.adapters.ListAdapter;
 import im.ene.lab.attiq.adapters.UserStockItemsAdapter;
 import im.ene.lab.attiq.data.one.PublicUser;
-import im.ene.lab.attiq.data.one.UserStockItem;
+import im.ene.lab.attiq.data.one.UserOwnItem;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
-import io.realm.RealmResults;
-import io.realm.Sort;
 
 /**
  * Created by eneim on 1/6/16.
  */
-public class UserStockedItemsFragment extends RealmListFragment<UserStockItem> {
+public class UserStockedItemsFragment extends ListFragment<UserOwnItem> {
 
   private static final String ARGS_USER_ID = "attiq_fragment_args_user_id";
 
@@ -38,19 +36,14 @@ public class UserStockedItemsFragment extends RealmListFragment<UserStockItem> {
     return fragment;
   }
 
-  @NonNull @Override protected RealmListAdapter<UserStockItem> createAdapter() {
-    RealmResults<UserStockItem> items = mRealm.where(UserStockItem.class)
-        .findAllSorted("createdAtAsSeconds", Sort.DESCENDING);
-    return new UserStockItemsAdapter(mUserId, items);
+  @NonNull @Override protected ListAdapter<UserOwnItem> createAdapter() {
+    return new UserStockItemsAdapter(mUserId);
   }
 
   private BaseAdapter.OnItemClickListener mItemClickListener;
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
-    mRealm.beginTransaction();
-    mRealm.clear(UserStockItem.class);
-    mRealm.commitTransaction();
   }
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,7 +63,7 @@ public class UserStockedItemsFragment extends RealmListFragment<UserStockItem> {
         startActivity(ProfileActivity.createIntent(getContext(), user.getUrlName()));
       }
 
-      @Override public void onItemContentClick(UserStockItem item) {
+      @Override public void onItemContentClick(UserOwnItem item) {
         startActivity(ItemDetailActivity.createIntent(getContext(), item.getId(), item.getUuid()));
       }
     };

@@ -1,7 +1,6 @@
 package im.ene.lab.attiq.data.api;
 
 import im.ene.lab.attiq.data.one.UserOwnItem;
-import im.ene.lab.attiq.data.one.UserStockItem;
 import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.two.AccessToken;
 import im.ene.lab.attiq.data.two.Article;
@@ -55,7 +54,7 @@ interface Api {
         @Query("per_page") int limit
     );
 
-    @GET("/api/v1/users/{url_name}/stocks") Call<List<UserStockItem>> userStockedItems(
+    @GET("/api/v1/users/{url_name}/stocks") Call<List<UserOwnItem>> userStockedItems(
         @Path("url_name") String userId,
         @Query("page") int page,
         @Query("per_page") int limit

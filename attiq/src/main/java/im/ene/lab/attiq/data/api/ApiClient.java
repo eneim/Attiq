@@ -118,7 +118,7 @@ public final class ApiClient {
     return ONE.userItems(userId, page, DEFAULT_PAGE_LIMIT);
   }
 
-  public static Call<List<UserStockItem>> userStockedItems(String userId, int page) {
+  public static Call<List<UserOwnItem>> userStockedItems(String userId, int page) {
     return ONE.userStockedItems(userId, page, DEFAULT_PAGE_LIMIT);
   }
 }
