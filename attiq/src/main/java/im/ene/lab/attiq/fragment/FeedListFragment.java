@@ -9,10 +9,14 @@ import android.view.View;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
+import im.ene.lab.attiq.activities.ProfileActivity;
 import im.ene.lab.attiq.adapters.AttiqListAdapter;
 import im.ene.lab.attiq.adapters.FeedAdapter;
+import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.api.open.FeedItem;
+import im.ene.lab.attiq.data.api.v2.response.Article;
 import im.ene.lab.attiq.data.event.Event;
+import im.ene.lab.attiq.data.event.ItemDetailEvent;
 import im.ene.lab.attiq.data.event.TypedEvent;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.UIUtil;
@@ -20,6 +24,7 @@ import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.io.UnsupportedEncodingException;
@@ -43,6 +48,23 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
 
   private FeedAdapter.OnFeedItemClickListener mOnItemClickListener;
 
+  private Callback<Article> mOnArticleLoaded = new Callback<Article>() {
+    @Override public void onResponse(Response<Article> response) {
+      Article article = response.body();
+      if (article != null) {
+        EventBus.getDefault().post(new ItemDetailEvent(true, null, article));
+      } else {
+        EventBus.getDefault().post(new ItemDetailEvent(false,
+            new Event.Error(response.code(), response.message()), null));
+      }
+    }
+
+    @Override public void onFailure(Throwable t) {
+      EventBus.getDefault().post(new ItemDetailEvent(false,
+          new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
+    }
+  };
+
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
@@ -51,6 +73,7 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     mOnItemClickListener = new FeedAdapter.OnFeedItemClickListener() {
       @Override public void onUserClick(FeedItem host) {
         Log.d(TAG, "onUserClick() called with: " + "host = [" + host + "]");
+        ApiClient.itemDetail(host.getMentionedObjectUuid()).enqueue(mOnArticleLoaded);
       }
 
       @Override public void onItemContentClick(FeedItem item) {
@@ -67,8 +90,16 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
   }
 
   @Override public void onDestroyView() {
+    mOnArticleLoaded = null;
     mOnItemClickListener = null;
     super.onDestroyView();
+  }
+
+  public void onEventMainThread(ItemDetailEvent event) {
+    Article article = event.article;
+    if (article != null) {
+      startActivity(ProfileActivity.createIntent(getContext()));
+    }
   }
 
   @NonNull @Override protected AttiqListAdapter<FeedItem> createAdapter() {
