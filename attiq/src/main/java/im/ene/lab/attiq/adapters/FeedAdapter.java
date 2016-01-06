@@ -150,13 +150,17 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
     }
 
     void setupItemClick(FeedViewHolder vh, View view, FeedItem item,
-                        @NonNull OnFeedItemClickListener listener) {
+                        OnFeedItemClickListener listener) {
+      if (listener == null) {
+        return;
+      }
+
       if (view == vh.itemView) {
         listener.onItemContentClick(item);
       } else if (view == vh.mItemUserImage) {
-        listener.onUserClick(item);
+        listener.onMentionedUserClick(item);
       } else if (view.getId() == R.id.feed_view_id_tag) {
-        listener.onTagClick(item);
+        listener.onMentionedTagClick(item);
       }
     }
 
@@ -232,7 +236,7 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
 
         infoText.setId(R.id.feed_view_id_info);
         mItemIdentity.addView(infoText);
-      } else if (FeedItem.TRACKABLE_TYPE_COMMENT.equals(item.getTrackableType())){
+      } else if (FeedItem.TRACKABLE_TYPE_COMMENT.equals(item.getTrackableType())) {
         TextView infoText = (TextView) mInflater.inflate(R.layout.single_line_text_tiny,
             mItemIdentity, false);
         infoText.setClickable(true);
@@ -264,6 +268,8 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
 
     private final LayoutInflater mInflater;
 
+    private View.OnClickListener mListener;
+
     public FollowingViewHolder(@NonNull View itemView) {
       super(itemView);
       mInflater = LayoutInflater.from(itemView.getContext());
@@ -271,9 +277,24 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
       mItemInfo.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {
+      mListener = listener;
+      itemView.setOnClickListener(listener);
+    }
+
     void setupItemClick(FollowingViewHolder vh, View view, FeedItem item,
                         OnFeedItemClickListener listener) {
+      if (listener == null) {
+        return;
+      }
 
+      if (view.getId() == R.id.feed_view_id_mentioned_item) {
+        if (FeedItem.TRACKABLE_TYPE_FOLLOW_TAG.equals(item.getTrackableType())) {
+          listener.onMentionedTagClick(item);
+        } else if (FeedItem.TRACKABLE_TYPE_FOLLOW_USER.equals(item.getTrackableType())) {
+          listener.onMentionedUserClick(item);
+        }
+      }
     }
 
     @Override public void bind(FeedItem item) {
@@ -337,6 +358,7 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
       }
 
       mentionedItem.setId(R.id.feed_view_id_mentioned_item);
+      mentionedItem.setOnClickListener(mListener);
       container.addView(mentionedItem);
     }
   }
@@ -344,11 +366,11 @@ public class FeedAdapter extends AttiqListAdapter<FeedItem> {
   public static abstract class OnFeedItemClickListener
       implements BaseAdapter.OnItemClickListener {
 
-    public abstract void onUserClick(FeedItem host);
+    public abstract void onMentionedUserClick(FeedItem host);
 
     public abstract void onItemContentClick(FeedItem item);
 
-    public abstract void onTagClick(FeedItem host);
+    public abstract void onMentionedTagClick(FeedItem host);
 
     @Override
     public void onItemClick(BaseAdapter adapter, BaseAdapter.ViewHolder viewHolder,
