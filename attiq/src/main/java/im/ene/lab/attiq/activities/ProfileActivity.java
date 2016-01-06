@@ -16,9 +16,12 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.ImageView;
 
 import butterknife.Bind;
+import butterknife.BindColor;
+import butterknife.BindDimen;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
@@ -31,6 +34,7 @@ import im.ene.lab.attiq.fragment.UserStockedItemsFragment;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ProfileFetchedEvent;
+import im.ene.lab.attiq.widgets.RoundedTransformation;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AnimationUtils;
 import im.ene.support.design.widget.AppBarLayout;
@@ -56,10 +60,21 @@ public class ProfileActivity extends BaseActivity {
   @Bind(R.id.view_pager) ViewPager mViewPager;
   @Bind(R.id.app_bar) AppBarLayout mAppBarLayout;
   @Bind(R.id.toolbar_layout) CollapsingToolbarLayout mToolBarLayout;
-  @Bind(R.id.toolbar_overlay) ImageView mOverLayView;
+  @Bind(R.id.toolbar_overlay) View mOverLayContainer;
+  @Bind(R.id.toolbar_overlay_image) ImageView mOverLayView;
+  @Bind(R.id.profile_image) ImageView mProfileImage;
+
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.tab_layout) TabLayout mTabLayout;
   @Bind(R.id.fab) FloatingActionButton mFab;
+
+  // Others
+  // @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
+  @BindDimen(R.dimen.dimen_unit) int mImageBorderWidth;
+  @BindColor(R.color.colorAccent) int mImageBorderColor;
+
+  @BindDimen(R.dimen.profile_image_size) int mProfileImageSize;
+  @BindDimen(R.dimen.profile_image_size_half) int mProfileImageSizeHalf;
 
   private ProfileViewPagerAdapter mPagerAdapter;
   // Title support
@@ -75,7 +90,7 @@ public class ProfileActivity extends BaseActivity {
               ViewCompat.getMinimumHeight(mToolBarLayout) - mToolBarLayout.getInsetTop();
           if (maxOffset > 0) {
             float offsetFraction = Math.abs(verticalOffset) / maxOffset;
-            mOverLayView.setAlpha(1.f - offsetFraction);
+            mOverLayContainer.setAlpha(1.f - offsetFraction);
 
             float fabScale =
                 AnimationUtils.DECELERATE_INTERPOLATOR.getInterpolation(
@@ -189,6 +204,15 @@ public class ProfileActivity extends BaseActivity {
     Log.d(TAG, "onEventMainThread() called with: " + "event = [" + event + "]");
 
     if (mProfile != null) {
+      Attiq.picasso()
+          .load(mProfile.getProfileImageUrl())
+          .placeholder(R.drawable.ic_smile_ninja_48dp)
+          .error(R.drawable.ic_smile_ninja_48dp)
+          .resize(mProfileImageSize, 0)
+          .transform(new RoundedTransformation(
+              mImageBorderWidth, mImageBorderColor, mProfileImageSizeHalf))
+          .into(mProfileImage);
+
       mSpannableTitle = new SpannableString(mProfile.getId());
       updateTitle();
     }

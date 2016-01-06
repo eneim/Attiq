@@ -10,6 +10,10 @@
     <dimen name="tab_layout_height">48dp</dimen>
 
     <!-- Material Design key-lines -->
+    <dimen name="profile_image_size">80dp</dimen>
+    <dimen name="profile_image_size_half">40dp</dimen>
+    <dimen name="profile_image_margin">24dp</dimen>
+
     <dimen name="header_icon_size">56dp</dimen>
     <dimen name="header_icon_size_half">28dp</dimen>
     <dimen name="header_icon_padding">0dp</dimen>
