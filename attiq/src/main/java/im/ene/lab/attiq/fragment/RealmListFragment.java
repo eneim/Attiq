@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
@@ -75,7 +76,7 @@ public abstract class RealmListFragment<E extends RealmObject>
   @Bind(R.id.swipe_refresh_layout) MultiSwipeRefreshLayout mSwipeRefreshLayout;
   @Bind(R.id.loading_container) View mLoadingView;
   @Bind(R.id.view_empty) View mEmptyView;
-  @Bind(R.id.view_error) View mErrorView;
+  @Bind(R.id.view_error) TextView mErrorView;
 
   protected RealmListAdapter<E> mAdapter;
 
@@ -196,6 +197,10 @@ public abstract class RealmListFragment<E extends RealmObject>
   // Just do nothing here
   @SuppressWarnings("unused")
   public void onEventMainThread(TypedEvent<E> event) {
+    Event.Error error = event.error;
+    if (error != null && !UIUtil.isEmpty(error.message) && mErrorView != null) {
+      mErrorView.setText(error.message);
+    }
   }
 
   @Override public void onResponse(Response<List<E>> response) {

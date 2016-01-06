@@ -39,20 +39,20 @@ import io.realm.Realm;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.util.Random;
+
 public class ProfileActivity extends BaseActivity {
 
-  private static Intent createIntent(Context context) {
-    return new Intent(context, ProfileActivity.class);
-  }
-
   private static final String EXTRA_USER_NAME = "attiq_profile_user_name";
-
-  public static Intent createIntent(Context context, String userName) {
-    Intent intent = createIntent(context);
-    intent.putExtra(EXTRA_USER_NAME, userName);
-    return intent;
-  }
-
+  private static final Random sRandom = new Random();
+  private static final String TAG = "ProfileActivity";
+  private final int[] BACKGROUNDS = {
+      R.mipmap.wallpaper_1,
+      R.mipmap.wallpaper_2,
+      R.mipmap.wallpaper_3,
+      R.mipmap.wallpaper_4,
+      R.mipmap.wallpaper_5
+  };
   @Bind(R.id.view_pager) ViewPager mViewPager;
   @Bind(R.id.app_bar) AppBarLayout mAppBarLayout;
   @Bind(R.id.toolbar_layout) CollapsingToolbarLayout mToolBarLayout;
@@ -90,6 +90,17 @@ public class ProfileActivity extends BaseActivity {
   private Realm mRealm;
   private Profile mProfile;
   private String mUserId; // actually the User name
+  private Callback<Profile> mOnUserLoaded;
+
+  public static Intent createIntent(Context context, String userName) {
+    Intent intent = createIntent(context);
+    intent.putExtra(EXTRA_USER_NAME, userName);
+    return intent;
+  }
+
+  private static Intent createIntent(Context context) {
+    return new Intent(context, ProfileActivity.class);
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -124,13 +135,18 @@ public class ProfileActivity extends BaseActivity {
     mTabLayout.setupWithViewPager(mViewPager);
   }
 
-  private Callback<Profile> mOnUserLoaded;
+  @Override protected void onDestroy() {
+    if (mRealm != null) {
+      mRealm.close();
+    }
+    ButterKnife.unbind(this);
+    super.onDestroy();
+  }
 
   @Override protected void onResume() {
     super.onResume();
     Attiq.picasso()
-        .load("https://newevolutiondesigns.com/images/freebies" +
-            "/google-material-design-wallpaper-2.jpg")
+        .load(BACKGROUNDS[sRandom.nextInt(5)])
         .fit().centerCrop()
         .into(mOverLayView);
 
@@ -167,16 +183,6 @@ public class ProfileActivity extends BaseActivity {
     mOnUserLoaded = null;
     super.onPause();
   }
-
-  @Override protected void onDestroy() {
-    if (mRealm != null) {
-      mRealm.close();
-    }
-    ButterKnife.unbind(this);
-    super.onDestroy();
-  }
-
-  private static final String TAG = "ProfileActivity";
 
   public void onEventMainThread(ProfileFetchedEvent event) {
     mProfile = event.profile;

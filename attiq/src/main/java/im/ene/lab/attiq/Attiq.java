@@ -3,7 +3,6 @@ package im.ene.lab.attiq;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
@@ -73,7 +72,7 @@ public class Attiq extends Application {
 
     mPreference = getSharedPreferences(getPackageName() + "_pref", Context.MODE_PRIVATE);
     mPicasso = new Picasso.Builder(this)
-        .defaultBitmapConfig(Bitmap.Config.RGB_565)
+        // .defaultBitmapConfig(Bitmap.Config.RGB_565)
         .downloader(new OkHttp3Downloader(this))  // a separated client
         .build();
 

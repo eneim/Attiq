@@ -17,12 +17,13 @@ import com.wefika.flowlayout.FlowLayout;
 import butterknife.Bind;
 import butterknife.BindColor;
 import butterknife.BindDimen;
+import butterknife.ButterKnife;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.data.zero.PublicItem;
 import im.ene.lab.attiq.data.one.PublicTag;
 import im.ene.lab.attiq.data.one.PublicUser;
+import im.ene.lab.attiq.data.zero.PublicItem;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
@@ -173,6 +174,9 @@ public class PublicItemsAdapter extends RealmListAdapter<PublicItem> {
     @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
     @BindColor(R.color.colorAccent) int mIconBorderColor;
 
+    @BindDimen(R.dimen.tag_icon_size) int mTagIconSize;
+    @BindDimen(R.dimen.tag_icon_size_half) int mTagIconSizeHalf;
+
     private final Context mContext;
 
     public ViewHolder(View view) {
@@ -231,10 +235,19 @@ public class PublicItemsAdapter extends RealmListAdapter<PublicItem> {
       mItemTags.removeAllViews();
       if (!UIUtil.isEmpty(item.getTags())) {
         for (PublicTag tag : item.getTags()) {
-          TextView tagView = (TextView) mInflater.inflate(
-              R.layout.widget_tag_textview, mItemTags, false);
-          tagView.setText(tag.getName());
+          final View tagView = mInflater.inflate(R.layout.widget_tag_view, mItemTags, false);
+          final TextView tagName = ButterKnife.findById(tagView, R.id.tag_name);
+          final ImageView tagIcon = ButterKnife.findById(tagView, R.id.tag_icon);
           mItemTags.addView(tagView);
+
+          tagName.setText(tag.getName());
+          Attiq.picasso().load(tag.getIconUrl())
+              .placeholder(R.drawable.ic_dnd_forwardslash_24dp)
+              .error(R.drawable.ic_dnd_forwardslash_24dp)
+              .resize(mTagIconSize, 0)
+              .transform(new RoundedTransformation(
+                  mIconBorderWidth, mIconBorderColor, mTagIconSizeHalf))
+              .into(tagIcon);
         }
       }
     }
