@@ -6,15 +6,14 @@ import android.support.annotation.Nullable;
 
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.data.one.UserOwnItem;
-import im.ene.lab.attiq.data.one.UserStockItem;
+import im.ene.lab.attiq.data.one.Post;
 import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.two.AccessToken;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.Comment;
 import im.ene.lab.attiq.data.two.Tag;
 import im.ene.lab.attiq.data.zero.FeedItem;
-import im.ene.lab.attiq.data.zero.Profile;
+import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.zero.PublicItem;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.PrefUtil;
@@ -114,11 +113,11 @@ public final class ApiClient {
     return TWO.user(userName);
   }
 
-  public static Call<List<UserOwnItem>> userItems(String userId, int page) {
+  public static Call<List<Post>> userItems(String userId, int page) {
     return ONE.userItems(userId, page, DEFAULT_PAGE_LIMIT);
   }
 
-  public static Call<List<UserOwnItem>> userStockedItems(String userId, int page) {
+  public static Call<List<Post>> userStockedItems(String userId, int page) {
     return ONE.userStockedItems(userId, page, DEFAULT_PAGE_LIMIT);
   }
 }

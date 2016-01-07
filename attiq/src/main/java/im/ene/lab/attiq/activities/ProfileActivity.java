@@ -26,7 +26,7 @@ import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.data.zero.Profile;
+import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.fragment.PublicStreamFragment;
 import im.ene.lab.attiq.fragment.UserItemsFragment;
 import im.ene.lab.attiq.fragment.UserStockedItemsFragment;
@@ -66,7 +66,7 @@ public class ProfileActivity extends BaseActivity {
 
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.tab_layout) TabLayout mTabLayout;
-  @Bind(R.id.fab) FabImageView mFab;
+  @Bind(R.id.fab) FabImageView mProfileFabImage;
 
   // Others
   // @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
@@ -96,8 +96,8 @@ public class ProfileActivity extends BaseActivity {
                 AnimationUtils.DECELERATE_INTERPOLATOR.getInterpolation(
                     1.f - 0.5f * offsetFraction
                 );
-            mFab.setScaleX(fabScale);
-            mFab.setScaleY(fabScale);
+            mProfileFabImage.setScaleX(fabScale);
+            mProfileFabImage.setScaleY(fabScale);
           }
         }
       };
@@ -211,7 +211,7 @@ public class ProfileActivity extends BaseActivity {
           .resize(mProfileImageSize, 0)
           .transform(new RoundedTransformation(
               mImageBorderWidth, mImageBorderColor, mProfileImageSizeHalf))
-          .into(mFab);
+          .into(mProfileFabImage);
 
       mSpannableTitle = new SpannableString(mProfile.getId());
       updateTitle();
@@ -255,7 +255,7 @@ public class ProfileActivity extends BaseActivity {
     }
 
     @Override public int getCount() {
-      return 3;
+      return 2;
     }
 
     @Override public CharSequence getPageTitle(int position) {

@@ -7,7 +7,9 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="tab_layout_start_inset">56dp</dimen>
     <dimen name="tab_layout_height">48dp</dimen>
+    <dimen name="tab_max_width">120dp</dimen>
 
     <!-- Material Design key-lines -->
     <dimen name="design_fab_content_size">76dp</dimen>
@@ -26,6 +28,7 @@
     <dimen name="item_icon_size">48dp</dimen>
     <dimen name="item_icon_size_half">24dp</dimen>
     <dimen name="item_icon_padding">4dp</dimen>
+    <dimen name="item_icon_padding_half">2dp</dimen>
 
     <dimen name="item_icon_size_small">36dp</dimen>
     <dimen name="item_icon_size_small_half">18dp</dimen>

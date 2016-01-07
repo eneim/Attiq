@@ -12,13 +12,13 @@ import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.adapters.ListAdapter;
 import im.ene.lab.attiq.adapters.UserStockItemsAdapter;
 import im.ene.lab.attiq.data.one.PublicUser;
-import im.ene.lab.attiq.data.one.UserOwnItem;
+import im.ene.lab.attiq.data.one.Post;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
 
 /**
  * Created by eneim on 1/6/16.
  */
-public class UserStockedItemsFragment extends ListFragment<UserOwnItem> {
+public class UserStockedItemsFragment extends ListFragment<Post> {
 
   private static final String ARGS_USER_ID = "attiq_fragment_args_user_id";
 
@@ -36,7 +36,7 @@ public class UserStockedItemsFragment extends ListFragment<UserOwnItem> {
     return fragment;
   }
 
-  @NonNull @Override protected ListAdapter<UserOwnItem> createAdapter() {
+  @NonNull @Override protected ListAdapter<Post> createAdapter() {
     return new UserStockItemsAdapter(mUserId);
   }
 
@@ -63,7 +63,7 @@ public class UserStockedItemsFragment extends ListFragment<UserOwnItem> {
         startActivity(ProfileActivity.createIntent(getContext(), user.getUrlName()));
       }
 
-      @Override public void onItemContentClick(UserOwnItem item) {
+      @Override public void onItemContentClick(Post item) {
         startActivity(ItemDetailActivity.createIntent(getContext(), item.getId(), item.getUuid()));
       }
     };

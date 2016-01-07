@@ -52,7 +52,7 @@ import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.data.one.UserOwnItem;
+import im.ene.lab.attiq.data.one.Post;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.Comment;
 import im.ene.lab.attiq.data.two.User;
@@ -169,7 +169,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     return createIntent(context, item.getId(), item.getUuid());
   }
 
-  public static Intent createIntent(Context context, @NonNull UserOwnItem item) {
+  public static Intent createIntent(Context context, @NonNull Post item) {
     return createIntent(context, item.getId(), item.getUuid());
   }
 

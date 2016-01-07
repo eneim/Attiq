@@ -12,15 +12,13 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
-        android:theme="@style/Attiq.Theme.AppBarOverlay">
+        android:fitsSystemWindows="true">
 
         <im.ene.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            android:theme="@style/Attiq.Theme.AppBarOverlay"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:titleEnabled="false"
@@ -44,7 +42,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#80000000"/>
+                    android:background="#40ffffff"/>
 
             </FrameLayout>
 
@@ -58,22 +56,52 @@
 
         </im.ene.support.design.widget.CollapsingToolbarLayout>
 
-        <android.support.v7.widget.LinearLayoutCompat
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/item_icon_size_small"
-            android:background="@color/colorPrimaryDark"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:paddingBottom="@dimen/item_icon_padding"
+            android:paddingEnd="@dimen/profile_image_size"
+            android:paddingLeft="@dimen/tab_layout_height"
+            android:paddingRight="@dimen/profile_image_size"
+            android:paddingStart="@dimen/tab_layout_height"
+            android:paddingTop="@dimen/item_icon_padding"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-        </android.support.v7.widget.LinearLayoutCompat>
+            <ImageButton
+                android:layout_width="@dimen/item_icon_size_small"
+                android:layout_height="@dimen/item_icon_size_small"
+                android:layout_margin="@dimen/item_icon_padding_half"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_social_twitter"/>
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tab_layout"
+            <ImageButton
+                android:layout_width="@dimen/item_icon_size_small"
+                android:layout_height="@dimen/item_icon_size_small"
+                android:layout_margin="@dimen/item_icon_padding_half"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_social_github"/>
+
+        </LinearLayout>
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/tab_layout_height"
-            android:background="@color/colorPrimaryDark"
-            app:tabGravity="fill"
-            app:tabMode="scrollable"/>
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark">
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/tab_layout_height"
+                android:theme="@style/Attiq.Theme.AppBarOverlay"
+                app:tabContentStart="@dimen/tab_layout_start_inset"
+                app:tabGravity="fill"
+                app:tabIndicatorColor="@android:color/white"
+                app:tabIndicatorHeight="1dp"
+                app:tabMode="scrollable"/>
+        </FrameLayout>
 
     </im.ene.support.design.widget.AppBarLayout>
 

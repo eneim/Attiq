@@ -1,13 +1,13 @@
 package im.ene.lab.attiq.data.api;
 
-import im.ene.lab.attiq.data.one.UserOwnItem;
+import im.ene.lab.attiq.data.one.Post;
 import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.two.AccessToken;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.Comment;
 import im.ene.lab.attiq.data.two.Tag;
 import im.ene.lab.attiq.data.zero.FeedItem;
-import im.ene.lab.attiq.data.zero.Profile;
+import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.zero.PublicItem;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -48,13 +48,13 @@ interface Api {
         @Query("per_page") int limit
     );
 
-    @GET("/api/v1/users/{url_name}/items") Call<List<UserOwnItem>> userItems(
+    @GET("/api/v1/users/{url_name}/items") Call<List<Post>> userItems(
         @Path("url_name") String userId,
         @Query("page") int page,
         @Query("per_page") int limit
     );
 
-    @GET("/api/v1/users/{url_name}/stocks") Call<List<UserOwnItem>> userStockedItems(
+    @GET("/api/v1/users/{url_name}/stocks") Call<List<Post>> userStockedItems(
         @Path("url_name") String userId,
         @Query("page") int page,
         @Query("per_page") int limit

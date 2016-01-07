@@ -34,7 +34,7 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ProfileFetchedEvent;
-import im.ene.lab.attiq.data.zero.Profile;
+import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.two.AccessToken;
 import im.ene.lab.attiq.fragment.FeedListFragment;
 import im.ene.lab.attiq.fragment.PublicStreamFragment;

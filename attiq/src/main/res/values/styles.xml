@@ -18,6 +18,17 @@
         </item>
     </style>
 
+    <style name="Attiq.Theme.Profile" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="toolbarNavigationButtonStyle">
+            @style/Attiq.Widget.Toolbar.Button.Navigation
+        </item>
+
+        <item name="colorPrimary">#84C69B</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowActionBarOverlay">true</item>
+    </style>
+
     <style name="Attiq.Theme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="Attiq.Theme.ActionBar" parent="Theme.AppCompat.Light">

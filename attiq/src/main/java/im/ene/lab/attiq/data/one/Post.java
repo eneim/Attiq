@@ -4,11 +4,12 @@ package im.ene.lab.attiq.data.one;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmList;
 import io.realm.annotations.PrimaryKey;
 
 import java.util.List;
 
-public class UserStockItem {
+public class Post {
 
   @SerializedName("body")
   @Expose
@@ -168,11 +169,7 @@ public class UserStockItem {
     this.stocked = stocked;
   }
 
-  public List<PublicTag> getTags() {
-    return tags;
-  }
-
-  public void setTags(List<PublicTag> tags) {
+  public void setTags(RealmList<PublicTag> tags) {
     this.tags = tags;
   }
 
@@ -232,4 +229,7 @@ public class UserStockItem {
     this.uuid = uuid;
   }
 
+  public List<PublicTag> getTags() {
+    return tags;
+  }
 }

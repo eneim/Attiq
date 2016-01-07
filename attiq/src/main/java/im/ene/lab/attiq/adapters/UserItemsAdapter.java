@@ -23,7 +23,7 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.one.PublicTag;
 import im.ene.lab.attiq.data.one.PublicUser;
-import im.ene.lab.attiq.data.one.UserOwnItem;
+import im.ene.lab.attiq.data.one.Post;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
@@ -36,12 +36,12 @@ import java.util.List;
 /**
  * Created by eneim on 1/6/16.
  */
-public class UserItemsAdapter extends ListAdapter<UserOwnItem> {
+public class UserItemsAdapter extends ListAdapter<Post> {
 
   private final Object LOCK = new Object();
 
   private final String mUserId;
-  private final ArrayList<UserOwnItem> mItems;
+  private final ArrayList<Post> mItems;
 
   public UserItemsAdapter(String userId) {
     super();
@@ -80,19 +80,19 @@ public class UserItemsAdapter extends ListAdapter<UserOwnItem> {
     return mItems.size();
   }
 
-  @Override public UserOwnItem getItem(int position) {
+  @Override public Post getItem(int position) {
     return mItems.get(position);
   }
 
-  private UserOwnItem getBottomItem() {
+  private Post getBottomItem() {
     return getItem(getItemCount() - 1);
   }
 
   @Override
   public void loadItems(final boolean isLoadingMore, int page, int pageLimit,
-                        @Nullable String query, final Callback<List<UserOwnItem>> callback) {
-    ApiClient.userItems(mUserId, page).enqueue(new Callback<List<UserOwnItem>>() {
-      @Override public void onResponse(Response<List<UserOwnItem>> response) {
+                        @Nullable String query, final Callback<List<Post>> callback) {
+    ApiClient.userItems(mUserId, page).enqueue(new Callback<List<Post>>() {
+      @Override public void onResponse(Response<List<Post>> response) {
         cleanup(!isLoadingMore);
         if (callback != null) {
           callback.onResponse(response);
@@ -108,14 +108,14 @@ public class UserItemsAdapter extends ListAdapter<UserOwnItem> {
     });
   }
 
-  @Override public void addItem(UserOwnItem item) {
+  @Override public void addItem(Post item) {
     synchronized (LOCK) {
       mItems.add(item);
       notifyItemInserted(getItemCount() - 1);
     }
   }
 
-  @Override public void addItems(List<UserOwnItem> items) {
+  @Override public void addItems(List<Post> items) {
     synchronized (LOCK) {
       int oldLen = getItemCount();
       mItems.addAll(items);
@@ -137,15 +137,15 @@ public class UserItemsAdapter extends ListAdapter<UserOwnItem> {
 
     public abstract void onUserClick(PublicUser user);
 
-    public abstract void onItemContentClick(UserOwnItem item);
+    public abstract void onItemContentClick(Post item);
 
     @Override
     public void onItemClick(BaseAdapter adapter,
                             BaseAdapter.ViewHolder viewHolder,
                             View view, int adapterPos, long itemId) {
-      final UserOwnItem item;
+      final Post item;
       if (adapter instanceof BaseListAdapter) {
-        item = (UserOwnItem) ((BaseListAdapter) adapter).getItem(adapterPos);
+        item = (Post) ((BaseListAdapter) adapter).getItem(adapterPos);
       } else {
         item = null;
       }
@@ -160,7 +160,7 @@ public class UserItemsAdapter extends ListAdapter<UserOwnItem> {
     }
   }
 
-  public static class ViewHolder extends BaseListAdapter.ViewHolder<UserOwnItem> {
+  public static class ViewHolder extends BaseListAdapter.ViewHolder<Post> {
 
     static final int LAYOUT_RES = R.layout.post_item_view;
 
@@ -196,7 +196,7 @@ public class UserItemsAdapter extends ListAdapter<UserOwnItem> {
       itemView.setOnClickListener(listener);
     }
 
-    @Override public void bind(UserOwnItem item) {
+    @Override public void bind(Post item) {
       String itemInfo = item.getCommentCount() == 1 ?
           mContext.getString(R.string.item_info_one, item.getStockCount()) :
           mContext.getString(R.string.item_info_many, item.getStockCount(), item.getCommentCount());
