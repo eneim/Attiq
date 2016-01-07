@@ -23,7 +23,7 @@
             @style/Attiq.Widget.Toolbar.Button.Navigation
         </item>
 
-        <item name="colorPrimary">#84C69B</item>
+        <item name="colorPrimary">#F8E796</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowActionBarOverlay">true</item>

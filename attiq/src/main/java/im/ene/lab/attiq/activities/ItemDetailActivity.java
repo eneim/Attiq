@@ -59,7 +59,7 @@ import im.ene.lab.attiq.data.two.User;
 import im.ene.lab.attiq.data.zero.FeedItem;
 import im.ene.lab.attiq.data.zero.PublicItem;
 import im.ene.lab.attiq.util.AnimUtils;
-import im.ene.lab.attiq.util.HtmlUtil;
+import im.ene.lab.attiq.util.WebUtil;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
@@ -469,9 +469,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     if (!UIUtil.isEmpty(headers)) {
       // 1. Find the top level (lowest level)
       Iterator<Element> items = headers.iterator();
-      int topLevel = HtmlUtil.getHeaderLevel(items.next().tagName());
+      int topLevel = WebUtil.getHeaderLevel(items.next().tagName());
       while (items.hasNext()) {
-        int level = HtmlUtil.getHeaderLevel(items.next().tagName());
+        int level = WebUtil.getHeaderLevel(items.next().tagName());
         if (topLevel > level) {
           topLevel = level;
         }
@@ -485,7 +485,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
             (CheckedTextView) menuItemView.findViewById(R.id.header_content);
         menuContent.setText(item.text());
 
-        int currentLevel = HtmlUtil.getHeaderLevel(item.tagName());
+        int currentLevel = WebUtil.getHeaderLevel(item.tagName());
         if (currentLevel - topLevel > 0) {
           menuContent.setCompoundDrawablesWithIntrinsicBounds(new ThreadedCommentDrawable(
               mHeaderDepthWidth, mHeaderDepthGap, currentLevel - topLevel

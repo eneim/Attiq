@@ -11,12 +11,13 @@ import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.two.AccessToken;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.Comment;
+import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.two.Tag;
 import im.ene.lab.attiq.data.zero.FeedItem;
-import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.zero.PublicItem;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.PrefUtil;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
@@ -29,7 +30,7 @@ import java.util.UUID;
  */
 public final class ApiClient {
 
-  private static final okhttp3.OkHttpClient OK3_CLIENT;
+  private static final OkHttpClient HTTP_CLIENT;
   private static final Retrofit RETROFIT;
 
   private static final Api.Zero ZERO;
@@ -39,13 +40,13 @@ public final class ApiClient {
   private static final int DEFAULT_PAGE_LIMIT = 99; // save API call...
 
   static {
-    OK3_CLIENT = new okhttp3.OkHttpClient.Builder()
+    HTTP_CLIENT = Attiq.httpClient().newBuilder()
         .addInterceptor(PrefUtil.ok3Auth())
         .build();
 
     RETROFIT = new Retrofit.Builder()
         .baseUrl(Api.BASE_URL)
-        .client(OK3_CLIENT)
+        .client(HTTP_CLIENT)
         .addConverterFactory(GsonConverterFactory.create(IOUtil.gson()))
         .build();
 

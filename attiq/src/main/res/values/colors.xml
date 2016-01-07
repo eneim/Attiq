@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#28475C</color>
     <color name="colorPrimaryDark">#1A2F4B</color>
-    <color name="colorAccent">#2F8886</color>
+    <color name="colorAccent">#C98B70</color>
 
     <!-- ref: http://www.colorhexa.com/3e3639 -->
     <color name="very_dark_grayish_pink">#3e3639</color>
