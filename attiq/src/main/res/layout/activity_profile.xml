@@ -110,6 +110,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/item_icon_padding"
+            android:paddingEnd="@dimen/profile_image_size_margin"
+            android:paddingLeft="@dimen/tab_layout_height"
+            android:paddingRight="@dimen/profile_image_size_margin"
+            android:paddingStart="@dimen/social_buttons_padding_start"
+            android:paddingTop="@dimen/item_icon_padding"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <LinearLayout
@@ -117,13 +124,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="?attr/actionBarSize"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/item_icon_padding"
-                android:paddingEnd="@dimen/profile_image_size"
-                android:paddingLeft="@dimen/tab_layout_height"
-                android:paddingRight="@dimen/profile_image_size"
-                android:paddingStart="@dimen/social_buttons_padding_start"
-                android:paddingTop="@dimen/item_icon_padding">
+                android:orientation="horizontal">
 
                 <ImageButton
                     android:id="@+id/profile_social_website"
