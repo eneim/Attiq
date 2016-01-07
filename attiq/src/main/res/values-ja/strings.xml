@@ -17,4 +17,8 @@
     <string name="title_activity_item_detail">アイテム詳細</string>
     <string name="title_activity_profile">プロフィル</string>
     <string name="auth_add_account">アカウント追加</string>
+    <string name="article_comment">%2$s（%1$d件）</string>
+
+    <string name="comment_singular">コメント</string>
+    <string name="comment_plural">コメント</string>
 </resources>

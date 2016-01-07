@@ -4,8 +4,6 @@ import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -34,10 +32,7 @@ import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
-import com.squareup.picasso.Target;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -59,14 +54,13 @@ import im.ene.lab.attiq.data.two.User;
 import im.ene.lab.attiq.data.zero.FeedItem;
 import im.ene.lab.attiq.data.zero.PublicItem;
 import im.ene.lab.attiq.util.AnimUtils;
-import im.ene.lab.attiq.util.WebUtil;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.util.WebUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemCommentsEvent;
 import im.ene.lab.attiq.util.event.ItemDetailEvent;
-import im.ene.lab.attiq.widgets.RoundedTransformation;
 import im.ene.lab.attiq.widgets.drawable.ThreadedCommentDrawable;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AppBarLayout;
@@ -87,8 +81,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   private static final String TAG = "ItemDetailActivity";
 
-  @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingLayout;
+  // @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingLayout;
   @Bind(R.id.content_container) CoordinatorLayout mContentContainer;
+  @Bind(R.id.comments_header) TextView mCommentInfo;
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.item_content_web) WebView mContentView;
   @Bind(R.id.item_comments) WebView mComments;
@@ -102,7 +97,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Bind(R.id.loading_container) View mLoadingView;
   // @Bind(R.id.detail_author_icon) ImageButton mAuthorIcon;
   // !IMPORTANT Bottom Toolbar, setup specially for an Article
-  @Bind(R.id.actions_bar) Toolbar mArticleBar;
+  // @Bind(R.id.actions_bar) Toolbar mArticleBar;
 
   @BindDimen(R.dimen.item_icon_size_small) int mIconSize;
   @BindDimen(R.dimen.item_icon_size_small_half) int mIconCornerRadius;
@@ -111,26 +106,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   @BindDimen(R.dimen.header_depth_width) int mHeaderDepthWidth;
   @BindDimen(R.dimen.header_depth_gap) int mHeaderDepthGap;
-
-  private Toolbar.OnMenuItemClickListener mArticleBarItemClickListener =
-      new Toolbar.OnMenuItemClickListener() {
-        @Override public boolean onMenuItemClick(MenuItem item) {
-          int id = item.getItemId();
-          switch (id) {
-            case R.id.action_item_share:
-              shareArticle();
-              return true;
-            case R.id.action_item_comment:
-              commentArticle();
-              return true;
-            case R.id.action_item_stock:
-              stockArticle();
-              return true;
-            default:
-              return false;
-          }
-        }
-      };
 
   private MenuItem mArticleHeaderMenu;
 
@@ -198,9 +173,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    mArticleBar.inflateMenu(R.menu.menu_item_detail_actions);
-    mArticleBar.setOnMenuItemClickListener(mArticleBarItemClickListener);
-
     // empty title at start
     setTitle("");
 
@@ -231,14 +203,12 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mItemUuid = getIntent().getStringExtra(EXTRA_DETAIL_ITEM_UUID);
     mRealm = Attiq.realm();
     mPublicItem = mRealm.where(PublicItem.class).equalTo("uuid", mItemUuid).findFirst();
-
   }
 
   @Override protected void onDestroy() {
     if (mRealm != null) {
       mRealm.close();
     }
-    mArticleBarItemClickListener = null;
     super.onDestroy();
   }
 
@@ -363,30 +333,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       } else {
         requestCreator = Attiq.picasso().load(R.drawable.blank_profile_icon_medium);
       }
-
-      requestCreator
-          .placeholder(R.drawable.blank_profile_icon_medium)
-          .error(R.drawable.blank_profile_icon_medium)
-          .resize(mIconSize, 0)
-          .transform(new RoundedTransformation(
-              mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
-          .into(new Target() {
-            @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-              mArticleBar.setNavigationIcon(
-                  new BitmapDrawable(mArticleBar.getContext().getResources(), bitmap));
-            }
-
-            @Override public void onBitmapFailed(Drawable errorDrawable) {
-              mArticleBar.setNavigationIcon(R.mipmap.ic_launcher);
-            }
-
-            @Override public void onPrepareLoad(Drawable placeHolderDrawable) {
-              mArticleBar.setNavigationIcon(R.drawable.blank_profile_icon_small);
-            }
-          });
-
-      mArticleBar.setTitle(user.getId());
-      mArticleBar.setSubtitle(user.getItemsCount() + "");
 
       mArticleName.setText(article.getTitle());
       mSpannableTitle = new SpannableString(article.getTitle());
@@ -525,6 +471,10 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   public void onEventMainThread(ItemCommentsEvent event) {
     if (event.success && !UIUtil.isEmpty(event.comments)) {
       List<Comment> comments = event.comments;
+      String info = comments.size() == 1 ?
+          getString(R.string.comment_singular) : getString(R.string.comment_plural);
+      mCommentInfo.setText(getString(R.string.article_comment, comments.size(), info));
+
       final String html;
       try {
         html = IOUtil.readAssets("html/comments.html");
@@ -538,7 +488,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
           commentHtml = commentHtml
               .replace("{user_name}", comment.getUser().getId())
               .replace("{comment_time}", TimeUtil.commentTime(comment.getUpdatedAt()))
-              .replace("{article_uuid}", mPublicItem.getUuid())
+              .replace("{article_uuid}", mItemUuid)
               .replace("{comment_id}", comment.getId());
 
           Document commentDoc = Jsoup.parse(commentHtml);
@@ -553,24 +503,15 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       } catch (IOException e) {
         e.printStackTrace();
       }
-      mSlidingLayout.setTouchEnabled(true);
     } else {
-      mSlidingLayout.setTouchEnabled(false);
+      mCommentInfo.setText(
+          getString(R.string.article_comment, 0, getString(R.string.comment_plural)));
     }
   }
 
   @Override public void onFailure(Throwable error) {
     EventBus.getDefault().post(new ItemDetailEvent(false,
         new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
-  }
-
-  @Override public void onBackPressed() {
-    if (mSlidingLayout != null
-        && mSlidingLayout.getPanelState() != SlidingUpPanelLayout.PanelState.COLLAPSED) {
-      mSlidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-    } else {
-      super.onBackPressed();
-    }
   }
 
   @Override protected void onResume() {

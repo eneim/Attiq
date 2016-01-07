@@ -6,9 +6,30 @@
     android:layout_height="match_parent"
     app:layout_behavior="im.ene.support.design.widget.AppBarLayout$ScrollingViewBehavior">
 
-    <WebView
-        android:id="@+id/item_content_web"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <WebView
+            android:id="@+id/item_content_web"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/comments_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/life_gray_light"
+            android:textStyle="bold"/>
+
+        <WebView
+            android:id="@+id/item_comments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

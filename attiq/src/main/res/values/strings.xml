@@ -131,4 +131,8 @@
     <string name="action_item_menu">Menu</string>
     <string name="title_activity_profile">Profile</string>
     <string name="item_detail_subtitle">posted by %1$s</string>
+    <string name="article_comment">%1$d %2$s</string>
+
+    <string name="comment_singular">comment</string>
+    <string name="comment_plural">comments</string>
 </resources>
