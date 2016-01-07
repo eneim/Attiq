@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 
 import de.greenrobot.event.EventBus;
@@ -72,19 +71,22 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
         DividerItemDecoration.VERTICAL_LIST));
 
     mOnItemClickListener = new FeedAdapter.OnFeedItemClickListener() {
+      @Override public void onFollowingUserClick(FeedItem host) {
+        Uri itemUri = Uri.parse(host.getMentionedObjectUrl());
+        startActivity(ProfileActivity.createIntent(getContext(), itemUri.getLastPathSegment()));
+      }
+
       @Override public void onMentionedUserClick(FeedItem host) {
-        Log.d(TAG, "onMentionedUserClick() called with: " + "host = [" + host + "]");
         Uri itemUri = Uri.parse(host.getMentionedObjectUrl());
         ApiClient.itemDetail(itemUri.getLastPathSegment()).enqueue(mOnArticleLoaded);
       }
 
       @Override public void onItemContentClick(FeedItem item) {
-        Log.d(TAG, "onItemContentClick() called with: " + "item = [" + item + "]");
         startActivity(ItemDetailActivity.createIntent(getContext(), item));
       }
 
-      @Override public void onMentionedTagClick(FeedItem host) {
-        Log.d(TAG, "onMentionedTagClick() called with: " + "host = [" + host + "]");
+      @Override public void onFollowingTagClick(FeedItem host) {
+        // TODO open tag screen
       }
     };
 

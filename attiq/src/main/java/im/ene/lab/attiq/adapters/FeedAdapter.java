@@ -160,7 +160,7 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
       } else if (view == vh.mItemUserImage) {
         listener.onMentionedUserClick(item);
       } else if (view.getId() == R.id.feed_view_id_tag) {
-        listener.onMentionedTagClick(item);
+        listener.onFollowingTagClick(item);
       }
     }
 
@@ -290,9 +290,9 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
 
       if (view.getId() == R.id.feed_view_id_mentioned_item) {
         if (FeedItem.TRACKABLE_TYPE_FOLLOW_TAG.equals(item.getTrackableType())) {
-          listener.onMentionedTagClick(item);
+          listener.onFollowingTagClick(item);
         } else if (FeedItem.TRACKABLE_TYPE_FOLLOW_USER.equals(item.getTrackableType())) {
-          listener.onMentionedUserClick(item);
+          listener.onFollowingUserClick(item);
         }
       }
     }
@@ -366,11 +366,13 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
   public static abstract class OnFeedItemClickListener
       implements BaseAdapter.OnItemClickListener {
 
+    public abstract void onFollowingUserClick(FeedItem host);
+
     public abstract void onMentionedUserClick(FeedItem host);
 
     public abstract void onItemContentClick(FeedItem item);
 
-    public abstract void onMentionedTagClick(FeedItem host);
+    public abstract void onFollowingTagClick(FeedItem host);
 
     @Override
     public void onItemClick(BaseAdapter adapter, BaseAdapter.ViewHolder viewHolder,

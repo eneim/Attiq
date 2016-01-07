@@ -5,6 +5,9 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:minHeight="?attr/actionBarSize"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
     android:orientation="horizontal"
     android:padding="@dimen/item_padding">
 
