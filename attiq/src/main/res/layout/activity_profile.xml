@@ -79,9 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:paddingEnd="@dimen/profile_image_size"
-                app:popupTheme="@style/Attiq.Theme.AppBarOverlay"
-                app:subtitleTextAppearance="@style/Attiq.Widget.Toolbar.Subtitle"/>
+                app:subtitleTextAppearance="@style/Attiq.Widget.Profile.Toolbar.Subtitle"/>
 
             <View
                 android:id="@+id/divider_1"

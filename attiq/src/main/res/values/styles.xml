@@ -58,4 +58,9 @@
         <item name="rippleColor">?attr/colorControlHighlight</item>
         <item name="borderWidth">@dimen/design_fab_border_width</item>
     </style>
+
+    <style name="Attiq.Widget.Profile.Toolbar.Subtitle"
+           parent="Attiq.Widget.Toolbar.Subtitle">
+        <item name="android:paddingRight">@dimen/profile_image_size_margin</item>
+    </style>
 </resources>
