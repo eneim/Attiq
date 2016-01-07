@@ -999,4 +999,12 @@ public class CollapsingToolbarLayout extends FrameLayout {
       mToolbar.setSubtitle(mSpannableSubtitle);
     }
   }
+
+  public boolean isCollapsed() {
+    return false;
+  }
+
+  public boolean isExpanded() {
+    return true;
+  }
 }

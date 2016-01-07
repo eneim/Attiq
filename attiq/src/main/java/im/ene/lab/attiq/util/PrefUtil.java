@@ -1,7 +1,7 @@
 package im.ene.lab.attiq.util;
 
 import im.ene.lab.attiq.Attiq;
-import im.ene.lab.attiq.data.api.base.Header;
+import im.ene.lab.attiq.data.api.Header;
 import okhttp3.Interceptor;
 
 import java.io.IOException;

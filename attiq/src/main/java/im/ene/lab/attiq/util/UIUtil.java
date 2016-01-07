@@ -1,7 +1,10 @@
 package im.ene.lab.attiq.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
@@ -60,5 +63,39 @@ public class UIUtil {
     if (context != null) {
       Toast.makeText(context, "Coming Soon! ^^", Toast.LENGTH_SHORT).show();
     }
+  }
+
+  public static void openWebsite(Activity activity, String url) {
+    Intent i = new Intent(Intent.ACTION_VIEW);
+    i.setData(Uri.parse(url));
+    activity.startActivity(i);
+  }
+
+  public static void openFacebookUser(Activity activity, String username) {
+    String url = "https://www.facebook.com/" + username;
+    Intent i = new Intent(Intent.ACTION_VIEW);
+    i.setData(Uri.parse(url));
+    activity.startActivity(i);
+  }
+
+  public static void openTwitterUser(Activity activity, String username) {
+    String url = "https://twitter.com/" + username;
+    Intent i = new Intent(Intent.ACTION_VIEW);
+    i.setData(Uri.parse(url));
+    activity.startActivity(i);
+  }
+
+  public static void openGithubUser(Activity activity, String username) {
+    String url = "https://github.com/" + username;
+    Intent i = new Intent(Intent.ACTION_VIEW);
+    i.setData(Uri.parse(url));
+    activity.startActivity(i);
+  }
+
+  public static void openLinkedinUser(Activity activity, String username) {
+    String url = "https://www.linkedin.com/in/" + username;
+    Intent i = new Intent(Intent.ACTION_VIEW);
+    i.setData(Uri.parse(url));
+    activity.startActivity(i);
   }
 }

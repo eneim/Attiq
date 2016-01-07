@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#40393C</color>
-    <color name="colorPrimaryDark">#252123</color>
-    <color name="colorAccent">#FF5722</color>
+    <color name="colorPrimary">#28475C</color>
+    <color name="colorPrimaryDark">#1A2F4B</color>
+    <color name="colorAccent">#C98B70</color>
 
     <!-- ref: http://www.colorhexa.com/3e3639 -->
     <color name="very_dark_grayish_pink">#3e3639</color>

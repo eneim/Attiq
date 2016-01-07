@@ -13,14 +13,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.adapters.AttiqListAdapter;
-import im.ene.lab.attiq.data.event.Event;
-import im.ene.lab.attiq.data.event.TypedEvent;
+import im.ene.lab.attiq.adapters.RealmListAdapter;
+import im.ene.lab.attiq.util.event.Event;
+import im.ene.lab.attiq.util.event.TypedEvent;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.EndlessScrollListener;
 import im.ene.lab.attiq.widgets.MultiSwipeRefreshLayout;
@@ -75,9 +76,9 @@ public abstract class RealmListFragment<E extends RealmObject>
   @Bind(R.id.swipe_refresh_layout) MultiSwipeRefreshLayout mSwipeRefreshLayout;
   @Bind(R.id.loading_container) View mLoadingView;
   @Bind(R.id.view_empty) View mEmptyView;
-  @Bind(R.id.view_error) View mErrorView;
+  @Bind(R.id.view_error) TextView mErrorView;
 
-  protected AttiqListAdapter<E> mAdapter;
+  protected RealmListAdapter<E> mAdapter;
 
   // User a handler to prevent too frequently calling of methods. For example Realm may trigger
   // #onChange a lot of time, since it doesn't support type-specific change event now. So we
@@ -183,7 +184,7 @@ public abstract class RealmListFragment<E extends RealmObject>
   }
 
   @NonNull
-  protected abstract AttiqListAdapter<E> createAdapter();
+  protected abstract RealmListAdapter<E> createAdapter();
 
   @Override public void onRefresh() {
     if (mSwipeRefreshLayout != null) {
@@ -196,6 +197,10 @@ public abstract class RealmListFragment<E extends RealmObject>
   // Just do nothing here
   @SuppressWarnings("unused")
   public void onEventMainThread(TypedEvent<E> event) {
+    Event.Error error = event.error;
+    if (error != null && !UIUtil.isEmpty(error.message) && mErrorView != null) {
+      mErrorView.setText(error.message);
+    }
   }
 
   @Override public void onResponse(Response<List<E>> response) {

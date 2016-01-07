@@ -17,6 +17,7 @@
         android:id="@+id/tag_icon"
         android:layout_width="@dimen/tag_icon_size"
         android:layout_height="@dimen/tag_icon_size"
+        android:scaleType="centerInside"
         tools:src="@mipmap/ic_launcher"/>
 
     <TextView

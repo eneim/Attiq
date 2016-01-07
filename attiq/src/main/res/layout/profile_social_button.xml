@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageButton
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/item_icon_size_small"
+    android:layout_height="@dimen/item_icon_size_small"
+    android:layout_margin="@dimen/item_icon_padding_half"
+    android:background="?attr/selectableItemBackgroundBorderless"
+    android:src="@drawable/ic_radio_button_on_24dp"/>

@@ -12,10 +12,10 @@ import android.view.animation.LinearInterpolator;
  */
 public class AnimationUtils {
 
-  static final Interpolator LINEAR_INTERPOLATOR = new LinearInterpolator();
-  static final Interpolator FAST_OUT_SLOW_IN_INTERPOLATOR = new FastOutSlowInInterpolator();
-  static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
-  static final Interpolator ACCELERATE_DECELERATE = new AccelerateDecelerateInterpolator();
+  public static final Interpolator LINEAR_INTERPOLATOR = new LinearInterpolator();
+  public static final Interpolator FAST_OUT_SLOW_IN_INTERPOLATOR = new FastOutSlowInInterpolator();
+  public static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
+  public static final Interpolator ACCELERATE_DECELERATE = new AccelerateDecelerateInterpolator();
 
   /**
    * Linear interpolation between {@code startValue} and {@code endValue} by {@code fraction}.

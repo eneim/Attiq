@@ -77,7 +77,8 @@
             android:name=".activities.ProfileActivity"
             android:label="@string/title_activity_profile"
             android:parentActivityName=".activities.MainActivity"
-            android:theme="@style/Attiq.Theme.NoActionBar">
+            android:screenOrientation="portrait"
+            android:theme="@style/Attiq.Theme.Profile">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="im.ene.lab.attiq.activities.MainActivity"/>

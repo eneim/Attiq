@@ -1,13 +1,14 @@
 package im.ene.lab.attiq.data.api;
 
-import im.ene.lab.attiq.data.api.open.FeedItem;
-import im.ene.lab.attiq.data.api.open.Profile;
-import im.ene.lab.attiq.data.api.v1.response.PublicItem;
-import im.ene.lab.attiq.data.api.v2.request.AccessTokenRequest;
-import im.ene.lab.attiq.data.api.v2.response.AccessToken;
-import im.ene.lab.attiq.data.api.v2.response.Article;
-import im.ene.lab.attiq.data.api.v2.response.Comment;
-import im.ene.lab.attiq.data.api.v2.response.Tag;
+import im.ene.lab.attiq.data.one.Post;
+import im.ene.lab.attiq.data.request.AccessTokenRequest;
+import im.ene.lab.attiq.data.two.AccessToken;
+import im.ene.lab.attiq.data.two.Article;
+import im.ene.lab.attiq.data.two.Comment;
+import im.ene.lab.attiq.data.two.Tag;
+import im.ene.lab.attiq.data.zero.FeedItem;
+import im.ene.lab.attiq.data.two.Profile;
+import im.ene.lab.attiq.data.zero.PublicItem;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -27,7 +28,7 @@ interface Api {
   /**
    * APIs directly get from qiita.com website.
    */
-  interface Open {
+  interface Zero {
 
     @GET("/api/public") Call<List<PublicItem>> stream(
         @Query("before") Long id,
@@ -39,10 +40,39 @@ interface Api {
     );
   }
 
-  interface Items {
+  interface One {
 
     // No token only
     @GET("/api/v1/items") Call<List<PublicItem>> stream(
+        @Query("page") int page,
+        @Query("per_page") int limit
+    );
+
+    @GET("/api/v1/users/{url_name}/items") Call<List<Post>> userItems(
+        @Path("url_name") String userId,
+        @Query("page") int page,
+        @Query("per_page") int limit
+    );
+
+    @GET("/api/v1/users/{url_name}/stocks") Call<List<Post>> userStockedItems(
+        @Path("url_name") String userId,
+        @Query("page") int page,
+        @Query("per_page") int limit
+    );
+  }
+
+  interface Two {
+
+    @POST("/api/v2/access_tokens") Call<AccessToken> accessToken(
+        @Body AccessTokenRequest request
+    );
+
+    @GET("/api/v2/authenticated_user") Call<Profile> me();
+
+    @GET("/api/v2/authenticated_user/items") Call<List<Article>> myItems();
+
+    @GET("/api/v2/users/{user_id}/following_tags") Call<List<Tag>> myTags(
+        @Path("item_id") String id,
         @Query("page") int page,
         @Query("per_page") int limit
     );
@@ -66,22 +96,7 @@ interface Api {
         @Query("per_page") int limit,
         @Query("sort") String sort
     );
-  }
 
-  interface Me {
-
-    @POST("/api/v2/access_tokens") Call<AccessToken> accessToken(
-        @Body AccessTokenRequest request
-    );
-
-    @GET("/api/v2/authenticated_user") Call<Profile> me();
-
-    @GET("/api/v2/authenticated_user/items") Call<List<Article>> myItems();
-
-    @GET("/api/v2/users/{user_id}/following_tags") Call<List<Tag>> myTags(
-        @Path("item_id") String id,
-        @Query("page") int page,
-        @Query("per_page") int limit
-    );
+    @GET("/api/v2/users/{user_id}") Call<Profile> user(@Path("user_id") String userName);
   }
 }

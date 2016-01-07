@@ -7,7 +7,25 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <!-- Social Buttons -->
+    <dimen name="social_buttons_padding_start">48dp</dimen>
+    <dimen name="social_button_size_full">40dp</dimen>
+    <dimen name="social_button_size">24dp</dimen>
+    <dimen name="social_button_margin">2dp</dimen>
+
+    <dimen name="tab_layout_start_inset">72dp</dimen>
+    <dimen name="tab_layout_height">48dp</dimen>
+    <dimen name="tab_max_width">120dp</dimen>
+
     <!-- Material Design key-lines -->
+    <dimen name="design_fab_content_size">72dp</dimen>
+    <dimen name="design_fab_size_big">80dp</dimen>
+
+    <dimen name="profile_image_size_margin">112dp</dimen>
+    <dimen name="profile_image_size">80dp</dimen>
+    <dimen name="profile_image_size_half">40dp</dimen>
+    <dimen name="profile_image_margin">24dp</dimen>
+
     <dimen name="header_icon_size">56dp</dimen>
     <dimen name="header_icon_size_half">28dp</dimen>
     <dimen name="header_icon_padding">0dp</dimen>
@@ -17,6 +35,7 @@
     <dimen name="item_icon_size">48dp</dimen>
     <dimen name="item_icon_size_half">24dp</dimen>
     <dimen name="item_icon_padding">4dp</dimen>
+    <dimen name="item_icon_padding_half">2dp</dimen>
 
     <dimen name="item_icon_size_small">36dp</dimen>
     <dimen name="item_icon_size_small_half">18dp</dimen>
@@ -28,6 +47,7 @@
     <!-- Attiq specific dimens -->
     <dimen name="recycler_view_padding">0dp</dimen>
     <dimen name="item_padding">8dp</dimen>
+    <dimen name="item_padding_half">4dp</dimen>
     <dimen name="dimen_unit">1px</dimen>
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="text_margin">16dp</dimen>
