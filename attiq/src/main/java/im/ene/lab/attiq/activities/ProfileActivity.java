@@ -237,7 +237,7 @@ public class ProfileActivity extends BaseActivity {
       }
 
       if (!UIUtil.isEmpty(mProfile.getOrganization())) {
-        description.append(mProfile.getOrganization()).append(", ");
+        description.append(mProfile.getOrganization());
       }
 
       if (!UIUtil.isEmpty(mProfile.getDescription())) {
