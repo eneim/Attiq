@@ -121,4 +121,5 @@ public final class ApiClient {
   public static Call<List<Post>> userStockedItems(String userId, int page) {
     return ONE.userStockedItems(userId, page, DEFAULT_PAGE_LIMIT);
   }
+
 }

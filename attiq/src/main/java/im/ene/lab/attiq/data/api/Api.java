@@ -5,9 +5,9 @@ import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.two.AccessToken;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.Comment;
+import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.two.Tag;
 import im.ene.lab.attiq.data.zero.FeedItem;
-import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.zero.PublicItem;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -38,6 +38,7 @@ interface Api {
     @GET("/api/tracks") Call<List<FeedItem>> feed(
         @Query("max_created_at") Long maxCreatedAt
     );
+
   }
 
   interface One {

@@ -32,15 +32,12 @@ import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.RequestCreator;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import butterknife.Bind;
-import butterknife.BindColor;
 import butterknife.BindDimen;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
@@ -58,6 +55,7 @@ import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.WebUtil;
+import im.ene.lab.attiq.util.event.DocumentEvent;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemCommentsEvent;
 import im.ene.lab.attiq.util.event.ItemDetailEvent;
@@ -66,10 +64,13 @@ import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AppBarLayout;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
 import io.realm.Realm;
+import okhttp3.Request;
+import okhttp3.ResponseBody;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -86,7 +87,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Bind(R.id.comments_header) TextView mCommentInfo;
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.item_content_web) WebView mContentView;
-  @Bind(R.id.item_comments) WebView mComments;
+  @Bind(R.id.item_comments_web) WebView mComments;
+  @Bind(R.id.item_stocks) TextView mStockCount;
+  @Bind(R.id.item_comments) TextView mCommentCount;
   @Bind(R.id.toolbar_overlay) View mOverLayView;
   @Bind(R.id.item_title) TextView mArticleName;
   @Bind(R.id.item_subtitle) TextView mArticleDescription;
@@ -95,18 +98,13 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Bind(R.id.drawer_layout) DrawerLayout mMenuLayout;
   @Bind(R.id.html_headers_container) LinearLayout mMenuContainer;
   @Bind(R.id.loading_container) View mLoadingView;
-  // @Bind(R.id.detail_author_icon) ImageButton mAuthorIcon;
-  // !IMPORTANT Bottom Toolbar, setup specially for an Article
-  // @Bind(R.id.actions_bar) Toolbar mArticleBar;
-
-  @BindDimen(R.dimen.item_icon_size_small) int mIconSize;
-  @BindDimen(R.dimen.item_icon_size_small_half) int mIconCornerRadius;
-  @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
-  @BindColor(R.color.colorPrimary) int mIconBorderColor;
 
   @BindDimen(R.dimen.header_depth_width) int mHeaderDepthWidth;
   @BindDimen(R.dimen.header_depth_gap) int mHeaderDepthGap;
+  @BindDimen(R.dimen.app_bar_max_elevation) float mMaxAppbarElevation;
+  @BindDimen(R.dimen.app_bar_min_elevation) float mMinAppbarElevation;
 
+  private Document mArticleDocument;
   private MenuItem mArticleHeaderMenu;
 
   private Realm mRealm;
@@ -126,12 +124,20 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
           float maxOffset = mToolBarLayout.getHeight() -
               ViewCompat.getMinimumHeight(mToolBarLayout) - mToolBarLayout.getInsetTop();
           if (maxOffset > 0) {
-            float offsetFraction = Math.abs(verticalOffset) / maxOffset;
-            mOverLayView.setAlpha(1.f - offsetFraction);
+            float fraction = Math.abs(verticalOffset) / maxOffset;
+            mOverLayView.setAlpha(1.f - fraction);
+
+            ViewCompat.setElevation(mAppBarLayout,
+                mMaxAppbarElevation * fraction + mMinAppbarElevation * (1.f - fraction));
           }
         }
       };
   private String mItemUuid;
+  private okhttp3.Callback mDocumentCallback;
+
+  public static Intent createIntent(Context context, @NonNull PublicItem item) {
+    return createIntent(context, item.getId(), item.getUuid());
+  }
 
   public static Intent createIntent(Context context, Long itemId, String itemUuid) {
     Intent intent = createIntent(context);
@@ -140,8 +146,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     return intent;
   }
 
-  public static Intent createIntent(Context context, @NonNull PublicItem item) {
-    return createIntent(context, item.getId(), item.getUuid());
+  private static Intent createIntent(Context context) {
+    return new Intent(context, ItemDetailActivity.class);
   }
 
   public static Intent createIntent(Context context, @NonNull Post item) {
@@ -150,10 +156,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   public static Intent createIntent(Context context, @NonNull FeedItem item) {
     return createIntent(context, null, item.getMentionedObjectUuid());
-  }
-
-  private static Intent createIntent(Context context) {
-    return new Intent(context, ItemDetailActivity.class);
   }
 
   public static Intent createIntent(Context context, String uuid) {
@@ -209,28 +211,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     if (mRealm != null) {
       mRealm.close();
     }
+    mDocumentCallback = null;
     super.onDestroy();
-  }
-
-  private void shareArticle() {
-    if (mArticle == null) {
-      return;
-    }
-
-    String shareUrl = mArticle.getUrl();
-    Intent intent = new Intent(Intent.ACTION_SEND);
-    intent.setType("text/plain");
-    intent.putExtra(Intent.EXTRA_SUBJECT, mArticle.getTitle());
-    intent.putExtra(Intent.EXTRA_TEXT, shareUrl);
-    startActivity(intent);
-  }
-
-  private void commentArticle() {
-
-  }
-
-  private void stockArticle() {
-
   }
 
   private void trySetupMenuDrawerLayout() {
@@ -312,6 +294,27 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mComments.setHorizontalScrollBarEnabled(false);
   }
 
+  private void shareArticle() {
+    if (mArticle == null) {
+      return;
+    }
+
+    String shareUrl = mArticle.getUrl();
+    Intent intent = new Intent(Intent.ACTION_SEND);
+    intent.setType("text/plain");
+    intent.putExtra(Intent.EXTRA_SUBJECT, mArticle.getTitle());
+    intent.putExtra(Intent.EXTRA_TEXT, shareUrl);
+    startActivity(intent);
+  }
+
+  private void commentArticle() {
+
+  }
+
+  private void stockArticle() {
+
+  }
+
   @Override public void onResponse(Response<Article> response) {
     Article article = response.body();
     if (article != null) {
@@ -327,12 +330,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mArticle = article;
     if (article != null) {
       User user = article.getUser();
-      final RequestCreator requestCreator;
-      if (!UIUtil.isEmpty(user.getProfileImageUrl())) {
-        requestCreator = Attiq.picasso().load(user.getProfileImageUrl());
-      } else {
-        requestCreator = Attiq.picasso().load(R.drawable.blank_profile_icon_medium);
-      }
 
       mArticleName.setText(article.getTitle());
       mSpannableTitle = new SpannableString(article.getTitle());
@@ -468,9 +465,21 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   }
 
+  @SuppressWarnings("unused")
+  public void onEventMainThread(DocumentEvent event) {
+    if (event.document != null) {
+      String stockCount = event.document.getElementsByClass("js-stocksCount").first().text();
+      mStockCount.setText(stockCount);
+    }
+  }
+
+  @SuppressWarnings("unused")
   public void onEventMainThread(ItemCommentsEvent event) {
     if (event.success && !UIUtil.isEmpty(event.comments)) {
       List<Comment> comments = event.comments;
+
+      mCommentCount.setText(comments.size() + "");
+
       String info = comments.size() == 1 ?
           getString(R.string.comment_singular) : getString(R.string.comment_plural);
       mCommentInfo.setText(getString(R.string.article_comment, comments.size(), info));
@@ -504,6 +513,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         e.printStackTrace();
       }
     } else {
+      mCommentCount.setText("0");
       mCommentInfo.setText(
           getString(R.string.article_comment, 0, getString(R.string.comment_plural)));
     }
@@ -518,6 +528,18 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     super.onResume();
     if (mItemUuid != null) {
       ApiClient.itemDetail(mItemUuid).enqueue(this);
+
+      final String baseUrl = "http://qiita.com/api/items/" + mItemUuid;
+
+      mDocumentCallback = new DocumentCallback(baseUrl) {
+        @Override void onDocument(Document response) {
+          if (response != null) {
+            EventBus.getDefault().post(new DocumentEvent(true, null, response));
+          }
+        }
+      };
+
+      WebUtil.loadWeb(baseUrl).enqueue(mDocumentCallback);
     }
   }
 
@@ -528,5 +550,30 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mArticleHeaderMenu = menu.findItem(R.id.action_item_menu);
     return true;
   }
+
+  private static abstract class DocumentCallback implements okhttp3.Callback {
+
+    private final String baseUrl;
+
+    public DocumentCallback(String baseUrl) {
+      this.baseUrl = baseUrl;
+    }
+
+    @Override public void onFailure(Request request, IOException e) {
+      onDocument(null);
+    }
+
+    @Override public void onResponse(okhttp3.Response response) throws IOException {
+      ResponseBody body = response.body();
+      InputStream stream = body == null ? null : body.byteStream();
+      if (stream != null) {
+        Document document = Jsoup.parse(stream, "utf-8", baseUrl);
+        onDocument(document);
+      }
+    }
+
+    abstract void onDocument(Document response);
+  }
+
 
 }

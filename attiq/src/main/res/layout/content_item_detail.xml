@@ -27,7 +27,7 @@
             android:textStyle="bold"/>
 
         <WebView
-            android:id="@+id/item_comments"
+            android:id="@+id/item_comments_web"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
