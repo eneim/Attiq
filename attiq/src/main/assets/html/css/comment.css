@@ -1,4 +1,4 @@
-.comment-box .comment-body {
+.comment-box {
   background: rgba(255,255,255,0.3);
   max-width: 100%;
   height: auto;
@@ -14,7 +14,7 @@ p {
   margin: 0;
 }
 
-.message .comment-body {
+.message {
   font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;
   font-size: 13px;
   line-height: 1.6;
