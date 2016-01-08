@@ -1,0 +1,49 @@
+a {
+  text-decoration: none;
+}
+
+.user {
+  max-width: 100%;
+  height: auto;
+  position: relative;
+  display: inline-block;
+  vertical-align:top;
+  horizontal-align:center;
+}
+
+.user-icon {
+  width: 36px;
+  height: 36px;
+}
+
+.user-description {
+  top: 4px;
+  display: inline-block;
+  margin-left: 4px;
+  height: 100%;
+  font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;
+  word-wrap: break-word;
+  line-height: 1;
+  padding-bottom: px;
+}
+
+.user-description > .user-name > a {
+  color: #000000;
+  font-size: 16px;
+}
+
+.user-description > .comment-time > a {
+  font-size: 12px;
+}
+
+.img-circle {
+  padding: 1px;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 0 1px rgba(0, 0, 0, .8);
+  -webkit-box-shadow: 0 0 1px rgba(0, 0, 0, .8);
+  -moz-box-shadow: 0 0 1px rgba(0, 0, 0, .8);
+}

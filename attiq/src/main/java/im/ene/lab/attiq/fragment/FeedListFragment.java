@@ -82,7 +82,7 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
       }
 
       @Override public void onItemContentClick(FeedItem item) {
-        startActivity(ItemDetailActivity.createIntent(getContext(), item));
+        startActivity(ItemDetailActivity.createIntent(getContext(), item.getMentionedObjectUuid()));
       }
 
       @Override public void onFollowingTagClick(FeedItem host) {

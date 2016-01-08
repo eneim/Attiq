@@ -6,14 +6,19 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
 import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.adapters.ListAdapter;
 import im.ene.lab.attiq.adapters.UserStockItemsAdapter;
-import im.ene.lab.attiq.data.one.PublicUser;
 import im.ene.lab.attiq.data.one.Post;
+import im.ene.lab.attiq.data.one.PublicUser;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
+import io.realm.Realm;
+import retrofit2.Response;
+
+import java.util.List;
 
 /**
  * Created by eneim on 1/6/16.
@@ -64,7 +69,7 @@ public class UserStockedItemsFragment extends ListFragment<Post> {
       }
 
       @Override public void onItemContentClick(Post item) {
-        startActivity(ItemDetailActivity.createIntent(getContext(), item.getId(), item.getUuid()));
+        startActivity(ItemDetailActivity.createIntent(getContext(), item.getUuid()));
       }
     };
 
@@ -75,5 +80,15 @@ public class UserStockedItemsFragment extends ListFragment<Post> {
     // no UI interaction after this point;
     mItemClickListener = null;
     super.onDestroyView();
+  }
+
+  @Override public void onResponse(Response<List<Post>> response) {
+    super.onResponse(response);
+    List<Post> posts = response.body();
+    Realm realm = Attiq.realm();
+    realm.beginTransaction();
+    realm.copyToRealmOrUpdate(posts);
+    realm.commitTransaction();
+    realm.close();
   }
 }

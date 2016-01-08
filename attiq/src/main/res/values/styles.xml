@@ -23,7 +23,7 @@
             @style/Attiq.Widget.Toolbar.Button.Navigation
         </item>
 
-        <item name="colorPrimary">#F8E796</item>
+        <item name="colorPrimary">@color/colorPrimaryLight</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowActionBarOverlay">true</item>
@@ -57,5 +57,10 @@
         <item name="pressedTranslationZ">@dimen/design_fab_translation_z_pressed</item>
         <item name="rippleColor">?attr/colorControlHighlight</item>
         <item name="borderWidth">@dimen/design_fab_border_width</item>
+    </style>
+
+    <style name="Attiq.Widget.Profile.Toolbar.Subtitle"
+           parent="Attiq.Widget.Toolbar.Subtitle">
+        <item name="android:paddingRight">@dimen/profile_image_size_margin</item>
     </style>
 </resources>

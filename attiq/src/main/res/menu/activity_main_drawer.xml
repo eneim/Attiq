@@ -14,15 +14,12 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:title="Home"/>
-
-        <item
-            android:id="@+id/nav_history"
-            android:title="History"/>
+            android:title="@string/menu_item_home"/>
     </group>
 
     <item
-        android:title="Post">
+        android:title="Post"
+        android:visible="false">
         <menu>
             <group
                 android:id="@+id/group_post"
@@ -37,11 +34,11 @@
     </item>
 
     <item
-        android:title="Profile">
+        android:title="@string/menu_item_profile">
         <menu>
             <item
                 android:id="@+id/nav_profile"
-                android:title="My page"/>
+                android:title="@string/menu_item_my_page"/>
         </menu>
     </item>
 
@@ -50,9 +47,11 @@
         <menu>
             <item
                 android:id="@+id/nav_share"
+                android:enabled="false"
                 android:title="Settings"/>
             <item
                 android:id="@+id/nav_send"
+                android:enabled="false"
                 android:title="About"/>
         </menu>
     </item>

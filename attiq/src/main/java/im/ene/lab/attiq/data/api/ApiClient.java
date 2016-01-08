@@ -118,7 +118,16 @@ public final class ApiClient {
     return ONE.userItems(userId, page, DEFAULT_PAGE_LIMIT);
   }
 
-  public static Call<List<Post>> userStockedItems(String userId, int page) {
+  public static Call<List<Post>> userStockedItemsV1(String userId, int page) {
     return ONE.userStockedItems(userId, page, DEFAULT_PAGE_LIMIT);
   }
+
+  public static Call<List<Post>> userStockedItemsV0(String userId, Integer anchorTime) {
+    return ZERO.stockedItem(userId, anchorTime);
+  }
+
+  public static Call<Void> isStocked(String id) {
+    return TWO.checkStock(id);
+  }
+
 }

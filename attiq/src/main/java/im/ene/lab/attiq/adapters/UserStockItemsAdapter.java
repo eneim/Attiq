@@ -21,9 +21,9 @@ import butterknife.ButterKnife;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
+import im.ene.lab.attiq.data.one.Post;
 import im.ene.lab.attiq.data.one.PublicTag;
 import im.ene.lab.attiq.data.one.PublicUser;
-import im.ene.lab.attiq.data.one.Post;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
@@ -90,7 +90,7 @@ public class UserStockItemsAdapter extends ListAdapter<Post> {
   @Override
   public void loadItems(final boolean isLoadingMore, int page, int pageLimit,
                         @Nullable String query, final Callback<List<Post>> callback) {
-    ApiClient.userStockedItems(mUserId, page).enqueue(new Callback<List<Post>>() {
+    ApiClient.userStockedItemsV1(mUserId, page).enqueue(new Callback<List<Post>>() {
       @Override public void onResponse(Response<List<Post>> response) {
         cleanup(!isLoadingMore);
         if (callback != null) {

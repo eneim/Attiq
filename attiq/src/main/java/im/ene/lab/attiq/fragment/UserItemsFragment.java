@@ -63,7 +63,7 @@ public class UserItemsFragment extends ListFragment<Post> {
       }
 
       @Override public void onItemContentClick(Post item) {
-        startActivity(ItemDetailActivity.createIntent(getContext(), item));
+        startActivity(ItemDetailActivity.createIntent(getContext(), item.getUuid()));
       }
     };
 

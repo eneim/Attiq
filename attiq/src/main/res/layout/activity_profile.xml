@@ -79,9 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:paddingEnd="@dimen/profile_image_size"
-                app:popupTheme="@style/Attiq.Theme.AppBarOverlay"
-                app:subtitleTextAppearance="@style/Attiq.Widget.Toolbar.Subtitle"/>
+                app:subtitleTextAppearance="@style/Attiq.Widget.Profile.Toolbar.Subtitle"/>
 
             <View
                 android:id="@+id/divider_1"
@@ -110,18 +108,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
+            android:scrollbars="none"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <LinearLayout
                 android:id="@+id/profile_social_buttons"
                 android:layout_width="wrap_content"
                 android:layout_height="?attr/actionBarSize"
+                android:clipToPadding="false"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingBottom="@dimen/item_icon_padding"
-                android:paddingEnd="@dimen/profile_image_size"
+                android:paddingEnd="@dimen/profile_image_size_margin"
                 android:paddingLeft="@dimen/tab_layout_height"
-                android:paddingRight="@dimen/profile_image_size"
+                android:paddingRight="@dimen/profile_image_size_margin"
                 android:paddingStart="@dimen/social_buttons_padding_start"
                 android:paddingTop="@dimen/item_icon_padding">
 

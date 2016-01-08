@@ -33,6 +33,9 @@ android {
         versionCode VERSION_CODE
         versionName VERSION_NAME
         manifestPlaceholders = [fabric_api_key: "${attiq_fabric_api_key}"]
+
+        // resValue "string", "twitter_consumer_key", "${attiq_twitter_consumer_key}"
+        // resValue "string", "twitter_consumer_secret", "${attiq_twitter_consumer_secret}"
     }
 
     packagingOptions {
@@ -126,6 +129,9 @@ dependencies {
     }
 
     compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.2@aar') {
+        transitive = true;
+    }
+    compile('com.twitter.sdk.android:twitter:1.11.0@aar') {
         transitive = true;
     }
 }

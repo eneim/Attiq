@@ -5,13 +5,14 @@ import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.two.AccessToken;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.Comment;
+import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.two.Tag;
 import im.ene.lab.attiq.data.zero.FeedItem;
-import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.zero.PublicItem;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -38,6 +39,16 @@ interface Api {
     @GET("/api/tracks") Call<List<FeedItem>> feed(
         @Query("max_created_at") Long maxCreatedAt
     );
+
+    @Headers({
+        "Accept: application/json",
+        "Content-Type: application/json"
+    })
+    @GET("/{user_name}/stock") Call<List<Post>> stockedItem(
+        @Path("user_name") String userId,
+        @Query("before") Integer before
+    );
+
   }
 
   interface One {
@@ -98,5 +109,9 @@ interface Api {
     );
 
     @GET("/api/v2/users/{user_id}") Call<Profile> user(@Path("user_id") String userName);
+
+    @GET("/api/v2/items/{item_id}/stock") Call<Void> checkStock(
+        @Path("item_id") String id
+    );
   }
 }
