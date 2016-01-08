@@ -134,7 +134,7 @@ public class MainActivity extends BaseActivity
       updateMasterUser(mMyProfile);
     }
 
-    trySetupToolBarTabs();
+    trySetupToolBarTabs(savedInstanceState);
 
     getMasterUser(PrefUtil.getCurrentToken());
   }
@@ -157,6 +157,14 @@ public class MainActivity extends BaseActivity
               mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
           .into(mHeaderIcon);
     }
+  }
+
+  private void trySetupToolBarTabs(Bundle savedState) {
+    if (savedState != null) {
+      return;
+    }
+
+    trySetupToolBarTabs();
   }
 
   private void trySetupToolBarTabs() {
