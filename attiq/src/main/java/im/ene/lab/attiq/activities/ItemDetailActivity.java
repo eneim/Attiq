@@ -109,7 +109,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private MenuItem mArticleHeaderMenu;
 
   private Realm mRealm;
-  private Post mPublicItem;
+  private Post mReferItem;
   private Article mArticle;
   private boolean mIsFirstTimeLoaded = false;
   private Element mMenuAnchor;
@@ -205,9 +205,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
     mItemUuid = getIntent().getStringExtra(EXTRA_DETAIL_ITEM_UUID);
     mRealm = Attiq.realm();
-    mPublicItem = mRealm.where(Post.class).equalTo("uuid", mItemUuid).findFirst();
+    mReferItem = mRealm.where(Post.class).equalTo("uuid", mItemUuid).findFirst();
 
-    if (mPublicItem != null && mPublicItem.getStocked()) {
+    if (mReferItem != null && Boolean.TRUE.equals(mReferItem.getStocked())) {
       mStockCount.setCompoundDrawablesRelativeWithIntrinsicBounds(
           getDrawable(R.drawable.ic_action_stocked),
           null, null, null);

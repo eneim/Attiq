@@ -44,9 +44,10 @@ public class Post extends RealmObject {
   @SerializedName("stock_count")
   @Expose
   private Integer stockCount;
-  //  @SerializedName("stock_users")
-//  @Expose
-//  private RealmList<PublicUser> stockUsers;
+  @Ignore
+  @SerializedName("stock_users")
+  @Expose
+  private List<PublicUser> stockUsers;
   @SerializedName("stocked")
   @Expose
   private Boolean stocked;
@@ -218,6 +219,10 @@ public class Post extends RealmObject {
 
   public PublicUser getUser() {
     return user;
+  }
+
+  public List<PublicUser> getStockUsers() {
+    return stockUsers;
   }
 
   public void setUser(PublicUser user) {
