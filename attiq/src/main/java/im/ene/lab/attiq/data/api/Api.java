@@ -110,6 +110,8 @@ interface Api {
 
     @GET("/api/v2/users/{user_id}") Call<Profile> user(@Path("user_id") String userName);
 
-    // @GET("/api/v2/items/:item_id/stock") Call<>
+    @GET("/api/v2/items/{item_id}/stock") Call<Void> checkStock(
+        @Path("item_id") String id
+    );
   }
 }

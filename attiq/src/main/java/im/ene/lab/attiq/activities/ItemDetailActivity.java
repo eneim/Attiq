@@ -105,7 +105,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @BindDimen(R.dimen.app_bar_max_elevation) float mMaxAppbarElevation;
   @BindDimen(R.dimen.app_bar_min_elevation) float mMinAppbarElevation;
 
-  private Document mArticleDocument;
+  // private Document mArticleDocument;
   private MenuItem mArticleHeaderMenu;
 
   private Realm mRealm;
@@ -136,27 +136,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private String mItemUuid;
   private okhttp3.Callback mDocumentCallback;
 
-  public static Intent createIntent(Context context, @NonNull PublicItem item) {
-    return createIntent(context, item.getId(), item.getUuid());
-  }
-
-  public static Intent createIntent(Context context, Long itemId, String itemUuid) {
-    Intent intent = createIntent(context);
-    intent.putExtra(EXTRA_DETAIL_ITEM_ID, itemId);
-    intent.putExtra(EXTRA_DETAIL_ITEM_UUID, itemUuid);
-    return intent;
-  }
-
   private static Intent createIntent(Context context) {
     return new Intent(context, ItemDetailActivity.class);
-  }
-
-  public static Intent createIntent(Context context, @NonNull Post item) {
-    return createIntent(context, item.getId(), item.getUuid());
-  }
-
-  public static Intent createIntent(Context context, @NonNull FeedItem item) {
-    return createIntent(context, null, item.getMentionedObjectUuid());
   }
 
   public static Intent createIntent(Context context, String uuid) {
@@ -207,20 +188,38 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mRealm = Attiq.realm();
     mReferItem = mRealm.where(Post.class).equalTo("uuid", mItemUuid).findFirst();
 
-    if (mReferItem != null && Boolean.TRUE.equals(mReferItem.getStocked())) {
-      mStockCount.setCompoundDrawablesRelativeWithIntrinsicBounds(
-          getDrawable(R.drawable.ic_action_stocked),
-          null, null, null);
-    }
+    ApiClient.isStocked(mItemUuid).enqueue(mCheckStockResponse);
   }
 
   @Override protected void onDestroy() {
     if (mRealm != null) {
       mRealm.close();
     }
+    mCheckStockResponse = null;
     mDocumentCallback = null;
     super.onDestroy();
   }
+
+  private Callback<Void> mCheckStockResponse = new Callback<Void>() {
+    @Override public void onResponse(Response<Void> response) {
+      int code = response.code();
+      if (code == 204) {
+        mStockCount.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            UIUtil.getDrawable(mStockCount.getContext(), R.drawable.ic_action_stocked),
+            null, null, null
+        );
+      } else {
+        mStockCount.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            UIUtil.getDrawable(mStockCount.getContext(), R.drawable.ic_action_stock),
+            null, null, null
+        );
+      }
+    }
+
+    @Override public void onFailure(Throwable t) {
+
+    }
+  };
 
   private void trySetupMenuDrawerLayout() {
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -589,5 +588,12 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     abstract void onDocument(Document response);
   }
 
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      navigateUpOrBack(this, null);
+      return true;
+    }
 
+    return super.onOptionsItemSelected(item);
+  }
 }

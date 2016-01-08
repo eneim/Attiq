@@ -126,4 +126,8 @@ public final class ApiClient {
     return ZERO.stockedItem(userId, anchorTime);
   }
 
+  public static Call<Void> isStocked(String id) {
+    return TWO.checkStock(id);
+  }
+
 }

@@ -4,12 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Collection;
@@ -57,6 +62,34 @@ public class UIUtil {
 
   public static int getDimen(Context context, @DimenRes int dimenId) {
     return context.getResources().getDimensionPixelSize(dimenId);
+  }
+
+  public static Drawable getDrawable(@NonNull Context context, @DrawableRes int id) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      return context.getResources().getDrawable(id, context.getTheme());
+    } else {
+      return context.getResources().getDrawable(id);
+    }
+  }
+
+  public static void setCompoundDrawablesRelativeWithIntrinsicBounds(@NonNull TextView view,
+      @Nullable Drawable start, @Nullable Drawable top,
+      @Nullable Drawable end, @Nullable Drawable bottom) {
+
+    if (start != null) {
+      start.setBounds(0, 0, start.getIntrinsicWidth(), start.getIntrinsicHeight());
+    }
+    if (end != null) {
+      end.setBounds(0, 0, end.getIntrinsicWidth(), end.getIntrinsicHeight());
+    }
+    if (top != null) {
+      top.setBounds(0, 0, top.getIntrinsicWidth(), top.getIntrinsicHeight());
+    }
+    if (bottom != null) {
+      bottom.setBounds(0, 0, bottom.getIntrinsicWidth(), bottom.getIntrinsicHeight());
+    }
+
+    view.setCompoundDrawablesRelative(start, top, end, bottom);
   }
 
   public static void commingSoon(Context context) {

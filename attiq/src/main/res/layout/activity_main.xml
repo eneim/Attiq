@@ -28,7 +28,8 @@
             android:layout_width="@dimen/design_navigation_elevation"
             android:layout_height="?attr/actionBarSize"
             android:layout_alignParentBottom="true"
-            android:background="#e5e5e5"/>
+            android:background="#e5e5e5"
+            android:visibility="gone"/>
 
         <android.support.design.widget.NavigationView
             android:id="@+id/nav_actions"

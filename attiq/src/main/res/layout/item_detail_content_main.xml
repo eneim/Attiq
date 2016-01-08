@@ -80,7 +80,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="@dimen/tab_layout_height"
                 android:background="@android:color/white"
                 android:orientation="horizontal"
                 android:theme="@style/Attiq.Theme.NoActionBar">
@@ -88,7 +88,7 @@
                 <ImageButton
                     android:id="@+id/button_action_share"
                     android:layout_width="?attr/actionBarSize"
-                    android:layout_height="?attr/actionBarSize"
+                    android:layout_height="@dimen/tab_layout_height"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
@@ -103,7 +103,7 @@
                 <TextView
                     android:id="@+id/item_stocks"
                     android:layout_width="wrap_content"
-                    android:layout_height="?attr/actionBarSize"
+                    android:layout_height="@dimen/tab_layout_height"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
@@ -123,7 +123,7 @@
                 <TextView
                     android:id="@+id/item_comments"
                     android:layout_width="wrap_content"
-                    android:layout_height="?attr/actionBarSize"
+                    android:layout_height="@dimen/tab_layout_height"
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@id/item_stocks"
                     android:layout_toRightOf="@id/item_stocks"

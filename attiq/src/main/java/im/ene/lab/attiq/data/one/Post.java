@@ -45,8 +45,8 @@ public class Post extends RealmObject {
   @Expose
   private Integer stockCount;
   @Ignore
-  @SerializedName("stock_users")
-  @Expose
+  // @SerializedName("stock_users")
+  // @Expose
   private List<PublicUser> stockUsers;
   @SerializedName("stocked")
   @Expose
