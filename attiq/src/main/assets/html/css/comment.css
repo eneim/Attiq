@@ -18,29 +18,7 @@ p {
   font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;
   font-size: 13px;
   line-height: 1.6;
+  margin-top: 10px;
   background-color: white;
   word-wrap: break-word;
-}
-
-.user {
-  background: rgba(0,0,0,0.8);
-  max-width: 100%;
-  height: auto;
-  padding: 6px 10px 4px 10px;
-  margin:  0 0 10px 0;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-}
-
-.user-description {
-  font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;
-  font-size: 14px;
-  // line-height: 1.6;
-  color: white;
-  word-wrap: break-word;
-}
-
-.user-description > p > a {
-  color: #ffffee;
 }

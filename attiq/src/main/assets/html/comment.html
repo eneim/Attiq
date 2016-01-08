@@ -1,10 +1,17 @@
 <div class="comment-box">
+    <div class="user user-icon">
+        <a href="http://qiita.com/{user_name}">
+            <img class="img-circle" src="{user_icon_url}">
+        </a>
+    </div>
+
     <div class="user user-description">
-        <p>
-            <a href="http://qiita.com/{user_name}">{user_name}</a> さんが
+        <div class="user-name">
+            <a href="http://qiita.com/{user_name}">{user_name}</a>
+        </div>
+        <div class="comment-time">
             <a href="http://qiita.com/{user_name}/items/{article_uuid}#comment-{comment_id}">{comment_time}</a>
-            にコメントしました。
-        </p>
+        </div>
     </div>
 
     <div class="message">

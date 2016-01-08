@@ -40,6 +40,7 @@ import org.jsoup.select.Elements;
 import butterknife.Bind;
 import butterknife.BindDimen;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
@@ -286,7 +287,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         }
       }
     });
-
   }
 
   private void trySetupCommentView() {
@@ -294,7 +294,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mComments.setHorizontalScrollBarEnabled(false);
   }
 
-  private void shareArticle() {
+  @SuppressWarnings("unused")
+  @OnClick(R.id.button_action_share) void shareArticle() {
     if (mArticle == null) {
       return;
     }
@@ -495,6 +496,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         for (Comment comment : comments) {
           String commentHtml = IOUtil.readAssets("html/comment.html");
           commentHtml = commentHtml
+              .replace("{user_icon_url}", comment.getUser().getProfileImageUrl())
               .replace("{user_name}", comment.getUser().getId())
               .replace("{comment_time}", TimeUtil.commentTime(comment.getUpdatedAt()))
               .replace("{article_uuid}", mItemUuid)

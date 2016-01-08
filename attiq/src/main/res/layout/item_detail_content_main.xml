@@ -80,15 +80,15 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/tab_layout_height"
+                android:layout_height="?attr/actionBarSize"
                 android:background="@android:color/white"
                 android:orientation="horizontal"
-                android:padding="@dimen/item_padding">
+                android:theme="@style/Attiq.Theme.NoActionBar">
 
                 <ImageButton
                     android:id="@+id/button_action_share"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="?attr/actionBarSize"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
@@ -97,43 +97,46 @@
                     android:focusable="true"
                     android:gravity="center_vertical"
                     android:padding="@dimen/item_padding"
+                    android:scaleType="centerInside"
                     android:src="@drawable/ic_action_share"/>
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/item_comments"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@id/button_action_share"
-                    android:layout_toStartOf="@id/button_action_share"
-                    android:clickable="true"
-                    android:drawableLeft="@drawable/ic_action_comment"
-                    android:drawablePadding="@dimen/item_padding"
-                    android:drawableStart="@drawable/ic_action_comment"
-                    android:focusable="true"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/item_padding"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textColor="@android:color/black"
-                    tools:text="100"/>
 
                 <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/item_stocks"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@id/item_comments"
-                    android:layout_toStartOf="@id/item_comments"
                     android:clickable="true"
                     android:drawableLeft="@drawable/ic_action_stock"
                     android:drawablePadding="@dimen/item_padding"
                     android:drawableStart="@drawable/ic_action_stock"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:padding="@dimen/item_padding"
+                    android:minWidth="?attr/actionBarSize"
+                    android:padding="@dimen/activity_vertical_margin"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@android:color/black"
                     tools:text="2345"/>
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@+id/item_comments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/item_stocks"
+                    android:layout_toRightOf="@id/item_stocks"
+                    android:clickable="true"
+                    android:drawableLeft="@drawable/ic_action_comment"
+                    android:drawablePadding="@dimen/item_padding"
+                    android:drawableStart="@drawable/ic_action_comment"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:minWidth="?attr/actionBarSize"
+                    android:padding="@dimen/activity_vertical_margin"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textColor="@android:color/black"
+                    tools:text="100"/>
 
             </RelativeLayout>
 
