@@ -109,7 +109,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private MenuItem mArticleHeaderMenu;
 
   private Realm mRealm;
-  private PublicItem mPublicItem;
+  private Post mPublicItem;
   private Article mArticle;
   private boolean mIsFirstTimeLoaded = false;
   private Element mMenuAnchor;
@@ -205,7 +205,13 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
     mItemUuid = getIntent().getStringExtra(EXTRA_DETAIL_ITEM_UUID);
     mRealm = Attiq.realm();
-    mPublicItem = mRealm.where(PublicItem.class).equalTo("uuid", mItemUuid).findFirst();
+    mPublicItem = mRealm.where(Post.class).equalTo("uuid", mItemUuid).findFirst();
+
+    if (mPublicItem != null && mPublicItem.getStocked()) {
+      mStockCount.setCompoundDrawablesRelativeWithIntrinsicBounds(
+          getDrawable(R.drawable.ic_action_stocked),
+          null, null, null);
+    }
   }
 
   @Override protected void onDestroy() {
@@ -312,7 +318,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     startActivity(intent);
   }
 
-  private void commentArticle() {
+  @SuppressWarnings("unused")
+  @OnClick(R.id.item_comments) void commentArticle() {
 
   }
 
@@ -333,22 +340,13 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   public void onEventMainThread(ItemDetailEvent event) {
     Article article = event.article;
     mArticle = article;
+    String userName = null;
     if (article != null) {
       User user = article.getUser();
 
       mArticleName.setText(article.getTitle());
       mSpannableTitle = new SpannableString(article.getTitle());
-      String userName = user.getId();
-      final CharSequence subTitle;
-
-      if (mPublicItem != null) {
-        subTitle = Html.fromHtml(getString(R.string.item_user_info,
-            userName, userName, TimeUtil.beautify(article.getCreatedAt())));
-      } else {
-        subTitle = getString(R.string.item_detail_subtitle, userName);
-      }
-
-      mArticleDescription.setText(subTitle);
+      userName = user.getId();
       mSpannableSubtitle = new SpannableString(userName);
 
       updateTitle();
@@ -372,6 +370,16 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         e.printStackTrace();
       }
     }
+
+    final CharSequence subTitle;
+    if (article != null && !UIUtil.isEmpty(userName)) {
+      subTitle = Html.fromHtml(getString(R.string.item_user_info,
+          userName, userName, TimeUtil.beautify(article.getCreatedAt())));
+    } else {
+      subTitle = getString(R.string.item_detail_subtitle, userName);
+    }
+
+    mArticleDescription.setText(subTitle);
   }
 
   private void updateTitle() {

@@ -20,11 +20,10 @@
             android:id="@+id/comments_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorPrimaryLight"
             android:padding="@dimen/activity_horizontal_margin"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/life_gray_light"
-            android:textStyle="bold"/>
+            android:textColor="@color/colorPrimaryDark"/>
 
         <WebView
             android:id="@+id/item_comments_web"

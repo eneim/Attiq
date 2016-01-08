@@ -5,11 +5,13 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 import java.util.List;
 
-public class Post {
+public class Post extends RealmObject {
 
   @SerializedName("body")
   @Expose
@@ -48,6 +50,7 @@ public class Post {
   @SerializedName("stocked")
   @Expose
   private Boolean stocked;
+  @Ignore
   @SerializedName("tags")
   @Expose
   private List<PublicTag> tags;

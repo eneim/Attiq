@@ -90,7 +90,12 @@ public class UserStockItemsAdapter extends ListAdapter<Post> {
   @Override
   public void loadItems(final boolean isLoadingMore, int page, int pageLimit,
                         @Nullable String query, final Callback<List<Post>> callback) {
-    ApiClient.userStockedItems(mUserId, page).enqueue(new Callback<List<Post>>() {
+    Integer timeAnchor = null;
+    if (mItems.size() > 0) {
+      timeAnchor = getBottomItem().getCreatedAtAsSeconds();
+    }
+
+    ApiClient.userStockedItemsV0(mUserId, timeAnchor).enqueue(new Callback<List<Post>>() {
       @Override public void onResponse(Response<List<Post>> response) {
         cleanup(!isLoadingMore);
         if (callback != null) {
