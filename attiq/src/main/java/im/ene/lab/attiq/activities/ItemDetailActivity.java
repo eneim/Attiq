@@ -300,11 +300,15 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       return;
     }
 
+    boolean found = false;
+    Intent share = new Intent(android.content.Intent.ACTION_SEND);
+    share.setType("text/plain");
+
     String shareUrl = mArticle.getUrl();
     Intent intent = new Intent(Intent.ACTION_SEND);
     intent.setType("text/plain");
     intent.putExtra(Intent.EXTRA_SUBJECT, mArticle.getTitle());
-    intent.putExtra(Intent.EXTRA_TEXT, shareUrl);
+    intent.putExtra(Intent.EXTRA_TEXT, "I want to share this URL: " + shareUrl);
     startActivity(intent);
   }
 
