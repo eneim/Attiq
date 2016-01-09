@@ -84,6 +84,7 @@ public class ProfileActivity extends BaseActivity {
   @Bind({R.id.divider_1, R.id.divider_2}) List<View> mOverlayDividers;
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.tab_layout) TabLayout mTabLayout;
+  @Bind(R.id.profile_image) ImageView mProfileImage;
   @Bind(R.id.fab) ImageButton mProfileFabImage;
   @Bind(R.id.profile_social_buttons) LinearLayout mSocialButtonContainer;
   @Bind(R.id.text_action_follow) TextView mBtnFollow;
@@ -91,10 +92,10 @@ public class ProfileActivity extends BaseActivity {
   @Bind(R.id.profile_description) TextView mProfileDescription;
   // Others
   // @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
-  @BindDimen(R.dimen.dimen_unit) int mImageBorderWidth;
-  @BindColor(R.color.colorAccent) int mImageBorderColor;
+  @BindDimen(R.dimen.item_padding_half) int mImageBorderWidth;
+  @BindColor(android.R.color.white) int mImageBorderColor;
   @BindDimen(R.dimen.profile_image_size) int mProfileImageSize;
-  @BindDimen(R.dimen.profile_image_size_half) int mProfileImageSizeHalf;
+  @BindDimen(R.dimen.item_padding) int mProfileImageRadius;
   @Bind({
       R.id.profile_social_website,
       R.id.profile_social_facebook,
@@ -302,25 +303,28 @@ public class ProfileActivity extends BaseActivity {
     mUser = event.user;
     Log.d(TAG, "onEventMainThread() called with: " + "event = [" + event + "]");
     if (mUser != null) {
-      mProfileName.setText(mUser.getId() + " | " + mUser.getItemsCount() + "投稿");
+      mProfileName.setText(mUser.getId());
 
       StringBuilder description = new StringBuilder();
 
+      boolean willBreakLine = false;
+      boolean willSeparate = false;
+
       if (!UIUtil.isEmpty(mUser.getName())) {
-        description.append(mUser.getName()).append(", ");
+        description.append(mUser.getName());
+        willSeparate = true;
       }
 
       if (!UIUtil.isEmpty(mUser.getLocation())) {
-        description.append(mUser.getLocation()).append(System.lineSeparator());
-      }
+        if (willSeparate) {
+          description.append(", ");
+        }
 
-      if (!UIUtil.isEmpty(mUser.getOrganization())) {
-        description.append(mUser.getOrganization());
-      }
+        if (willBreakLine) {
+          description.append(System.lineSeparator());
+        }
 
-      if (!UIUtil.isEmpty(mUser.getDescription())) {
-        description.append(System.lineSeparator())
-            .append(mUser.getDescription());
+        description.append(mUser.getLocation());
       }
 
       mProfileDescription.setText(description.toString());
@@ -331,8 +335,8 @@ public class ProfileActivity extends BaseActivity {
           .error(R.mipmap.ic_launcher)
           .resize(mProfileImageSize, 0)
           .transform(new RoundedTransformation(
-              mImageBorderWidth, mImageBorderColor, mProfileImageSizeHalf))
-          .into(mProfileFabImage);
+              mImageBorderWidth, mImageBorderColor, mProfileImageRadius))
+          .into(mProfileImage);
 
       mSpannableTitle = new SpannableString(mUser.getId());
       if (!UIUtil.isEmpty(mUser.getName())) {
