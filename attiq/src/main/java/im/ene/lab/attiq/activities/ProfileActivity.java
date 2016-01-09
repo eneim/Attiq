@@ -313,7 +313,7 @@ public class ProfileActivity extends BaseActivity {
 
       if (!UIUtil.isEmpty(mUser.getName())) {
         description.append(mUser.getName());
-        willSeparate = true;
+        willBreakLine = true;
       }
 
       if (!UIUtil.isEmpty(mUser.getLocation())) {
