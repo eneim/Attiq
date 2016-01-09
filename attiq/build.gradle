@@ -118,7 +118,7 @@ dependencies {
     compile "de.greenrobot:eventbus:2.4.0"
     compile 'com.jakewharton.threetenabp:threetenabp:1.0.3'
 
-    compile "io.realm:realm-android:0.87.1"
+    compile "io.realm:realm-android:0.87.2"
 
     compile "com.facebook.stetho:stetho:1.2.0"
     compile "com.facebook.stetho:stetho-okhttp:1.2.0"

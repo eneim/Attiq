@@ -1,5 +1,9 @@
 <resources>
 
+    <style name="Attiq">
+
+    </style>
+
     <!-- Base application theme. -->
     <style name="Attiq.Theme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -38,6 +42,8 @@
     </style>
 
     <style name="Attiq.Theme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="Attiq.Widget"></style>
 
     <style name="Attiq.Widget.Toolbar.Subtitle"
            parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">

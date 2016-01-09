@@ -20,7 +20,6 @@ import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.RealmListAdapter;
-import im.ene.lab.attiq.data.ListTransaction;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.TypedEvent;
@@ -66,7 +65,6 @@ public abstract class RealmListFragment<E extends RealmObject>
   private static final int DEFAULT_FIRST_PAGE = 1;
 
   protected Realm mRealm;
-  protected ListTransaction<E> mTransaction;
   protected RealmAsyncTask mTransactionTask;
 
   // In my experience, GridLayout provide more accurate Cell's measurement. It may have worse
@@ -222,9 +220,11 @@ public abstract class RealmListFragment<E extends RealmObject>
     } else {
       final List<E> items = response.body();
       if (!UIUtil.isEmpty(items)) {
-        mTransaction = new ListTransaction<>(items);
-        mTransactionTask = Attiq.realm().executeTransaction(mTransaction, new Realm.Transaction
-            .Callback() {
+        mTransactionTask = Attiq.realm().executeTransaction(new Realm.Transaction() {
+          @Override public void execute(Realm realm) {
+            realm.copyToRealmOrUpdate(items);
+          }
+        }, new Realm.Transaction.Callback() {
           @Override public void onSuccess() {
             super.onSuccess();
             EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), mPage));

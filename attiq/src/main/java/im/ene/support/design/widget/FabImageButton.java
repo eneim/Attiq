@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Created by eneim on 1/7/16.
  */
-public class FabImageView extends ImageButton {
+public class FabImageButton extends ImageButton {
 
   private static final String LOG_TAG = "FloatingActionButton";
 
@@ -39,7 +39,7 @@ public class FabImageView extends ImageButton {
      *
      * @param fab the FloatingActionButton that was shown.
      */
-    public void onShown(FabImageView fab) {
+    public void onShown(FabImageButton fab) {
     }
 
     /**
@@ -48,7 +48,7 @@ public class FabImageView extends ImageButton {
      *
      * @param fab the FloatingActionButton that was hidden.
      */
-    public void onHidden(FabImageView fab) {
+    public void onHidden(FabImageButton fab) {
     }
   }
 
@@ -70,15 +70,15 @@ public class FabImageView extends ImageButton {
 
   private final FloatingActionButtonImpl mImpl;
 
-  public FabImageView(Context context) {
+  public FabImageButton(Context context) {
     this(context, null);
   }
 
-  public FabImageView(Context context, AttributeSet attrs) {
+  public FabImageButton(Context context, AttributeSet attrs) {
     this(context, attrs, 0);
   }
 
-  public FabImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+  public FabImageButton(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
 
     ThemeUtils.checkAppCompatTheme(context);
@@ -114,7 +114,7 @@ public class FabImageView extends ImageButton {
 
       @Override
       public void setBackgroundDrawable(Drawable background) {
-        FabImageView.super.setBackgroundDrawable(background);
+        FabImageButton.super.setBackgroundDrawable(background);
       }
     };
 
@@ -158,7 +158,7 @@ public class FabImageView extends ImageButton {
   }
 
   /**
-   * Set the ripple color for this {@link FabImageView}.
+   * Set the ripple color for this {@link FabImageButton}.
    * <p/>
    * When running on devices with KitKat or below, we draw a fill rather than a ripple.
    *
@@ -288,12 +288,12 @@ public class FabImageView extends ImageButton {
     return new FloatingActionButtonImpl.InternalVisibilityChangedListener() {
       @Override
       public void onShown() {
-        listener.onShown(FabImageView.this);
+        listener.onShown(FabImageButton.this);
       }
 
       @Override
       public void onHidden() {
-        listener.onHidden(FabImageView.this);
+        listener.onHidden(FabImageButton.this);
       }
     };
   }
@@ -385,11 +385,11 @@ public class FabImageView extends ImageButton {
   }
 
   /**
-   * Behavior designed for use with {@link FabImageView} instances. It's main function
-   * is to move {@link FabImageView} views so that any displayed {@link Snackbar}s do
+   * Behavior designed for use with {@link FabImageButton} instances. It's main function
+   * is to move {@link FabImageButton} views so that any displayed {@link Snackbar}s do
    * not cover them.
    */
-  public static class Behavior extends CoordinatorLayout.Behavior<FabImageView> {
+  public static class Behavior extends CoordinatorLayout.Behavior<FabImageButton> {
     // We only support the FAB <> Snackbar shift movement on Honeycomb and above. This is
     // because we can use view translation properties which greatly simplifies the code.
     private static final boolean SNACKBAR_BEHAVIOR_ENABLED = Build.VERSION.SDK_INT >= 11;
@@ -400,13 +400,13 @@ public class FabImageView extends ImageButton {
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent,
-                                   FabImageView child, View dependency) {
+                                   FabImageButton child, View dependency) {
       // We're dependent on all SnackbarLayouts (if enabled)
       return SNACKBAR_BEHAVIOR_ENABLED && dependency instanceof Snackbar.SnackbarLayout;
     }
 
     @Override
-    public boolean onDependentViewChanged(CoordinatorLayout parent, FabImageView child,
+    public boolean onDependentViewChanged(CoordinatorLayout parent, FabImageButton child,
                                           View dependency) {
       if (dependency instanceof Snackbar.SnackbarLayout) {
         updateFabTranslationForSnackbar(parent, child, dependency);
@@ -419,7 +419,7 @@ public class FabImageView extends ImageButton {
     }
 
     private boolean updateFabVisibility(CoordinatorLayout parent,
-                                        AppBarLayout appBarLayout, FabImageView child) {
+                                        AppBarLayout appBarLayout, FabImageButton child) {
       final CoordinatorLayout.LayoutParams lp =
           (CoordinatorLayout.LayoutParams) child.getLayoutParams();
       if (lp.getAnchorId() != appBarLayout.getId()) {
@@ -447,7 +447,7 @@ public class FabImageView extends ImageButton {
     }
 
     private void updateFabTranslationForSnackbar(CoordinatorLayout parent,
-                                                 final FabImageView fab, View snackbar) {
+                                                 final FabImageButton fab, View snackbar) {
       if (fab.getVisibility() != View.VISIBLE) {
         return;
       }
@@ -492,7 +492,7 @@ public class FabImageView extends ImageButton {
     }
 
     private float getFabTranslationYForSnackbar(CoordinatorLayout parent,
-                                                FabImageView fab) {
+                                                FabImageButton fab) {
       float minOffset = 0;
       final List<View> dependencies = parent.getDependencies(fab);
       for (int i = 0, z = dependencies.size(); i < z; i++) {
@@ -507,7 +507,7 @@ public class FabImageView extends ImageButton {
     }
 
     @Override
-    public boolean onLayoutChild(CoordinatorLayout parent, FabImageView child,
+    public boolean onLayoutChild(CoordinatorLayout parent, FabImageButton child,
                                  int layoutDirection) {
       // First, lets make sure that the visibility of the FAB is consistent
       final List<View> dependencies = parent.getDependencies(child);
@@ -530,7 +530,7 @@ public class FabImageView extends ImageButton {
      * offsets our layout position so that we're positioned correctly if we're on one of
      * our parent's edges.
      */
-    private void offsetIfNeeded(CoordinatorLayout parent, FabImageView fab) {
+    private void offsetIfNeeded(CoordinatorLayout parent, FabImageButton fab) {
       final Rect padding = fab.mShadowPadding;
 
       if (padding != null && padding.centerX() > 0 && padding.centerY() > 0) {

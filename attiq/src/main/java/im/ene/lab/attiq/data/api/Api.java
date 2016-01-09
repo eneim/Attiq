@@ -6,6 +6,7 @@ import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.Comment;
 import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.two.Tag;
+import im.ene.lab.attiq.data.two.User;
 import im.ene.lab.attiq.data.zero.FeedItem;
 import im.ene.lab.attiq.data.zero.Post;
 import retrofit2.Call;
@@ -109,18 +110,31 @@ interface Api {
         @Query("sort") String sort
     );
 
-    @GET("/api/v2/users/{user_id}") Call<Profile> user(@Path("user_id") String userName);
+    @GET("/api/v2/users/{user_id}") Call<User> user(@Path("user_id") String userName);
 
-    @GET("/api/v2/items/{item_id}/stock") Call<Void> checkStock(
+    @GET("/api/v2/items/{item_id}/stock") Call<Void> getStock(
         @Path("item_id") String id
     );
 
-    @PUT("/api/v2/items/{item_id}/stock") Call<Void> stockItem(
+    @PUT("/api/v2/items/{item_id}/stock") Call<Void> putStock(
         @Path("item_id") String id
     );
 
-    @DELETE("/api/v2/items/{item_id}/stock") Call<Void> unStockItem(
+    @DELETE("/api/v2/items/{item_id}/stock") Call<Void> deleteStock(
         @Path("item_id") String id
+    );
+
+    // Following action
+    @GET("/api/v2/users/{user_id}/following") Call<Void> getFollow(
+        @Path("user_id") String userId
+    );
+
+    @PUT("/api/v2/users/{user_id}/following") Call<Void> putFollow(
+        @Path("user_id") String userId
+    );
+
+    @DELETE("/api/v2/users/{user_id}/following") Call<Void> deleteFollow(
+        @Path("user_id") String userId
     );
   }
 }

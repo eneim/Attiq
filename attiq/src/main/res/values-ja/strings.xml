@@ -24,4 +24,7 @@
     <string name="menu_item_home">ホーム</string>
     <string name="menu_item_profile">プロフィル</string>
     <string name="menu_item_my_page">マイページ</string>
+    <string name="action_follow">フォローする</string>
+    <string name="state_following">フォロー中</string>
+    <string name="state_not_following">フォローする</string>
 </resources>

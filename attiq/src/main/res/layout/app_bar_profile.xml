@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<im.ene.support.design.widget.AppBarLayout
+    android:id="@+id/app_bar"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
+    tools:showIn="@layout/activity_profile">
+
+    <im.ene.support.design.widget.CollapsingToolbarLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        app:contentScrim="?attr/colorPrimary"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        app:titleEnabled="false"
+        app:toolbarId="@+id/toolbar">
+
+        <FrameLayout
+            android:id="@+id/toolbar_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="224dp"
+            android:layout_gravity="bottom"
+            android:fitsSystemWindows="true"
+            app:layout_collapseMode="parallax">
+
+            <ImageView
+                android:id="@+id/toolbar_overlay_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                android:fitsSystemWindows="true"/>
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/profile_info_container"
+            style="@style/Widget.AppCompat.ActionBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:orientation="vertical"
+            android:paddingEnd="?attr/actionBarSize"
+            android:paddingLeft="@dimen/profile_image_size_margin"
+            android:paddingRight="?attr/actionBarSize"
+            android:paddingStart="@dimen/profile_image_size_margin"
+            android:paddingTop="@dimen/item_padding">
+
+            <TextView
+                android:id="@+id/profile_name"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="end|center_vertical"
+                android:singleLine="true"/>
+
+            <TextView
+                android:id="@+id/profile_description"
+                style="@style/TextAppearance.AppCompat.Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="end|center_vertical"
+                android:maxLines="4"
+                android:singleLine="false"/>
+
+        </LinearLayout>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_collapseMode="pin"
+            app:subtitleTextAppearance="@style/Attiq.Widget.Profile.Toolbar.Subtitle"/>
+
+        <View
+            android:id="@+id/divider_1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="?attr/actionBarSize"
+            android:layout_marginStart="?attr/actionBarSize"
+            android:background="?attr/colorPrimaryDark"
+            app:layout_anchor="@id/toolbar_layout"
+            app:layout_anchorGravity="bottom|end"/>
+
+    </im.ene.support.design.widget.CollapsingToolbarLayout>
+
+    <View
+        android:id="@+id/divider_2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="?attr/actionBarSize"
+        android:layout_marginStart="?attr/actionBarSize"
+        android:background="?attr/colorPrimaryDark"
+        app:layout_anchor="@id/toolbar_layout"
+        app:layout_anchorGravity="bottom|end"/>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:scrollbars="none"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+        <LinearLayout
+            android:id="@+id/profile_social_buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="?attr/actionBarSize"
+            android:clipToPadding="false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/item_icon_padding"
+            android:paddingEnd="@dimen/profile_image_size_margin"
+            android:paddingLeft="@dimen/tab_layout_height"
+            android:paddingRight="@dimen/profile_image_size_margin"
+            android:paddingStart="@dimen/social_buttons_padding_start"
+            android:paddingTop="@dimen/item_icon_padding">
+
+            <ImageButton
+                android:id="@+id/profile_social_website"
+                android:layout_width="@dimen/social_button_size_full"
+                android:layout_height="@dimen/social_button_size_full"
+                android:layout_margin="@dimen/social_button_margin"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_social_world"
+                android:visibility="gone"/>
+
+            <ImageButton
+                android:id="@+id/profile_social_facebook"
+                android:layout_width="@dimen/social_button_size_full"
+                android:layout_height="@dimen/social_button_size_full"
+                android:layout_margin="@dimen/social_button_margin"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_social_facebook"
+                android:visibility="gone"/>
+
+            <ImageButton
+                android:id="@+id/profile_social_twitter"
+                android:layout_width="@dimen/social_button_size_full"
+                android:layout_height="@dimen/social_button_size_full"
+                android:layout_margin="@dimen/social_button_margin"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_social_twitter"
+                android:visibility="gone"/>
+
+            <ImageButton
+                android:id="@+id/profile_social_github"
+                android:layout_width="@dimen/social_button_size_full"
+                android:layout_height="@dimen/social_button_size_full"
+                android:layout_margin="@dimen/social_button_margin"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_social_github"
+                android:visibility="gone"/>
+
+            <ImageButton
+                android:id="@+id/profile_social_linkedin"
+                android:layout_width="@dimen/social_button_size_full"
+                android:layout_height="@dimen/social_button_size_full"
+                android:layout_margin="@dimen/social_button_margin"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_social_linkedin"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:background="@color/colorPrimaryDark"
+        android:theme="@style/Attiq.Theme.AppBarOverlay">
+
+        <TextView
+            android:id="@+id/text_action_follow"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:background="@drawable/rounded_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:paddingEnd="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:paddingStart="@dimen/activity_vertical_margin"
+            android:text="@string/action_follow"
+            android:visibility="gone"/>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tab_layout_height"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/text_action_follow"
+            android:layout_toStartOf="@id/text_action_follow"
+            app:tabContentStart="@dimen/tab_layout_start_inset"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@android:color/white"
+            app:tabIndicatorHeight="1dp"
+            app:tabMode="scrollable"/>
+    </RelativeLayout>
+
+</im.ene.support.design.widget.AppBarLayout>

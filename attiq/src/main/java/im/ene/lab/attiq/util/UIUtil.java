@@ -13,9 +13,10 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import im.ene.lab.attiq.R;
 
 import java.util.Collection;
 
@@ -36,10 +37,13 @@ public class UIUtil {
    */
   public static int getStatusBarHeight(@NonNull Context context) {
     Resources resources = context.getResources();
-    int result = 0;
+    final int result;
     int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
     if (resourceId > 0) {
       result = resources.getDimensionPixelSize(resourceId);
+    } else {
+      // fallback to local resource
+      result = resources.getDimensionPixelSize(R.dimen.status_bar_height);
     }
     return result;
   }
@@ -73,8 +77,10 @@ public class UIUtil {
   }
 
   public static void setCompoundDrawablesRelativeWithIntrinsicBounds(@NonNull TextView view,
-      @Nullable Drawable start, @Nullable Drawable top,
-      @Nullable Drawable end, @Nullable Drawable bottom) {
+                                                                     @Nullable Drawable start,
+                                                                     @Nullable Drawable top,
+                                                                     @Nullable Drawable end,
+                                                                     @Nullable Drawable bottom) {
 
     if (start != null) {
       start.setBounds(0, 0, start.getIntrinsicWidth(), start.getIntrinsicHeight());

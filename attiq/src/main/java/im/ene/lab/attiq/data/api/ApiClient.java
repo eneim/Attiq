@@ -12,6 +12,7 @@ import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.Comment;
 import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.two.Tag;
+import im.ene.lab.attiq.data.two.User;
 import im.ene.lab.attiq.data.zero.FeedItem;
 import im.ene.lab.attiq.data.zero.Post;
 import im.ene.lab.attiq.util.IOUtil;
@@ -109,7 +110,7 @@ public final class ApiClient {
     return TWO.myTags("", page, limit);
   }
 
-  public static Call<Profile> user(@NonNull String userName) {
+  public static Call<User> user(@NonNull String userName) {
     return TWO.user(userName);
   }
 
@@ -126,14 +127,26 @@ public final class ApiClient {
 //  }
 
   public static Call<Void> isStocked(String id) {
-    return TWO.checkStock(id);
+    return TWO.getStock(id);
   }
 
   public static Call<Void> stockItem(String id) {
-    return TWO.stockItem(id);
+    return TWO.putStock(id);
   }
 
   public static Call<Void> unStockItem(String id) {
-    return TWO.stockItem(id);
+    return TWO.deleteStock(id);
+  }
+
+  public static Call<Void> isFollowing(String userId) {
+    return TWO.getFollow(userId);
+  }
+
+  public static Call<Void> followUser(String userId) {
+    return TWO.putFollow(userId);
+  }
+
+  public static Call<Void> unFollowUser(String userId) {
+    return TWO.deleteFollow(userId);
   }
 }

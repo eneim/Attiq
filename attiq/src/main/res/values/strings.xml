@@ -138,4 +138,7 @@
     <string name="menu_item_home">Home</string>
     <string name="menu_item_profile">Profile</string>
     <string name="menu_item_my_page">My page</string>
+    <string name="action_follow">Follow</string>
+    <string name="state_following">Following</string>
+    <string name="state_not_following">Follow</string>
 </resources>

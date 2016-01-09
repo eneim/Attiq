@@ -3,6 +3,9 @@ package im.ene.lab.attiq.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -33,6 +36,7 @@ import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.Profile;
+import im.ene.lab.attiq.data.two.User;
 import im.ene.lab.attiq.fragment.PublicStreamFragment;
 import im.ene.lab.attiq.fragment.UserItemsFragment;
 import im.ene.lab.attiq.fragment.UserStockedItemsFragment;
@@ -40,12 +44,12 @@ import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.DocumentEvent;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ProfileFetchedEvent;
+import im.ene.lab.attiq.util.event.UserFetchedEvent;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AnimationUtils;
 import im.ene.support.design.widget.AppBarLayout;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
-import im.ene.support.design.widget.FabImageView;
 import io.realm.Realm;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -54,6 +58,8 @@ import java.util.List;
 import java.util.Random;
 
 public class ProfileActivity extends BaseActivity {
+
+  private static final int MESSAGE_ACTION_FOLLOW = 1;
 
   private static final String EXTRA_USER_NAME = "attiq_profile_user_name";
   private static final Random sRandom = new Random();
@@ -79,9 +85,10 @@ public class ProfileActivity extends BaseActivity {
   @Bind({R.id.divider_1, R.id.divider_2}) List<View> mOverlayDividers;
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.tab_layout) TabLayout mTabLayout;
-  @Bind(R.id.fab) FabImageView mProfileFabImage;
+  @Bind(R.id.fab) ImageButton mProfileFabImage;
   @Bind(R.id.profile_social_buttons) LinearLayout mSocialButtonContainer;
 
+  @Bind(R.id.text_action_follow) TextView mBtnFollow;
   @Bind(R.id.profile_name) TextView mProfileName;
   @Bind(R.id.profile_description) TextView mProfileDescription;
 
@@ -115,7 +122,7 @@ public class ProfileActivity extends BaseActivity {
             mOverlayContainer.setAlpha(1.f - offsetFraction);
             float fabScale =
                 AnimationUtils.DECELERATE_INTERPOLATOR.getInterpolation(
-                    1.f - 0.5f * offsetFraction
+                    1.f - offsetFraction
                 );
             mProfileFabImage.setScaleX(fabScale);
             mProfileFabImage.setScaleY(fabScale);
@@ -125,10 +132,14 @@ public class ProfileActivity extends BaseActivity {
           }
         }
       };
+
   private Realm mRealm;
-  private Profile mProfile;
+  private User mUser;
+  private State mState = new State();
   private String mUserId; // actually the User name
-  private Callback<Profile> mOnUserLoaded;
+  private Callback<Void> mOnFollowStateCallback;
+  private Callback<Void> mOnUnFollowStateCallback;
+  private Callback<User> mOnUserCallback;
 
   public static Intent createIntent(Context context, String userName) {
     Intent intent = createIntent(context);
@@ -165,7 +176,7 @@ public class ProfileActivity extends BaseActivity {
     mRealm = Attiq.realm();
     mUserId = getIntent().getStringExtra(EXTRA_USER_NAME);
 
-    mProfile = mRealm.where(Profile.class).equalTo("id", mUserId).findFirst();
+    mUser = mRealm.where(User.class).equalTo("id", mUserId).findFirst();
 
     mPagerAdapter = new ProfileViewPagerAdapter(getSupportFragmentManager(), mUserId);
     mViewPager.setAdapter(mPagerAdapter);
@@ -185,22 +196,42 @@ public class ProfileActivity extends BaseActivity {
     super.onResume();
     mOverlayView.setBackgroundResource(BACKGROUNDS[sRandom.nextInt(BACKGROUNDS.length)]);
 
-    if (mProfile != null) {
-      EventBus.getDefault().post(new ProfileFetchedEvent(true, null, mProfile));
-    }
+    // setup
+    mOnFollowStateCallback = new Callback<Void>() {
+      @Override public void onResponse(Response<Void> response) {
+        mState.isFollowing = response != null && response.code() == 204;
+        EventBus.getDefault().post(new StateEvent(true, null, mState));
+      }
 
-    mOnUserLoaded = new Callback<Profile>() {
-      @Override public void onResponse(Response<Profile> response) {
-        Profile profile = response.body();
-        if (profile != null) {
+      @Override public void onFailure(Throwable t) {
+        EventBus.getDefault().post(new StateEvent(false,
+            new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
+      }
+    };
+
+    mOnUnFollowStateCallback = new Callback<Void>() {
+      @Override public void onResponse(Response<Void> response) {
+        mState.isFollowing = response != null && !(response.code() == 204);
+      }
+
+      @Override public void onFailure(Throwable t) {
+        EventBus.getDefault().post(new StateEvent(false,
+            new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
+      }
+    };
+
+    mOnUserCallback = new Callback<User>() {
+      @Override public void onResponse(Response<User> response) {
+        User user = response.body();
+        if (user != null) {
           Realm realm = Attiq.realm();
           realm.beginTransaction();
-          realm.copyToRealmOrUpdate(profile);
+          realm.copyToRealmOrUpdate(user);
           realm.commitTransaction();
           realm.close();
-          EventBus.getDefault().post(new ProfileFetchedEvent(true, null, profile));
+          EventBus.getDefault().post(new UserFetchedEvent(true, null, user));
         } else {
-          EventBus.getDefault().post(new ProfileFetchedEvent(false,
+          EventBus.getDefault().post(new UserFetchedEvent(false,
               new Event.Error(response.code(), response.message()), null));
         }
       }
@@ -211,44 +242,75 @@ public class ProfileActivity extends BaseActivity {
       }
     };
 
-    ApiClient.user(mUserId).enqueue(mOnUserLoaded);
+    // update UI
+    if (mUser != null) {
+      EventBus.getDefault().post(new UserFetchedEvent(true, null, mUser));
+    }
+
+    ApiClient.isFollowing(mUserId).enqueue(mOnFollowStateCallback);
+    ApiClient.user(mUserId).enqueue(mOnUserCallback);
   }
 
   @Override protected void onPause() {
-    mOnUserLoaded = null;
+    mOnUserCallback = null;
+    mOnFollowStateCallback = null;
+    mOnUnFollowStateCallback = null;
+    mHandlerCallback = null;
+    mHandler.removeCallbacksAndMessages(null);
     super.onPause();
   }
 
-  public void onEventMainThread(ProfileFetchedEvent event) {
-    mProfile = event.profile;
-    Log.d(TAG, "onEventMainThread() called with: " + "event = [" + event + "]");
+  @SuppressWarnings("unused")
+  public void onEventMainThread(StateEvent event) {
+    if (event.state != null) {
+      mBtnFollow.setText(
+          event.state.isFollowing ? R.string.state_following : R.string.state_not_following
+      );
 
-    if (mProfile != null) {
-      mProfileName.setText(mProfile.getId() + " | " + mProfile.getItemsCount() + "投稿");
+      mBtnFollow.setBackgroundResource(
+          event.state.isFollowing ?
+              R.drawable.rounded_background_active : R.drawable.rounded_background
+      );
+    }
+  }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(UserFetchedEvent event) {
+    mUser = event.user;
+    Log.d(TAG, "onEventMainThread() called with: " + "event = [" + event + "]");
+    if (mUser != null) {
+      Profile refUser = mRealm.where(Profile.class).findFirst();
+      mBtnFollow.setEnabled(refUser != null && !UIUtil.isEmpty(refUser.getToken()));
+      mBtnFollow.setClickable(refUser != null && !UIUtil.isEmpty(refUser.getToken()));
+      mBtnFollow.setVisibility(
+          refUser != null && mUserId.equals(refUser.getId()) ? View.GONE : View.VISIBLE
+      );
+
+      mProfileName.setText(mUser.getId() + " | " + mUser.getItemsCount() + "投稿");
 
       StringBuilder description = new StringBuilder();
 
-      if (!UIUtil.isEmpty(mProfile.getName())) {
-        description.append(mProfile.getName()).append(", ");
+      if (!UIUtil.isEmpty(mUser.getName())) {
+        description.append(mUser.getName()).append(", ");
       }
 
-      if (!UIUtil.isEmpty(mProfile.getLocation())) {
-        description.append(mProfile.getLocation()).append(System.lineSeparator());
+      if (!UIUtil.isEmpty(mUser.getLocation())) {
+        description.append(mUser.getLocation()).append(System.lineSeparator());
       }
 
-      if (!UIUtil.isEmpty(mProfile.getOrganization())) {
-        description.append(mProfile.getOrganization());
+      if (!UIUtil.isEmpty(mUser.getOrganization())) {
+        description.append(mUser.getOrganization());
       }
 
-      if (!UIUtil.isEmpty(mProfile.getDescription())) {
+      if (!UIUtil.isEmpty(mUser.getDescription())) {
         description.append(System.lineSeparator())
-            .append(mProfile.getDescription());
+            .append(mUser.getDescription());
       }
 
       mProfileDescription.setText(description.toString());
 
       Attiq.picasso()
-          .load(mProfile.getProfileImageUrl())
+          .load(mUser.getProfileImageUrl())
           .placeholder(R.mipmap.ic_launcher)
           .error(R.mipmap.ic_launcher)
           .resize(mProfileImageSize, 0)
@@ -256,9 +318,9 @@ public class ProfileActivity extends BaseActivity {
               mImageBorderWidth, mImageBorderColor, mProfileImageSizeHalf))
           .into(mProfileFabImage);
 
-      mSpannableTitle = new SpannableString(mProfile.getId());
-      if (!UIUtil.isEmpty(mProfile.getDescription())) {
-        mSpannableSubtitle = new SpannableString(mProfile.getDescription());
+      mSpannableTitle = new SpannableString(mUser.getId());
+      if (!UIUtil.isEmpty(mUser.getName())) {
+        mSpannableSubtitle = new SpannableString(mUser.getName());
       }
       updateTitle();
       updateSocialButtons();
@@ -283,7 +345,7 @@ public class ProfileActivity extends BaseActivity {
   }
 
   private void updateSocialButtons() {
-    if (mProfile == null || mSocialButtonContainer == null) {
+    if (mUser == null || mSocialButtonContainer == null) {
       return;
     }
 
@@ -291,57 +353,58 @@ public class ProfileActivity extends BaseActivity {
       button.setVisibility(View.GONE);
     }
 
-    if (!UIUtil.isEmpty(mProfile.getWebsiteUrl())) {
+    if (!UIUtil.isEmpty(mUser.getWebsiteUrl())) {
       mSocialButtons[WEBSITE_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
 
-    if (!UIUtil.isEmpty(mProfile.getFacebookId())) {
+    if (!UIUtil.isEmpty(mUser.getFacebookId())) {
       mSocialButtons[FACEBOOK_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
 
-    if (!UIUtil.isEmpty(mProfile.getTwitterScreenName())) {
+    if (!UIUtil.isEmpty(mUser.getTwitterScreenName())) {
       mSocialButtons[TWITTER_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
 
-    if (!UIUtil.isEmpty(mProfile.getGithubLoginName())) {
+    if (!UIUtil.isEmpty(mUser.getGithubLoginName())) {
       mSocialButtons[GITHUB_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
 
-    if (!UIUtil.isEmpty(mProfile.getLinkedinId())) {
+    if (!UIUtil.isEmpty(mUser.getLinkedinId())) {
       mSocialButtons[LINKEDIN_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
   }
 
   @OnClick(R.id.profile_social_website) void openWebsite() {
-    if (mProfile != null) {
-      UIUtil.openWebsite(this, mProfile.getWebsiteUrl());
+    if (mUser != null) {
+      UIUtil.openWebsite(this, mUser.getWebsiteUrl());
     }
   }
 
   @OnClick(R.id.profile_social_facebook) void openFacebook() {
-    if (mProfile != null) {
-      UIUtil.openFacebookUser(this, mProfile.getFacebookId());
+    if (mUser != null) {
+      UIUtil.openFacebookUser(this, mUser.getFacebookId());
     }
   }
 
   @OnClick(R.id.profile_social_twitter) void openTwitter() {
-    if (mProfile != null) {
-      UIUtil.openTwitterUser(this, mProfile.getTwitterScreenName());
+    if (mUser != null) {
+      UIUtil.openTwitterUser(this, mUser.getTwitterScreenName());
     }
   }
 
   @OnClick(R.id.profile_social_github) void openGithub() {
-    if (mProfile != null) {
-      UIUtil.openGithubUser(this, mProfile.getGithubLoginName());
+    if (mUser != null) {
+      UIUtil.openGithubUser(this, mUser.getGithubLoginName());
     }
   }
 
   @OnClick(R.id.profile_social_linkedin) void openLinkedin() {
-    if (mProfile != null) {
-      UIUtil.openLinkedinUser(this, mProfile.getLinkedinId());
+    if (mUser != null) {
+      UIUtil.openLinkedinUser(this, mUser.getLinkedinId());
     }
   }
 
+  @SuppressWarnings("unused")
   public void onEventMainThread(DocumentEvent event) {
     Document document = event.document;
     if (document != null) {
@@ -380,6 +443,49 @@ public class ProfileActivity extends BaseActivity {
       }
 
       return "Tab: " + position;
+    }
+  }
+
+  private static final int HANDLER_DELAY = 200;
+
+  @OnClick(R.id.text_action_follow) void followUnFollow() {
+    mHandler.removeMessages(MESSAGE_ACTION_FOLLOW);
+    mHandler.sendEmptyMessageDelayed(MESSAGE_ACTION_FOLLOW, HANDLER_DELAY);
+  }
+
+  private Handler.Callback mHandlerCallback = new Handler.Callback() {
+    @Override public boolean handleMessage(Message msg) {
+      if (msg.what == MESSAGE_ACTION_FOLLOW) {
+        if (!mState.isFollowing) {
+          mState.isFollowing = true;
+          EventBus.getDefault().post(new StateEvent(true, null, mState));
+          ApiClient.followUser(mUserId).enqueue(mOnFollowStateCallback);
+        } else {
+          mState.isFollowing = false;
+          EventBus.getDefault().post(new StateEvent(true, null, mState));
+          ApiClient.unFollowUser(mUserId).enqueue(mOnUnFollowStateCallback);
+        }
+
+        return true;
+      }
+      return false;
+    }
+  };
+
+  private final Handler mHandler = new Handler(mHandlerCallback);
+
+  private static class State {
+
+    private boolean isFollowing;
+  }
+
+  private static class StateEvent extends Event {
+
+    private final State state;
+
+    public StateEvent(boolean success, @Nullable Error error, State state) {
+      super(success, error);
+      this.state = state;
     }
   }
 }

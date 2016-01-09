@@ -1,5 +1,7 @@
 package im.ene.lab.attiq.util;
 
+import android.support.annotation.NonNull;
+
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.data.api.Header;
 import okhttp3.Interceptor;
@@ -25,8 +27,9 @@ public class PrefUtil {
     Attiq.pref().edit().putString(PREF_CURRENT_TOKEN, token).apply();
   }
 
+  @NonNull
   public static String getCurrentToken() {
-    return Attiq.pref().getString(PREF_CURRENT_TOKEN, null);
+    return Attiq.pref().getString(PREF_CURRENT_TOKEN, "");
   }
 
   public static boolean isFirstStart() {

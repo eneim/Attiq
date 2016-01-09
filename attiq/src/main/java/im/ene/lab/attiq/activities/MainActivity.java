@@ -17,7 +17,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +41,7 @@ import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ProfileFetchedEvent;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
 import io.realm.Realm;
+import io.realm.RealmAsyncTask;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -50,18 +50,21 @@ public class MainActivity extends BaseActivity
 
   public static final int LOGIN_REQUEST_CODE = 0xa11d;
   public static final String EXTRA_AUTH_CALLBACK = "extra_auth_callback";
-  @Bind(R.id.header_account_background) View mHeaderBackground;
+  // @Bind(R.id.header_account_background) View mHeaderBackground;
   @Bind(R.id.header_account_icon) ImageView mHeaderIcon;
   @Bind(R.id.header_account_name) TextView mHeaderName;
   @Bind(R.id.header_account_description) TextView mHeaderDescription;
   @Bind(R.id.header_auth_menu) ImageButton mAuthMenu;
-  int mIconCornerRadius;
-  int mIconBorderWidth;
-  int mIconBorderColor;
+
   // No ButterKnife
   Toolbar mToolBar;
   View mContainer;
   ViewPager mViewPager;
+
+  int mIconCornerRadius;
+  int mIconBorderWidth;
+  int mIconBorderColor;
+
   MenuItem mAuthMenuItem;
   private Realm mRealm;
   private View mHeaderView;
@@ -230,18 +233,30 @@ public class MainActivity extends BaseActivity
     mToolBar.addView(mMainTabs, lp);
   }
 
+  private RealmAsyncTask mTransactionTask;
+
   private void getMasterUser(final String token) {
     ApiClient.me().enqueue(new Callback<Profile>() {
-      @Override public void onResponse(Response<Profile> response) {
+      @Override public void onResponse(final Response<Profile> response) {
         mMyProfile = response.body();
         if (mMyProfile != null) {
           mMyProfile.setToken(token);
-          Realm realm = Attiq.realm();
-          realm.beginTransaction();
-          realm.copyToRealmOrUpdate(mMyProfile);
-          realm.commitTransaction();
-          realm.close();
-          EventBus.getDefault().post(new ProfileFetchedEvent(true, null, mMyProfile));
+          mTransactionTask = Attiq.realm().executeTransaction(new Realm.Transaction() {
+            @Override public void execute(Realm realm) {
+              realm.copyToRealmOrUpdate(mMyProfile);
+            }
+          }, new Realm.Transaction.Callback() {
+            @Override public void onSuccess() {
+              super.onSuccess();
+              EventBus.getDefault().post(new ProfileFetchedEvent(true, null, mMyProfile));
+            }
+
+            @Override public void onError(Exception e) {
+              super.onError(e);
+              EventBus.getDefault().post(new ProfileFetchedEvent(false,
+                  new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), null));
+            }
+          });
         } else {
           EventBus.getDefault().post(new ProfileFetchedEvent(false,
               new Event.Error(response.code(), response.message()), null));
@@ -256,40 +271,22 @@ public class MainActivity extends BaseActivity
   }
 
   @Override protected void onDestroy() {
+    if (mTransactionTask != null && !mTransactionTask.isCancelled()) {
+      mTransactionTask.cancel();
+    }
+
     if (mRealm != null) {
       mRealm.close();
     }
+
     ButterKnife.unbind(this);
     super.onDestroy();
-  }
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    // getMenuInflater().inflate(R.menu.main, menu);
-    return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    int id = item.getItemId();
-
-    //noinspection SimplifiableIfStatement
-    if (id == R.id.action_settings) {
-      return true;
-    }
-
-    return super.onOptionsItemSelected(item);
   }
 
   @SuppressWarnings("StatementWithEmptyBody")
   @Override public boolean onNavigationItemSelected(MenuItem item) {
     // Handle navigation view item clicks here.
     int id = item.getItemId();
-    // TODO navigation
     if (id == R.id.nav_login) {
       login();
     } else if (id == R.id.nav_profile) {
@@ -305,6 +302,11 @@ public class MainActivity extends BaseActivity
   private void login() {
     Intent intent = new Intent(this, WebViewActivity.class);
     startActivityForResult(intent, LOGIN_REQUEST_CODE);
+  }
+
+  private void logout() {
+    // FIXME: 1/9/16
+    Realm.deleteRealm(mRealm.getConfiguration());
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -338,6 +340,7 @@ public class MainActivity extends BaseActivity
     }
   }
 
+  @SuppressWarnings("unused")
   public void onEventMainThread(final ProfileFetchedEvent event) {
     if (event.success) {
       if (PrefUtil.isFirstStart()) {
@@ -345,9 +348,8 @@ public class MainActivity extends BaseActivity
         mDrawerLayout.openDrawer(GravityCompat.START);
       }
 
-      trySetupToolBarTabs();
-
-      if (event.profile != null) {
+      if (event.profile != null && PrefUtil.getCurrentToken().equals(event.profile.getToken())) {
+        trySetupToolBarTabs();
         updateMasterUser(event.profile);
       }
     }
