@@ -141,4 +141,6 @@
     <string name="action_follow">Follow</string>
     <string name="state_following">Following</string>
     <string name="state_not_following">Follow</string>
+    <string name="tab_title_items">Posts</string>
+    <string name="tab_title_stocks">Stocks</string>
 </resources>

@@ -24,8 +24,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.jsoup.nodes.Document;
-
 import butterknife.Bind;
 import butterknife.BindColor;
 import butterknife.BindDimen;
@@ -37,11 +35,11 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.two.User;
-import im.ene.lab.attiq.fragment.PublicStreamFragment;
+import im.ene.lab.attiq.fragment.DummyFragment;
 import im.ene.lab.attiq.fragment.UserItemsFragment;
 import im.ene.lab.attiq.fragment.UserStockedItemsFragment;
+import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
-import im.ene.lab.attiq.util.event.DocumentEvent;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ProfileFetchedEvent;
 import im.ene.lab.attiq.util.event.UserFetchedEvent;
@@ -70,6 +68,7 @@ public class ProfileActivity extends BaseActivity {
   private static final int TWITTER_BUTTON_INDEX = 2;
   private static final int GITHUB_BUTTON_INDEX = 3;
   private static final int LINKEDIN_BUTTON_INDEX = 4;
+  private static final int HANDLER_DELAY = 200;
   private final int[] BACKGROUNDS = {
       R.drawable.gradient_fresh_turboscent,
       R.drawable.gradient_lizard,
@@ -87,11 +86,9 @@ public class ProfileActivity extends BaseActivity {
   @Bind(R.id.tab_layout) TabLayout mTabLayout;
   @Bind(R.id.fab) ImageButton mProfileFabImage;
   @Bind(R.id.profile_social_buttons) LinearLayout mSocialButtonContainer;
-
   @Bind(R.id.text_action_follow) TextView mBtnFollow;
   @Bind(R.id.profile_name) TextView mProfileName;
   @Bind(R.id.profile_description) TextView mProfileDescription;
-
   // Others
   // @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
   @BindDimen(R.dimen.dimen_unit) int mImageBorderWidth;
@@ -132,14 +129,33 @@ public class ProfileActivity extends BaseActivity {
           }
         }
       };
-
   private Realm mRealm;
+  private Profile mRefUser;
   private User mUser;
   private State mState = new State();
   private String mUserId; // actually the User name
   private Callback<Void> mOnFollowStateCallback;
   private Callback<Void> mOnUnFollowStateCallback;
   private Callback<User> mOnUserCallback;
+  private Handler.Callback mHandlerCallback = new Handler.Callback() {
+    @Override public boolean handleMessage(Message msg) {
+      if (msg.what == MESSAGE_ACTION_FOLLOW) {
+        if (!mState.isFollowing) {
+          mState.isFollowing = true;
+          EventBus.getDefault().post(new StateEvent(true, null, mState));
+          ApiClient.followUser(mUserId).enqueue(mOnFollowStateCallback);
+        } else {
+          mState.isFollowing = false;
+          EventBus.getDefault().post(new StateEvent(true, null, mState));
+          ApiClient.unFollowUser(mUserId).enqueue(mOnUnFollowStateCallback);
+        }
+
+        return true;
+      }
+      return false;
+    }
+  };
+  private final Handler mHandler = new Handler(mHandlerCallback);
 
   public static Intent createIntent(Context context, String userName) {
     Intent intent = createIntent(context);
@@ -176,6 +192,7 @@ public class ProfileActivity extends BaseActivity {
     mRealm = Attiq.realm();
     mUserId = getIntent().getStringExtra(EXTRA_USER_NAME);
 
+    mRefUser = mRealm.where(Profile.class).equalTo("token", PrefUtil.getCurrentToken()).findFirst();
     mUser = mRealm.where(User.class).equalTo("id", mUserId).findFirst();
 
     mPagerAdapter = new ProfileViewPagerAdapter(getSupportFragmentManager(), mUserId);
@@ -255,18 +272,17 @@ public class ProfileActivity extends BaseActivity {
     mOnUserCallback = null;
     mOnFollowStateCallback = null;
     mOnUnFollowStateCallback = null;
-    mHandlerCallback = null;
     mHandler.removeCallbacksAndMessages(null);
+    mHandlerCallback = null;
     super.onPause();
   }
 
   @SuppressWarnings("unused")
   public void onEventMainThread(StateEvent event) {
-    Profile refUser = mRealm.where(Profile.class).findFirst();
-    mBtnFollow.setEnabled(refUser != null && !UIUtil.isEmpty(refUser.getToken()));
-    mBtnFollow.setClickable(refUser != null && !UIUtil.isEmpty(refUser.getToken()));
+    mBtnFollow.setEnabled(mRefUser != null && !UIUtil.isEmpty(mRefUser.getToken()));
+    mBtnFollow.setClickable(mRefUser != null && !UIUtil.isEmpty(mRefUser.getToken()));
     mBtnFollow.setVisibility(
-        refUser != null && mUserId.equals(refUser.getId()) ? View.GONE : View.VISIBLE
+        mRefUser != null && mUserId.equals(mRefUser.getId()) ? View.GONE : View.VISIBLE
     );
 
     if (event.state != null) {
@@ -374,30 +390,35 @@ public class ProfileActivity extends BaseActivity {
     }
   }
 
+  @SuppressWarnings("unused")
   @OnClick(R.id.profile_social_website) void openWebsite() {
     if (mUser != null) {
       UIUtil.openWebsite(this, mUser.getWebsiteUrl());
     }
   }
 
+  @SuppressWarnings("unused")
   @OnClick(R.id.profile_social_facebook) void openFacebook() {
     if (mUser != null) {
       UIUtil.openFacebookUser(this, mUser.getFacebookId());
     }
   }
 
+  @SuppressWarnings("unused")
   @OnClick(R.id.profile_social_twitter) void openTwitter() {
     if (mUser != null) {
       UIUtil.openTwitterUser(this, mUser.getTwitterScreenName());
     }
   }
 
+  @SuppressWarnings("unused")
   @OnClick(R.id.profile_social_github) void openGithub() {
     if (mUser != null) {
       UIUtil.openGithubUser(this, mUser.getGithubLoginName());
     }
   }
 
+  @SuppressWarnings("unused")
   @OnClick(R.id.profile_social_linkedin) void openLinkedin() {
     if (mUser != null) {
       UIUtil.openLinkedinUser(this, mUser.getLinkedinId());
@@ -405,11 +426,9 @@ public class ProfileActivity extends BaseActivity {
   }
 
   @SuppressWarnings("unused")
-  public void onEventMainThread(DocumentEvent event) {
-    Document document = event.document;
-    if (document != null) {
-      Log.d(TAG, "onEventMainThread: " + document.html());
-    }
+  @OnClick(R.id.text_action_follow) void followUnFollow() {
+    mHandler.removeMessages(MESSAGE_ACTION_FOLLOW);
+    mHandler.sendEmptyMessageDelayed(MESSAGE_ACTION_FOLLOW, HANDLER_DELAY);
   }
 
   private static class ProfileViewPagerAdapter extends FragmentStatePagerAdapter {
@@ -428,7 +447,8 @@ public class ProfileActivity extends BaseActivity {
         return UserStockedItemsFragment.newInstance(mUserId);
       }
 
-      return PublicStreamFragment.newInstance();
+      // fallback
+      return DummyFragment.newInstance();
     }
 
     @Override public int getCount() {
@@ -437,42 +457,15 @@ public class ProfileActivity extends BaseActivity {
 
     @Override public CharSequence getPageTitle(int position) {
       if (position == 0) {
-        return "投稿リスト";
+        return Attiq.creator().getString(R.string.tab_title_items);
       } else if (position == 1) {
-        return "ストック";
+        return Attiq.creator().getString(R.string.tab_title_stocks);
       }
 
+      // fallback
       return "Tab: " + position;
     }
   }
-
-  private static final int HANDLER_DELAY = 200;
-
-  @OnClick(R.id.text_action_follow) void followUnFollow() {
-    mHandler.removeMessages(MESSAGE_ACTION_FOLLOW);
-    mHandler.sendEmptyMessageDelayed(MESSAGE_ACTION_FOLLOW, HANDLER_DELAY);
-  }
-
-  private Handler.Callback mHandlerCallback = new Handler.Callback() {
-    @Override public boolean handleMessage(Message msg) {
-      if (msg.what == MESSAGE_ACTION_FOLLOW) {
-        if (!mState.isFollowing) {
-          mState.isFollowing = true;
-          EventBus.getDefault().post(new StateEvent(true, null, mState));
-          ApiClient.followUser(mUserId).enqueue(mOnFollowStateCallback);
-        } else {
-          mState.isFollowing = false;
-          EventBus.getDefault().post(new StateEvent(true, null, mState));
-          ApiClient.unFollowUser(mUserId).enqueue(mOnUnFollowStateCallback);
-        }
-
-        return true;
-      }
-      return false;
-    }
-  };
-
-  private final Handler mHandler = new Handler(mHandlerCallback);
 
   private static class State {
 

@@ -27,4 +27,6 @@
     <string name="action_follow">フォローする</string>
     <string name="state_following">フォロー中</string>
     <string name="state_not_following">フォローする</string>
+    <string name="tab_title_items">投稿リスト</string>
+    <string name="tab_title_stocks">ストック</string>
 </resources>
