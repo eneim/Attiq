@@ -1,6 +1,5 @@
 package im.ene.lab.attiq.data.api;
 
-import im.ene.lab.attiq.data.one.Post;
 import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.two.AccessToken;
 import im.ene.lab.attiq.data.two.Article;
@@ -8,12 +7,14 @@ import im.ene.lab.attiq.data.two.Comment;
 import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.two.Tag;
 import im.ene.lab.attiq.data.zero.FeedItem;
-import im.ene.lab.attiq.data.zero.PublicItem;
+import im.ene.lab.attiq.data.zero.Post;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -31,7 +32,7 @@ interface Api {
    */
   interface Zero {
 
-    @GET("/api/public") Call<List<PublicItem>> stream(
+    @GET("/api/public") Call<List<Post>> stream(
         @Query("before") Long id,
         @Query("type") String type
     );
@@ -54,7 +55,7 @@ interface Api {
   interface One {
 
     // No token only
-    @GET("/api/v1/items") Call<List<PublicItem>> stream(
+    @GET("/api/v1/items") Call<List<Post>> stream(
         @Query("page") int page,
         @Query("per_page") int limit
     );
@@ -111,6 +112,14 @@ interface Api {
     @GET("/api/v2/users/{user_id}") Call<Profile> user(@Path("user_id") String userName);
 
     @GET("/api/v2/items/{item_id}/stock") Call<Void> checkStock(
+        @Path("item_id") String id
+    );
+
+    @PUT("/api/v2/items/{item_id}/stock") Call<Void> stockItem(
+        @Path("item_id") String id
+    );
+
+    @DELETE("/api/v2/items/{item_id}/stock") Call<Void> unStockItem(
         @Path("item_id") String id
     );
   }

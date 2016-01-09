@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.data.one.Post;
 import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.two.AccessToken;
 import im.ene.lab.attiq.data.two.Article;
@@ -14,7 +13,7 @@ import im.ene.lab.attiq.data.two.Comment;
 import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.two.Tag;
 import im.ene.lab.attiq.data.zero.FeedItem;
-import im.ene.lab.attiq.data.zero.PublicItem;
+import im.ene.lab.attiq.data.zero.Post;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.PrefUtil;
 import okhttp3.OkHttpClient;
@@ -60,7 +59,7 @@ public final class ApiClient {
         Attiq.creator().getString(R.string.client_id), UUID.randomUUID().toString());
   }
 
-  public static Call<List<PublicItem>> publicStream(@Nullable Long bottomId) {
+  public static Call<List<Post>> publicStream(@Nullable Long bottomId) {
     return ZERO.stream(bottomId, "id");
   }
 
@@ -68,7 +67,7 @@ public final class ApiClient {
     return ZERO.feed(maxCreatedAt);
   }
 
-  public static Call<List<PublicItem>> openStream(int page, int limit) {
+  public static Call<List<Post>> openStream(int page, int limit) {
     return ONE.stream(page, limit);
   }
 
@@ -122,12 +121,19 @@ public final class ApiClient {
     return ONE.userStockedItems(userId, page, DEFAULT_PAGE_LIMIT);
   }
 
-  public static Call<List<Post>> userStockedItemsV0(String userId, Integer anchorTime) {
-    return ZERO.stockedItem(userId, anchorTime);
-  }
+//  public static Call<List<Post>> userStockedItemsV0(String userId, Integer anchorTime) {
+//    return ZERO.stockedItem(userId, anchorTime);
+//  }
 
   public static Call<Void> isStocked(String id) {
     return TWO.checkStock(id);
   }
 
+  public static Call<Void> stockItem(String id) {
+    return TWO.stockItem(id);
+  }
+
+  public static Call<Void> unStockItem(String id) {
+    return TWO.stockItem(id);
+  }
 }

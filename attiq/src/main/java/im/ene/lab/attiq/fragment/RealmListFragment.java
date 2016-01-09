@@ -20,13 +20,15 @@ import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.RealmListAdapter;
+import im.ene.lab.attiq.data.ListTransaction;
+import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.TypedEvent;
-import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.EndlessScrollListener;
 import im.ene.lab.attiq.widgets.MultiSwipeRefreshLayout;
 import im.ene.lab.attiq.widgets.NonEmptyRecyclerView;
 import io.realm.Realm;
+import io.realm.RealmAsyncTask;
 import io.realm.RealmChangeListener;
 import io.realm.RealmObject;
 import retrofit2.Callback;
@@ -64,6 +66,8 @@ public abstract class RealmListFragment<E extends RealmObject>
   private static final int DEFAULT_FIRST_PAGE = 1;
 
   protected Realm mRealm;
+  protected ListTransaction<E> mTransaction;
+  protected RealmAsyncTask mTransactionTask;
 
   // In my experience, GridLayout provide more accurate Cell's measurement. It may have worse
   // performance (comparing to its super class LinearLayoutManager), but this a reasonable trade
@@ -145,6 +149,13 @@ public abstract class RealmListFragment<E extends RealmObject>
     mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
   }
 
+  @Override public void onPause() {
+    super.onPause();
+    if (mTransactionTask != null && !mTransactionTask.isCancelled()) {
+      mTransactionTask.cancel();
+    }
+  }
+
   @Override public void onDetach() {
     if (mRealm != null) {
       mRealm.removeChangeListener(mDataChangeListener);
@@ -209,14 +220,22 @@ public abstract class RealmListFragment<E extends RealmObject>
       EventBus.getDefault().post(new TypedEvent<>(false,
           new Event.Error(response.code(), response.message()), null, mPage));
     } else {
-      List<E> items = response.body();
+      final List<E> items = response.body();
       if (!UIUtil.isEmpty(items)) {
-        Realm realm = Attiq.realm();
-        realm.beginTransaction();
-        realm.copyToRealmOrUpdate(items);
-        realm.commitTransaction();
-        realm.close();
-        EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), mPage));
+        mTransaction = new ListTransaction<>(items);
+        mTransactionTask = Attiq.realm().executeTransaction(mTransaction, new Realm.Transaction
+            .Callback() {
+          @Override public void onSuccess() {
+            super.onSuccess();
+            EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), mPage));
+          }
+
+          @Override public void onError(Exception e) {
+            super.onError(e);
+            EventBus.getDefault().post(new TypedEvent<>(false,
+                new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), null, mPage));
+          }
+        });
       }
     }
 

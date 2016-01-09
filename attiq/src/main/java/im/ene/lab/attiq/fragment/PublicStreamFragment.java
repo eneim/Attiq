@@ -10,7 +10,7 @@ import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
 import im.ene.lab.attiq.adapters.PublicItemsAdapter;
 import im.ene.lab.attiq.adapters.RealmListAdapter;
-import im.ene.lab.attiq.data.zero.PublicItem;
+import im.ene.lab.attiq.data.zero.Post;
 import im.ene.lab.attiq.data.one.PublicUser;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import io.realm.RealmResults;
@@ -19,7 +19,7 @@ import io.realm.Sort;
 /**
  * Created by eneim on 12/14/15.
  */
-public class PublicStreamFragment extends RealmListFragment<PublicItem> {
+public class PublicStreamFragment extends RealmListFragment<Post> {
 
   public PublicStreamFragment() {
 
@@ -29,8 +29,8 @@ public class PublicStreamFragment extends RealmListFragment<PublicItem> {
     return new PublicStreamFragment();
   }
 
-  @NonNull @Override protected RealmListAdapter<PublicItem> createAdapter() {
-    RealmResults<PublicItem> items = mRealm.where(PublicItem.class)
+  @NonNull @Override protected RealmListAdapter<Post> createAdapter() {
+    RealmResults<Post> items = mRealm.where(Post.class)
         .findAllSorted("createdAtAsSeconds", Sort.DESCENDING);
     return new PublicItemsAdapter(items);
   }
@@ -51,7 +51,7 @@ public class PublicStreamFragment extends RealmListFragment<PublicItem> {
         startActivity(ProfileActivity.createIntent(getContext(), user.getUrlName()));
       }
 
-      @Override public void onItemContentClick(PublicItem item) {
+      @Override public void onItemContentClick(Post item) {
         startActivity(ItemDetailActivity.createIntent(getContext(), item.getUuid()));
       }
     };

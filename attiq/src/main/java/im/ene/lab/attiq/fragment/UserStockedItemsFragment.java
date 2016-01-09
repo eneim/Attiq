@@ -12,7 +12,7 @@ import im.ene.lab.attiq.activities.ProfileActivity;
 import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.adapters.ListAdapter;
 import im.ene.lab.attiq.adapters.UserStockItemsAdapter;
-import im.ene.lab.attiq.data.one.Post;
+import im.ene.lab.attiq.data.zero.Post;
 import im.ene.lab.attiq.data.one.PublicUser;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import io.realm.Realm;

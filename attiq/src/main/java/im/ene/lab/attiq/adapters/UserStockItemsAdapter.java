@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.data.one.Post;
+import im.ene.lab.attiq.data.zero.Post;
 import im.ene.lab.attiq.data.one.PublicTag;
 import im.ene.lab.attiq.data.one.PublicUser;
 import im.ene.lab.attiq.util.TimeUtil;

@@ -23,7 +23,7 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.one.PublicTag;
 import im.ene.lab.attiq.data.one.PublicUser;
-import im.ene.lab.attiq.data.zero.PublicItem;
+import im.ene.lab.attiq.data.zero.Post;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
@@ -39,11 +39,11 @@ import java.util.List;
 /**
  * Created by eneim on 12/14/15.
  */
-public class PublicItemsAdapter extends RealmListAdapter<PublicItem> {
+public class PublicItemsAdapter extends RealmListAdapter<Post> {
 
-  private final RealmResults<PublicItem> mItems;
+  private final RealmResults<Post> mItems;
 
-  public PublicItemsAdapter(RealmResults<PublicItem> items) {
+  public PublicItemsAdapter(RealmResults<Post> items) {
     super();
     mItems = items;
     setHasStableIds(true);
@@ -78,18 +78,18 @@ public class PublicItemsAdapter extends RealmListAdapter<PublicItem> {
     return mItems.size();
   }
 
-  @Override public PublicItem getItem(int position) {
+  @Override public Post getItem(int position) {
     return mItems.get(position);
   }
 
-  private PublicItem getBottomItem() {
+  private Post getBottomItem() {
     return getItem(getItemCount() - 1);
   }
 
   @Override
   public void loadItems(final boolean isLoadingMore, int page, int pageLimit,
-                        @Nullable String query, final Callback<List<PublicItem>> callback) {
-    final Call<List<PublicItem>> data;
+                        @Nullable String query, final Callback<List<Post>> callback) {
+    final Call<List<Post>> data;
     if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
       data = ApiClient.openStream(page, pageLimit);
     } else {
@@ -101,8 +101,8 @@ public class PublicItemsAdapter extends RealmListAdapter<PublicItem> {
       data = ApiClient.publicStream(id);
     }
 
-    data.enqueue(new Callback<List<PublicItem>>() {
-      @Override public void onResponse(Response<List<PublicItem>> response) {
+    data.enqueue(new Callback<List<Post>>() {
+      @Override public void onResponse(Response<List<Post>> response) {
         cleanup(!isLoadingMore);
         if (callback != null) {
           callback.onResponse(response);
@@ -122,7 +122,7 @@ public class PublicItemsAdapter extends RealmListAdapter<PublicItem> {
     if (shouldCleanup) {
       Realm realm = Attiq.realm();
       realm.beginTransaction();
-      realm.clear(PublicItem.class);
+      realm.clear(Post.class);
       realm.commitTransaction();
       realm.close();
     }
@@ -133,15 +133,15 @@ public class PublicItemsAdapter extends RealmListAdapter<PublicItem> {
 
     public abstract void onUserClick(PublicUser user);
 
-    public abstract void onItemContentClick(PublicItem item);
+    public abstract void onItemContentClick(Post item);
 
     @Override
     public void onItemClick(BaseAdapter adapter,
                             BaseAdapter.ViewHolder viewHolder,
                             View view, int adapterPos, long itemId) {
-      final PublicItem item;
+      final Post item;
       if (adapter instanceof BaseListAdapter) {
-        item = (PublicItem) ((BaseListAdapter) adapter).getItem(adapterPos);
+        item = (Post) ((BaseListAdapter) adapter).getItem(adapterPos);
       } else {
         item = null;
       }
@@ -156,7 +156,7 @@ public class PublicItemsAdapter extends RealmListAdapter<PublicItem> {
     }
   }
 
-  public static class ViewHolder extends BaseListAdapter.ViewHolder<PublicItem> {
+  public static class ViewHolder extends BaseListAdapter.ViewHolder<Post> {
 
     static final int LAYOUT_RES = R.layout.post_item_view;
 
@@ -192,7 +192,7 @@ public class PublicItemsAdapter extends RealmListAdapter<PublicItem> {
       itemView.setOnClickListener(listener);
     }
 
-    @Override public void bind(PublicItem item) {
+    @Override public void bind(Post item) {
       String itemInfo = item.getCommentCount() == 1 ?
           mContext.getString(R.string.item_info_one, item.getStockCount()) :
           mContext.getString(R.string.item_info_many, item.getStockCount(), item.getCommentCount());

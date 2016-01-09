@@ -1,10 +1,12 @@
 package im.ene.lab.attiq.activities;
 
 import android.animation.Animator;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -45,12 +47,10 @@ import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.data.one.Post;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.Comment;
 import im.ene.lab.attiq.data.two.User;
-import im.ene.lab.attiq.data.zero.FeedItem;
-import im.ene.lab.attiq.data.zero.PublicItem;
+import im.ene.lab.attiq.data.zero.Post;
 import im.ene.lab.attiq.util.AnimUtils;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
@@ -110,6 +110,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   private Realm mRealm;
   private Post mReferItem;
+  private Boolean mIsItemStocked = null;
   private Article mArticle;
   private boolean mIsFirstTimeLoaded = false;
   private Element mMenuAnchor;
@@ -188,19 +189,30 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mRealm = Attiq.realm();
     mReferItem = mRealm.where(Post.class).equalTo("uuid", mItemUuid).findFirst();
 
-    ApiClient.isStocked(mItemUuid).enqueue(mCheckStockResponse);
+    ApiClient.isStocked(mItemUuid).enqueue(mItemStockedResponse);
   }
 
   @Override protected void onDestroy() {
     if (mRealm != null) {
       mRealm.close();
     }
-    mCheckStockResponse = null;
+    mItemStockedResponse = null;
     mDocumentCallback = null;
     super.onDestroy();
   }
 
-  private Callback<Void> mCheckStockResponse = new Callback<Void>() {
+  private Callback<Void> mItemUnstockedResponse = new Callback<Void>() {
+    @Override public void onResponse(Response<Void> response) {
+
+    }
+
+    @Override public void onFailure(Throwable t) {
+
+    }
+  };
+
+  private Callback<Void> mItemStockedResponse = new Callback<Void>() {
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override public void onResponse(Response<Void> response) {
       int code = response.code();
       if (code == 204) {
@@ -322,8 +334,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   }
 
-  private void stockArticle() {
-
+  @SuppressWarnings("unused")
+  @OnClick(R.id.item_stocks) void stockArticle() {
+    ApiClient.stockItem(mItemUuid).enqueue(mItemStockedResponse);
   }
 
   @Override public void onResponse(Response<Article> response) {

@@ -1,9 +1,11 @@
 
-package im.ene.lab.attiq.data.one;
+package im.ene.lab.attiq.data.zero;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import im.ene.lab.attiq.data.one.PublicTag;
+import im.ene.lab.attiq.data.one.PublicUser;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
@@ -45,16 +47,15 @@ public class Post extends RealmObject {
   @Expose
   private Integer stockCount;
   @Ignore
-  // @SerializedName("stock_users")
-  // @Expose
-  private List<PublicUser> stockUsers;
+  @SerializedName("stock_users")
+  @Expose
+  private List<String> stockUsers;
   @SerializedName("stocked")
   @Expose
   private Boolean stocked;
-  @Ignore
   @SerializedName("tags")
   @Expose
-  private List<PublicTag> tags;
+  private RealmList<PublicTag> tags;
   @SerializedName("title")
   @Expose
   private String title;
@@ -157,13 +158,13 @@ public class Post extends RealmObject {
     this.stockCount = stockCount;
   }
 
-//  public RealmList<PublicUser> getStockUsers() {
-//    return stockUsers;
-//  }
-//
-//  public void setStockUsers(RealmList<PublicUser> stockUsers) {
-//    this.stockUsers = stockUsers;
-//  }
+  public List<String> getStockUsers() {
+    return stockUsers;
+  }
+
+  public void setStockUsers(List<String> stockUsers) {
+    this.stockUsers = stockUsers;
+  }
 
   public Boolean getStocked() {
     return stocked;
@@ -171,6 +172,10 @@ public class Post extends RealmObject {
 
   public void setStocked(Boolean stocked) {
     this.stocked = stocked;
+  }
+
+  public RealmList<PublicTag> getTags() {
+    return tags;
   }
 
   public void setTags(RealmList<PublicTag> tags) {
@@ -221,10 +226,6 @@ public class Post extends RealmObject {
     return user;
   }
 
-  public List<PublicUser> getStockUsers() {
-    return stockUsers;
-  }
-
   public void setUser(PublicUser user) {
     this.user = user;
   }
@@ -237,7 +238,4 @@ public class Post extends RealmObject {
     this.uuid = uuid;
   }
 
-  public List<PublicTag> getTags() {
-    return tags;
-  }
 }
