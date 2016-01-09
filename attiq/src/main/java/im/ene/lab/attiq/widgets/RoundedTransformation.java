@@ -70,7 +70,9 @@ public class RoundedTransformation implements Transformation {
       paint.setColor(this.mColor);
       paint.setStyle(Paint.Style.FILL);
 
-      canvas.drawRoundRect(new RectF(rect), this.mCornerRadius, this.mCornerRadius, paint);
+      canvas.drawRoundRect(new RectF(rect),
+          this.mCornerRadius + this.mBorderSize,
+          this.mCornerRadius + this.mBorderSize, paint);
 
       canvas.drawBitmap(image, this.mBorderSize, this.mBorderSize, null);
     }
