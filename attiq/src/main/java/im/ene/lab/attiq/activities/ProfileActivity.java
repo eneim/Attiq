@@ -70,18 +70,11 @@ public class ProfileActivity extends BaseActivity {
   private static final int GITHUB_BUTTON_INDEX = 3;
   private static final int LINKEDIN_BUTTON_INDEX = 4;
   private static final int HANDLER_DELAY = 200;
-  private final int[] BACKGROUNDS = {
-      R.drawable.gradient_fresh_turboscent,
-      R.drawable.gradient_lizard,
-      R.drawable.gradient_nightwalk,
-      R.drawable.gradient_turpoise_flow,
-      R.drawable.gradient_vine
-  };
+
   @Bind(R.id.view_pager) ViewPager mViewPager;
   @Bind(R.id.app_bar) AppBarLayout mAppBarLayout;
   @Bind(R.id.toolbar_layout) CollapsingToolbarLayout mToolBarLayout;
   @Bind(R.id.toolbar_overlay) View mOverlayContainer;
-  @Bind(R.id.toolbar_overlay_image) ImageView mOverlayView;
   @Bind({R.id.divider_1, R.id.divider_2}) List<View> mOverlayDividers;
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.tab_layout) TabLayout mTabLayout;
@@ -213,8 +206,6 @@ public class ProfileActivity extends BaseActivity {
 
   @Override protected void onResume() {
     super.onResume();
-    mOverlayView.setBackgroundResource(BACKGROUNDS[sRandom.nextInt(BACKGROUNDS.length)]);
-
     // setup
     mOnFollowStateCallback = new Callback<Void>() {
       @Override public void onResponse(Response<Void> response) {
