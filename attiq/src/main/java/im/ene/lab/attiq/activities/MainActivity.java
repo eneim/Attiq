@@ -74,6 +74,7 @@ public class MainActivity extends BaseActivity
   private NavigationView mNavigationView;
   private Profile mMyProfile;
 
+  @SuppressWarnings("unused")
   @OnClick(R.id.header_auth_menu) void toggleAuthMenu() {
     if (mAuthMenuItem != null) {
       if (mAuthMenuItem.isVisible()) {

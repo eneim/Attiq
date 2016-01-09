@@ -157,7 +157,6 @@ public class CollapsingToolbarLayout extends FrameLayout {
           a.getResourceId(
               android.support.design.R.styleable
                   .CollapsingToolbarLayout_collapsedTitleTextAppearance, 0));
-
     }
 
     setContentScrim(a.getDrawable(android.support.design.R.styleable
@@ -930,7 +929,11 @@ public class CollapsingToolbarLayout extends FrameLayout {
   }
 
   public boolean shouldTriggerScrimOffset(int verticalOffset) {
-    return getHeight() + verticalOffset < getScrimTriggerOffset() + getInsetTop();
+    return getHeight() + verticalOffset < getScrimOffsetBound();
+  }
+
+  public int getScrimOffsetBound() {
+    return getScrimTriggerOffset() + getInsetTop();
   }
 
   private AlphaForegroundColorSpan mTitleColorSpan;
@@ -1000,11 +1003,4 @@ public class CollapsingToolbarLayout extends FrameLayout {
     }
   }
 
-  public boolean isCollapsed() {
-    return false;
-  }
-
-  public boolean isExpanded() {
-    return true;
-  }
 }

@@ -20,7 +20,7 @@ public class AnimationUtils {
   /**
    * Linear interpolation between {@code startValue} and {@code endValue} by {@code fraction}.
    */
-  static float lerp(float startValue, float endValue, float fraction) {
+  public static float lerp(float startValue, float endValue, float fraction) {
     return startValue + (fraction * (endValue - startValue));
   }
 

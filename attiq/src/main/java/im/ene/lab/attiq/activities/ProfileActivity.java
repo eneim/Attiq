@@ -10,18 +10,18 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -49,19 +49,19 @@ import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AnimationUtils;
 import im.ene.support.design.widget.AppBarLayout;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
+import im.ene.support.design.widget.FabImageButton;
+import im.ene.support.design.widget.MathUtils;
 import io.realm.Realm;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.util.List;
-import java.util.Random;
 
 public class ProfileActivity extends BaseActivity {
 
   private static final int MESSAGE_ACTION_FOLLOW = 1;
 
   private static final String EXTRA_USER_NAME = "attiq_profile_user_name";
-  private static final Random sRandom = new Random();
   private static final String TAG = "ProfileActivity";
   // Used to keep track of index
   private static final int WEBSITE_BUTTON_INDEX = 0;
@@ -78,12 +78,14 @@ public class ProfileActivity extends BaseActivity {
   @Bind({R.id.divider_1, R.id.divider_2}) List<View> mOverlayDividers;
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.tab_layout) TabLayout mTabLayout;
-  @Bind(R.id.profile_image) ImageView mProfileImage;
+  @Bind(R.id.profile_image) FabImageButton mProfileImage;
   // @Bind(R.id.fab) ImageButton mProfileFabImage;
   @Bind(R.id.profile_social_buttons) LinearLayout mSocialButtonContainer;
   @Bind(R.id.text_action_follow) TextView mBtnFollow;
   @Bind(R.id.profile_name) TextView mProfileName;
   @Bind(R.id.profile_description) TextView mProfileDescription;
+
+  @Bind(R.id.description_container) LinearLayout mDescription;
   // Others
   // @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
   @BindDimen(R.dimen.item_padding_half) int mImageBorderWidth;
@@ -107,18 +109,15 @@ public class ProfileActivity extends BaseActivity {
       new AppBarLayout.OnOffsetChangedListener() {
         @Override public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
           mToolbarLayoutOffset = verticalOffset;
-          float maxOffset = mToolBarLayout.getHeight() -
-              ViewCompat.getMinimumHeight(mToolBarLayout) - mToolBarLayout.getInsetTop();
+          float maxOffset = mToolBarLayout.getHeight() - mToolBarLayout.getScrimOffsetBound();
           if (maxOffset > 0) {
             float offsetFraction = Math.abs(verticalOffset) / maxOffset;
+            offsetFraction = MathUtils.constrain(offsetFraction, 0.f, 1.f);
             mOverlayContainer.setAlpha(1.f - offsetFraction);
-            float fabScale =
-                AnimationUtils.DECELERATE_INTERPOLATOR.getInterpolation(
-                    1.f - 0.5f * offsetFraction
-                );
+            mProfileImage.setAlpha(1.f - offsetFraction);
 
             for (View divider : mOverlayDividers) {
-              divider.setAlpha(1 - fabScale);
+              divider.setAlpha(0.65f * offsetFraction);
             }
           }
         }
@@ -333,8 +332,37 @@ public class ProfileActivity extends BaseActivity {
       if (!UIUtil.isEmpty(mUser.getName())) {
         mSpannableSubtitle = new SpannableString(mUser.getName());
       }
+
+      updateDescription();
       updateTitle();
       updateSocialButtons();
+    }
+  }
+
+  private void updateDescription() {
+    if (mUser == null || mDescription == null) {
+      return;
+    }
+
+    mDescription.removeAllViews();
+    final Context context = mDescription.getContext();
+
+    if (!UIUtil.isEmpty(mUser.getDescription())) {
+      TextView description = (TextView) LayoutInflater.from(context)
+          .inflate(R.layout.widget_info_textview, mDescription, false);
+      TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(description,
+          UIUtil.getDrawable(context, R.drawable.ic_description), null, null, null);
+      description.setText(mUser.getDescription());
+      mDescription.addView(description);
+    }
+
+    if (!UIUtil.isEmpty(mUser.getOrganization())) {
+      TextView organization = (TextView) LayoutInflater.from(context)
+          .inflate(R.layout.widget_info_textview, mDescription, false);
+      TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(organization,
+          UIUtil.getDrawable(context, R.drawable.ic_organization), null, null, null);
+      organization.setText(mUser.getOrganization());
+      mDescription.addView(organization);
     }
   }
 
