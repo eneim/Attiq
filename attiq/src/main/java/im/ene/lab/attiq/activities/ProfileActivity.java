@@ -18,6 +18,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -433,6 +434,15 @@ public class ProfileActivity extends BaseActivity {
   @OnClick(R.id.text_action_follow) void followUnFollow() {
     mHandler.removeMessages(MESSAGE_ACTION_FOLLOW);
     mHandler.sendEmptyMessageDelayed(MESSAGE_ACTION_FOLLOW, HANDLER_DELAY);
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      navigateUpOrBack(this, null);
+      return true;
+    }
+
+    return super.onOptionsItemSelected(item);
   }
 
   private static class ProfileViewPagerAdapter extends FragmentStatePagerAdapter {
