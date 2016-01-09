@@ -262,6 +262,13 @@ public class ProfileActivity extends BaseActivity {
 
   @SuppressWarnings("unused")
   public void onEventMainThread(StateEvent event) {
+    Profile refUser = mRealm.where(Profile.class).findFirst();
+    mBtnFollow.setEnabled(refUser != null && !UIUtil.isEmpty(refUser.getToken()));
+    mBtnFollow.setClickable(refUser != null && !UIUtil.isEmpty(refUser.getToken()));
+    mBtnFollow.setVisibility(
+        refUser != null && mUserId.equals(refUser.getId()) ? View.GONE : View.VISIBLE
+    );
+
     if (event.state != null) {
       mBtnFollow.setText(
           event.state.isFollowing ? R.string.state_following : R.string.state_not_following
@@ -279,13 +286,6 @@ public class ProfileActivity extends BaseActivity {
     mUser = event.user;
     Log.d(TAG, "onEventMainThread() called with: " + "event = [" + event + "]");
     if (mUser != null) {
-      Profile refUser = mRealm.where(Profile.class).findFirst();
-      mBtnFollow.setEnabled(refUser != null && !UIUtil.isEmpty(refUser.getToken()));
-      mBtnFollow.setClickable(refUser != null && !UIUtil.isEmpty(refUser.getToken()));
-      mBtnFollow.setVisibility(
-          refUser != null && mUserId.equals(refUser.getId()) ? View.GONE : View.VISIBLE
-      );
-
       mProfileName.setText(mUser.getId() + " | " + mUser.getItemsCount() + "投稿");
 
       StringBuilder description = new StringBuilder();
