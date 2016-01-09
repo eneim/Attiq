@@ -79,7 +79,7 @@ public class ProfileActivity extends BaseActivity {
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.tab_layout) TabLayout mTabLayout;
   @Bind(R.id.profile_image) ImageView mProfileImage;
-  @Bind(R.id.fab) ImageButton mProfileFabImage;
+  // @Bind(R.id.fab) ImageButton mProfileFabImage;
   @Bind(R.id.profile_social_buttons) LinearLayout mSocialButtonContainer;
   @Bind(R.id.text_action_follow) TextView mBtnFollow;
   @Bind(R.id.profile_name) TextView mProfileName;
@@ -114,10 +114,9 @@ public class ProfileActivity extends BaseActivity {
             mOverlayContainer.setAlpha(1.f - offsetFraction);
             float fabScale =
                 AnimationUtils.DECELERATE_INTERPOLATOR.getInterpolation(
-                    1.f - offsetFraction
+                    1.f - 0.5f * offsetFraction
                 );
-            mProfileFabImage.setScaleX(fabScale);
-            mProfileFabImage.setScaleY(fabScale);
+
             for (View divider : mOverlayDividers) {
               divider.setAlpha(1 - fabScale);
             }
