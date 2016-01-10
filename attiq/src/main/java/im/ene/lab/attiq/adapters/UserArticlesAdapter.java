@@ -189,8 +189,7 @@ public class UserArticlesAdapter extends ListAdapter<Article> {
     }
 
     @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {
-      // mItemUserImage.setOnClickListener(listener);
-      itemView.setOnClickListener(listener);
+      super.setOnViewHolderClickListener(listener);
     }
 
     @Override public void bind(Article item) {

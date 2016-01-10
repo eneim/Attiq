@@ -83,7 +83,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   private static final String TAG = "ItemDetailActivity";
 
-  // @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingLayout;
   @Bind(R.id.content_container) CoordinatorLayout mContentContainer;
   @Bind(R.id.comments_header) TextView mCommentInfo;
   @Bind(R.id.toolbar) Toolbar mToolbar;
@@ -349,6 +348,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   }
 
+  @SuppressWarnings("unused")
   public void onEventMainThread(ItemDetailEvent event) {
     Article article = event.article;
     mArticle = article;
@@ -376,8 +376,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         elem.append(article.getRenderedBody());
 
         String result = doc.outerHtml();
-        mContentView.loadDataWithBaseURL(
-            article.getUrl(), result, null, null, null);
+        mContentView.loadDataWithBaseURL(article.getUrl(), result, null, null, null);
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -516,7 +515,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         Document fullBody = Jsoup.parse(html);
         Element content = fullBody.getElementById("content");
 
-        // TODO support comment ordering
         for (Comment comment : comments) {
           String commentHtml = IOUtil.readAssets("html/comment.html");
           commentHtml = commentHtml

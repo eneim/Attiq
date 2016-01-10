@@ -54,7 +54,7 @@ public class UserItemsFragment extends ListFragment<Article> {
 
     mItemClickListener = new UserArticlesAdapter.OnUserItemClickListener() {
       @Override public void onUserClick(User user) {
-        // startActivity(ProfileActivity.createIntent(getContext(), user.getUrlName()));
+        // Do nothing
       }
 
       @Override public void onItemContentClick(Article item) {

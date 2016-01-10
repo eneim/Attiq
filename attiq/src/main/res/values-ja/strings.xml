@@ -3,6 +3,7 @@
     <string name="app_name">Attiq</string>
     <string name="activity_login">ログイン</string>
     <string name="activity_profile">プロフィル</string>
+    <string name="title_activity_tag">タグ: %1$s</string>
     <string name="item_detail_subtitle">%1$s さんが投稿した</string>
     <string name="item_info_many">ストック%1$d件、コメント%2$d件</string>
     <string name="item_info_one">ストック%1$d件、コメント１件</string>

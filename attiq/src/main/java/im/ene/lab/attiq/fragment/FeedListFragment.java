@@ -99,6 +99,7 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     super.onDestroyView();
   }
 
+  @SuppressWarnings("unused")
   public void onEventMainThread(ItemDetailEvent event) {
     Article article = event.article;
     if (article != null && article.getUser() != null) {
