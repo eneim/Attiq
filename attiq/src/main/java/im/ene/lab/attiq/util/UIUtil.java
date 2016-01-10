@@ -113,4 +113,8 @@ public class UIUtil {
     i.setData(Uri.parse(url));
     activity.startActivity(i);
   }
+
+  public static String beautify(String text) {
+    return text == null ? null : text.trim();
+  }
 }

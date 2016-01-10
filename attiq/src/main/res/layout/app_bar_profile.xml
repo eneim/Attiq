@@ -66,6 +66,7 @@
                 android:gravity="top"
                 android:minHeight="?attr/actionBarSize"
                 android:orientation="vertical"
+                android:paddingBottom="@dimen/activity_vertical_margin"
                 android:paddingLeft="?attr/actionBarSize"
                 android:paddingStart="?attr/actionBarSize">
 
@@ -87,9 +88,92 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="@dimen/item_padding">
+                    android:paddingTop="@dimen/item_padding">
 
                 </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/social_button_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/social_button_indicator"
+                        android:layout_width="@dimen/social_button_size_full"
+                        android:layout_height="@dimen/social_button_size_full"
+                        android:layout_margin="@dimen/social_button_margin"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_account_circle_24dp"/>
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/social_button_indicator"
+                        android:layout_toRightOf="@id/social_button_indicator"
+                        android:paddingLeft="@dimen/activity_horizontal_margin"
+                        android:paddingStart="@dimen/activity_horizontal_margin"
+                        android:scrollbars="none"
+                        app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                        <LinearLayout
+                            android:id="@+id/profile_social_buttons"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageButton
+                                android:id="@+id/profile_social_website"
+                                android:layout_width="@dimen/social_button_size_full"
+                                android:layout_height="@dimen/social_button_size_full"
+                                android:layout_margin="@dimen/social_button_margin"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:src="@drawable/ic_social_world"
+                                android:visibility="gone"
+                                tools:visibility="visible"/>
+
+                            <ImageButton
+                                android:id="@+id/profile_social_facebook"
+                                android:layout_width="@dimen/social_button_size_full"
+                                android:layout_height="@dimen/social_button_size_full"
+                                android:layout_margin="@dimen/social_button_margin"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:src="@drawable/ic_social_facebook"
+                                android:visibility="gone"
+                                tools:visibility="visible"/>
+
+                            <ImageButton
+                                android:id="@+id/profile_social_twitter"
+                                android:layout_width="@dimen/social_button_size_full"
+                                android:layout_height="@dimen/social_button_size_full"
+                                android:layout_margin="@dimen/social_button_margin"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:src="@drawable/ic_social_twitter"
+                                android:visibility="gone"
+                                tools:visibility="visible"/>
+
+                            <ImageButton
+                                android:id="@+id/profile_social_github"
+                                android:layout_width="@dimen/social_button_size_full"
+                                android:layout_height="@dimen/social_button_size_full"
+                                android:layout_margin="@dimen/social_button_margin"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:src="@drawable/ic_social_github"
+                                android:visibility="gone"
+                                tools:visibility="visible"/>
+
+                            <ImageButton
+                                android:id="@+id/profile_social_linkedin"
+                                android:layout_width="@dimen/social_button_size_full"
+                                android:layout_height="@dimen/social_button_size_full"
+                                android:layout_margin="@dimen/social_button_margin"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:src="@drawable/ic_social_linkedin"
+                                android:visibility="gone"
+                                tools:visibility="visible"/>
+                        </LinearLayout>
+                    </HorizontalScrollView>
+                </RelativeLayout>
             </LinearLayout>
 
         </LinearLayout>
@@ -101,95 +185,7 @@
             app:layout_collapseMode="pin"
             app:subtitleTextAppearance="@style/Attiq.Widget.Profile.Toolbar.Subtitle"/>
 
-        <View
-            android:id="@+id/divider_1"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="?attr/actionBarSize"
-            android:layout_marginStart="?attr/actionBarSize"
-            android:background="?attr/colorPrimaryDark"
-            app:layout_anchor="@id/toolbar_layout"
-            app:layout_anchorGravity="bottom|end"/>
-
     </im.ene.support.design.widget.CollapsingToolbarLayout>
-
-    <View
-        android:id="@+id/divider_2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="?attr/actionBarSize"
-        android:layout_marginStart="?attr/actionBarSize"
-        android:background="?attr/colorPrimaryDark"
-        app:layout_anchor="@id/toolbar_layout"
-        app:layout_anchorGravity="bottom|end"/>
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
-        app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-        <LinearLayout
-            android:id="@+id/profile_social_buttons"
-            android:layout_width="wrap_content"
-            android:layout_height="?attr/actionBarSize"
-            android:clipToPadding="false"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/item_icon_padding"
-            android:paddingEnd="@dimen/profile_image_size_margin"
-            android:paddingLeft="@dimen/tab_layout_height"
-            android:paddingRight="@dimen/profile_image_size_margin"
-            android:paddingStart="@dimen/social_buttons_padding_start"
-            android:paddingTop="@dimen/item_icon_padding">
-
-            <ImageButton
-                android:id="@+id/profile_social_website"
-                android:layout_width="@dimen/social_button_size_full"
-                android:layout_height="@dimen/social_button_size_full"
-                android:layout_margin="@dimen/social_button_margin"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_social_world"
-                android:visibility="gone"/>
-
-            <ImageButton
-                android:id="@+id/profile_social_facebook"
-                android:layout_width="@dimen/social_button_size_full"
-                android:layout_height="@dimen/social_button_size_full"
-                android:layout_margin="@dimen/social_button_margin"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_social_facebook"
-                android:visibility="gone"/>
-
-            <ImageButton
-                android:id="@+id/profile_social_twitter"
-                android:layout_width="@dimen/social_button_size_full"
-                android:layout_height="@dimen/social_button_size_full"
-                android:layout_margin="@dimen/social_button_margin"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_social_twitter"
-                android:visibility="gone"/>
-
-            <ImageButton
-                android:id="@+id/profile_social_github"
-                android:layout_width="@dimen/social_button_size_full"
-                android:layout_height="@dimen/social_button_size_full"
-                android:layout_margin="@dimen/social_button_margin"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_social_github"
-                android:visibility="gone"/>
-
-            <ImageButton
-                android:id="@+id/profile_social_linkedin"
-                android:layout_width="@dimen/social_button_size_full"
-                android:layout_height="@dimen/social_button_size_full"
-                android:layout_margin="@dimen/social_button_margin"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_social_linkedin"
-                android:visibility="gone"/>
-        </LinearLayout>
-    </HorizontalScrollView>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -206,7 +202,9 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/activity_vertical_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:background="@drawable/rounded_background"
             android:clickable="true"
             android:focusable="true"

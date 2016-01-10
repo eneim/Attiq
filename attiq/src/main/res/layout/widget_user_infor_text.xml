@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="@dimen/social_button_size_full"
+        android:layout_height="@dimen/social_button_size_full"
+        android:layout_margin="@dimen/social_button_margin"
+        android:scaleType="centerInside"
+        tools:src="@drawable/ic_account_circle_24dp"/>
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/icon"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/social_button_margin"
+        android:layout_toEndOf="@id/icon"
+        android:layout_toRightOf="@id/icon"
+        android:ellipsize="end"
+        android:gravity="center_vertical|start"
+        android:maxLines="3"
+        android:minHeight="@dimen/social_button_size_full"
+        android:textAlignment="viewStart"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        tools:text="Givery Inc\nLine 2 \nLine 3\nLine 4"/>
+</merge>

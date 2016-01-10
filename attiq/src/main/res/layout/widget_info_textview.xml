@@ -8,4 +8,5 @@
     android:gravity="center_vertical|start"
     android:maxLines="3"
     android:minHeight="32dp"
+    android:padding="@dimen/item_padding"
     android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>

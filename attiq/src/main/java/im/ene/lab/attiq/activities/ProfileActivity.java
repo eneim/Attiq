@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -45,6 +44,7 @@ import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ProfileFetchedEvent;
 import im.ene.lab.attiq.util.event.UserFetchedEvent;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
+import im.ene.lab.attiq.widgets.UserInfoRowTextView;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AppBarLayout;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
@@ -53,8 +53,6 @@ import im.ene.support.design.widget.MathUtils;
 import io.realm.Realm;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import java.util.List;
 
 public class ProfileActivity extends BaseActivity {
 
@@ -74,16 +72,14 @@ public class ProfileActivity extends BaseActivity {
   @Bind(R.id.app_bar) AppBarLayout mAppBarLayout;
   @Bind(R.id.toolbar_layout) CollapsingToolbarLayout mToolBarLayout;
   @Bind(R.id.toolbar_overlay) View mOverlayContainer;
-  @Bind({R.id.divider_1, R.id.divider_2}) List<View> mOverlayDividers;
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.tab_layout) TabLayout mTabLayout;
   @Bind(R.id.profile_image) FabImageButton mProfileImage;
-  // @Bind(R.id.fab) ImageButton mProfileFabImage;
-  @Bind(R.id.profile_social_buttons) LinearLayout mSocialButtonContainer;
+  @Bind(R.id.social_button_container) View mSocialButtonContainer;
+  @Bind(R.id.profile_social_buttons) LinearLayout mSocialButtonView;
   @Bind(R.id.text_action_follow) TextView mBtnFollow;
   @Bind(R.id.profile_name) TextView mProfileName;
   @Bind(R.id.profile_description) TextView mProfileDescription;
-
   @Bind(R.id.description_container) LinearLayout mDescription;
   // Others
   // @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
@@ -114,10 +110,6 @@ public class ProfileActivity extends BaseActivity {
             offsetFraction = MathUtils.constrain(offsetFraction, 0.f, 1.f);
             mOverlayContainer.setAlpha(1.f - offsetFraction);
             mProfileImage.setAlpha(1.f - offsetFraction);
-
-            for (View divider : mOverlayDividers) {
-              divider.setAlpha(0.65f * offsetFraction);
-            }
           }
         }
       };
@@ -349,20 +341,17 @@ public class ProfileActivity extends BaseActivity {
     if (!UIUtil.isEmpty(mUser.getDescription())) {
       TextView description = (TextView) LayoutInflater.from(context)
           .inflate(R.layout.widget_info_textview, mDescription, false);
-      description.setText(mUser.getDescription());
+      description.setText(UIUtil.beautify(mUser.getDescription()));
       mDescription.addView(description);
     }
 
     if (!UIUtil.isEmpty(mUser.getOrganization())) {
-      TextView organization = (TextView) LayoutInflater.from(context)
-          .inflate(R.layout.widget_info_textview, mDescription, false);
-      TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(organization,
-          UIUtil.getDrawable(context, R.drawable.ic_organization), null, null, null);
-      organization.setText(mUser.getOrganization());
-      mDescription.addView(organization);
-    }
+      UserInfoRowTextView view = new UserInfoRowTextView(mDescription.getContext());
+      view.setText(UIUtil.beautify(mUser.getOrganization()));
+      view.setIcon(R.drawable.ic_organization);
 
-    mDescription.requestLayout();
+      mDescription.addView(view);
+    }
   }
 
   private void updateTitle() {
@@ -383,33 +372,42 @@ public class ProfileActivity extends BaseActivity {
   }
 
   private void updateSocialButtons() {
-    if (mUser == null || mSocialButtonContainer == null) {
+    if (mUser == null || mSocialButtonView == null || mSocialButtonContainer == null) {
       return;
     }
+
+    boolean hasSocialButton = false;
 
     for (View button : mSocialButtons) {
       button.setVisibility(View.GONE);
     }
 
     if (!UIUtil.isEmpty(mUser.getWebsiteUrl())) {
+      hasSocialButton = true;
       mSocialButtons[WEBSITE_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
 
     if (!UIUtil.isEmpty(mUser.getFacebookId())) {
+      hasSocialButton = true;
       mSocialButtons[FACEBOOK_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
 
     if (!UIUtil.isEmpty(mUser.getTwitterScreenName())) {
+      hasSocialButton = true;
       mSocialButtons[TWITTER_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
 
     if (!UIUtil.isEmpty(mUser.getGithubLoginName())) {
+      hasSocialButton = true;
       mSocialButtons[GITHUB_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
 
     if (!UIUtil.isEmpty(mUser.getLinkedinId())) {
+      hasSocialButton = true;
       mSocialButtons[LINKEDIN_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
+
+    mSocialButtonContainer.setVisibility(hasSocialButton ? View.VISIBLE : View.GONE);
   }
 
   @SuppressWarnings("unused")
@@ -483,7 +481,7 @@ public class ProfileActivity extends BaseActivity {
     }
 
     @Override public int getCount() {
-      return 2;
+      return 3;
     }
 
     @Override public CharSequence getPageTitle(int position) {

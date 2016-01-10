@@ -9,7 +9,7 @@
 
     <!-- Social Buttons -->
     <dimen name="social_buttons_padding_start">48dp</dimen>
-    <dimen name="social_button_size_full">40dp</dimen>
+    <dimen name="social_button_size_full">32dp</dimen>
     <dimen name="social_button_size">24dp</dimen>
     <dimen name="social_button_margin">2dp</dimen>
 
