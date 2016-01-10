@@ -138,7 +138,7 @@ public abstract class RealmListFragment<E extends RealmObject>
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.layout_general_recycler_view, container, false);
+    return inflater.inflate(R.layout.fragment_general_recycler_view, container, false);
   }
 
   @Override public void onResume() {
