@@ -46,7 +46,6 @@ import im.ene.lab.attiq.util.event.ProfileFetchedEvent;
 import im.ene.lab.attiq.util.event.UserFetchedEvent;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
-import im.ene.support.design.widget.AnimationUtils;
 import im.ene.support.design.widget.AppBarLayout;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
 import im.ene.support.design.widget.FabImageButton;
@@ -350,8 +349,6 @@ public class ProfileActivity extends BaseActivity {
     if (!UIUtil.isEmpty(mUser.getDescription())) {
       TextView description = (TextView) LayoutInflater.from(context)
           .inflate(R.layout.widget_info_textview, mDescription, false);
-      TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(description,
-          UIUtil.getDrawable(context, R.drawable.ic_description), null, null, null);
       description.setText(mUser.getDescription());
       mDescription.addView(description);
     }
@@ -364,6 +361,8 @@ public class ProfileActivity extends BaseActivity {
       organization.setText(mUser.getOrganization());
       mDescription.addView(organization);
     }
+
+    mDescription.requestLayout();
   }
 
   private void updateTitle() {
