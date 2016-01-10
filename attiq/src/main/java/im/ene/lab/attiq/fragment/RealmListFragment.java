@@ -20,6 +20,7 @@ import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.RealmListAdapter;
+import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.TypedEvent;
@@ -57,7 +58,7 @@ public abstract class RealmListFragment<E extends RealmObject>
   /**
    * Default item count per page
    */
-  private static final int DEFAULT_THRESHOLD = 20;
+  private static final int DEFAULT_THRESHOLD = ApiClient.DEFAULT_PAGE_LIMIT;
 
   /**
    * Default first page for API call
@@ -141,12 +142,6 @@ public abstract class RealmListFragment<E extends RealmObject>
     return inflater.inflate(R.layout.fragment_general_recycler_view, container, false);
   }
 
-  @Override public void onResume() {
-    super.onResume();
-    mHandler.removeMessages(MESSAGE_LOAD_RELOAD);
-    mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
-  }
-
   @Override public void onPause() {
     super.onPause();
     if (mTransactionTask != null && !mTransactionTask.isCancelled()) {
@@ -184,11 +179,15 @@ public abstract class RealmListFragment<E extends RealmObject>
     mRecyclerView.setAdapter(mAdapter);
     mRecyclerView.setErrorView(mErrorView);
     mRecyclerView.setEmptyView(mEmptyView);
+
+    mHandler.removeMessages(MESSAGE_LOAD_RELOAD);
+    mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
   }
 
   @Override public void onDestroyView() {
     mRecyclerView.removeOnScrollListener(mEndlessScrollListener);
     mEndlessScrollListener = null;
+    mHandler.removeCallbacksAndMessages(null);
     super.onDestroyView();
   }
 

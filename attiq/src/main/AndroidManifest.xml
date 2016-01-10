@@ -70,6 +70,13 @@
         </activity>
 
         <activity
+            android:name=".activities.TagItemsActivity"
+            android:label="@string/title_activity_tag_detail"
+            android:screenOrientation="portrait"
+            android:theme="@style/Attiq.Theme.NoActionBar">
+        </activity>
+
+        <activity
             android:name=".activities.ProfileActivity"
             android:label="@string/title_activity_profile"
             android:screenOrientation="portrait"

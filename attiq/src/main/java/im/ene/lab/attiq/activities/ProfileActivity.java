@@ -38,6 +38,7 @@ import im.ene.lab.attiq.data.two.User;
 import im.ene.lab.attiq.fragment.DummyFragment;
 import im.ene.lab.attiq.fragment.UserItemsFragment;
 import im.ene.lab.attiq.fragment.UserStockedItemsFragment;
+import im.ene.lab.attiq.fragment.UserTagsFragment;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
@@ -188,6 +189,12 @@ public class ProfileActivity extends BaseActivity {
 
     mRefUser = mRealm.where(Profile.class).equalTo("token", PrefUtil.getCurrentToken()).findFirst();
     mUser = mRealm.where(User.class).equalTo("id", mUserId).findFirst();
+
+    if (getSupportFragmentManager().findFragmentById(R.id.profile_info_tags) == null) {
+      mTagFragment = UserTagsFragment.newInstance(mUserId);
+      getSupportFragmentManager().beginTransaction()
+          .replace(R.id.profile_info_tags, mTagFragment).commit();
+    }
 
     mPagerAdapter = new ProfileViewPagerAdapter(getSupportFragmentManager(), mUserId);
     mViewPager.setAdapter(mPagerAdapter);
@@ -365,6 +372,8 @@ public class ProfileActivity extends BaseActivity {
     }
   }
 
+  private UserTagsFragment mTagFragment;
+
   private void updateQuantities() {
     if (mUser == null || isFinishing()) {
       return;
@@ -532,4 +541,5 @@ public class ProfileActivity extends BaseActivity {
       this.state = state;
     }
   }
+
 }

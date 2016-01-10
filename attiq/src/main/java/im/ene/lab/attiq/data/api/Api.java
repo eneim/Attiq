@@ -1,5 +1,6 @@
 package im.ene.lab.attiq.data.api;
 
+import im.ene.lab.attiq.data.one.PublicTag;
 import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.two.AccessToken;
 import im.ene.lab.attiq.data.two.Article;
@@ -72,6 +73,12 @@ interface Api {
         @Query("page") int page,
         @Query("per_page") int limit
     );
+
+    @GET("/api/v1/users/{url_name}/following_tags") Call<List<PublicTag>> userFollowingTags(
+        @Path("url_name") String userId,
+        @Query("page") int page,
+        @Query("per_page") int limit
+    );
   }
 
   interface Two {
@@ -125,6 +132,18 @@ interface Api {
         @Query("sort") String sort
     );
 
+    @GET("/api/v2/users/{user_id}/following_tags") Call<List<Tag>> userFollowingTags(
+        @Path("user_id") String userId,
+        @Query("page") int page,
+        @Query("per_page") int limit
+    );
+
+    @GET("/api/v2/tags/{tag_id}/items") Call<List<Article>> tagItems(
+        @Path("tag_id") String tagName,
+        @Query("page") int page,
+        @Query("per_page") int limit
+    );
+
     @GET("/api/v2/users/{user_id}") Call<User> user(@Path("user_id") String userName);
 
     @GET("/api/v2/items/{item_id}/stock") Call<Void> getStock(
@@ -151,5 +170,6 @@ interface Api {
     @DELETE("/api/v2/users/{user_id}/following") Call<Void> deleteFollow(
         @Path("user_id") String userId
     );
+
   }
 }

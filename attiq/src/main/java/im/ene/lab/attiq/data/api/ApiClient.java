@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.data.one.PublicTag;
 import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.two.AccessToken;
 import im.ene.lab.attiq.data.two.Article;
@@ -37,7 +38,7 @@ public final class ApiClient {
   private static final Api.One ONE;
   private static final Api.Two TWO;
 
-  private static final int DEFAULT_PAGE_LIMIT = 99; // save API call...
+  public static final int DEFAULT_PAGE_LIMIT = 99; // save API calls...
 
   static {
     HTTP_CLIENT = Attiq.httpClient().newBuilder()
@@ -82,6 +83,18 @@ public final class ApiClient {
 
   public static Call<List<Article>> userStockedItems(String userId, int page, int pageLimit) {
     return TWO.userStockedItems(userId, page, pageLimit);
+  }
+
+  public static Call<List<Tag>> userFollowingTags(String userId, int page, int pageLimit) {
+    return TWO.userFollowingTags(userId, page, pageLimit);
+  }
+
+  public static Call<List<PublicTag>> userFollowingTagsV1(String userId, int page, int pageLimit) {
+    return ONE.userFollowingTags(userId, page, pageLimit);
+  }
+
+  public static Call<List<Article>> tagItems(String tagUrlName, int page, int pageLimit) {
+    return TWO.tagItems(tagUrlName, page, pageLimit);
   }
 
   public static Call<Article> itemDetail(String id) {

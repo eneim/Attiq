@@ -18,20 +18,12 @@ public class BaseFragment extends Fragment {
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     ButterKnife.bind(this, view);
-  }
-
-  @Override public void onResume() {
-    super.onResume();
     EventBus.getDefault().register(this);
-  }
-
-  @Override public void onPause() {
-    super.onPause();
-    EventBus.getDefault().unregister(this);
   }
 
   @CallSuper
   @Override public void onDestroyView() {
+    EventBus.getDefault().unregister(this);
     ButterKnife.unbind(this);
     super.onDestroyView();
   }

@@ -135,8 +135,7 @@ public class UserArticlesAdapter extends ListAdapter<Article> {
     }
   }
 
-  public static abstract class OnUserItemClickListener
-      implements OnItemClickListener {
+  public static abstract class OnUserItemClickListener implements OnItemClickListener {
 
     @Override
     public void onItemClick(BaseAdapter adapter,

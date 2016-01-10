@@ -37,6 +37,7 @@
 
     <string name="auth_add_account">Add Account</string>
     <string name="title_activity_item_detail">Article</string>
+    <string name="title_activity_tag_detail">Tag</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

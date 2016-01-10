@@ -96,10 +96,16 @@
 
                 </LinearLayout>
 
+                <FrameLayout
+                    android:id="@id/profile_info_tags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
                 <RelativeLayout
                     android:id="@+id/social_button_container"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/item_padding">
 
                     <ImageView
                         android:id="@+id/social_button_indicator"

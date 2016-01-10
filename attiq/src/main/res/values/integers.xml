@@ -8,4 +8,5 @@
     <item name="feed_view_id_mentioned_item" type="id"/>
     <item name="feed_view_id_tag" type="id"/>
     <item name="feed_view_id_info" type="id"/>
+    <item name="profile_info_tags" type="id"/>
 </resources>

@@ -1,6 +1,5 @@
 package im.ene.lab.attiq.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,17 +16,15 @@ import android.widget.TextView;
 
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
-import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.ListAdapter;
+import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.TypedEvent;
 import im.ene.lab.attiq.widgets.EndlessScrollListener;
 import im.ene.lab.attiq.widgets.MultiSwipeRefreshLayout;
 import im.ene.lab.attiq.widgets.NonEmptyRecyclerView;
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -55,14 +52,12 @@ public abstract class ListFragment<E>
   /**
    * Default item count per page
    */
-  private static final int DEFAULT_THRESHOLD = 20;
+  private static final int DEFAULT_THRESHOLD = ApiClient.DEFAULT_PAGE_LIMIT;
 
   /**
    * Default first page for API call
    */
   private static final int DEFAULT_FIRST_PAGE = 1;
-
-  protected Realm mRealm;
 
   // In my experience, GridLayout provide more accurate Cell's measurement. It may have worse
   // performance (comparing to its super class LinearLayoutManager), but this a reasonable trade
@@ -84,12 +79,6 @@ public abstract class ListFragment<E>
   // should queue the Change event up, and remove the duplicated ones to save resources
   private Handler mHandler = new Handler(this);
 
-  private RealmChangeListener mDataChangeListener = new RealmChangeListener() {
-    @Override public void onChange() {
-      mHandler.removeMessages(MESSAGE_UPDATE_DATA);
-      mHandler.sendEmptyMessageDelayed(MESSAGE_UPDATE_DATA, 200);
-    }
-  };
   // This object requires a LayoutManager, so it must be initialized after we create our
   // LayoutManager.
   private EndlessScrollListener mEndlessScrollListener;
@@ -126,30 +115,13 @@ public abstract class ListFragment<E>
     mAdapter.loadItems(isLoadingMore, mPage, DEFAULT_THRESHOLD, null, this);
   }
 
-  @Override public void onAttach(Context context) {
-    super.onAttach(context);
-    mRealm = Attiq.realm();
-    mRealm.addChangeListener(mDataChangeListener);
-  }
-
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
     return inflater.inflate(R.layout.fragment_general_recycler_view, container, false);
   }
 
-  @Override public void onResume() {
-    super.onResume();
-    mHandler.removeMessages(MESSAGE_LOAD_RELOAD);
-    mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
-  }
-
   @Override public void onDetach() {
-    if (mRealm != null) {
-      mRealm.removeChangeListener(mDataChangeListener);
-      mRealm.close();
-    }
-    mDataChangeListener = null;
     super.onDetach();
   }
 
@@ -174,11 +146,15 @@ public abstract class ListFragment<E>
     mRecyclerView.setAdapter(mAdapter);
     mRecyclerView.setErrorView(mErrorView);
     mRecyclerView.setEmptyView(mEmptyView);
+
+    mHandler.removeMessages(MESSAGE_LOAD_RELOAD);
+    mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
   }
 
   @Override public void onDestroyView() {
     mRecyclerView.removeOnScrollListener(mEndlessScrollListener);
     mEndlessScrollListener = null;
+    mHandler.removeCallbacksAndMessages(null);
     super.onDestroyView();
   }
 
@@ -203,7 +179,8 @@ public abstract class ListFragment<E>
   }
 
   @Override public void onResponse(Response<List<E>> response) {
-    Log.d(TAG, "onResponse() called with: " + "response = [" + response + "]");
+    Log.d(getClass().getSimpleName(),
+        "onResponse() called with: " + "response = [" + response + "]");
     if (response.code() != 200) {
       EventBus.getDefault().post(new TypedEvent<>(false,
           new Event.Error(response.code(), response.message()), null, mPage));
@@ -229,7 +206,7 @@ public abstract class ListFragment<E>
   }
 
   @Override public void onFailure(Throwable t) {
-    Log.d(TAG, "onFailure() called with: " + "t = [" + t + "]");
+    Log.d(getClass().getSimpleName(), "onFailure() called with: " + "t = [" + t + "]");
     EventBus.getDefault().post(new TypedEvent<>(false,
         new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null, mPage));
 

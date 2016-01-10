@@ -15,6 +15,7 @@
         <![CDATA[<a href="http://qiita.com/%1$s">%2$s</a>、%3$s（<a href="http://qiita.com/%4$s/items/%5$s/revisions">修正あり</a>）]]>
     </string>
     <string name="title_activity_item_detail">アイテム詳細</string>
+    <string name="title_activity_tag_detail">タグ詳細</string>
     <string name="title_activity_profile">プロフィル</string>
     <string name="auth_add_account">アカウント追加</string>
     <string name="article_comment">%2$s（%1$d件）</string>
