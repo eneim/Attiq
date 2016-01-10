@@ -601,12 +601,4 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     abstract void onDocument(Document response);
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == android.R.id.home) {
-      navigateUpOrBack(this, null);
-      return true;
-    }
-
-    return super.onOptionsItemSelected(item);
-  }
 }

@@ -144,7 +144,10 @@
     <string name="tab_title_items">Posts</string>
     <string name="tab_title_stocks">Stocks</string>
     <string name="tab_title_tags">Following Tags</string>
+    <string name="user_connection_follower">Follower</string>
     <string name="user_connection_followers">Followers</string>
+
     <string name="user_connection_following">Following</string>
+    <string name="user_connection_item">Post</string>
     <string name="user_connection_items">Posts</string>
 </resources>

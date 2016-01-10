@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.util.event.Event;
@@ -80,5 +81,14 @@ public class BaseActivity extends AppCompatActivity {
         NavUtils.navigateUpTo(currentActivity, intent);
       }
     }
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      navigateUpOrBack(this, null);
+      return true;
+    }
+
+    return super.onOptionsItemSelected(item);
   }
 }

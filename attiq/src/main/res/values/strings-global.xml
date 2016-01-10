@@ -14,4 +14,19 @@
     <string name="client_secret">f2c8b222d0d77238e5ad7132a52ca4127c62a85a</string>
 
     <string name="transition_story_title_background" translatable="false">story_title_background</string>
+
+    <plurals name="user_followers">
+        <item quantity="one">@string/user_connection_follower</item>
+        <item quantity="other">@string/user_connection_followers</item>
+    </plurals>
+
+    <plurals name="user_following">
+        <item quantity="one">@string/user_connection_following</item>
+        <item quantity="other">@string/user_connection_following</item>
+    </plurals>
+
+    <plurals name="user_items">
+        <item quantity="one">@string/user_connection_item</item>
+        <item quantity="other">@string/user_connection_items</item>
+    </plurals>
 </resources>

@@ -2,6 +2,7 @@ package im.ene.lab.attiq.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,7 +19,6 @@ import android.text.Spanned;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -81,6 +81,16 @@ public class ProfileActivity extends BaseActivity {
   @Bind(R.id.profile_name) TextView mProfileName;
   @Bind(R.id.profile_description) TextView mProfileDescription;
   @Bind(R.id.description_container) LinearLayout mDescription;
+
+  @Bind(R.id.user_item_count) TextView mItemCount;
+  @Bind(R.id.user_item_count_quantity) TextView mItemQuantity;
+
+  @Bind(R.id.user_follower_count) TextView mFollowerCount;
+  @Bind(R.id.user_follower_count_quantity) TextView mFollowerQuantity;
+
+  @Bind(R.id.user_following_count) TextView mFollowingCount;
+  @Bind(R.id.user_following_count_quantity) TextView mFollowingQuantity;
+
   // Others
   // @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
   @BindDimen(R.dimen.item_padding_half) int mImageBorderWidth;
@@ -324,8 +334,9 @@ public class ProfileActivity extends BaseActivity {
         mSpannableSubtitle = new SpannableString(mUser.getName());
       }
 
-      updateDescription();
       updateTitle();
+      updateDescription();
+      updateQuantities();
       updateSocialButtons();
     }
   }
@@ -352,6 +363,24 @@ public class ProfileActivity extends BaseActivity {
 
       mDescription.addView(view);
     }
+  }
+
+  private void updateQuantities() {
+    if (mUser == null || isFinishing()) {
+      return;
+    }
+
+    final Resources res = getResources();
+    mItemCount.setText(mUser.getItemsCount() + "");
+    mItemQuantity.setText(res.getQuantityString(R.plurals.user_items, mUser.getItemsCount()));
+
+    mFollowerCount.setText(mUser.getFollowersCount() + "");
+    mFollowerQuantity.setText(
+        res.getQuantityString(R.plurals.user_followers, mUser.getFollowersCount()));
+
+    mFollowingCount.setText(mUser.getFolloweesCount() + "");
+    mFollowingQuantity.setText(
+        res.getQuantityString(R.plurals.user_following, mUser.getFolloweesCount()));
   }
 
   private void updateTitle() {
@@ -449,15 +478,6 @@ public class ProfileActivity extends BaseActivity {
   @OnClick(R.id.text_action_follow) void followUnFollow() {
     mHandler.removeMessages(MESSAGE_ACTION_FOLLOW);
     mHandler.sendEmptyMessageDelayed(MESSAGE_ACTION_FOLLOW, HANDLER_DELAY);
-  }
-
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == android.R.id.home) {
-      navigateUpOrBack(this, null);
-      return true;
-    }
-
-    return super.onOptionsItemSelected(item);
   }
 
   private static class ProfileViewPagerAdapter extends FragmentStatePagerAdapter {
