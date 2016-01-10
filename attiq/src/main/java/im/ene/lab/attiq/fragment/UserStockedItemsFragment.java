@@ -9,6 +9,7 @@ import android.view.View;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
+import im.ene.lab.attiq.adapters.ArticleListAdapter;
 import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.adapters.ListAdapter;
 import im.ene.lab.attiq.adapters.UserStockArticlesAdapter;
@@ -63,7 +64,7 @@ public class UserStockedItemsFragment extends ListFragment<Article> {
     mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
         DividerItemDecoration.VERTICAL_LIST));
 
-    mItemClickListener = new UserStockArticlesAdapter.OnUserItemClickListener() {
+    mItemClickListener = new ArticleListAdapter.OnArticleClickListener() {
       @Override public void onUserClick(User user) {
         startActivity(ProfileActivity.createIntent(getContext(), user.getId()));
       }

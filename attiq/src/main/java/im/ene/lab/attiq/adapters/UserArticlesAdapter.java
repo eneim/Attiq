@@ -1,9 +1,6 @@
 package im.ene.lab.attiq.adapters;
 
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.view.ViewGroup;
 
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.Article;
@@ -22,24 +19,6 @@ public class UserArticlesAdapter extends ArticleListAdapter {
   public UserArticlesAdapter(String userId) {
     super();
     this.mUserId = userId;
-  }
-
-  @Override
-  public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view = ArticleListAdapter.ViewHolder.createViewHolder(parent, viewType).itemView;
-    final ViewHolder viewHolder = new ViewHolder(view);
-    viewHolder.setOnViewHolderClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        int position = viewHolder.getAdapterPosition();
-        if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-          mOnItemClickListener.onItemClick(
-              UserArticlesAdapter.this, viewHolder, view, position, getItemId(position)
-          );
-        }
-      }
-    });
-
-    return viewHolder;
   }
 
   @Override
@@ -62,10 +41,4 @@ public class UserArticlesAdapter extends ArticleListAdapter {
     });
   }
 
-  public static class ViewHolder extends ArticleListAdapter.ViewHolder {
-
-    public ViewHolder(View view) {
-      super(view);
-    }
-  }
 }

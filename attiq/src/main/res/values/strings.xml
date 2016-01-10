@@ -41,8 +41,8 @@
     <string name="title_activity_tag_detail">Tag</string>
     <string name="title_activity_tag">Tag: %1$s</string>
     <plurals name="title_activity_tag_quantity">
-        <item quantity="one">Tag: %1$s (%2$d post)</item>
-        <item quantity="other">Tag: %1$s (%2$d posts)</item>
+        <item quantity="one">%1$d post</item>
+        <item quantity="other">%1$d posts</item>
     </plurals>
     <string name="large_text">
         "Material is the metaphor.\n\n"

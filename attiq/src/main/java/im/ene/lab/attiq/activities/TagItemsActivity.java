@@ -53,8 +53,8 @@ public class TagItemsActivity extends BaseActivity implements TagItemsFragment.C
       String itemCount = headers.get("Total-Count");
       try {
         int count = Integer.parseInt(itemCount);
-        setTitle(getResources().getQuantityString(R.plurals.title_activity_tag_quantity,
-            count, mTagId, count));
+        mToolbar.setSubtitle(
+            getResources().getQuantityString(R.plurals.title_activity_tag_quantity, count, count));
       } catch (NumberFormatException er) {
         er.printStackTrace();
       }
