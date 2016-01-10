@@ -11,9 +11,7 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import im.ene.lab.attiq.R;
@@ -74,28 +72,6 @@ public class UIUtil {
     } else {
       return context.getResources().getDrawable(id);
     }
-  }
-
-  public static void setCompoundDrawablesRelativeWithIntrinsicBounds(@NonNull TextView view,
-                                                                     @Nullable Drawable start,
-                                                                     @Nullable Drawable top,
-                                                                     @Nullable Drawable end,
-                                                                     @Nullable Drawable bottom) {
-
-    if (start != null) {
-      start.setBounds(0, 0, start.getIntrinsicWidth(), start.getIntrinsicHeight());
-    }
-    if (end != null) {
-      end.setBounds(0, 0, end.getIntrinsicWidth(), end.getIntrinsicHeight());
-    }
-    if (top != null) {
-      top.setBounds(0, 0, top.getIntrinsicWidth(), top.getIntrinsicHeight());
-    }
-    if (bottom != null) {
-      bottom.setBounds(0, 0, bottom.getIntrinsicWidth(), bottom.getIntrinsicHeight());
-    }
-
-    view.setCompoundDrawablesRelative(start, top, end, bottom);
   }
 
   public static void commingSoon(Context context) {

@@ -82,18 +82,33 @@ interface Api {
 
     @GET("/api/v2/authenticated_user") Call<Profile> me();
 
-    @GET("/api/v2/authenticated_user/items") Call<List<Article>> myItems();
+    @GET("/api/v2/authenticated_user/items") Call<List<Article>> myItems(
+        @Query("page") int page,
+        @Query("per_page") int limit
+    );
 
-    @GET("/api/v2/users/{user_id}/following_tags") Call<List<Tag>> myTags(
+    @GET("/api/v2/users/{user_id}/following_tags") Call<List<Tag>> tags(
         @Path("item_id") String id,
         @Query("page") int page,
         @Query("per_page") int limit
     );
 
-    @GET("/api/v2/items") Call<List<Article>> items(
+    @GET("/api/v2/items") Call<List<Article>> searchItems(
         @Query("page") int page,
         @Query("per_page") int limit,
         @Query("query") String query
+    );
+
+    @GET("/api/v2/users/{user_id}/items") Call<List<Article>> userItems(
+        @Path("user_id") String userId,
+        @Query("page") int page,
+        @Query("per_page") int limit
+    );
+
+    @GET("/api/v2/users/{user_id}/stocks") Call<List<Article>> userStockedItems(
+        @Path("user_id") String userId,
+        @Query("page") int page,
+        @Query("per_page") int limit
     );
 
     @GET("/api/v2/items/{item_id}") Call<Article> itemDetail(

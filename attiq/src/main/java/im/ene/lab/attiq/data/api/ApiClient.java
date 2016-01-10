@@ -73,7 +73,15 @@ public final class ApiClient {
   }
 
   public static Call<List<Article>> items(int page, int pageLimit, String query) {
-    return TWO.items(page, pageLimit, query);
+    return TWO.searchItems(page, pageLimit, query);
+  }
+
+  public static Call<List<Article>> userItems(String userId, int page, int pageLimit) {
+    return TWO.userItems(userId, page, pageLimit);
+  }
+
+  public static Call<List<Article>> userStockedItems(String userId, int page, int pageLimit) {
+    return TWO.userStockedItems(userId, page, pageLimit);
   }
 
   public static Call<Article> itemDetail(String id) {
@@ -107,7 +115,7 @@ public final class ApiClient {
   }
 
   public static Call<List<Tag>> myTags(int page, int limit) {
-    return TWO.myTags("", page, limit);
+    return TWO.tags("", page, limit);
   }
 
   public static Call<User> user(@NonNull String userName) {

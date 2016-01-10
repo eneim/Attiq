@@ -11,9 +11,9 @@ import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
 import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.adapters.ListAdapter;
-import im.ene.lab.attiq.adapters.UserStockItemsAdapter;
-import im.ene.lab.attiq.data.zero.Post;
-import im.ene.lab.attiq.data.one.PublicUser;
+import im.ene.lab.attiq.adapters.UserStockArticlesAdapter;
+import im.ene.lab.attiq.data.two.Article;
+import im.ene.lab.attiq.data.two.User;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import io.realm.Realm;
 import retrofit2.Response;
@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Created by eneim on 1/6/16.
  */
-public class UserStockedItemsFragment extends ListFragment<Post> {
+public class UserStockedItemsFragment extends ListFragment<Article> {
 
   private static final String ARGS_USER_ID = "attiq_fragment_args_user_id";
 
@@ -41,8 +41,8 @@ public class UserStockedItemsFragment extends ListFragment<Post> {
     return fragment;
   }
 
-  @NonNull @Override protected ListAdapter<Post> createAdapter() {
-    return new UserStockItemsAdapter(mUserId);
+  @NonNull @Override protected ListAdapter<Article> createAdapter() {
+    return new UserStockArticlesAdapter(mUserId);
   }
 
   private BaseAdapter.OnItemClickListener mItemClickListener;
@@ -63,13 +63,13 @@ public class UserStockedItemsFragment extends ListFragment<Post> {
     mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
         DividerItemDecoration.VERTICAL_LIST));
 
-    mItemClickListener = new UserStockItemsAdapter.OnUserItemClickListener() {
-      @Override public void onUserClick(PublicUser user) {
-        startActivity(ProfileActivity.createIntent(getContext(), user.getUrlName()));
+    mItemClickListener = new UserStockArticlesAdapter.OnUserItemClickListener() {
+      @Override public void onUserClick(User user) {
+        startActivity(ProfileActivity.createIntent(getContext(), user.getId()));
       }
 
-      @Override public void onItemContentClick(Post item) {
-        startActivity(ItemDetailActivity.createIntent(getContext(), item.getUuid()));
+      @Override public void onItemContentClick(Article item) {
+        startActivity(ItemDetailActivity.createIntent(getContext(), item.getId()));
       }
     };
 
@@ -82,9 +82,9 @@ public class UserStockedItemsFragment extends ListFragment<Post> {
     super.onDestroyView();
   }
 
-  @Override public void onResponse(Response<List<Post>> response) {
+  @Override public void onResponse(Response<List<Article>> response) {
     super.onResponse(response);
-    List<Post> posts = response.body();
+    List<Article> posts = response.body();
     Realm realm = Attiq.realm();
     realm.beginTransaction();
     realm.copyToRealmOrUpdate(posts);

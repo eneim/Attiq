@@ -9,15 +9,15 @@ import android.view.View;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.adapters.ListAdapter;
-import im.ene.lab.attiq.adapters.UserItemsAdapter;
-import im.ene.lab.attiq.data.one.PublicUser;
-import im.ene.lab.attiq.data.zero.Post;
+import im.ene.lab.attiq.adapters.UserArticlesAdapter;
+import im.ene.lab.attiq.data.two.Article;
+import im.ene.lab.attiq.data.two.User;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
 
 /**
  * Created by eneim on 1/6/16.
  */
-public class UserItemsFragment extends ListFragment<Post> {
+public class UserItemsFragment extends ListFragment<Article> {
 
   private static final String ARGS_USER_ID = "attiq_fragment_args_user_id";
 
@@ -35,8 +35,8 @@ public class UserItemsFragment extends ListFragment<Post> {
     return fragment;
   }
 
-  @NonNull @Override protected ListAdapter<Post> createAdapter() {
-    return new UserItemsAdapter(mUserId);
+  @NonNull @Override protected ListAdapter<Article> createAdapter() {
+    return new UserArticlesAdapter(mUserId);
   }
 
   private BaseAdapter.OnItemClickListener mItemClickListener;
@@ -57,13 +57,13 @@ public class UserItemsFragment extends ListFragment<Post> {
     mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
         DividerItemDecoration.VERTICAL_LIST));
 
-    mItemClickListener = new UserItemsAdapter.OnUserItemClickListener() {
-      @Override public void onUserClick(PublicUser user) {
+    mItemClickListener = new UserArticlesAdapter.OnUserItemClickListener() {
+      @Override public void onUserClick(User user) {
         // startActivity(ProfileActivity.createIntent(getContext(), user.getUrlName()));
       }
 
-      @Override public void onItemContentClick(Post item) {
-        startActivity(ItemDetailActivity.createIntent(getContext(), item.getUuid()));
+      @Override public void onItemContentClick(Article item) {
+        startActivity(ItemDetailActivity.createIntent(getContext(), item.getId()));
       }
     };
 
