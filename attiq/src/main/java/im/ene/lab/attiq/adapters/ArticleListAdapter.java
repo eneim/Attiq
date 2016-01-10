@@ -16,7 +16,6 @@ import com.wefika.flowlayout.FlowLayout;
 import butterknife.Bind;
 import butterknife.BindColor;
 import butterknife.BindDimen;
-import butterknife.ButterKnife;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.two.Article;
@@ -131,8 +130,6 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
     public abstract void onUserClick(User user);
 
     public abstract void onItemContentClick(Article item);
-
-    public abstract void onTagClick(String tagId);
   }
 
   public static class ViewHolder extends BaseListAdapter.ViewHolder<Article> {
@@ -158,8 +155,6 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
     @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
     @BindColor(R.color.colorAccent) int mIconBorderColor;
 
-    private OnArticleClickListener mListener;
-
     public ViewHolder(View view) {
       super(view);
       mContext = itemView.getContext();
@@ -171,9 +166,6 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
 
     @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {
       super.setOnViewHolderClickListener(listener);
-      if (listener instanceof OnArticleClickListener) {
-        mListener = (OnArticleClickListener) listener;
-      }
     }
 
     @Override public void bind(final Article item) {
@@ -214,21 +206,14 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
       mItemTags.removeAllViews();
       if (!UIUtil.isEmpty(item.getTags())) {
         for (ItemTag tag : item.getTags()) {
-          final View tagView = mInflater.inflate(R.layout.widget_tag_view, mItemTags, false);
-          if (mListener != null) {
-            tagView.setOnClickListener(new View.OnClickListener() {
-              @Override public void onClick(View v) {
-                mListener.onTagClick(item.getId());
-              }
-            });
-          }
-
-          final TextView tagName = ButterKnife.findById(tagView, R.id.tag_name);
-          final ImageView tagIcon = ButterKnife.findById(tagView, R.id.tag_icon);
-          tagIcon.setVisibility(View.GONE);
-          mItemTags.addView(tagView);
-
-          tagName.setText(tag.getName());
+          final TextView tagName = (TextView) mInflater
+              .inflate(R.layout.widget_tag_textview, mItemTags, false);
+          tagName.setClickable(true);
+          tagName.setMovementMethod(LinkMovementMethod.getInstance());
+          tagName.setText(Html.fromHtml(mContext.getString(R.string.local_tag_url,
+              tag.getName(), tag.getName())));
+          UIUtil.stripUnderlines(tagName);
+          mItemTags.addView(tagName);
         }
       }
     }

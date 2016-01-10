@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import im.ene.lab.attiq.activities.ItemDetailActivity;
+import im.ene.lab.attiq.adapters.ArticleListAdapter;
 import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.adapters.ListAdapter;
 import im.ene.lab.attiq.adapters.UserArticlesAdapter;
@@ -52,9 +53,9 @@ public class UserItemsFragment extends ListFragment<Article> {
     mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
         DividerItemDecoration.VERTICAL_LIST));
 
-    mItemClickListener = new UserArticlesAdapter.OnUserItemClickListener() {
+    mItemClickListener = new ArticleListAdapter.OnArticleClickListener() {
       @Override public void onUserClick(User user) {
-        // Do nothing
+
       }
 
       @Override public void onItemContentClick(Article item) {

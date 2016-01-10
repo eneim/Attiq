@@ -28,6 +28,7 @@
     </string>
     <string name="tag_new_post">has new post</string>
 
+    <string name="local_tag_url">&lt;a href="attiq://qiita.com/tag/%1$s">%2$s&lt;/a></string>
     <!-- somehow doesn't work well, need help! -->
 
     <!--<plurals name="plural_item_info">-->
@@ -39,6 +40,10 @@
     <string name="title_activity_item_detail">Article</string>
     <string name="title_activity_tag_detail">Tag</string>
     <string name="title_activity_tag">Tag: %1$s</string>
+    <plurals name="title_activity_tag_quantity">
+        <item quantity="one">Tag: %1$s (%2$d post)</item>
+        <item quantity="other">Tag: %1$s (%2$d posts)</item>
+    </plurals>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

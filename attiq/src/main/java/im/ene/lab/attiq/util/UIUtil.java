@@ -11,7 +11,11 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.text.Spannable;
+import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.style.URLSpan;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import im.ene.lab.attiq.R;
@@ -116,5 +120,29 @@ public class UIUtil {
 
   public static String beautify(String text) {
     return text == null ? null : text.trim();
+  }
+
+  public static void stripUnderlines(TextView textView) {
+    Spannable s = (Spannable) textView.getText();
+    URLSpan[] spans = s.getSpans(0, s.length(), URLSpan.class);
+    for (URLSpan span : spans) {
+      int start = s.getSpanStart(span);
+      int end = s.getSpanEnd(span);
+      s.removeSpan(span);
+      span = new NoUnderlineURLSpan(span.getURL());
+      s.setSpan(span, start, end, 0);
+    }
+    textView.setText(s);
+  }
+
+  private static class NoUnderlineURLSpan extends URLSpan {
+    public NoUnderlineURLSpan(String url) {
+      super(url);
+    }
+
+    @Override public void updateDrawState(TextPaint ds) {
+      super.updateDrawState(ds);
+      ds.setUnderlineText(false);
+    }
   }
 }
