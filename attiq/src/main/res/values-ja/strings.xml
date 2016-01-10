@@ -29,4 +29,8 @@
     <string name="state_not_following">フォローする</string>
     <string name="tab_title_items">投稿リスト</string>
     <string name="tab_title_stocks">ストック</string>
+    <string name="tab_title_tags">フォロー中タグ</string>
+    <string name="user_connection_followers">フォロワー</string>
+    <string name="user_connection_following">フォロー中</string>
+    <string name="user_connection_items">投稿</string>
 </resources>

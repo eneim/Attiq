@@ -481,7 +481,7 @@ public class ProfileActivity extends BaseActivity {
     }
 
     @Override public int getCount() {
-      return 3;
+      return 2;
     }
 
     @Override public CharSequence getPageTitle(int position) {
@@ -489,6 +489,8 @@ public class ProfileActivity extends BaseActivity {
         return Attiq.creator().getString(R.string.tab_title_items);
       } else if (position == 1) {
         return Attiq.creator().getString(R.string.tab_title_stocks);
+      } else if (position == 2) {
+        return Attiq.creator().getString(R.string.tab_title_tags);
       }
 
       // fallback
