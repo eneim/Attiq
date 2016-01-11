@@ -178,17 +178,10 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
     @Override public void bind(final Article item) {
       if (item.getUser() != null) {
         String userName = item.getUser().getId();
-        if (item.getCreatedAt().equals(item.getUpdatedAt())) {
-          mItemUserInfo.setText(Html.fromHtml(mContext.getString(R.string.item_user_info,
-              userName, userName,
-              TimeUtil.beautify(item.getCreatedAt())
-          )));
-        } else {
-          mItemUserInfo.setText(Html.fromHtml(mContext.getString(R.string.item_user_info_edited,
-              userName, userName,
-              TimeUtil.beautify(item.getCreatedAt()),
-              userName, item.getId())));
-        }
+        mItemUserInfo.setText(Html.fromHtml(mContext.getString(R.string.item_user_info,
+            userName, userName,
+            TimeUtil.beautify(item.getCreatedAt())
+        )));
         mItemUserInfo.setVisibility(View.VISIBLE);
       } else {
         mItemUserInfo.setVisibility(View.GONE);

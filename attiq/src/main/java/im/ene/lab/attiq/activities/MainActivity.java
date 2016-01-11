@@ -19,6 +19,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -414,6 +415,21 @@ public class MainActivity extends BaseActivity
 
       EventBus.getDefault().post(new StateEvent(true, null, mState));
     }
+  }
+
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
+    // Inflate the menu; this adds items to the action bar if it is present.
+    getMenuInflater().inflate(R.menu.main, menu);
+    return true;
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    if (R.id.action_search == item.getItemId()) {
+      //
+      return true;
+    }
+
+    return super.onOptionsItemSelected(item);
   }
 
   private static class MainPagerAdapter extends FragmentStatePagerAdapter {

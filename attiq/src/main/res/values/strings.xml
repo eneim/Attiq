@@ -13,11 +13,6 @@
         &lt;a href="attiq://qiita.com/user/%1$s">%2$s&lt;/a> posted %3$s
     </string>
 
-    <string name="item_user_info_edited">
-        &lt;a href="attiq://qiita.com/user/%1$s">%2$s&lt;/a> posted %3$s&#32;
-        &lt;a href="http://qiita.com/%4$s/items/%5$s/revisions">(edited)&lt;/a>
-    </string>
-
     <string name="item_url">https://qiita.com/%1$s/items/%2$s</string>
 
     <string name="item_info_one">%1$d stocked, 1 comment</string>
@@ -140,6 +135,7 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
     <string name="action_filter">Filter</string>
     <string name="action_item_menu">Menu</string>
     <string name="title_activity_profile">Profile</string>
