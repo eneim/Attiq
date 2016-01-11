@@ -17,15 +17,17 @@ public class FeedItem extends RealmObject {
 
   public static final String FOLLOWABLE_TYPE_USER = "User";
 
-  public static final String TRACKABLE_TYPE_STOCK = "StockItem";
+  public static final String TRACKABLE_TYPE_PUBLIC = "PublicDomainArticle"; // someone posts smthg
 
-  public static final String TRACKABLE_TYPE_TAG = "Tagging";
+  public static final String TRACKABLE_TYPE_STOCK = "StockItem";  // someone stocks smthg
 
-  public static final String TRACKABLE_TYPE_FOLLOW_TAG = "TagFollowlist";
+  public static final String TRACKABLE_TYPE_TAG = "Tagging";  // sometag has some new posts
 
-  public static final String TRACKABLE_TYPE_FOLLOW_USER = "FollowingUser";
+  public static final String TRACKABLE_TYPE_FOLLOW_TAG = "TagFollowlist"; // follow new post
 
-  public static final String TRACKABLE_TYPE_COMMENT = "Comment";
+  public static final String TRACKABLE_TYPE_FOLLOW_USER = "FollowingUser";  // follow new user
+
+  public static final String TRACKABLE_TYPE_COMMENT = "Comment";  // comment on post
 
   @SerializedName("created_at_in_unixtime")
   @Expose

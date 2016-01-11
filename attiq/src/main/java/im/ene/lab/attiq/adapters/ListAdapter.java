@@ -18,4 +18,6 @@ public abstract class ListAdapter<T> extends BaseListAdapter<T> {
 
   public abstract void addItems(List<T> items);
 
+  public abstract void clear();
+
 }

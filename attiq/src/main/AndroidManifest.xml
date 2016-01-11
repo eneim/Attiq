@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="im.ene.lab.attiq"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest package="im.ene.lab.attiq"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -54,12 +53,10 @@
                     android:host="qiita.com"
                     android:pathPattern="/.*/items/.*"
                     android:scheme="https"/>
-
                 <data
                     android:host="qiita.com"
                     android:pathPattern="/tag/.*"
                     android:scheme="attiq"/>
-
                 <data
                     android:host="qiita.com"
                     android:pathPattern="/user/.*"
@@ -88,6 +85,16 @@
             android:label="@string/title_activity_profile"
             android:screenOrientation="portrait"
             android:theme="@style/Attiq.Theme.Profile">
+        </activity>
+        <activity
+            android:name=".activities.TestActivity"
+            android:label="@string/title_activity_test"
+            android:theme="@style/Attiq.Theme.NoActionBar">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN"/>-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+            <!--</intent-filter>-->
         </activity>
     </application>
 

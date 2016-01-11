@@ -47,7 +47,7 @@ public abstract class ListFragment<E>
    * Message sent from anywhere we want to load/reload data (refresh to reload, or scroll down to
    * load more items)
    */
-  private static final int MESSAGE_LOAD_RELOAD = 1 << 2;
+  protected static final int MESSAGE_LOAD_RELOAD = 1 << 2;
 
   /**
    * Default item count per page
@@ -98,8 +98,12 @@ public abstract class ListFragment<E>
     return false;
   }
 
-  private void loadReload() {
+  protected void loadReload() {
     boolean isRefreshing = mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing();
+    if (isRefreshing) {
+      mAdapter.clear();
+    }
+
     boolean isLoadingMore = mAdapter.getItemCount() > 0 && !isRefreshing;
     if (isLoadingMore) {
       mPage++;

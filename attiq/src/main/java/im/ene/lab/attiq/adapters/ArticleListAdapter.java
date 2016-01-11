@@ -45,6 +45,13 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
     setHasStableIds(true);
   }
 
+  @Override public void clear() {
+    synchronized (LOCK) {
+      mItems.clear();
+      notifyDataSetChanged();
+    }
+  }
+
   @Override
   public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     final ViewHolder viewHolder = ViewHolder.createViewHolder(parent, viewType);
@@ -67,10 +74,6 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
   }
 
   @Override public int getItemCount() {
-    if (mItems == null) {
-      return 0;
-    }
-
     return mItems.size();
   }
 

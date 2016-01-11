@@ -7,34 +7,28 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import de.greenrobot.event.EventBus;
-import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
-import im.ene.lab.attiq.adapters.FeedAdapter;
-import im.ene.lab.attiq.adapters.RealmListAdapter;
+import im.ene.lab.attiq.adapters.BaseAdapter;
+import im.ene.lab.attiq.adapters.FeedListAdapter;
+import im.ene.lab.attiq.adapters.ListAdapter;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.zero.FeedItem;
-import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemDetailEvent;
 import im.ene.lab.attiq.util.event.TypedEvent;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
-import io.realm.Realm;
-import io.realm.RealmResults;
-import io.realm.Sort;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
  * Created by eneim on 12/25/15.
  */
-public class FeedListFragment extends RealmListFragment<FeedItem> {
+public class FeedListFragment extends ListFragment<FeedItem> {
 
   public FeedListFragment() {
 
@@ -46,7 +40,7 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
 
   private static final String TAG = "FeedListFragment";
 
-  private FeedAdapter.OnFeedItemClickListener mOnItemClickListener;
+  private BaseAdapter.OnItemClickListener mOnItemClickListener;
 
   private Callback<Article> mOnArticleLoaded = new Callback<Article>() {
     @Override public void onResponse(Response<Article> response) {
@@ -70,12 +64,7 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
         DividerItemDecoration.VERTICAL_LIST));
 
-    mOnItemClickListener = new FeedAdapter.OnFeedItemClickListener() {
-      @Override public void onFollowingUserClick(FeedItem host) {
-        Uri itemUri = Uri.parse(host.getMentionedObjectUrl());
-        startActivity(ProfileActivity.createIntent(getContext(), itemUri.getLastPathSegment()));
-      }
-
+    mOnItemClickListener = new FeedListAdapter.OnFeedItemClickListener() {
       @Override public void onMentionedUserClick(FeedItem host) {
         Uri itemUri = Uri.parse(host.getMentionedObjectUrl());
         ApiClient.itemDetail(itemUri.getLastPathSegment()).enqueue(mOnArticleLoaded);
@@ -83,10 +72,6 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
 
       @Override public void onItemContentClick(FeedItem item) {
         startActivity(ItemDetailActivity.createIntent(getContext(), item.getMentionedObjectUuid()));
-      }
-
-      @Override public void onFollowingTagClick(FeedItem host) {
-        // TODO open tag screen
       }
     };
 
@@ -107,10 +92,8 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     }
   }
 
-  @NonNull @Override protected RealmListAdapter<FeedItem> createAdapter() {
-    RealmResults<FeedItem> items = mRealm.where(FeedItem.class)
-        .findAllSorted("createdAtInUnixtime", Sort.DESCENDING);
-    return new FeedAdapter(items);
+  @NonNull @Override protected ListAdapter<FeedItem> createAdapter() {
+    return new FeedListAdapter();
   }
 
   @Override public void onFailure(Throwable t) {
@@ -120,25 +103,11 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
   @Override public void onResponse(Response<List<FeedItem>> response) {
     if (response.code() != 200) {
       EventBus.getDefault().post(new TypedEvent<>(false,
-          new Event.Error(response.code(), response.message()), null, 1));
+          new Event.Error(response.code(), ApiClient.parseError(response).message), null, 1));
     } else {
       List<FeedItem> items = response.body();
       if (!UIUtil.isEmpty(items)) {
-        for (FeedItem item : items) {
-          if (item.getMentionedObjectUuid() == null) {
-            try {
-              item.setMentionedObjectUuid(IOUtil.sha1(IOUtil.toString(item)));
-            } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-              e.printStackTrace();
-            }
-          }
-        }
-
-        Realm realm = Attiq.realm();
-        realm.beginTransaction();
-        realm.copyToRealmOrUpdate(items);
-        realm.commitTransaction();
-        realm.close();
+        mAdapter.addItems(items);
         EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), 1));
       }
     }

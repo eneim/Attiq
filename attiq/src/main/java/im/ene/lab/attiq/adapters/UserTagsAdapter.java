@@ -73,6 +73,13 @@ public class UserTagsAdapter extends ListAdapter<PublicTag> {
     }
   }
 
+  @Override public void clear() {
+    synchronized (LOCK) {
+      mItems.clear();
+      notifyDataSetChanged();
+    }
+  }
+
   @Override public PublicTag getItem(int position) {
     return mItems.get(position);
   }

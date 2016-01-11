@@ -1,8 +1,12 @@
 package im.ene.lab.attiq.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -14,38 +18,39 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.wefika.flowlayout.FlowLayout;
 
 import butterknife.Bind;
 import butterknife.BindColor;
 import butterknife.BindDimen;
-import butterknife.ButterKnife;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.zero.FeedItem;
+import im.ene.lab.attiq.util.TextViewTarget;
+import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
-import io.realm.RealmResults;
 import retrofit2.Callback;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by eneim on 12/25/15.
  */
-public class FeedAdapter extends RealmListAdapter<FeedItem> {
-
-  private final RealmResults<FeedItem> mItems;
+public class FeedListAdapter extends ListAdapter<FeedItem> {
 
   private static final int VIEW_TYPE_ITEM = 1 << 1;
-
   private static final int VIEW_TYPE_FOLLOW = 1 << 2;
+  private final ArrayList<FeedItem> mItems;
+  private final Object LOCK = new Object();
 
-  public FeedAdapter(RealmResults<FeedItem> items) {
+  public FeedListAdapter() {
     super();
-    this.mItems = items;
+    this.mItems = new ArrayList<>();
     setHasStableIds(true);
   }
 
@@ -66,7 +71,7 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
       @Override public void onClick(View view) {
         int position = viewHolder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-          mOnItemClickListener.onItemClick(FeedAdapter.this, viewHolder, view, position,
+          mOnItemClickListener.onItemClick(FeedListAdapter.this, viewHolder, view, position,
               getItemId(position));
         }
       }
@@ -75,19 +80,8 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
     return viewHolder;
   }
 
-  @Override public int getItemCount() {
-    if (mItems == null || !mItems.isValid()) {
-      return 0;
-    }
-    return mItems.size();
-  }
-
   @Override public FeedItem getItem(int position) {
     return mItems.get(position);
-  }
-
-  @Override public long getItemId(int position) {
-    return getItem(position).getCreatedAtInUnixtime();
   }
 
   @Override public int getItemViewType(int position) {
@@ -98,6 +92,14 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
     }
 
     return VIEW_TYPE_ITEM;
+  }
+
+  @Override public long getItemId(int position) {
+    return getItem(position).getCreatedAtInUnixtime();
+  }
+
+  @Override public int getItemCount() {
+    return mItems.size();
   }
 
   @Override
@@ -113,12 +115,34 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
     ApiClient.feed(createdAt).enqueue(callback);
   }
 
-  public static class FeedViewHolder extends BaseListAdapter.ViewHolder<FeedItem> {
+  @Override public void addItem(FeedItem item) {
+    synchronized (LOCK) {
+      mItems.add(item);
+      notifyItemInserted(getItemCount() - 1);
+    }
+  }
+
+  @Override public void addItems(List<FeedItem> items) {
+    synchronized (LOCK) {
+      int oldLen = getItemCount();
+      mItems.addAll(items);
+      notifyItemRangeInserted(oldLen, items.size());
+    }
+  }
+
+  @Override public void clear() {
+    synchronized (LOCK) {
+      mItems.clear();
+      notifyDataSetChanged();
+    }
+  }
+
+  public static class FeedViewHolder extends ViewHolder<FeedItem> {
 
     static final int LAYOUT_RES = R.layout.feed_item_view;
 
     private final LayoutInflater mInflater;
-
+    private final Context mContext;
     // Views
     @Bind(R.id.item_user_icon) ImageView mItemUserImage;
     @Bind(R.id.item_title) TextView mItemTitle;
@@ -126,19 +150,12 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
     @Bind(R.id.item_info) TextView mItemInfo;
     @Bind(R.id.item_posted_info) TextView mItemUserInfo;
     @Bind(R.id.feed_item_identity) LinearLayout mItemIdentity;
-
     // Others
     @BindDimen(R.dimen.tag_icon_size) int mTagIconSize;
     @BindDimen(R.dimen.tag_icon_size_half) int mTagIconSizeHalf;
-
     @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
     @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
     @BindColor(R.color.colorAccent) int mIconBorderColor;
-
-    // TODO take care of memory leak
-    private View.OnClickListener mListener;
-
-    private final Context mContext;
 
     public FeedViewHolder(View view) {
       super(view);
@@ -147,6 +164,7 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
       mItemUserInfo.setClickable(true);
       mItemUserInfo.setMovementMethod(LinkMovementMethod.getInstance());
       mItemTags.setVisibility(View.GONE);
+      mItemUserInfo.setVisibility(View.GONE);
     }
 
     void setupItemClick(FeedViewHolder vh, View view, FeedItem item,
@@ -159,13 +177,10 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
         listener.onItemContentClick(item);
       } else if (view == vh.mItemUserImage) {
         listener.onMentionedUserClick(item);
-      } else if (view.getId() == R.id.feed_view_id_tag) {
-        listener.onFollowingTagClick(item);
       }
     }
 
     @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {
-      mListener = listener;
       mItemUserImage.setOnClickListener(listener);
       itemView.setOnClickListener(listener);
     }
@@ -176,8 +191,6 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
           mContext.getString(R.string.item_info_many, item.getMentionedObjectStocksCount(),
               item.getMentionedObjectCommentsCount());
       mItemInfo.setText(itemInfo);
-
-      mItemUserInfo.setVisibility(View.GONE);
 
       mItemTitle.setText(item.getMentionedObjectName());
       final RequestCreator requestCreator;
@@ -197,34 +210,37 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
 
       mItemIdentity.setVisibility(View.VISIBLE);
       mItemIdentity.removeAllViews();
+
       if (FeedItem.TRACKABLE_TYPE_TAG.equals(item.getTrackableType())) {
-        final View tagView = mInflater.inflate(R.layout.widget_tag_view, mItemIdentity, false);
-        final TextView tagName = ButterKnife.findById(tagView, R.id.tag_name);
-        final ImageView tagIcon = ButterKnife.findById(tagView, R.id.tag_icon);
+        final TextView tagName =
+            (TextView) mInflater.inflate(R.layout.widget_tag_textview, mItemIdentity, false);
+        tagName.setClickable(true);
+        tagName.setMovementMethod(LinkMovementMethod.getInstance());
 
-        tagView.setId(R.id.feed_view_id_tag);
-        tagView.setOnClickListener(mListener);
-        mItemIdentity.addView(tagView);
-
-        tagName.setText(item.getFollowableName());
+        tagName.setText(Html.fromHtml(itemView.getContext().getString(R.string.local_tag_url,
+            item.getFollowableName(), item.getFollowableName())));
 
         Attiq.picasso().load(item.getFollowableImageUrl())
-            .resize(mTagIconSize, 0)
+            .resize(0, mTagIconSize)
             .transform(new RoundedTransformation(
                 mIconBorderWidth, mIconBorderColor, mTagIconSizeHalf))
-            .into(tagIcon, new com.squareup.picasso.Callback() {
-              @Override public void onSuccess() {
-                tagIcon.setVisibility(View.VISIBLE);
-              }
-
-              @Override public void onError() {
-                tagIcon.setVisibility(View.GONE);
+            .into(new TextViewTarget(tagName) {
+              @Override
+              public void onBitmapLoaded(TextView textView, Bitmap bitmap,
+                                         Picasso.LoadedFrom from) {
+                RoundedBitmapDrawable drawable =
+                    RoundedBitmapDrawableFactory.create(itemView.getResources(), bitmap);
+                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView,
+                    drawable, null, null, null);
               }
             });
+        UIUtil.stripUnderlines(tagName);
+        mItemIdentity.addView(tagName);
 
         final TextView infoText = (TextView) mInflater.inflate(R.layout.single_line_text_tiny,
             mItemIdentity, false);
         infoText.setText(R.string.tag_new_post);
+
         mItemIdentity.addView(infoText);
       } else if (FeedItem.TRACKABLE_TYPE_STOCK.equals(item.getTrackableType())) {
         TextView infoText = (TextView) mInflater.inflate(R.layout.single_line_text_tiny,
@@ -243,6 +259,21 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
         infoText.setMovementMethod(LinkMovementMethod.getInstance());
         infoText.setText(Html.fromHtml(mContext.getString(R.string.user_commented,
             item.getFollowableName(), item.getFollowableName())));
+
+        infoText.setId(R.id.feed_view_id_info);
+        mItemIdentity.addView(infoText);
+      } else if (FeedItem.TRACKABLE_TYPE_PUBLIC.equals(item.getTrackableType())) {
+        TextView infoText = (TextView) mInflater.inflate(R.layout.single_line_text_tiny,
+            mItemIdentity, false);
+        infoText.setClickable(true);
+        infoText.setMovementMethod(LinkMovementMethod.getInstance());
+
+        String userName = item.getFollowableName();
+        infoText.setText(Html.fromHtml(mContext.getString(R.string.item_user_info,
+            userName, userName,
+            TimeUtil.beautify(item.getCreatedAtInUnixtime())
+        )));
+
         infoText.setId(R.id.feed_view_id_info);
         mItemIdentity.addView(infoText);
       } else {
@@ -254,47 +285,21 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
   public static class FollowingViewHolder extends ViewHolder<FeedItem> {
 
     static final int LAYOUT_RES = R.layout.feed_item_simple_view;
-
+    private final LayoutInflater mInflater;
     @Bind(R.id.item_info) TextView mItemInfo;
-    // @Bind(R.id.item_tag) View mItemTag;
-
     // Others
-    @BindDimen(R.dimen.item_icon_size_small) int mTagIconSize;
-    @BindDimen(R.dimen.item_icon_size_small_half) int mTagIconSizeHalf;
-
-    @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
+    @BindDimen(R.dimen.item_icon_size_small) int mUserIconSize;
+    @BindDimen(R.dimen.item_icon_size_small_half) int mUserIconSizeHalf;
     @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
     @BindColor(R.color.colorAccent) int mIconBorderColor;
-
-    private final LayoutInflater mInflater;
-
-    private View.OnClickListener mListener;
+    @BindDimen(R.dimen.tag_icon_size) int mTagIconSize;
+    @BindDimen(R.dimen.tag_icon_size_half) int mTagIconSizeHalf;
 
     public FollowingViewHolder(@NonNull View itemView) {
       super(itemView);
       mInflater = LayoutInflater.from(itemView.getContext());
       mItemInfo.setClickable(true);
       mItemInfo.setMovementMethod(LinkMovementMethod.getInstance());
-    }
-
-    @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {
-      mListener = listener;
-      itemView.setOnClickListener(listener);
-    }
-
-    void setupItemClick(FollowingViewHolder vh, View view, FeedItem item,
-                        OnFeedItemClickListener listener) {
-      if (listener == null) {
-        return;
-      }
-
-      if (view.getId() == R.id.feed_view_id_mentioned_item) {
-        if (FeedItem.TRACKABLE_TYPE_FOLLOW_TAG.equals(item.getTrackableType())) {
-          listener.onFollowingTagClick(item);
-        } else if (FeedItem.TRACKABLE_TYPE_FOLLOW_USER.equals(item.getTrackableType())) {
-          listener.onFollowingUserClick(item);
-        }
-      }
     }
 
     @Override public void bind(FeedItem item) {
@@ -304,75 +309,70 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
       );
 
       LinearLayoutCompat container = (LinearLayoutCompat) itemView;
-      View mentionedItem;
-      if ((mentionedItem = itemView.findViewById(R.id.feed_view_id_mentioned_item)) != null) {
-        container.removeView(mentionedItem);
+      TextView itemName;
+      if ((itemName = (TextView) itemView.findViewById(R.id.feed_view_id_mentioned_item)) != null) {
+        container.removeView(itemName);
       }
 
       if (FeedItem.TRACKABLE_TYPE_FOLLOW_TAG.equals(item.getTrackableType())) {
-        mentionedItem = mInflater.inflate(R.layout.widget_tag_view, container, false);
+        itemName = (TextView) mInflater.inflate(R.layout.widget_tag_textview, container, false);
+        itemName.setClickable(true);
+        itemName.setMovementMethod(LinkMovementMethod.getInstance());
 
-        final TextView tagName = ButterKnife.findById(mentionedItem, R.id.tag_name);
-        final ImageView tagIcon = ButterKnife.findById(mentionedItem, R.id.tag_icon);
-
-        tagName.setText(item.getMentionedObjectName());
-
-        Attiq.picasso().load(item.getMentionedObjectImageUrl())
-            .resize(mTagIconSize, 0)
-            .transform(new RoundedTransformation(
-                mIconBorderWidth, mIconBorderColor, mTagIconSizeHalf))
-            .into(tagIcon, new com.squareup.picasso.Callback() {
-              @Override public void onSuccess() {
-                tagIcon.setVisibility(View.VISIBLE);
-              }
-
-              @Override public void onError() {
-                tagIcon.setVisibility(View.GONE);
-              }
-            });
-
-      } else {
-        mentionedItem = mInflater.inflate(R.layout.widget_user_view, container, false);
-
-        final TextView userName = ButterKnife.findById(mentionedItem, R.id.user_name);
-        userName.setClickable(true);
-        userName.setMovementMethod(LinkMovementMethod.getInstance());
-        final ImageView userImage = ButterKnife.findById(mentionedItem, R.id.user_image);
-
-        userName.setText(Html.fromHtml(itemView.getContext().getString(R.string.user_name,
+        itemName.setText(Html.fromHtml(itemView.getContext().getString(R.string.local_tag_url,
             item.getMentionedObjectName(), item.getMentionedObjectName())));
 
         Attiq.picasso().load(item.getMentionedObjectImageUrl())
-            .resize(mTagIconSize, 0)
+            .resize(0, mTagIconSize)
             .transform(new RoundedTransformation(
                 mIconBorderWidth, mIconBorderColor, mTagIconSizeHalf))
-            .into(userImage, new com.squareup.picasso.Callback() {
-              @Override public void onSuccess() {
-                userImage.setVisibility(View.VISIBLE);
+            .into(new TextViewTarget(itemName) {
+              @Override
+              public void onBitmapLoaded(TextView textView, Bitmap bitmap,
+                                         Picasso.LoadedFrom from) {
+                RoundedBitmapDrawable drawable =
+                    RoundedBitmapDrawableFactory.create(itemView.getResources(), bitmap);
+                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView,
+                    drawable, null, null, null);
               }
+            });
+        UIUtil.stripUnderlines(itemName);
+      } else {
+        itemName = (TextView) mInflater.inflate(R.layout.widget_user_textview, container, false);
+        itemName.setClickable(true);
+        itemName.setMovementMethod(LinkMovementMethod.getInstance());
 
-              @Override public void onError() {
-                userImage.setVisibility(View.GONE);
+        itemName.setText(
+            Html.fromHtml(itemView.getContext().getString(R.string.user_name,
+                item.getMentionedObjectName(), item.getMentionedObjectName())));
+
+        Attiq.picasso().load(item.getMentionedObjectImageUrl())
+            .resize(mUserIconSize, 0)
+            .transform(new RoundedTransformation(
+                mIconBorderWidth, mIconBorderColor, mUserIconSizeHalf))
+            .into(new TextViewTarget(itemName) {
+              @Override
+              public void onBitmapLoaded(TextView textView, Bitmap bitmap,
+                                         Picasso.LoadedFrom from) {
+                RoundedBitmapDrawable drawable =
+                    RoundedBitmapDrawableFactory.create(itemView.getResources(), bitmap);
+                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView,
+                    drawable, null, null, null);
               }
             });
       }
 
-      mentionedItem.setId(R.id.feed_view_id_mentioned_item);
-      mentionedItem.setOnClickListener(mListener);
-      container.addView(mentionedItem);
+      itemName.setId(R.id.feed_view_id_mentioned_item);
+      container.addView(itemName);
     }
   }
 
   public static abstract class OnFeedItemClickListener
-      implements BaseAdapter.OnItemClickListener {
-
-    public abstract void onFollowingUserClick(FeedItem host);
+      implements OnItemClickListener {
 
     public abstract void onMentionedUserClick(FeedItem host);
 
     public abstract void onItemContentClick(FeedItem item);
-
-    public abstract void onFollowingTagClick(FeedItem host);
 
     @Override
     public void onItemClick(BaseAdapter adapter, BaseAdapter.ViewHolder viewHolder,
@@ -391,9 +391,6 @@ public class FeedAdapter extends RealmListAdapter<FeedItem> {
       if (viewHolder instanceof FeedViewHolder) {
         ((FeedViewHolder) viewHolder)
             .setupItemClick((FeedViewHolder) viewHolder, view, item, this);
-      } else if (viewHolder instanceof FollowingViewHolder) {
-        ((FollowingViewHolder) viewHolder)
-            .setupItemClick((FollowingViewHolder) viewHolder, view, item, this);
       }
     }
   }

@@ -252,7 +252,7 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
           Attiq.picasso().load(tag.getIconUrl())
               .placeholder(R.drawable.ic_dnd_forwardslash_16dp)
               .error(R.drawable.ic_dnd_forwardslash_16dp)
-              .resize(0, mTagIconSize).onlyScaleDown()
+              .resize(0, mTagIconSize)
               .transform(new RoundedTransformation(
                   mIconBorderWidth, mIconBorderColor, mTagIconSizeHalf))
               .into(new TextViewTarget(tagName) {
