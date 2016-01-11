@@ -2,6 +2,12 @@
     <string name="activity_login">Login</string>
     <string name="activity_profile">Profile</string>
 
+    <string name="action_login">Login</string>
+    <string name="action_logout">Logout</string>
+
+    <string name="tab_home_feed">Feed (Beta)</string>
+    <string name="tab_home_public">All Posts</string>
+
     <string name="item_posted_info">%1$s posted %2$s ago</string>
     <string name="item_user_info">
         &lt;a href="attiq://qiita.com/user/%1$s">%2$s&lt;/a> posted %3$s

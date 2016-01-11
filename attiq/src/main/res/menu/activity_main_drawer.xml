@@ -6,7 +6,8 @@
         android:visible="true">
         <item
             android:id="@+id/nav_login"
-            android:title="@string/activity_login"/>
+            android:title="@string/action_login"/>
+
     </group>
 
     <group

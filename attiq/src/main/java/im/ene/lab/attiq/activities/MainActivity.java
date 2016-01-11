@@ -181,8 +181,6 @@ public class MainActivity extends BaseActivity
       mNavigationView.getMenu().setGroupVisible(R.id.group_auth, true);
       mNavigationView.getMenu().setGroupVisible(R.id.group_navigation, false);
       mNavigationView.getMenu().setGroupVisible(R.id.group_post, false);
-      // Hide User manage button visibility
-      mAuthMenu.setVisibility(View.GONE);
 
       if (getSupportActionBar() != null) {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -205,8 +203,7 @@ public class MainActivity extends BaseActivity
     mNavigationView.getMenu().setGroupVisible(R.id.group_auth, false);
     mNavigationView.getMenu().setGroupVisible(R.id.group_navigation, true);
     mNavigationView.getMenu().setGroupVisible(R.id.group_post, true);
-    // Hide User manage button visibility
-    mAuthMenu.setVisibility(View.VISIBLE);
+
     // Check home button at startup
     mNavigationView.setCheckedItem(R.id.nav_home);
 
@@ -344,22 +341,26 @@ public class MainActivity extends BaseActivity
   @SuppressWarnings("unused")
   public void onEventMainThread(final ProfileFetchedEvent event) {
     if (event.success) {
-      if (PrefUtil.isFirstStart()) {
-        PrefUtil.setFirstStart(false);
-        mDrawerLayout.openDrawer(GravityCompat.START);
-      }
-
       if (event.profile != null && PrefUtil.getCurrentToken().equals(event.profile.getToken())) {
+        if (PrefUtil.isFirstStart()) {
+          PrefUtil.setFirstStart(false);
+          mDrawerLayout.openDrawer(GravityCompat.START);
+        }
+
         trySetupToolBarTabs();
         updateMasterUser(event.profile);
+
+        mAuthMenuItem.setTitle(R.string.action_logout);
+      } else {
+        mAuthMenuItem.setTitle(R.string.action_login);
       }
     }
   }
 
   private static class MainPagerAdapter extends FragmentStatePagerAdapter {
 
-    private static final String TITLES[] = {
-        "Feed", "Public"
+    private static final int TITLES[] = {
+        R.string.tab_home_public, R.string.tab_home_feed
     };
 
     public MainPagerAdapter(FragmentManager fm) {
@@ -368,6 +369,8 @@ public class MainActivity extends BaseActivity
 
     @Override public Fragment getItem(int position) {
       if (position == 0) {
+        return PublicStreamFragment.newInstance();
+      } else if (position == 1) {
         return FeedListFragment.newInstance();
       }
 
@@ -379,7 +382,7 @@ public class MainActivity extends BaseActivity
     }
 
     @Override public CharSequence getPageTitle(int position) {
-      return TITLES[position];
+      return Attiq.creator().getString(TITLES[position]);
     }
   }
 }
