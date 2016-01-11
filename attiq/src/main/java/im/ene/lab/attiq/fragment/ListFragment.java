@@ -183,7 +183,7 @@ public abstract class ListFragment<E>
         "onResponse() called with: " + "response = [" + response + "]");
     if (response.code() != 200) {
       EventBus.getDefault().post(new TypedEvent<>(false,
-          new Event.Error(response.code(), response.message()), null, mPage));
+          new Event.Error(response.code(), ApiClient.parseError(response).message), null, mPage));
     } else {
       List<E> items = response.body();
       if (!UIUtil.isEmpty(items)) {

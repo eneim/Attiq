@@ -336,7 +336,7 @@ public class ProfileActivity extends BaseActivity {
               mImageBorderWidth, mImageBorderColor, mProfileImageRadius))
           .into(mProfileImage);
 
-      mSpannableTitle = new SpannableString(mUser.getId());
+      mSpannableTitle = new SpannableString(mUserId);
       if (!UIUtil.isEmpty(mUser.getName())) {
         mSpannableSubtitle = new SpannableString(mUser.getName());
       }

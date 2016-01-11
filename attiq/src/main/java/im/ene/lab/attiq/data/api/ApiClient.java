@@ -19,10 +19,15 @@ import im.ene.lab.attiq.data.zero.Post;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.PrefUtil;
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Converter;
 import retrofit2.GsonConverterFactory;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +42,8 @@ public final class ApiClient {
   private static final Api.Zero ZERO;
   private static final Api.One ONE;
   private static final Api.Two TWO;
+
+  private static final Converter<ResponseBody, HttpError> ERROR_CONVERTER;
 
   public static final int DEFAULT_PAGE_LIMIT = 99; // save API calls...
 
@@ -54,6 +61,16 @@ public final class ApiClient {
     ZERO = RETROFIT.create(Api.Zero.class);
     ONE = RETROFIT.create(Api.One.class);
     TWO = RETROFIT.create(Api.Two.class);
+
+    ERROR_CONVERTER = RETROFIT.responseBodyConverter(HttpError.class, new Annotation[0]);
+  }
+
+  public static HttpError parseError(Response response) {
+    try {
+      return ERROR_CONVERTER.convert(response.errorBody());
+    } catch (IOException e) {
+      return new HttpError();
+    }
   }
 
   public static String authCallback() {
