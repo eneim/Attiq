@@ -8,6 +8,7 @@ import android.view.View;
 
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
+import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.adapters.PublicItemsAdapter;
 import im.ene.lab.attiq.adapters.RealmListAdapter;
 import im.ene.lab.attiq.data.zero.Post;
@@ -35,7 +36,7 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
     return new PublicItemsAdapter(items);
   }
 
-  private PublicItemsAdapter.OnPublicItemClickListener mItemClickListener;
+  private BaseAdapter.OnItemClickListener mItemClickListener;
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);

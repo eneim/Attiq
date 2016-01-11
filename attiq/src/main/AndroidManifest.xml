@@ -59,6 +59,11 @@
                     android:host="qiita.com"
                     android:pathPattern="/tag/.*"
                     android:scheme="attiq"/>
+
+                <data
+                    android:host="qiita.com"
+                    android:pathPattern="/user/.*"
+                    android:scheme="attiq"/>
             </intent-filter>
         </activity>
 

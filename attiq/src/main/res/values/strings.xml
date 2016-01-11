@@ -4,11 +4,11 @@
 
     <string name="item_posted_info">%1$s posted %2$s ago</string>
     <string name="item_user_info">
-        &lt;a href="http://qiita.com/%1$s">%2$s&lt;/a> posted %3$s
+        &lt;a href="attiq://qiita.com/user/%1$s">%2$s&lt;/a> posted %3$s
     </string>
 
     <string name="item_user_info_edited">
-        &lt;a href="http://qiita.com/%1$s">%2$s&lt;/a> posted %3$s&#32;
+        &lt;a href="attiq://qiita.com/user/%1$s">%2$s&lt;/a> posted %3$s&#32;
         &lt;a href="http://qiita.com/%4$s/items/%5$s/revisions">(edited)&lt;/a>
     </string>
 
@@ -18,13 +18,13 @@
     <string name="item_info_many">%1$d stocked, %2$d comments</string>
 
     <string name="user_stocked">
-        &lt;a href="http://qiita.com/users/%1$s">%2$s&lt;/a> stocked</string>
+        &lt;a href="attiq://qiita.com/user/%1$s">%2$s&lt;/a> stocked</string>
     <string name="user_follow">
-        &lt;a href="http://qiita.com/users/%1$s">%2$s&lt;/a> followed</string>
+        &lt;a href="attiq://qiita.com/user/%1$s">%2$s&lt;/a> followed</string>
     <string name="user_commented">
-        &lt;a href="http://qiita.com/users/%1$s">%2$s&lt;/a> commented</string>
+        &lt;a href="attiq://qiita.com/user/%1$s">%2$s&lt;/a> commented</string>
     <string name="user_name">
-        &lt;a href="http://qiita.com/users/%1$s">%2$s&lt;/a>
+        &lt;a href="attiq://qiita.com/user/%1$s">%2$s&lt;/a>
     </string>
     <string name="tag_new_post">has new post</string>
 
@@ -157,5 +157,4 @@
     <string name="user_connection_following">Following</string>
     <string name="user_connection_item">Post</string>
     <string name="user_connection_items">Posts</string>
-    <string name="title_activity_tag_items2">Tag</string>
 </resources>

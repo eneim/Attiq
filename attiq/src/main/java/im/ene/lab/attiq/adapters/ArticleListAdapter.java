@@ -1,6 +1,7 @@
 package im.ene.lab.attiq.adapters;
 
 import android.content.Context;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -155,6 +156,9 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
     @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
     @BindColor(R.color.colorAccent) int mIconBorderColor;
 
+    @BindDimen(R.dimen.tag_icon_size) int mTagIconSize;
+    @BindDimen(R.dimen.tag_icon_size_half) int mTagIconSizeHalf;
+
     public ViewHolder(View view) {
       super(view);
       mContext = itemView.getContext();
@@ -212,6 +216,10 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
           tagName.setMovementMethod(LinkMovementMethod.getInstance());
           tagName.setText(Html.fromHtml(mContext.getString(R.string.local_tag_url,
               tag.getName(), tag.getName())));
+
+          TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(tagName,
+              UIUtil.getDrawable(mContext, R.drawable.ic_lens_16dp), null, null, null);
+
           UIUtil.stripUnderlines(tagName);
           mItemTags.addView(tagName);
         }

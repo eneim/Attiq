@@ -18,20 +18,29 @@ public class DeepLinkActivity extends BaseActivity {
 
   private static final String SCHEME_HTTPS = "https";
 
-  private static final String TYPE_TAG = "tag";
+  private static final String INTERNAL_TYPE_TAG = "tag";
+
+  private static final String INTERNAL_TYPE_USER = "user";
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Uri data = getIntent().getData();
-    List<String> paths = data.getPathSegments();
-    if (!UIUtil.isEmpty(paths)) {
-      if (TYPE_TAG.equals(paths.get(0))) {
-        String lastPath = data.getLastPathSegment();
-        startActivity(TagItemsActivity.createIntent(this, lastPath));
-        finish();
-      } else {
-        // TODO
+    String scheme = data.getScheme();
+    if (SCHEME_INTERNAL.equals(scheme)) {
+      List<String> paths = data.getPathSegments();
+      if (!UIUtil.isEmpty(paths)) {
+        if (INTERNAL_TYPE_TAG.equals(paths.get(0))) {
+          String lastPath = data.getLastPathSegment();
+          startActivity(TagItemsActivity.createIntent(this, lastPath));
+          finish();
+        } else if (INTERNAL_TYPE_USER.equals(paths.get(0))) {
+          String lastPath = data.getLastPathSegment();
+          startActivity(ProfileActivity.createIntent(this, lastPath));
+          finish();
+        }
       }
+    } else {
+      // TODO
     }
   }
 }
