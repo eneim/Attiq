@@ -46,7 +46,6 @@ public class WebViewActivity extends AppCompatActivity {
       // attiq://lab.ene.im/qiita/oauth?code=c73fe3c7d4e570086221b17f1e64c95b2dec8616&state
       // =299792459
       if (url.startsWith(getString(R.string.api_callback))) {
-        // FIXME it is necessary to initialize an Intent with Activity class?
         Intent result = new Intent(WebViewActivity.this, MainActivity.class);
         // setup return result
         Bundle bundle = new Bundle();

@@ -24,7 +24,11 @@ public class PrefUtil {
   }
 
   public static void setCurrentToken(String token) {
-    Attiq.pref().edit().putString(PREF_CURRENT_TOKEN, token).apply();
+    if (token != null) {
+      Attiq.pref().edit().putString(PREF_CURRENT_TOKEN, token).apply();
+    } else {
+      Attiq.pref().edit().remove(PREF_CURRENT_TOKEN).apply();
+    }
   }
 
   @NonNull

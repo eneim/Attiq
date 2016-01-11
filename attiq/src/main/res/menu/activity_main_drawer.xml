@@ -39,21 +39,22 @@
         <menu>
             <item
                 android:id="@+id/nav_profile"
+                android:icon="@drawable/ic_portrait_24dp"
                 android:title="@string/menu_item_my_page"/>
         </menu>
     </item>
 
     <item
-        android:title="Application">
+        android:title="@string/menu_item_application">
         <menu>
             <item
                 android:id="@+id/nav_share"
                 android:enabled="false"
-                android:title="Settings"/>
+                android:title="@string/action_settings"/>
             <item
                 android:id="@+id/nav_send"
                 android:enabled="false"
-                android:title="About"/>
+                android:title="@string/action_about"/>
         </menu>
     </item>
 

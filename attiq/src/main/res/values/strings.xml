@@ -165,4 +165,8 @@
     <string name="user_connection_items">Posts</string>
     <string name="item_detail_no_menu">No menu available!</string>
     <string name="title_activity_test">TestActivity</string>
+    <string name="text_welcome">Welcome to Attiq</string>
+    <string name="text_attiq_intro">Another Qiita client</string>
+    <string name="menu_item_application">Application</string>
+    <string name="action_about">About</string>
 </resources>

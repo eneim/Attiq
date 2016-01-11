@@ -45,4 +45,9 @@
     <string name="user_connection_item">投稿</string>
     <string name="user_connection_items">投稿</string>
     <string name="item_detail_no_menu">メニューがありません！</string>
+    <string name="text_welcome">Attiqへようこそ</string>
+    <string name="text_attiq_intro">非公式Qiitaクライアント</string>
+    <string name="menu_item_application">アプリケーション</string>
+    <string name="action_about">アプリについて</string>
+
 </resources>

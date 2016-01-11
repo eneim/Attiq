@@ -1,10 +1,11 @@
 package im.ene.lab.attiq.activities;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -66,6 +68,7 @@ public class MainActivity extends BaseActivity
   int mIconBorderColor;
 
   MenuItem mAuthMenuItem;
+  MenuItem mMyPageMenuItem;
   private Realm mRealm;
   private View mHeaderView;
   private DrawerLayout mDrawerLayout;
@@ -78,8 +81,10 @@ public class MainActivity extends BaseActivity
   @OnClick(R.id.header_auth_menu) void toggleAuthMenu() {
     if (mAuthMenuItem != null) {
       if (mAuthMenuItem.isVisible()) {
+        mAuthMenu.setImageResource(R.drawable.ic_arrow_drop_down);
         mAuthMenuItem.setVisible(false);
       } else {
+        mAuthMenu.setImageResource(R.drawable.ic_arrow_drop_up);
         mAuthMenuItem.setVisible(true);
       }
     }
@@ -103,12 +108,14 @@ public class MainActivity extends BaseActivity
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
         this, mDrawerLayout, mToolBar,
         R.string.navigation_drawer_open,
-        R.string.navigation_drawer_close);
+        R.string.navigation_drawer_close) {
+    };
     mDrawerLayout.setDrawerListener(toggle);
     toggle.syncState();
 
     mNavigationView = (NavigationView) findViewById(R.id.nav_actions);
     mAuthMenuItem = mNavigationView.getMenu().findItem(R.id.nav_login);
+    mMyPageMenuItem = mNavigationView.getMenu().findItem(R.id.nav_profile);
     mNavigationView.setNavigationItemSelectedListener(this);
 
     if (mNavigationView.getHeaderCount() > 0) {
@@ -143,23 +150,37 @@ public class MainActivity extends BaseActivity
     getMasterUser(PrefUtil.getCurrentToken());
   }
 
-  private void updateMasterUser(@NonNull Profile user) {
-    if (mHeaderName != null) {
-      mHeaderName.setText(user.getName());
-    }
+  private void updateMasterUser(Profile user) {
+    if (user == null) {
+      if (mHeaderName != null) {
+        mHeaderName.setText(R.string.text_welcome);
+      }
 
-    if (mHeaderDescription != null) {
-      mHeaderDescription.setText(user.getId());
-    }
+      if (mHeaderDescription != null) {
+        mHeaderDescription.setText(R.string.text_attiq_intro);
+      }
 
-    if (mHeaderIcon != null && !UIUtil.isEmpty(user.getProfileImageUrl())) {
-      Attiq.picasso()
-          .load(user.getProfileImageUrl())
-          .placeholder(R.drawable.blank_profile_icon_large)
-          .fit().centerInside()
-          .transform(new RoundedTransformation(
-              mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
-          .into(mHeaderIcon);
+      if (mHeaderIcon != null) {
+        mHeaderIcon.setImageResource(R.drawable.blank_profile_icon_large);
+      }
+    } else {
+      if (mHeaderName != null) {
+        mHeaderName.setText(user.getName());
+      }
+
+      if (mHeaderDescription != null) {
+        mHeaderDescription.setText(user.getId());
+      }
+
+      if (mHeaderIcon != null && !UIUtil.isEmpty(user.getProfileImageUrl())) {
+        Attiq.picasso()
+            .load(user.getProfileImageUrl())
+            .placeholder(R.drawable.blank_profile_icon_large)
+            .fit().centerInside()
+            .transform(new RoundedTransformation(
+                mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
+            .into(mHeaderIcon);
+      }
     }
   }
 
@@ -178,7 +199,9 @@ public class MainActivity extends BaseActivity
 
     if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
       // We need an user, so inflate auth menu
+
       mNavigationView.getMenu().setGroupVisible(R.id.group_auth, true);
+      mAuthMenu.setImageResource(R.drawable.ic_arrow_drop_up);
       mNavigationView.getMenu().setGroupVisible(R.id.group_navigation, false);
       mNavigationView.getMenu().setGroupVisible(R.id.group_post, false);
 
@@ -196,42 +219,57 @@ public class MainActivity extends BaseActivity
         getSupportFragmentManager().beginTransaction()
             .replace(R.id.container, mFragment).commit();
       }
-      return;
+    } else {
+      // Change menu visibility
+      mNavigationView.getMenu().setGroupVisible(R.id.group_auth, false);
+      mAuthMenu.setImageResource(R.drawable.ic_arrow_drop_down);
+      mNavigationView.getMenu().setGroupVisible(R.id.group_navigation, true);
+      mNavigationView.getMenu().setGroupVisible(R.id.group_post, true);
+
+      // Check home button at startup
+      mNavigationView.setCheckedItem(R.id.nav_home);
+
+      mViewPager.setVisibility(View.VISIBLE);
+      mContainer.setVisibility(View.GONE);
+      // On first logging in, this Fragment has been initialized. We need to release it.
+      if (mFragment != null) {
+        getSupportFragmentManager().beginTransaction().remove(mFragment).commit();
+      }
+
+      if (getSupportActionBar() != null) {
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+      }
+
+      MainPagerAdapter pagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
+      mViewPager.setAdapter(pagerAdapter);
+
+      mMainTabs = (TabLayout) LayoutInflater.from(mToolBar.getContext())
+          .inflate(R.layout.toolbar_tab_layout, mToolBar, false);
+      mMainTabs.setupWithViewPager(mViewPager);
+
+      ActionBar.LayoutParams params = new ActionBar.LayoutParams(
+          ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+      params.gravity = GravityCompat.START;
+
+      mToolBar.addView(mMainTabs, params);
     }
-
-    // Change menu visibility
-    mNavigationView.getMenu().setGroupVisible(R.id.group_auth, false);
-    mNavigationView.getMenu().setGroupVisible(R.id.group_navigation, true);
-    mNavigationView.getMenu().setGroupVisible(R.id.group_post, true);
-
-    // Check home button at startup
-    mNavigationView.setCheckedItem(R.id.nav_home);
-
-    mViewPager.setVisibility(View.VISIBLE);
-    mContainer.setVisibility(View.GONE);
-    // On first logging in, this Fragment has been initialized. We need to release it.
-    if (mFragment != null) {
-      getSupportFragmentManager().beginTransaction().remove(mFragment).commit();
-    }
-
-    if (getSupportActionBar() != null) {
-      getSupportActionBar().setDisplayShowTitleEnabled(false);
-    }
-
-    mMainTabs = (TabLayout) LayoutInflater.from(mToolBar.getContext())
-        .inflate(R.layout.toolbar_tab_layout, mToolBar, false);
-    ActionBar.LayoutParams lp = new ActionBar.LayoutParams(
-        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
-    lp.gravity = GravityCompat.START;
-
-    MainPagerAdapter pagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
-    mViewPager.setAdapter(pagerAdapter);
-    mMainTabs.setupWithViewPager(mViewPager);
-
-    mToolBar.addView(mMainTabs, lp);
   }
 
   private RealmAsyncTask mTransactionTask;
+
+  private Callback<AccessToken> mOnTokenCallback = new Callback<AccessToken>() {
+    @Override public void onResponse(Response<AccessToken> response) {
+      AccessToken accessToken = response.body();
+      if (accessToken != null) {
+        PrefUtil.setCurrentToken(accessToken.getToken());
+        getMasterUser(accessToken.getToken());
+      }
+    }
+
+    @Override public void onFailure(Throwable t) {
+
+    }
+  };
 
   private void getMasterUser(final String token) {
     ApiClient.me().enqueue(new Callback<Profile>() {
@@ -277,6 +315,7 @@ public class MainActivity extends BaseActivity
       mRealm.close();
     }
 
+    mOnTokenCallback = null;
     ButterKnife.unbind(this);
     super.onDestroy();
   }
@@ -286,13 +325,16 @@ public class MainActivity extends BaseActivity
     // Handle navigation view item clicks here.
     int id = item.getItemId();
     if (id == R.id.nav_login) {
-      login();
+      if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
+        login();
+      } else {
+        logout();
+      }
     } else if (id == R.id.nav_profile) {
       if (mMyProfile != null) {
         startActivity(ProfileActivity.createIntent(this, mMyProfile.getId()));
       }
     }
-
     mDrawerLayout.closeDrawer(GravityCompat.START);
     return true;
   }
@@ -303,8 +345,36 @@ public class MainActivity extends BaseActivity
   }
 
   private void logout() {
-    // FIXME: 1/9/16
-    Realm.deleteRealm(mRealm.getConfiguration());
+    // Show a dialog
+    new AlertDialog.Builder(this)
+        .setMessage("本当にAttiqからログアウトしますか？")
+        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            if (dialog != null) {
+              dialog.dismiss();
+            }
+          }
+        })
+        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            if (dialog != null) {
+              dialog.dismiss();
+            }
+
+            // 1. find current profile
+            Profile profile = mRealm.where(Profile.class)
+                .equalTo("token", PrefUtil.getCurrentToken()).findFirst();
+            if (profile != null) {
+              mRealm.beginTransaction();
+              profile.removeFromRealm();
+              mRealm.commitTransaction();
+            }
+
+            mMyProfile = null;
+            PrefUtil.setCurrentToken(null);
+            EventBus.getDefault().post(new ProfileFetchedEvent(true, null, null));
+          }
+        }).create().show();
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -313,19 +383,7 @@ public class MainActivity extends BaseActivity
       String callback = data.getStringExtra(EXTRA_AUTH_CALLBACK);
       Uri callbackUri = Uri.parse(callback);
       final String code = callbackUri.getQueryParameter("code");
-      ApiClient.accessToken(code).enqueue(new Callback<AccessToken>() {
-        @Override public void onResponse(Response<AccessToken> response) {
-          AccessToken accessToken = response.body();
-          if (accessToken != null) {
-            PrefUtil.setCurrentToken(accessToken.getToken());
-            getMasterUser(accessToken.getToken());
-          }
-        }
-
-        @Override public void onFailure(Throwable t) {
-
-        }
-      });
+      ApiClient.accessToken(code).enqueue(mOnTokenCallback);
     }
   }
 
@@ -341,19 +399,20 @@ public class MainActivity extends BaseActivity
   @SuppressWarnings("unused")
   public void onEventMainThread(final ProfileFetchedEvent event) {
     if (event.success) {
+      trySetupToolBarTabs();
+      updateMasterUser(event.profile);
+
       if (event.profile != null && PrefUtil.getCurrentToken().equals(event.profile.getToken())) {
         if (PrefUtil.isFirstStart()) {
           PrefUtil.setFirstStart(false);
           mDrawerLayout.openDrawer(GravityCompat.START);
         }
-
-        trySetupToolBarTabs();
-        updateMasterUser(event.profile);
-
-        mAuthMenuItem.setTitle(R.string.action_logout);
+        mState.isLoggedIn = true;
       } else {
-        mAuthMenuItem.setTitle(R.string.action_login);
+        mState.isLoggedIn = false;
       }
+
+      EventBus.getDefault().post(new StateEvent(true, null, mState));
     }
   }
 
@@ -385,4 +444,33 @@ public class MainActivity extends BaseActivity
       return Attiq.creator().getString(TITLES[position]);
     }
   }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(StateEvent event) {
+    if (event.state.isLoggedIn) {
+      mAuthMenuItem.setTitle(R.string.action_logout);
+      mMyPageMenuItem.setEnabled(true);
+    } else {
+      mAuthMenuItem.setTitle(R.string.action_login);
+      mMyPageMenuItem.setEnabled(false);
+    }
+  }
+
+  private final State mState = new State();
+
+  private static class State {
+
+    private boolean isLoggedIn;
+  }
+
+  private static class StateEvent extends Event {
+
+    private final State state;
+
+    public StateEvent(boolean success, @Nullable Error error, State state) {
+      super(success, error);
+      this.state = state;
+    }
+  }
+
 }
