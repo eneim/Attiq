@@ -206,17 +206,10 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
 
       if (item.getUser() != null) {
         String userName = item.getUser().getUrlName();
-        if (item.getCreatedAt().equals(item.getUpdatedAt())) {
-          mItemUserInfo.setText(Html.fromHtml(mContext.getString(R.string.item_user_info,
-              userName, userName,
-              TimeUtil.beautify(item.getCreatedAtAsSeconds())
-          )));
-        } else {
-          mItemUserInfo.setText(Html.fromHtml(mContext.getString(R.string.item_user_info_edited,
-              userName, userName,
-              TimeUtil.beautify(item.getCreatedAtAsSeconds()),
-              userName, item.getUuid())));
-        }
+        mItemUserInfo.setText(Html.fromHtml(mContext.getString(R.string.item_user_info,
+            userName, userName,
+            TimeUtil.beautify(item.getCreatedAtAsSeconds())
+        )));
         mItemUserInfo.setVisibility(View.VISIBLE);
       } else {
         mItemUserInfo.setVisibility(View.GONE);
