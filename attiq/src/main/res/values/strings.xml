@@ -157,4 +157,5 @@
     <string name="user_connection_following">Following</string>
     <string name="user_connection_item">Post</string>
     <string name="user_connection_items">Posts</string>
+    <string name="item_detail_no_menu">No menu available!</string>
 </resources>

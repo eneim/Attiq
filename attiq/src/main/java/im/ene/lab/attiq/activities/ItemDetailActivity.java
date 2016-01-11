@@ -8,12 +8,16 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -77,11 +81,28 @@ import java.util.List;
 
 public class ItemDetailActivity extends BaseActivity implements Callback<Article> {
 
-  private static final String EXTRA_DETAIL_ITEM_ID = "attiq_item_detail_extra_id";
-
   private static final String EXTRA_DETAIL_ITEM_UUID = "attiq_item_detail_extra_uuid";
 
   private static final String TAG = "ItemDetailActivity";
+
+  private static final int MESSAGE_STOCK = 1;
+  private static final int MESSAGE_UNSTOCK = 1 << 1;
+
+  private Handler.Callback mHandlerCallback = new Handler.Callback() {
+    @Override public boolean handleMessage(Message msg) {
+      if (msg.what == MESSAGE_UNSTOCK) {
+        ApiClient.unStockItem(mItemUuid).enqueue(mItemUnStockedResponse);
+        return true;
+      } else if (msg.what == MESSAGE_STOCK) {
+        ApiClient.stockItem(mItemUuid).enqueue(mItemStockedResponse);
+        return true;
+      }
+
+      return false;
+    }
+  };
+
+  private final Handler mHandler = new Handler(mHandlerCallback);
 
   @Bind(R.id.content_container) CoordinatorLayout mContentContainer;
   @Bind(R.id.comments_header) TextView mCommentInfo;
@@ -135,15 +156,67 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       };
   private String mItemUuid;
   private okhttp3.Callback mDocumentCallback;
+  private Callback<Void> mItemUnStockedResponse = new Callback<Void>() {
+    @Override public void onResponse(Response<Void> response) {
+      if (response.code() == 204) {
+        mState.isStocked = false;
+        int newStockCount = (Integer.parseInt(mState.stockCount) - 1);
+        if (newStockCount < 0) {
+          newStockCount = 0;
+        }
 
-  private static Intent createIntent(Context context) {
-    return new Intent(context, ItemDetailActivity.class);
-  }
+        mState.stockCount = "" + newStockCount;
+      }
+
+      EventBus.getDefault().post(new StateEvent(true, null, mState));
+    }
+
+    @Override public void onFailure(Throwable t) {
+
+    }
+  };
+  private Callback<Void> mStockStatusResponse = new Callback<Void>() {
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    @Override public void onResponse(Response<Void> response) {
+      if (response.code() == 204) {
+        mState.isStocked = true;
+      } else {
+        mState.isStocked = false;
+      }
+
+      EventBus.getDefault().post(new StateEvent(true, null, mState));
+    }
+
+    @Override public void onFailure(Throwable t) {
+
+    }
+  };
+
+  private Callback<Void> mItemStockedResponse = new Callback<Void>() {
+    @Override public void onResponse(Response<Void> response) {
+      if (response.code() == 204) {
+        mState.isStocked = true;
+        mState.stockCount = "" + (1 + Integer.parseInt(mState.stockCount));
+      }
+
+      EventBus.getDefault().post(new StateEvent(true, null, mState));
+    }
+
+    @Override public void onFailure(Throwable t) {
+
+    }
+  };
+
+  private State mState = new State();
 
   public static Intent createIntent(Context context, String uuid) {
     Intent intent = createIntent(context);
     intent.putExtra(EXTRA_DETAIL_ITEM_UUID, uuid);
     return intent;
+  }
+
+  private static Intent createIntent(Context context) {
+    return new Intent(context, ItemDetailActivity.class);
   }
 
   @Override
@@ -188,49 +261,19 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mRealm = Attiq.realm();
     mReferItem = mRealm.where(Post.class).equalTo("uuid", mItemUuid).findFirst();
 
-    ApiClient.isStocked(mItemUuid).enqueue(mItemStockedResponse);
+    ApiClient.isStocked(mItemUuid).enqueue(mStockStatusResponse);
   }
 
   @Override protected void onDestroy() {
     if (mRealm != null) {
       mRealm.close();
     }
-    mItemStockedResponse = null;
+    mStockStatusResponse = null;
     mDocumentCallback = null;
+    mHandler.removeCallbacksAndMessages(null);
+    mHandlerCallback = null;
     super.onDestroy();
   }
-
-  private Callback<Void> mItemUnstockedResponse = new Callback<Void>() {
-    @Override public void onResponse(Response<Void> response) {
-
-    }
-
-    @Override public void onFailure(Throwable t) {
-
-    }
-  };
-
-  private Callback<Void> mItemStockedResponse = new Callback<Void>() {
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    @Override public void onResponse(Response<Void> response) {
-      int code = response.code();
-      if (code == 204) {
-        mStockCount.setCompoundDrawablesRelativeWithIntrinsicBounds(
-            UIUtil.getDrawable(mStockCount.getContext(), R.drawable.ic_action_stocked),
-            null, null, null
-        );
-      } else {
-        mStockCount.setCompoundDrawablesRelativeWithIntrinsicBounds(
-            UIUtil.getDrawable(mStockCount.getContext(), R.drawable.ic_action_stock),
-            null, null, null
-        );
-      }
-    }
-
-    @Override public void onFailure(Throwable t) {
-
-    }
-  };
 
   private void trySetupMenuDrawerLayout() {
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -335,7 +378,13 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   @SuppressWarnings("unused")
   @OnClick(R.id.item_stocks) void stockArticle() {
-    ApiClient.stockItem(mItemUuid).enqueue(mItemStockedResponse);
+    mHandler.removeMessages(MESSAGE_STOCK);
+    mHandler.removeMessages(MESSAGE_UNSTOCK);
+    if (!mState.isStocked) {
+      mHandler.sendEmptyMessageDelayed(MESSAGE_STOCK, 200);
+    } else {
+      mHandler.sendEmptyMessageDelayed(MESSAGE_UNSTOCK, 200);
+    }
   }
 
   @Override public void onResponse(Response<Article> response) {
@@ -481,7 +530,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       mArticleHeaderMenu.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
         @Override public boolean onMenuItemClick(MenuItem item) {
           if (!isFinishing() && mContentContainer != null) {
-            Snackbar.make(mContentContainer, "メニューがありません!", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mContentContainer, R.string.item_detail_no_menu,
+                Snackbar.LENGTH_LONG).show();
           }
           return true;
         }
@@ -492,8 +542,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @SuppressWarnings("unused")
   public void onEventMainThread(DocumentEvent event) {
     if (event.document != null) {
-      String stockCount = event.document.getElementsByClass("js-stocksCount").first().text();
-      mStockCount.setText(stockCount);
+      mState.stockCount = event.document.getElementsByClass("js-stocksCount").first().text();
+      EventBus.getDefault().post(new StateEvent(true, null, mState));
     }
   }
 
@@ -543,11 +593,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   }
 
-  @Override public void onFailure(Throwable error) {
-    EventBus.getDefault().post(new ItemDetailEvent(false,
-        new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
-  }
-
   @Override protected void onResume() {
     super.onResume();
     if (mItemUuid != null) {
@@ -567,12 +612,35 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   }
 
+  @Override public void onFailure(Throwable error) {
+    EventBus.getDefault().post(new ItemDetailEvent(false,
+        new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
+  }
+
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.menu_item_detail, menu);
     mArticleHeaderMenu = menu.findItem(R.id.action_item_menu);
     return true;
+  }
+
+  @SuppressWarnings("unused")
+  public void onEventMainThread(StateEvent event) {
+    if (event.state != null) {
+      mStockCount.setText(event.state.stockCount);
+      if (event.state.isStocked) {
+        TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(mStockCount,
+            UIUtil.getDrawable(mStockCount.getContext(), R.drawable.ic_action_stocked),
+            null, null, null
+        );
+      } else {
+        TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(mStockCount,
+            UIUtil.getDrawable(mStockCount.getContext(), R.drawable.ic_action_stock),
+            null, null, null
+        );
+      }
+    }
   }
 
   private static abstract class DocumentCallback implements okhttp3.Callback {
@@ -598,5 +666,23 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
     abstract void onDocument(Document response);
   }
+
+  private static class State {
+
+    private boolean isStocked;
+
+    private String stockCount;
+  }
+
+  private static class StateEvent extends Event {
+
+    private final State state;
+
+    public StateEvent(boolean success, @Nullable Error error, State state) {
+      super(success, error);
+      this.state = state;
+    }
+  }
+
 
 }

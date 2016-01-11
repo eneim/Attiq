@@ -37,4 +37,5 @@
     <string name="user_connection_following">フォロー中</string>
     <string name="user_connection_item">投稿</string>
     <string name="user_connection_items">投稿</string>
+    <string name="item_detail_no_menu">メニューがありません！</string>
 </resources>
