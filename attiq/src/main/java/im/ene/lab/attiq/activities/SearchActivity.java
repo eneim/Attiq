@@ -3,7 +3,6 @@ package im.ene.lab.attiq.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
-import android.animation.ValueAnimator;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPropertyAnimatorCompat;
 import android.support.v4.view.animation.PathInterpolatorCompat;
 import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.GridLayoutManager;
@@ -272,7 +272,7 @@ public class SearchActivity extends BaseActivity {
         .setListener(null)
         .start();
     if (ViewCompat.getZ(searchToolbar) != 0f) {
-      searchToolbar.animate()
+      ViewCompat.animate(searchToolbar)
           .z(0f)
           .setDuration(600L)
           .setInterpolator(LINEAR_OUT_SLOW_INT)
@@ -392,14 +392,13 @@ public class SearchActivity extends BaseActivity {
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
       gridScrollY += dy;
       if (gridScrollY > 0 && ViewCompat.getTranslationZ(searchToolbar) != appBarElevation) {
-        searchToolbar.animate()
+        ViewCompat.animate(searchToolbar)
             .translationZ(appBarElevation)
             .setDuration(300L)
             .setInterpolator(LINEAR_OUT_SLOW_INT)
             .start();
       } else if (gridScrollY == 0 && ViewCompat.getTranslationZ(searchToolbar) != 0) {
-        searchToolbar.animate()
-            .translationZ(0f)
+        ViewCompat.animate(searchToolbar).translationZ(0f)
             .setDuration(300L)
             .setInterpolator(LINEAR_OUT_SLOW_INT)
             .start();
