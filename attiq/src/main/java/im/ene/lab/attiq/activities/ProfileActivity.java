@@ -291,7 +291,7 @@ public class ProfileActivity extends BaseActivity {
 
       mBtnFollow.setBackgroundResource(
           event.state.isFollowing ?
-              R.drawable.rounded_background_active : R.drawable.rounded_background
+              R.drawable.rounded_background_active : R.drawable.rounded_background_normal
       );
     }
   }

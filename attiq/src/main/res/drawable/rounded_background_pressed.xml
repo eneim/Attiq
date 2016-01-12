@@ -4,6 +4,6 @@
     <corners android:radius="16dp"/>
     <stroke
         android:width="0.5dp"
-        android:color="?attr/colorAccent"/>
-    <solid android:color="?attr/colorAccent"/>
+        android:color="?attr/colorControlHighlight"/>
+    <solid android:color="?attr/colorControlHighlight"/>
 </shape>
