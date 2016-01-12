@@ -49,7 +49,7 @@ public abstract class BaseListAdapter<T> extends BaseAdapter<BaseListAdapter.Vie
   /*hide*/
   @Override
   public void onBindViewHolder(ViewHolder<T> holder, int position, List<Object> payloads) {
-    super.onBindViewHolder(holder, position, payloads);
+    super.onBindViewHolder(holder, position, null);
   }
 
   /**

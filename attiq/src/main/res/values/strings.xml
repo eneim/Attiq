@@ -165,4 +165,5 @@
     <string name="text_attiq_intro">Another Qiita client</string>
     <string name="menu_item_application">Application</string>
     <string name="action_about">About</string>
+    <string name="title_activity_search">SearchActivity</string>
 </resources>

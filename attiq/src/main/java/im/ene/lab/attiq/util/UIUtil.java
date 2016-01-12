@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -15,6 +17,8 @@ import android.text.Spannable;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.URLSpan;
+import android.util.Property;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -145,4 +149,22 @@ public class UIUtil {
       ds.setUnderlineText(false);
     }
   }
+
+  public static final Property<View, Integer> BACKGROUND_COLOR
+      = new AnimUtils.IntProperty<View>("backgroundColor") {
+
+    @Override
+    public void setValue(View view, int value) {
+      view.setBackgroundColor(value);
+    }
+
+    @Override
+    public Integer get(View view) {
+      Drawable d = view.getBackground();
+      if (d instanceof ColorDrawable) {
+        return ((ColorDrawable) d).getColor();
+      }
+      return Color.TRANSPARENT;
+    }
+  };
 }

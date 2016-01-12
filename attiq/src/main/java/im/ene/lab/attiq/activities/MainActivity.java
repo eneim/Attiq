@@ -1,6 +1,5 @@
 package im.ene.lab.attiq.activities;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -8,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -51,7 +51,7 @@ import retrofit2.Response;
 public class MainActivity extends BaseActivity
     implements NavigationView.OnNavigationItemSelectedListener {
 
-  public static final int LOGIN_REQUEST_CODE = 0xa11d;
+  public static final int RC_LOGIN = 0xa11d;
   public static final String EXTRA_AUTH_CALLBACK = "extra_auth_callback";
   // @Bind(R.id.header_account_background) View mHeaderBackground;
   @Bind(R.id.header_account_icon) ImageView mHeaderIcon;
@@ -342,7 +342,7 @@ public class MainActivity extends BaseActivity
 
   private void login() {
     Intent intent = new Intent(this, WebViewActivity.class);
-    startActivityForResult(intent, LOGIN_REQUEST_CODE);
+    startActivityForResult(intent, RC_LOGIN);
   }
 
   private void logout() {
@@ -380,11 +380,28 @@ public class MainActivity extends BaseActivity
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    if (resultCode == Activity.RESULT_OK && requestCode == LOGIN_REQUEST_CODE && data != null) {
-      String callback = data.getStringExtra(EXTRA_AUTH_CALLBACK);
-      Uri callbackUri = Uri.parse(callback);
-      final String code = callbackUri.getQueryParameter("code");
-      ApiClient.accessToken(code).enqueue(mOnTokenCallback);
+    switch (requestCode) {
+      case RC_SEARCH:
+        // reset the search icon which we hid
+        View searchMenuView = mToolBar.findViewById(R.id.action_search);
+        if (searchMenuView != null) {
+          searchMenuView.setAlpha(1f);
+        }
+        if (resultCode == SearchActivity.RESULT_CODE_SAVE) {
+
+        }
+        break;
+      case RC_LOGIN:
+        if (resultCode == RESULT_OK && data != null) {
+          String callback = data.getStringExtra(EXTRA_AUTH_CALLBACK);
+          Uri callbackUri = Uri.parse(callback);
+          final String code = callbackUri.getQueryParameter("code");
+          ApiClient.accessToken(code).enqueue(mOnTokenCallback);
+        }
+
+        break;
+      default:
+        break;
     }
   }
 
@@ -423,9 +440,18 @@ public class MainActivity extends BaseActivity
     return true;
   }
 
+  private static final int RC_SEARCH = 0;
+
   @Override public boolean onOptionsItemSelected(MenuItem item) {
     if (R.id.action_search == item.getItemId()) {
-      //
+      // get the icon's location on screen to pass through to the search screen
+      View searchMenuView = mToolBar.findViewById(R.id.action_search);
+      int[] loc = new int[2];
+      searchMenuView.getLocationOnScreen(loc);
+      startActivityForResult(SearchActivity.createStartIntent(this, loc[0], loc[0] +
+          (searchMenuView.getWidth() / 2)), RC_SEARCH,
+          ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
+      searchMenuView.setAlpha(0.f);
       return true;
     }
 

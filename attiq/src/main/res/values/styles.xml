@@ -43,8 +43,6 @@
 
     <style name="Attiq.Theme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
-    <style name="Attiq.Widget"></style>
-
     <style name="Attiq.Widget.Toolbar.Subtitle"
            parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
         <item name="android:textStyle">normal</item>
