@@ -3,16 +3,19 @@ package im.ene.lab.attiq.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.animation.PathInterpolatorCompat;
+import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -25,13 +28,11 @@ import android.transition.TransitionInflater;
 import android.transition.TransitionManager;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.ViewTreeObserver;
-import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
 import android.view.inputmethod.EditorInfo;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -45,13 +46,17 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.ArticleListAdapter;
 import im.ene.lab.attiq.data.SearchDataManager;
 import im.ene.lab.attiq.data.two.Article;
+import im.ene.lab.attiq.util.AnimUtils;
 import im.ene.lab.attiq.util.ImeUtils;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.BaselineGridTextView;
 import im.ene.lab.attiq.widgets.EndlessScrollListener;
+import io.codetail.animation.ViewAnimationUtils;
 import retrofit2.Callback;
 
 import java.util.List;
+
+//import android.view.ViewAnimationUtils;
 
 public class SearchActivity extends BaseActivity {
 
@@ -71,10 +76,6 @@ public class SearchActivity extends BaseActivity {
   @Bind(R.id.container) ViewGroup container;
   @Bind(R.id.search_toolbar) ViewGroup searchToolbar;
   @Bind(R.id.results_container) ViewGroup resultsContainer;
-  @Bind(R.id.fab) ImageButton fab;
-  @Bind(R.id.confirm_save_container) ViewGroup confirmSaveContainer;
-  @Bind(R.id.save_dribbble) CheckBox saveDribbble;
-  @Bind(R.id.save_designer_news) CheckBox saveDesignerNews;
   @Bind(R.id.scrim) View scrim;
   @Bind(R.id.results_scrim) View resultsScrim;
   private BaselineGridTextView noResults;
@@ -94,13 +95,17 @@ public class SearchActivity extends BaseActivity {
     return starter;
   }
 
+  private final Interpolator LINEAR_OUT_SLOW_INT =
+      PathInterpolatorCompat.create(0.4f, 0.f, 0.2f, 1.f);
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_search);
     ButterKnife.bind(this);
     setupSearchView();
-    auto = TransitionInflater.from(this).inflateTransition(R.transition.auto);
+    auto = TransitionInflater.from(this)
+        .inflateTransition(R.transition.auto).setInterpolator(LINEAR_OUT_SLOW_INT);
 
     dataManager = new SearchDataManager() {
       @Override public void onDataLoaded(List<Article> data) {
@@ -109,18 +114,6 @@ public class SearchActivity extends BaseActivity {
             TransitionManager.beginDelayedTransition(container, auto);
             progress.setVisibility(View.GONE);
             results.setVisibility(View.VISIBLE);
-            fab.setVisibility(View.VISIBLE);
-            fab.setAlpha(0.6f);
-            fab.setScaleX(0f);
-            fab.setScaleY(0f);
-            fab.animate()
-                .alpha(1f)
-                .scaleX(1f)
-                .scaleY(1f)
-                .setStartDelay(800L)
-                .setDuration(300L)
-                .setInterpolator(AnimationUtils.loadInterpolator(SearchActivity
-                    .this, android.R.interpolator.linear_out_slow_in));
           }
           adapter.addItems(data);
         } else {
@@ -131,35 +124,6 @@ public class SearchActivity extends BaseActivity {
       }
     };
 
-//    dataManager = new SearchDataManager(this) {
-//      @Override
-//      public void onDataLoaded(List<? extends PlaidItem> data) {
-//        if (data != null && data.size() > 0) {
-//          if (results.getVisibility() != View.VISIBLE) {
-//            TransitionManager.beginDelayedTransition(container, auto);
-//            progress.setVisibility(View.GONE);
-//            results.setVisibility(View.VISIBLE);
-//            fab.setVisibility(View.VISIBLE);
-//            fab.setAlpha(0.6f);
-//            fab.setScaleX(0f);
-//            fab.setScaleY(0f);
-//            fab.animate()
-//                .alpha(1f)
-//                .scaleX(1f)
-//                .scaleY(1f)
-//                .setStartDelay(800L)
-//                .setDuration(300L)
-//                .setInterpolator(AnimationUtils.loadInterpolator(SearchActivity
-//                    .this, android.R.interpolator.linear_out_slow_in));
-//          }
-//          adapter.addAndResort(data);
-//        } else {
-//          TransitionManager.beginDelayedTransition(container, auto);
-//          progress.setVisibility(View.GONE);
-//          setNoResultsVisibility(View.VISIBLE);
-//        }
-//      }
-//    };
     adapter = new ArticleListAdapter() {
       @Override
       public void loadItems(boolean isLoadingMore, int page, int pageLimit,
@@ -198,37 +162,23 @@ public class SearchActivity extends BaseActivity {
     searchBackContainer.animate()
         .translationX(0f)
         .setDuration(650L)
-        .setInterpolator(AnimationUtils.loadInterpolator(this,
-            android.R.interpolator.fast_out_slow_in));
+        .setInterpolator(LINEAR_OUT_SLOW_INT);
     // transform from search icon to back icon
-    AnimatedVectorDrawable searchToBack = (AnimatedVectorDrawable) ContextCompat
-        .getDrawable(this, R.drawable.avd_search_to_back);
+    DrawerArrowDrawable searchToBack = new DrawerArrowDrawable(searchBack.getContext());
+    searchToBack.setDirection(DrawerArrowDrawable.ARROW_DIRECTION_LEFT);
+    searchToBack.setProgress(1.f);
     searchBack.setImageDrawable(searchToBack);
-    searchToBack.start();
-    // for some reason the animation doesn't always finish (leaving a part arrow!?) so after
-    // the animation set a static drawable. Also animation callbacks weren't added until API23
-    // so using post delayed :(
-    // TODO fix properly!!
-//    searchBack.postDelayed(new Runnable() {
-//      @Override
-//      public void run() {
-//        searchBack.setImageDrawable(ContextCompat.getDrawable(SearchActivity.this,
-//            R.drawable.ic_arrow_back_padded));
-//      }
-//    }, 600L);
 
     // fade in the other search chrome
     searchBackground.animate()
         .alpha(1f)
         .setDuration(300L)
-        .setInterpolator(AnimationUtils.loadInterpolator(this,
-            android.R.interpolator.linear_out_slow_in));
+        .setInterpolator(LINEAR_OUT_SLOW_INT);
     searchView.animate()
         .alpha(1f)
         .setStartDelay(400L)
         .setDuration(400L)
-        .setInterpolator(AnimationUtils.loadInterpolator(this,
-            android.R.interpolator.linear_out_slow_in))
+        .setInterpolator(LINEAR_OUT_SLOW_INT)
         .setListener(new AnimatorListenerAdapter() {
           @Override
           public void onAnimationEnd(Animator animation) {
@@ -251,14 +201,13 @@ public class SearchActivity extends BaseActivity {
                 0,
                 (float) Math.hypot(searchBackDistanceX, scrim.getHeight()
                     - searchBackground.getBottom())),
-            ObjectAnimator.ofArgb(
+            AnimUtils.ofArgb(
                 scrim,
                 UIUtil.BACKGROUND_COLOR,
                 Color.TRANSPARENT,
                 ContextCompat.getColor(SearchActivity.this, R.color.scrim)));
         showScrim.setDuration(400L);
-        showScrim.setInterpolator(AnimationUtils.loadInterpolator(SearchActivity.this,
-            android.R.interpolator.linear_out_slow_in));
+        showScrim.setInterpolator(LINEAR_OUT_SLOW_INT);
         showScrim.start();
         return false;
       }
@@ -279,11 +228,7 @@ public class SearchActivity extends BaseActivity {
 
   @Override
   public void onBackPressed() {
-    if (confirmSaveContainer.getVisibility() == View.VISIBLE) {
-      hideSaveConfimation();
-    } else {
-      dismiss();
-    }
+    dismiss();
   }
 
   @Override
@@ -299,45 +244,38 @@ public class SearchActivity extends BaseActivity {
     searchBackContainer.animate()
         .translationX(searchBackDistanceX)
         .setDuration(600L)
-        .setInterpolator(AnimationUtils.loadInterpolator(this,
-            android.R.interpolator.fast_out_slow_in))
+        .setInterpolator(LINEAR_OUT_SLOW_INT)
         .setListener(new AnimatorListenerAdapter() {
           @Override
           public void onAnimationEnd(Animator animation) {
-            finishAfterTransition();
+            ActivityCompat.finishAfterTransition(SearchActivity.this);
           }
         })
         .start();
     // transform from back icon to search icon
-    AnimatedVectorDrawable backToSearch = (AnimatedVectorDrawable) ContextCompat
-        .getDrawable(this, R.drawable.avd_back_to_search);
-    searchBack.setImageDrawable(backToSearch);
+    searchBack.setImageResource(R.drawable.ic_search_24dp);
     // clear the background else the touch ripple moves with the translation which looks bad
     searchBack.setBackground(null);
-    backToSearch.start();
     // fade out the other search chrome
     searchView.animate()
         .alpha(0f)
         .setStartDelay(0L)
         .setDuration(120L)
-        .setInterpolator(AnimationUtils.loadInterpolator(this,
-            android.R.interpolator.fast_out_linear_in))
+        .setInterpolator(LINEAR_OUT_SLOW_INT)
         .setListener(null)
         .start();
     searchBackground.animate()
         .alpha(0f)
         .setStartDelay(300L)
         .setDuration(160L)
-        .setInterpolator(AnimationUtils.loadInterpolator(this,
-            android.R.interpolator.fast_out_linear_in))
+        .setInterpolator(LINEAR_OUT_SLOW_INT)
         .setListener(null)
         .start();
-    if (searchToolbar.getZ() != 0f) {
+    if (ViewCompat.getZ(searchToolbar) != 0f) {
       searchToolbar.animate()
           .z(0f)
           .setDuration(600L)
-          .setInterpolator(AnimationUtils.loadInterpolator(this,
-              android.R.interpolator.fast_out_linear_in))
+          .setInterpolator(LINEAR_OUT_SLOW_INT)
           .start();
     }
 
@@ -350,8 +288,7 @@ public class SearchActivity extends BaseActivity {
           (float) Math.hypot(searchIconCenterX, resultsContainer.getHeight()),
           0f);
       closeResults.setDuration(500L);
-      closeResults.setInterpolator(AnimationUtils.loadInterpolator(SearchActivity.this,
-          android.R.interpolator.fast_out_slow_in));
+      closeResults.setInterpolator(LINEAR_OUT_SLOW_INT);
       closeResults.addListener(new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
@@ -365,117 +302,9 @@ public class SearchActivity extends BaseActivity {
     scrim.animate()
         .alpha(0f)
         .setDuration(400L)
-        .setInterpolator(AnimationUtils.loadInterpolator(this,
-            android.R.interpolator.fast_out_linear_in))
+        .setInterpolator(LINEAR_OUT_SLOW_INT)
         .setListener(null)
         .start();
-  }
-
-  @OnClick(R.id.fab)
-  protected void save() {
-    // show the save confirmation bubble
-    fab.setVisibility(View.INVISIBLE);
-    confirmSaveContainer.setVisibility(View.VISIBLE);
-    resultsScrim.setVisibility(View.VISIBLE);
-
-    // expand it once it's been measured and show a scrim over the search results
-    confirmSaveContainer.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver
-        .OnPreDrawListener() {
-      @Override
-      public boolean onPreDraw() {
-        // expand the confirmation
-        confirmSaveContainer.getViewTreeObserver().removeOnPreDrawListener(this);
-        Animator reveal = ViewAnimationUtils.createCircularReveal(confirmSaveContainer,
-            confirmSaveContainer.getWidth() / 2,
-            confirmSaveContainer.getHeight() / 2,
-            fab.getWidth() / 2,
-            confirmSaveContainer.getWidth() / 2);
-        reveal.setDuration(250L);
-        reveal.setInterpolator(AnimationUtils.loadInterpolator(SearchActivity.this,
-            android.R.interpolator.fast_out_slow_in));
-        reveal.start();
-
-        // show the scrim
-        int centerX = (fab.getLeft() + fab.getRight()) / 2;
-        int centerY = (fab.getTop() + fab.getBottom()) / 2;
-        Animator revealScrim = ViewAnimationUtils.createCircularReveal(
-            resultsScrim,
-            centerX,
-            centerY,
-            0,
-            (float) Math.hypot(centerX, centerY));
-        revealScrim.setDuration(400L);
-        revealScrim.setInterpolator(AnimationUtils.loadInterpolator(SearchActivity
-            .this, android.R.interpolator.linear_out_slow_in));
-        revealScrim.start();
-        ObjectAnimator fadeInScrim = ObjectAnimator.ofArgb(resultsScrim,
-            UIUtil.BACKGROUND_COLOR,
-            Color.TRANSPARENT,
-            ContextCompat.getColor(SearchActivity.this, R.color.scrim));
-        fadeInScrim.setDuration(800L);
-        fadeInScrim.setInterpolator(AnimationUtils.loadInterpolator(SearchActivity
-            .this, android.R.interpolator.linear_out_slow_in));
-        fadeInScrim.start();
-
-        // ease in the checkboxes
-        saveDribbble.setAlpha(0.6f);
-        saveDribbble.setTranslationY(saveDribbble.getHeight() * 0.4f);
-        saveDribbble.animate()
-            .alpha(1f)
-            .translationY(0f)
-            .setDuration(200L)
-            .setInterpolator(AnimationUtils.loadInterpolator(SearchActivity.this,
-                android.R.interpolator.linear_out_slow_in));
-        saveDesignerNews.setAlpha(0.6f);
-        saveDesignerNews.setTranslationY(saveDesignerNews.getHeight() * 0.5f);
-        saveDesignerNews.animate()
-            .alpha(1f)
-            .translationY(0f)
-            .setDuration(200L)
-            .setInterpolator(AnimationUtils.loadInterpolator(SearchActivity.this,
-                android.R.interpolator.linear_out_slow_in));
-        return false;
-      }
-    });
-  }
-
-  @OnClick(R.id.save_confirmed)
-  protected void doSave() {
-    Intent saveData = new Intent();
-    saveData.putExtra(EXTRA_QUERY, dataManager.getQuery());
-    saveData.putExtra(EXTRA_SAVE_DRIBBBLE, saveDribbble.isChecked());
-    saveData.putExtra(EXTRA_SAVE_DESIGNER_NEWS, saveDesignerNews.isChecked());
-    setResult(RESULT_CODE_SAVE, saveData);
-    dismiss();
-  }
-
-  @OnClick(R.id.results_scrim)
-  protected void hideSaveConfimation() {
-    if (confirmSaveContainer.getVisibility() == View.VISIBLE) {
-      // contract the bubble & hide the scrim
-      AnimatorSet hideConfirmation = new AnimatorSet();
-      hideConfirmation.playTogether(
-          ViewAnimationUtils.createCircularReveal(confirmSaveContainer,
-              confirmSaveContainer.getWidth() / 2,
-              confirmSaveContainer.getHeight() / 2,
-              confirmSaveContainer.getWidth() / 2,
-              fab.getWidth() / 2),
-          ObjectAnimator.ofArgb(resultsScrim,
-              UIUtil.BACKGROUND_COLOR,
-              Color.TRANSPARENT));
-      hideConfirmation.setDuration(150L);
-      hideConfirmation.setInterpolator(AnimationUtils.loadInterpolator(SearchActivity.this,
-          android.R.interpolator.fast_out_slow_in));
-      hideConfirmation.addListener(new AnimatorListenerAdapter() {
-        @Override
-        public void onAnimationEnd(Animator animation) {
-          confirmSaveContainer.setVisibility(View.GONE);
-          resultsScrim.setVisibility(View.GONE);
-          fab.setVisibility(results.getVisibility());
-        }
-      });
-      hideConfirmation.start();
-    }
   }
 
   private void setupSearchView() {
@@ -504,8 +333,8 @@ public class SearchActivity extends BaseActivity {
     searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
       @Override
       public void onFocusChange(View v, boolean hasFocus) {
-        if (hasFocus && confirmSaveContainer.getVisibility() == View.VISIBLE) {
-          hideSaveConfimation();
+        if (hasFocus) {
+
         }
       }
     });
@@ -517,8 +346,6 @@ public class SearchActivity extends BaseActivity {
     TransitionManager.beginDelayedTransition(container, auto);
     results.setVisibility(View.GONE);
     progress.setVisibility(View.GONE);
-    fab.setVisibility(View.GONE);
-    confirmSaveContainer.setVisibility(View.GONE);
     resultsScrim.setVisibility(View.GONE);
     setNoResultsVisibility(View.GONE);
   }
@@ -564,19 +391,17 @@ public class SearchActivity extends BaseActivity {
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
       gridScrollY += dy;
-      if (gridScrollY > 0 && searchToolbar.getTranslationZ() != appBarElevation) {
+      if (gridScrollY > 0 && ViewCompat.getTranslationZ(searchToolbar) != appBarElevation) {
         searchToolbar.animate()
             .translationZ(appBarElevation)
             .setDuration(300L)
-            .setInterpolator(AnimationUtils.loadInterpolator(SearchActivity.this,
-                android.R.interpolator.fast_out_slow_in))
+            .setInterpolator(LINEAR_OUT_SLOW_INT)
             .start();
-      } else if (gridScrollY == 0 && searchToolbar.getTranslationZ() != 0) {
+      } else if (gridScrollY == 0 && ViewCompat.getTranslationZ(searchToolbar) != 0) {
         searchToolbar.animate()
             .translationZ(0f)
             .setDuration(300L)
-            .setInterpolator(AnimationUtils.loadInterpolator(SearchActivity.this,
-                android.R.interpolator.fast_out_slow_in))
+            .setInterpolator(LINEAR_OUT_SLOW_INT)
             .start();
       }
     }
