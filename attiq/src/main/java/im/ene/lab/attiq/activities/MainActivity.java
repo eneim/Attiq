@@ -452,7 +452,7 @@ public class MainActivity extends BaseActivity
       startActivityForResult(SearchActivity.createStartIntent(this, loc[0], loc[0] +
           (searchMenuView.getWidth() / 2)), RC_SEARCH,
           ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
-      searchMenuView.setAlpha(0.f);
+      // searchMenuView.setAlpha(0.f);
       return true;
     }
 

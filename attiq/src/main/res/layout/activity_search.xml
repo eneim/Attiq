@@ -25,7 +25,7 @@
         android:id="@+id/scrim"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/scrim"/>
+        android:background="@color/scrim_attiq"/>
 
     <FrameLayout
         android:id="@+id/search_toolbar"
@@ -33,14 +33,14 @@
         android:layout_height="?attr/actionBarSize"
         android:elevation="@dimen/z_app_bar"
         android:outlineProvider="bounds"
-        android:theme="@style/SearchViewTheme">
+        android:theme="@style/Attiq.Theme.SearchView">
 
         <View
             android:id="@+id/search_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:alpha="0"
-            android:background="@color/background_dark"/>
+            android:background="@color/white"/>
 
         <SearchView
             android:id="@+id/search_view"
@@ -69,7 +69,7 @@
                 android:layout_gravity="center"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:gravity="start|center_vertical"
-                android:src="@drawable/ic_search_24dp"/>
+                android:src="@drawable/ic_search_24dp_black"/>
 
         </FrameLayout>
 

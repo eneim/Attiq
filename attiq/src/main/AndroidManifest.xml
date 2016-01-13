@@ -90,7 +90,7 @@
             android:name=".activities.SearchActivity"
             android:label="@string/title_activity_search"
             android:launchMode="singleTop"
-            android:theme="@style/Plaid.Translucent.Search">
+            android:theme="@style/Attiq.Theme.NoActionBar.Translucent.Search">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>

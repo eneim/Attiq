@@ -1,8 +1,8 @@
 <resources>
 
-    <style name="Attiq">
+    <style name="Attiq"/>
 
-    </style>
+    <style name="Attiq.Widget" parent="android:Widget"/>
 
     <!-- Base application theme. -->
     <style name="Attiq.Theme" parent="Theme.AppCompat.Light.DarkActionBar">

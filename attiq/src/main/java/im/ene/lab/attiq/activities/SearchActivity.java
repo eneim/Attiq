@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPropertyAnimatorCompat;
 import android.support.v4.view.animation.PathInterpolatorCompat;
 import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.GridLayoutManager;
@@ -67,26 +66,27 @@ public class SearchActivity extends BaseActivity {
   public static final String EXTRA_SAVE_DESIGNER_NEWS = "EXTRA_SAVE_DESIGNER_NEWS";
   public static final int RESULT_CODE_SAVE = 7;
 
-  @Bind(R.id.searchback) ImageButton searchBack;
-  @Bind(R.id.searchback_container) ViewGroup searchBackContainer;
-  @Bind(R.id.search_view) SearchView searchView;
-  @Bind(R.id.search_background) View searchBackground;
-  @Bind(android.R.id.empty) ProgressBar progress;
-  @Bind(R.id.search_results) RecyclerView results;
-  @Bind(R.id.container) ViewGroup container;
-  @Bind(R.id.search_toolbar) ViewGroup searchToolbar;
-  @Bind(R.id.results_container) ViewGroup resultsContainer;
-  @Bind(R.id.scrim) View scrim;
-  @Bind(R.id.results_scrim) View resultsScrim;
-  private BaselineGridTextView noResults;
-  @BindInt(R.integer.num_columns) int columns;
-  @BindDimen(R.dimen.z_app_bar) float appBarElevation;
-  private Transition auto;
+  @Bind(R.id.searchback) ImageButton mSearchNavButton;
+  @Bind(R.id.searchback_container) ViewGroup mSearchNavButtonContainer;
+  @Bind(R.id.search_view) SearchView mSearchView;
+  @Bind(R.id.search_background) View mSearchBackground;
+  @Bind(android.R.id.empty) ProgressBar mProgress;
+  @Bind(R.id.search_results) RecyclerView mRecyclerView;
+  @Bind(R.id.container) ViewGroup mMainContainer;
+  @Bind(R.id.search_toolbar) ViewGroup mSearchToolbar;
+  @Bind(R.id.results_container) ViewGroup mResultsContainer;
+  @Bind(R.id.scrim) View mScrim;
+  @Bind(R.id.results_scrim) View mResultsScrim;
+  private BaselineGridTextView mNoResults;
+  @BindInt(R.integer.num_columns) int mColumns;
+  @BindDimen(R.dimen.z_app_bar) float mAppBarElevation;
 
-  private int searchBackDistanceX;
-  private int searchIconCenterX;
-  private SearchDataManager dataManager;
-  private ArticleListAdapter adapter;
+  private Transition mAutoTransition;
+
+  private int mSearchBackDistanceX;
+  private int mSearchIconCenterX;
+  private SearchDataManager mDataManager;
+  private ArticleListAdapter mAdapter;
 
   public static Intent createStartIntent(Context context, int menuIconLeft, int menuIconCenterX) {
     Intent starter = new Intent(context, SearchActivity.class);
@@ -104,27 +104,27 @@ public class SearchActivity extends BaseActivity {
     setContentView(R.layout.activity_search);
     ButterKnife.bind(this);
     setupSearchView();
-    auto = TransitionInflater.from(this)
+    mAutoTransition = TransitionInflater.from(this)
         .inflateTransition(R.transition.auto).setInterpolator(LINEAR_OUT_SLOW_INT);
 
-    dataManager = new SearchDataManager() {
+    mDataManager = new SearchDataManager() {
       @Override public void onDataLoaded(List<Article> data) {
         if (data != null && data.size() > 0) {
-          if (results.getVisibility() != View.VISIBLE) {
-            TransitionManager.beginDelayedTransition(container, auto);
-            progress.setVisibility(View.GONE);
-            results.setVisibility(View.VISIBLE);
+          if (mRecyclerView.getVisibility() != View.VISIBLE) {
+            TransitionManager.beginDelayedTransition(mMainContainer, mAutoTransition);
+            mProgress.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
           }
-          adapter.addItems(data);
+          mAdapter.addItems(data);
         } else {
-          TransitionManager.beginDelayedTransition(container, auto);
-          progress.setVisibility(View.GONE);
+          TransitionManager.beginDelayedTransition(mMainContainer, mAutoTransition);
+          mProgress.setVisibility(View.GONE);
           setNoResultsVisibility(View.VISIBLE);
         }
       }
     };
 
-    adapter = new ArticleListAdapter() {
+    mAdapter = new ArticleListAdapter() {
       @Override
       public void loadItems(boolean isLoadingMore, int page, int pageLimit,
                             @Nullable String query, Callback<List<Article>> callback) {
@@ -132,49 +132,49 @@ public class SearchActivity extends BaseActivity {
       }
     };
 
-    results.setAdapter(adapter);
-    GridLayoutManager layoutManager = new GridLayoutManager(this, columns);
+    mRecyclerView.setAdapter(mAdapter);
+    GridLayoutManager layoutManager = new GridLayoutManager(this, mColumns);
     layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
       @Override
       public int getSpanSize(int position) {
-        // return adapter.getItemColumnSpan(position);
-        return 1;
+        // return mAdapter.getItemColumnSpan(position);
+        return mColumns;
       }
     });
-    results.setLayoutManager(layoutManager);
-    results.addOnScrollListener(new EndlessScrollListener(layoutManager, 99) {
+    mRecyclerView.setLayoutManager(layoutManager);
+    mRecyclerView.addOnScrollListener(new EndlessScrollListener(layoutManager, 99) {
       @Override protected void loadMore() {
 
       }
     });
 
-    results.setHasFixedSize(true);
-    results.addOnScrollListener(gridScroll);
+    mRecyclerView.setHasFixedSize(true);
+    mRecyclerView.addOnScrollListener(gridScroll);
 
     // extract the search icon's location passed from the launching activity, minus 4dp to
     // compensate for different paddings in the views
-    searchBackDistanceX = getIntent().getIntExtra(EXTRA_MENU_LEFT, 0) - (int) TypedValue
+    mSearchBackDistanceX = getIntent().getIntExtra(EXTRA_MENU_LEFT, 0) - (int) TypedValue
         .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
-    searchIconCenterX = getIntent().getIntExtra(EXTRA_MENU_CENTER_X, 0);
+    mSearchIconCenterX = getIntent().getIntExtra(EXTRA_MENU_CENTER_X, 0);
 
     // translate icon to match the launching screen then animate back into position
-    searchBackContainer.setTranslationX(searchBackDistanceX);
-    searchBackContainer.animate()
+    mSearchNavButtonContainer.setTranslationX(mSearchBackDistanceX);
+    mSearchNavButtonContainer.animate()
         .translationX(0f)
         .setDuration(650L)
         .setInterpolator(LINEAR_OUT_SLOW_INT);
-    // transform from search icon to back icon
-    DrawerArrowDrawable searchToBack = new DrawerArrowDrawable(searchBack.getContext());
+    // change from search icon to back icon
+    DrawerArrowDrawable searchToBack = new DrawerArrowDrawable(mSearchNavButton.getContext());
     searchToBack.setDirection(DrawerArrowDrawable.ARROW_DIRECTION_LEFT);
     searchToBack.setProgress(1.f);
-    searchBack.setImageDrawable(searchToBack);
+    mSearchNavButton.setImageDrawable(searchToBack);
 
     // fade in the other search chrome
-    searchBackground.animate()
+    mSearchBackground.animate()
         .alpha(1f)
         .setDuration(300L)
         .setInterpolator(LINEAR_OUT_SLOW_INT);
-    searchView.animate()
+    mSearchView.animate()
         .alpha(1f)
         .setStartDelay(400L)
         .setDuration(400L)
@@ -182,27 +182,27 @@ public class SearchActivity extends BaseActivity {
         .setListener(new AnimatorListenerAdapter() {
           @Override
           public void onAnimationEnd(Animator animation) {
-            searchView.requestFocus();
-            ImeUtils.showIme(searchView);
+            mSearchView.requestFocus();
+            ImeUtils.showIme(mSearchView);
           }
         });
 
-    // animate in a scrim over the content behind
-    scrim.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+    // animate in a mScrim over the content behind
+    mScrim.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
       @Override
       public boolean onPreDraw() {
-        scrim.getViewTreeObserver().removeOnPreDrawListener(this);
+        mScrim.getViewTreeObserver().removeOnPreDrawListener(this);
         AnimatorSet showScrim = new AnimatorSet();
         showScrim.playTogether(
             ViewAnimationUtils.createCircularReveal(
-                scrim,
-                searchIconCenterX,
-                searchBackground.getBottom(),
+                mScrim,
+                mSearchIconCenterX,
+                mSearchBackground.getBottom(),
                 0,
-                (float) Math.hypot(searchBackDistanceX, scrim.getHeight()
-                    - searchBackground.getBottom())),
+                (float) Math.hypot(mSearchBackDistanceX, mScrim.getHeight()
+                    - mSearchBackground.getBottom())),
             AnimUtils.ofArgb(
-                scrim,
+                mScrim,
                 UIUtil.BACKGROUND_COLOR,
                 Color.TRANSPARENT,
                 ContextCompat.getColor(SearchActivity.this, R.color.scrim)));
@@ -212,6 +212,7 @@ public class SearchActivity extends BaseActivity {
         return false;
       }
     });
+
     onNewIntent(getIntent());
   }
 
@@ -220,7 +221,7 @@ public class SearchActivity extends BaseActivity {
     if (intent.hasExtra(SearchManager.QUERY)) {
       String query = intent.getStringExtra(SearchManager.QUERY);
       if (!TextUtils.isEmpty(query)) {
-        searchView.setQuery(query, false);
+        mSearchView.setQuery(query, false);
         searchFor(query);
       }
     }
@@ -241,8 +242,9 @@ public class SearchActivity extends BaseActivity {
   @OnClick({R.id.scrim, R.id.searchback})
   protected void dismiss() {
     // translate the icon to match position in the launching activity
-    searchBackContainer.animate()
-        .translationX(searchBackDistanceX)
+    mSearchNavButtonContainer.animate()
+        .translationX(mSearchBackDistanceX)
+        .alpha(0.f)
         .setDuration(600L)
         .setInterpolator(LINEAR_OUT_SLOW_INT)
         .setListener(new AnimatorListenerAdapter() {
@@ -253,53 +255,53 @@ public class SearchActivity extends BaseActivity {
         })
         .start();
     // transform from back icon to search icon
-    searchBack.setImageResource(R.drawable.ic_search_24dp);
+    mSearchNavButton.setImageResource(R.drawable.ic_search_24dp_black);
     // clear the background else the touch ripple moves with the translation which looks bad
-    searchBack.setBackground(null);
+    mSearchNavButton.setBackground(null);
     // fade out the other search chrome
-    searchView.animate()
+    mSearchView.animate()
         .alpha(0f)
         .setStartDelay(0L)
         .setDuration(120L)
         .setInterpolator(LINEAR_OUT_SLOW_INT)
         .setListener(null)
         .start();
-    searchBackground.animate()
+    mSearchBackground.animate()
         .alpha(0f)
         .setStartDelay(300L)
         .setDuration(160L)
         .setInterpolator(LINEAR_OUT_SLOW_INT)
         .setListener(null)
         .start();
-    if (ViewCompat.getZ(searchToolbar) != 0f) {
-      ViewCompat.animate(searchToolbar)
+    if (ViewCompat.getZ(mSearchToolbar) != 0f) {
+      ViewCompat.animate(mSearchToolbar)
           .z(0f)
           .setDuration(600L)
           .setInterpolator(LINEAR_OUT_SLOW_INT)
           .start();
     }
 
-    // if we're showing search results, circular hide them
-    if (resultsContainer.getHeight() > 0) {
+    // if we're showing search mRecyclerView, circular hide them
+    if (mResultsContainer.getHeight() > 0) {
       Animator closeResults = ViewAnimationUtils.createCircularReveal(
-          resultsContainer,
-          searchIconCenterX,
+          mResultsContainer,
+          mSearchIconCenterX,
           0,
-          (float) Math.hypot(searchIconCenterX, resultsContainer.getHeight()),
+          (float) Math.hypot(mSearchIconCenterX, mResultsContainer.getHeight()),
           0f);
       closeResults.setDuration(500L);
       closeResults.setInterpolator(LINEAR_OUT_SLOW_INT);
       closeResults.addListener(new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
-          resultsContainer.setVisibility(View.INVISIBLE);
+          mResultsContainer.setVisibility(View.INVISIBLE);
         }
       });
       closeResults.start();
     }
 
-    // fade out the scrim
-    scrim.animate()
+    // fade out the mScrim
+    mScrim.animate()
         .alpha(0f)
         .setDuration(400L)
         .setInterpolator(LINEAR_OUT_SLOW_INT)
@@ -309,13 +311,13 @@ public class SearchActivity extends BaseActivity {
 
   private void setupSearchView() {
     SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+    mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
     // hint, inputType & ime options seem to be ignored from XML! Set in code
-    searchView.setQueryHint(getString(R.string.search_hint));
-    searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
-    searchView.setImeOptions(searchView.getImeOptions() | EditorInfo.IME_ACTION_SEARCH |
+    mSearchView.setQueryHint(getString(R.string.search_hint));
+    mSearchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+    mSearchView.setImeOptions(mSearchView.getImeOptions() | EditorInfo.IME_ACTION_SEARCH |
         EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN);
-    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+    mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
       @Override
       public boolean onQueryTextSubmit(String query) {
         searchFor(query);
@@ -330,7 +332,7 @@ public class SearchActivity extends BaseActivity {
         return true;
       }
     });
-    searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+    mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
       @Override
       public void onFocusChange(View v, boolean hasFocus) {
         if (hasFocus) {
@@ -341,49 +343,49 @@ public class SearchActivity extends BaseActivity {
   }
 
   private void clearResults() {
-    adapter.clear();
-    dataManager.clear();
-    TransitionManager.beginDelayedTransition(container, auto);
-    results.setVisibility(View.GONE);
-    progress.setVisibility(View.GONE);
-    resultsScrim.setVisibility(View.GONE);
+    mAdapter.clear();
+    mDataManager.clear();
+    TransitionManager.beginDelayedTransition(mMainContainer, mAutoTransition);
+    mRecyclerView.setVisibility(View.GONE);
+    mProgress.setVisibility(View.GONE);
+    mResultsScrim.setVisibility(View.GONE);
     setNoResultsVisibility(View.GONE);
   }
 
   private void setNoResultsVisibility(int visibility) {
     if (visibility == View.VISIBLE) {
-      if (noResults == null) {
-        noResults = (BaselineGridTextView) ((ViewStub)
+      if (mNoResults == null) {
+        mNoResults = (BaselineGridTextView) ((ViewStub)
             findViewById(R.id.stub_no_search_results)).inflate();
-        noResults.setOnClickListener(new View.OnClickListener() {
+        mNoResults.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-            searchView.setQuery("", false);
-            searchView.requestFocus();
-            ImeUtils.showIme(searchView);
+            mSearchView.setQuery("", false);
+            mSearchView.requestFocus();
+            ImeUtils.showIme(mSearchView);
           }
         });
       }
       String message = String.format(getString(R
-          .string.no_search_results), searchView.getQuery().toString());
+          .string.no_search_results), mSearchView.getQuery().toString());
       SpannableStringBuilder ssb = new SpannableStringBuilder(message);
       ssb.setSpan(new StyleSpan(Typeface.ITALIC),
           message.indexOf('“') + 1,
           message.length() - 1,
           Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-      noResults.setText(ssb);
+      mNoResults.setText(ssb);
     }
-    if (noResults != null) {
-      noResults.setVisibility(visibility);
+    if (mNoResults != null) {
+      mNoResults.setVisibility(visibility);
     }
   }
 
   private void searchFor(String query) {
     clearResults();
-    progress.setVisibility(View.VISIBLE);
-    ImeUtils.hideIme(searchView);
-    searchView.clearFocus();
-    dataManager.searchFor(query);
+    mProgress.setVisibility(View.VISIBLE);
+    ImeUtils.hideIme(mSearchView);
+    mSearchView.clearFocus();
+    mDataManager.searchFor(query);
   }
 
   private int gridScrollY = 0;
@@ -391,14 +393,14 @@ public class SearchActivity extends BaseActivity {
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
       gridScrollY += dy;
-      if (gridScrollY > 0 && ViewCompat.getTranslationZ(searchToolbar) != appBarElevation) {
-        ViewCompat.animate(searchToolbar)
-            .translationZ(appBarElevation)
+      if (gridScrollY > 0 && ViewCompat.getTranslationZ(mSearchToolbar) != mAppBarElevation) {
+        ViewCompat.animate(mSearchToolbar)
+            .translationZ(mAppBarElevation)
             .setDuration(300L)
             .setInterpolator(LINEAR_OUT_SLOW_INT)
             .start();
-      } else if (gridScrollY == 0 && ViewCompat.getTranslationZ(searchToolbar) != 0) {
-        ViewCompat.animate(searchToolbar).translationZ(0f)
+      } else if (gridScrollY == 0 && ViewCompat.getTranslationZ(mSearchToolbar) != 0) {
+        ViewCompat.animate(mSearchToolbar).translationZ(0f)
             .setDuration(300L)
             .setInterpolator(LINEAR_OUT_SLOW_INT)
             .start();

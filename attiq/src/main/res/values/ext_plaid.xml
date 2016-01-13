@@ -2,6 +2,7 @@
 <resources>
     <!-- From plaid -->
     <color name="scrim">#99323232</color>
+    <color name="scrim_attiq">#99fefefe</color>
     <dimen name="z_app_bar">4dp</dimen>
 
     <color name="background_dark">#ff333333</color>
@@ -23,7 +24,7 @@
     <color name="mid_grey">#40808080</color>
     <color name="ripple_dark">@color/mid_grey</color>
 
-    <integer name="num_columns">2</integer>
+    <integer name="num_columns">1</integer>
 
     <string name="confirm_save_dribbble_search">Save Dribbble</string>
     <string name="confirm_save_designer_news_search">Save Designer News</string>
@@ -66,41 +67,29 @@
     <integer name="searchback_stem_trim_shorter_duration">450</integer>
 
     <!-- Styles -->
-    <style name="PlaidDarkOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-        <!-- Used to theme dark elements in light themed screens.
-             Extend the material dark Action Bar overlay as this contains text styling. -->
-    </style>
 
-    <style name="SearchViewTheme" parent="PlaidDarkOverlay">
+    <style name="Attiq.Theme.SearchView" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">#FFFFFFFF</item>
         <item name="colorControlActivated">?attr/colorAccent</item>
-        <item name="searchViewStyle">@style/Widget.Plaid.SearchView</item>
+        <item name="searchViewStyle">@style/Attiq.Widget.SearchView</item>
     </style>
 
-    <style name="Widget.Plaid.SearchView" parent="Widget.AppCompat.SearchView">
+    <style name="Attiq.Widget.SearchView" parent="Widget.AppCompat.SearchView">
         <item name="searchIcon">@null</item>
         <item name="searchHintIcon">@null</item>
         <item name="queryBackground">@android:color/transparent</item>
         <item name="submitBackground">@android:color/transparent</item>
     </style>
 
-    <style name="Widget.Plaid" parent="android:Widget"/>
-
-    <style name="Widget.Plaid.EmptyText">
-        <item name="android:textAppearance">@style/TextAppearance.DialogContent</item>
+    <style name="Attiq.Widget.EmptyText">
+        <item name="android:textAppearance">@style/Attiq.TextAppearance.DialogContent</item>
         <item name="lineHeightHint">24sp</item>
         <item name="android:textColor">@color/text_primary_light</item>
     </style>
 
-    <style name="TextAppearance.DialogContent" parent="TextAppearance.AppCompat.Subhead">
+    <style name="Attiq.TextAppearance.DialogContent" parent="TextAppearance.AppCompat.Subhead">
         <item name="android:textColor">@color/text_secondary_dark</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:letterSpacing">0.01</item>
-    </style>
-
-    <style name="ExpandedFabTheme" parent="ThemeOverlay.AppCompat.Light">
-        <item name="android:textColorPrimary">@color/dark_icon</item>
-        <item name="android:textColorPrimaryDisableOnly">@color/dark_icon</item>
-        <item name="colorControlActivated">@color/dark_icon</item>
     </style>
 
     <!-- app palette -->
@@ -178,20 +167,11 @@
     <!-- search -->
     <color name="search_background_scrim">#33000000</color>
 
-    <style name="Plaid" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:colorPrimary">@color/primary</item>
+    <style name="Attiq.Theme.NoActionBar.Translucent">
+        <item name="colorPrimary">@color/primary</item>
         <item name="android:colorBackground">@color/background_light</item>
-        <item name="android:colorAccent">@color/accent</item>
-        <item name="android:navigationBarColor">@color/primary_super_dark</item>
-        <item name="android:statusBarColor">@color/background_super_dark</item>
+        <item name="colorAccent">@color/accent</item>
         <item name="android:textColorHint">@color/hint_disabled_dark</item>
-        <item name="android:windowBackground">@color/background_light</item>
-        <item name="android:windowAllowEnterTransitionOverlap">true</item>
-        <item name="android:windowAllowReturnTransitionOverlap">true</item>
-        <item name="android:windowSharedElementsUseOverlay">false</item>
-    </style>
-
-    <style name="Plaid.Translucent">
         <!-- using a semi-transparent window background for the drag-back gesture -->
         <item name="android:windowBackground">@color/scrim</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
@@ -199,7 +179,6 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
     <style name="SearchWindowAnimations">
@@ -207,11 +186,8 @@
         <item name="android:windowExitAnimation">@anim/fade_out_rapidly</item>
     </style>
 
-    <style name="Plaid.Translucent.Search">
+    <style name="Attiq.Theme.NoActionBar.Translucent.Search">
         <item name="android:windowAnimationStyle">@style/SearchWindowAnimations</item>
-        <item name="android:statusBarColor">@color/background_super_dark</item>
-        <item name="android:navigationBarColor">@color/background_super_dark</item>
-        <item name="android:windowEnterTransition">@transition/search_enter</item>
     </style>
 
     <attr name="lineHeightHint" format="dimension"/>

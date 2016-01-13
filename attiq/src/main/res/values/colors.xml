@@ -6,6 +6,10 @@
 
     <color name="colorPrimaryLight">#F8E796</color>
 
+    <color name="searchColorPrimaryDark">#2E3A87</color>
+    <color name="searchColorPrimary">#1972A4</color>
+    <color name="searchColorAccent">#4C0B2F</color>
+
     <!-- ref: http://www.colorhexa.com/3e3639 -->
     <color name="very_dark_grayish_pink">#3e3639</color>
     <color name="very_dark_grayish_pink_75">#753e3639</color>
