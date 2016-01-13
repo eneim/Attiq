@@ -12,7 +12,7 @@
 
     <include layout="@layout/content_profile"/>
 
-    <ImageButton
+    <im.ene.lab.attiq.widgets.NotBadImageButton
         android:id="@+id/profile_image"
         android:layout_width="@dimen/design_fab_size_big"
         android:layout_height="@dimen/design_fab_size_big"

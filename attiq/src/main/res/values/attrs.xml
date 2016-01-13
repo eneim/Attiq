@@ -20,11 +20,7 @@
         <enum name="big" value="2"/>
     </attr>
 
-    <declare-styleable name="ImageButton">
-        <attr name="backgroundTint"/>
-        <attr name="backgroundTintMode"/>
+    <declare-styleable name="NotBadImageButton">
         <attr name="elevation"/>
-        <attr name="rippleColor"/>
-        <attr name="exFabSize"/>
     </declare-styleable>
 </resources>

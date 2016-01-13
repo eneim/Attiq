@@ -44,6 +44,7 @@ import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ProfileFetchedEvent;
 import im.ene.lab.attiq.util.event.UserFetchedEvent;
+import im.ene.lab.attiq.widgets.NotBadImageButton;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
 import im.ene.lab.attiq.widgets.UserInfoRowTextView;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
@@ -74,7 +75,7 @@ public class ProfileActivity extends BaseActivity {
   @Bind(R.id.toolbar_overlay) View mOverlayContainer;
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.tab_layout) TabLayout mTabLayout;
-  @Bind(R.id.profile_image) ImageButton mProfileImage;
+  @Bind(R.id.profile_image) NotBadImageButton mProfileImage;
   @Bind(R.id.social_button_container) View mSocialButtonContainer;
   @Bind(R.id.profile_social_buttons) LinearLayout mSocialButtonView;
   @Bind(R.id.text_action_follow) TextView mBtnFollow;
