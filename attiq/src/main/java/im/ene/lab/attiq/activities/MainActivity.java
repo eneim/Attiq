@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -100,7 +101,7 @@ public class MainActivity extends BaseActivity
 
     mIconCornerRadius = UIUtil.getDimen(this, R.dimen.header_icon_size_half);
     mIconBorderWidth = UIUtil.getDimen(this, R.dimen.dimen_unit);
-    mIconBorderColor = UIUtil.getColor(this, R.color.colorPrimary);
+    mIconBorderColor = ContextCompat.getColor(this, R.color.colorPrimary);
 
     mToolBar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(mToolBar);

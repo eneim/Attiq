@@ -1,6 +1,7 @@
 package im.ene.lab.attiq.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -214,7 +215,7 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
               tag.getName(), tag.getName())));
 
           TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(tagName,
-              UIUtil.getDrawable(mContext, R.drawable.ic_lens_16dp), null, null, null);
+              ContextCompat.getDrawable(mContext, R.drawable.ic_lens_16dp), null, null, null);
 
           UIUtil.stripUnderlines(tagName);
           mItemTags.addView(tagName);

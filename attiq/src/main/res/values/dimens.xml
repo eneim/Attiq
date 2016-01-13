@@ -53,6 +53,8 @@
     <dimen name="app_bar_max_elevation">4dp</dimen>
     <dimen name="app_bar_min_elevation">0dp</dimen>
 
+    <dimen name="profile_image_elevation">12dp</dimen>
+
     <dimen name="text_margin">16dp</dimen>
     <dimen name="comment_container_expand">224dp</dimen>
     <dimen name="comment_container_collapse">56dp</dimen>

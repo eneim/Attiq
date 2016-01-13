@@ -172,7 +172,7 @@ public class CollapsingToolbarLayout extends FrameLayout {
     TypedValue typedValue = new TypedValue();
     context.getTheme().resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
     int titleColorId = typedValue.resourceId;
-    mTitleColorSpan = new AlphaForegroundColorSpan(UIUtil.getColor(context, titleColorId));
+    mTitleColorSpan = new AlphaForegroundColorSpan(ContextCompat.getColor(context, titleColorId));
 
     setWillNotDraw(false);
 

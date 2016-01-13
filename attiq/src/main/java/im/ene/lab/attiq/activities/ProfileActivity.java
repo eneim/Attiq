@@ -11,6 +11,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
@@ -182,7 +184,7 @@ public class ProfileActivity extends BaseActivity {
     mToolbar.getContext().getTheme()
         .resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
     int titleColorId = typedValue.resourceId;
-    mTitleColorSpan = new AlphaForegroundColorSpan(UIUtil.getColor(this, titleColorId));
+    mTitleColorSpan = new AlphaForegroundColorSpan(ContextCompat.getColor(this, titleColorId));
 
     mRealm = Attiq.realm();
     mUserId = getIntent().getStringExtra(EXTRA_USER_NAME);

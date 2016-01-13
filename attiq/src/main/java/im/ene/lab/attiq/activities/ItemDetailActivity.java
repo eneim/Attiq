@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -255,7 +256,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mToolbar.getContext().getTheme()
         .resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
     int titleColorId = typedValue.resourceId;
-    mTitleColorSpan = new AlphaForegroundColorSpan(UIUtil.getColor(this, titleColorId));
+    mTitleColorSpan = new AlphaForegroundColorSpan(ContextCompat.getColor(this, titleColorId));
 
     mItemUuid = getIntent().getStringExtra(EXTRA_DETAIL_ITEM_UUID);
     mRealm = Attiq.realm();
@@ -631,12 +632,12 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       mStockCount.setText(event.state.stockCount);
       if (event.state.isStocked) {
         TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(mStockCount,
-            UIUtil.getDrawable(mStockCount.getContext(), R.drawable.ic_action_stocked),
+            ContextCompat.getDrawable(mStockCount.getContext(), R.drawable.ic_action_stocked),
             null, null, null
         );
       } else {
         TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(mStockCount,
-            UIUtil.getDrawable(mStockCount.getContext(), R.drawable.ic_action_stock),
+            ContextCompat.getDrawable(mStockCount.getContext(), R.drawable.ic_action_stock),
             null, null, null
         );
       }

@@ -8,10 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
-import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.TextPaint;
@@ -62,24 +59,8 @@ public class UIUtil {
     return list == null || list.size() == 0;
   }
 
-  public static int getColor(@NonNull Context context, @ColorRes int colorId) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      return context.getResources().getColor(colorId, context.getTheme());
-    } else {
-      return context.getResources().getColor(colorId);
-    }
-  }
-
   public static int getDimen(Context context, @DimenRes int dimenId) {
     return context.getResources().getDimensionPixelSize(dimenId);
-  }
-
-  public static Drawable getDrawable(@NonNull Context context, @DrawableRes int id) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      return context.getResources().getDrawable(id, context.getTheme());
-    } else {
-      return context.getResources().getDrawable(id);
-    }
   }
 
   public static void commingSoon(Context context) {
