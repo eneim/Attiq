@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From plaid -->
+    <color name="scrim">#99323232</color>
+    <color name="scrim_attiq">#99fefefe</color>
+    <dimen name="z_app_bar">4dp</dimen>
+    <dimen name="z_app_bar_low">2dp</dimen>
+
+    <color name="background_dark">#ff333333</color>
+    <dimen name="padding_normal">16dp</dimen>
+    <dimen name="spacing_huge">64dp</dimen>
+    <dimen name="spacing_micro">4dp</dimen>
+
+    <color name="text_primary_light">#ffffffff</color>
+    <color name="text_primary_dark">#de000000</color>
+    <!-- 87% -->
+    <color name="text_secondary_dark">#8a000000</color>
+    <color name="dark_icon">#99000000</color>
+    <!-- 60% black-->
+    <!-- 54% -->
+
+    <dimen name="fab_size">56dp</dimen>
+    <dimen name="z_fab">6dp</dimen>
+    <dimen name="touch_raise">6dp</dimen>
+    <color name="mid_grey">#40808080</color>
+    <color name="ripple_dark">@color/mid_grey</color>
+
+    <integer name="num_columns">1</integer>
+
+    <string name="confirm_save_dribbble_search">Save Dribbble</string>
+    <string name="confirm_save_designer_news_search">Save Designer News</string>
+    <string name="confirm_save_search">Save</string>
+
+    <string name="search_hint">Search Qiita</string>
+    <string name="no_search_results">No results for\n“%1$s”</string>
+
+    <!-- arrow head -->
+    <string name="searchback_path_arrow_head_top">M16.7017297,12.6957157 L24.7043962,4.69304955</string>
+    <string name="searchback_path_arrow_head_bottom">M16.7107986,11.2764828 L24.7221527,19.2878361</string>
+    <item name="searchback_arrow_head_search_trim_end" format="float" type="fraction">0</item>
+    <item name="searchback_arrow_head_back_trim_end" format="float" type="fraction">1</item>
+    <integer name="searchback_show_arrow_head_delay">350</integer>
+    <integer name="searchback_show_hide_arrow_head_duration">250</integer>
+
+    <!-- common -->
+    <dimen name="searchback_image_width">48dp</dimen>
+    <dimen name="searchback_image_height">24dp</dimen>
+    <integer name="searchback_viewport_width">48</integer>
+    <integer name="searchback_viewport_height">24</integer>
+    <integer name="searchback_stroke_width">2</integer>
+    <color name="searchback_stroke_color">#fff</color>
+
+    <!-- circle -->
+    <string name="searchback_path_circle">M25.39,13.39 A 5.5 5.5 0 1 1 17.61 5.61 A 5.5 5.5 0 1 1 25.39 13.39</string>
+    <item name="searchback_circle_search_trim_end" format="float" type="fraction">1</item>
+    <item name="searchback_circle_back_trim_end" format="float" type="fraction">0</item>
+    <integer name="searchback_show_hide_circle_duration">250</integer>
+    <integer name="searchback_show_circle_delay">300</integer>
+
+    <!-- stem -->
+    <string name="searchback_path_stem">M24.7000008,12.6999998 C24.7000008,12.6999998 31.8173374,19.9066081 31.8173371,19.9066082 C32.7867437,20.7006357 34.4599991,23 37.5,23 C40.5400009,23 43,20.54 43,17.5 C43,14.46 40.5400009,12 37.5,12 C34.4599991,12 33.2173088,12 31.8173371,12 C31.8173374,12 18.8477173,12 18.8477173,12</string>
+    <item name="searchback_stem_search_trim_start" format="float" type="fraction">0</item>
+    <item name="searchback_stem_search_trim_end" format="float" type="fraction">0.185</item>
+    <item name="searchback_stem_back_trim_start" format="float" type="fraction">0.75</item>
+    <item name="searchback_stem_back_trim_end" format="float" type="fraction">1</item>
+    <!-- use different timings to trim the ends to produce the 'stretching out' effect -->
+    <integer name="searchback_stem_trim_longer_duration">600</integer>
+    <integer name="searchback_stem_trim_shorter_duration">450</integer>
+
+    <!-- Styles -->
+
+    <style name="Attiq.Theme.SearchView" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">#FFFFFFFF</item>
+        <item name="colorControlActivated">?attr/colorAccent</item>
+        <item name="searchViewStyle">@style/Attiq.Widget.SearchView</item>
+    </style>
+
+    <style name="Attiq.Widget.SearchView" parent="Widget.AppCompat.SearchView">
+        <item name="searchIcon">@null</item>
+        <item name="searchHintIcon">@null</item>
+        <item name="queryBackground">@android:color/transparent</item>
+        <item name="submitBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="Attiq.Widget.EmptyText">
+        <item name="android:textAppearance">@style/Attiq.TextAppearance.DialogContent</item>
+        <item name="lineHeightHint">24sp</item>
+        <item name="android:textColor">@color/text_primary_dark</item>
+    </style>
+
+    <style name="Attiq.TextAppearance.DialogContent" parent="TextAppearance.AppCompat.Subhead">
+        <item name="android:textColor">@color/text_secondary_dark</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- app palette -->
+    <color name="primary">#69F0AE</color>
+    <color name="accent">@color/primary</color>
+    <!-- mono-color -->
+    <color name="primary_dark">#5acc95</color>
+    <color name="primary_super_dark">#11261c</color>
+    <!-- same hue & sat, 15% brightness -->
+
+    <!-- common colours -->
+    <color name="text_tertiary_dark">#61000000</color>
+    <!-- 38% -->
+    <color name="text_secondary_light">#b3ffffff</color>
+    <!-- 70% -->
+    <color name="text_disabled_light">#4dffffff</color>
+    <!-- 30% -->
+    <color name="ripple_light">#99ffffff</color>
+    <color name="background_light">#fafafa</color>
+    <color name="immersive_bars">#99000000</color>
+    <color name="status_bar_back">#ff676767</color>
+    <!-- this is blended with immersive_bars to produce the desired status bar color i.e. background_super_dark -->
+    <color name="background_super_dark">#ff292929</color>
+    <color name="light_grey">#fff5f5f5</color>
+    <color name="grey_200">#ffeeeeee</color>
+    <color name="grey_300">#ffe0e0e0</color>
+    <color name="content_placeholder">#ffe0e0e0</color>
+    <color name="light_icon">#ffffffff</color>
+    <color name="divider">#1f000000</color>
+    <!-- 12% black -->
+    <color name="page_indicator_dark">#80333333</color>
+    <color name="page_indicator_dark_selected">#ff333333</color>
+    <color name="selected_comment_background">#ffffffff</color>
+
+    <!-- text (most text uses material theme colours) -->
+    <color name="hint_disabled_dark">#43000000</color>
+    <!-- 26% black -->
+    <color name="text_on_accent">#8f000000</color>
+
+    <!-- designer news -->
+    <color name="designer_news">#03a9f4</color>
+    <!--light blue 500 -->-->
+    <color name="designer_news_dark">#039be5</color>
+    <!-- light blue 600 -->
+    <color name="designer_news_link_highlight">#b303a9f4</color>
+
+    <color name="designer_news_super_dark">#000133</color>
+    <color name="designer_news_quote_line">#ffeceef1</color>
+    <color name="designer_news_quote">#73000000</color>
+
+    <!-- dribbble -->
+    <color name="dribbble">#fff06292</color>
+    <!-- pink 300 -->
+    <color name="dribbble_dark">#ec407a</color>
+    <!-- pink 400 -->
+    <color name="dribbble_super_dark">#ff33292d</color>
+    <color name="dribbble_link_highlight">#b3f06292</color>
+    <color name="fab_heart_empty">@color/text_primary_light</color>
+    <color name="fab_heart_progress_bar">#deffffff</color>
+    <!-- 87% white-->
+    <color name="fab_heart_full">#ffffffff</color>
+    <color name="gif_badge_light_image">#40000000</color>
+    <color name="gif_badge_dark_image">#b3ffffff</color>
+    <array name="loading_placeholders">
+        <item>#ff191919</item>
+        <item>#ff212121</item>
+        <item>#ff232323</item>
+    </array>
+
+    <integer name="rapid_animation">120</integer>
+
+    <!-- product hunt-->
+    <color name="product_hunt">#ffff9800</color>
+
+    <!-- search -->
+    <color name="search_background_scrim">#33000000</color>
+
+    <style name="Attiq.Theme.NoActionBar.Translucent">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="android:colorBackground">@color/background_light</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorHint">@color/hint_disabled_dark</item>
+        <!-- using a semi-transparent window background for the drag-back gesture -->
+        <item name="android:windowBackground">@color/scrim</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="SearchWindowAnimations">
+        <item name="android:windowEnterAnimation">@null</item>
+        <item name="android:windowExitAnimation">@anim/fade_out_rapidly</item>
+    </style>
+
+    <style name="Attiq.Theme.NoActionBar.Translucent.Search">
+        <!--<item name="colorAccent"></item>-->
+        <item name="android:windowAnimationStyle">@style/SearchWindowAnimations</item>
+    </style>
+
+    <attr name="lineHeightHint" format="dimension"/>
+    <attr name="topPaddingHint" format="dimension"/>
+
+    <attr name="font" format="string"/>
+
+    <declare-styleable name="FontTextAppearance">
+        <attr name="android:textSize"/>
+        <attr name="android:textColor"/>
+        <attr name="android:fontFamily"/>
+        <attr name="font"/>
+    </declare-styleable>
+
+    <declare-styleable name="BaselineGridTextView">
+        <attr name="lineHeightMultiplierHint" format="float"/>
+        <attr name="lineHeightHint"/>
+        <attr name="topPaddingHint"/>
+    </declare-styleable>
+
+    <declare-styleable name="FontTextView">
+        <attr name="font"/>
+        <attr name="android:textAppearance"/>
+    </declare-styleable>
+</resources>

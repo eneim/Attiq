@@ -25,9 +25,10 @@ import java.util.List;
 /**
  * Created by eneim on 1/7/16.
  */
+@CoordinatorLayout.DefaultBehavior(FabImageButton.Behavior.class)
 public class FabImageButton extends ImageButton {
 
-  private static final String LOG_TAG = "FloatingActionButton";
+  private static final String LOG_TAG = "FabImageButton";
 
   /**
    * Callback to be invoked when the visibility of a FloatingActionButton changes.
@@ -195,7 +196,6 @@ public class FabImageButton extends ImageButton {
       mImpl.setBackgroundTintList(tint);
     }
   }
-
 
   /**
    * Return the blending mode used to apply the tint to the background
@@ -397,6 +397,13 @@ public class FabImageButton extends ImageButton {
     private ValueAnimatorCompat mFabTranslationYAnimator;
     private float mFabTranslationY;
     private Rect mTmpRect;
+
+    public Behavior() {
+    }
+
+    public Behavior(Context context, AttributeSet attrs) {
+      super(context, attrs);
+    }
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent,

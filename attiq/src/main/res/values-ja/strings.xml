@@ -10,15 +10,14 @@
     <string name="item_info_many">ストック%1$d件、コメント%2$d件</string>
     <string name="item_info_one">ストック%1$d件、コメント１件</string>
     <string name="action_settings">設定</string>
+    <string name="action_search">検索</string>
     <string name="action_filter">フィルター</string>
     <string name="action_item_menu">メニュー</string>
     <string name="item_posted_info">%1$s さんが%2$s投稿した</string>
     <string name="item_user_info">
         <![CDATA[<a href="attiq://qiita.com/user/%1$s">%2$s</a>、%3$s]]>
     </string>
-    <string name="item_user_info_edited">
-        <![CDATA[<a href="http://qiita.com/%1$s">%2$s</a>、%3$s（<a href="http://qiita.com/%4$s/items/%5$s/revisions">修正あり</a>）]]>
-    </string>
+
     <string name="title_activity_item_detail">アイテム詳細</string>
     <string name="title_activity_tag_detail">タグ詳細</string>
     <string name="title_activity_profile">プロフィル</string>
@@ -50,4 +49,6 @@
     <string name="menu_item_application">アプリケーション</string>
     <string name="action_about">アプリについて</string>
 
+    <string name="search_hint">Qiitaで検索</string>
+    <string name="no_search_results">「%1$s」の結果がありません</string>
 </resources>

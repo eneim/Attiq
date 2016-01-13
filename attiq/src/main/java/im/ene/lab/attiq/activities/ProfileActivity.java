@@ -11,6 +11,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
@@ -44,12 +46,12 @@ import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ProfileFetchedEvent;
 import im.ene.lab.attiq.util.event.UserFetchedEvent;
+import im.ene.lab.attiq.widgets.NotBadImageButton;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
 import im.ene.lab.attiq.widgets.UserInfoRowTextView;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AppBarLayout;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
-import im.ene.support.design.widget.FabImageButton;
 import im.ene.support.design.widget.MathUtils;
 import io.realm.Realm;
 import retrofit2.Callback;
@@ -75,7 +77,7 @@ public class ProfileActivity extends BaseActivity {
   @Bind(R.id.toolbar_overlay) View mOverlayContainer;
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.tab_layout) TabLayout mTabLayout;
-  @Bind(R.id.profile_image) FabImageButton mProfileImage;
+  @Bind(R.id.profile_image) NotBadImageButton mProfileImage;
   @Bind(R.id.social_button_container) View mSocialButtonContainer;
   @Bind(R.id.profile_social_buttons) LinearLayout mSocialButtonView;
   @Bind(R.id.text_action_follow) TextView mBtnFollow;
@@ -182,7 +184,7 @@ public class ProfileActivity extends BaseActivity {
     mToolbar.getContext().getTheme()
         .resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
     int titleColorId = typedValue.resourceId;
-    mTitleColorSpan = new AlphaForegroundColorSpan(UIUtil.getColor(this, titleColorId));
+    mTitleColorSpan = new AlphaForegroundColorSpan(ContextCompat.getColor(this, titleColorId));
 
     mRealm = Attiq.realm();
     mUserId = getIntent().getStringExtra(EXTRA_USER_NAME);

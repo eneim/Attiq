@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,16 +12,14 @@
 
     <include layout="@layout/content_profile"/>
 
-    <im.ene.support.design.widget.FabImageButton
+    <im.ene.lab.attiq.widgets.NotBadImageButton
         android:id="@+id/profile_image"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="@dimen/design_fab_size_big"
         android:layout_height="@dimen/design_fab_size_big"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_marginLeft="?attr/actionBarSize"
         android:layout_marginStart="?attr/actionBarSize"
         android:src="@mipmap/ic_launcher"
+        app:elevation="12dp"
         app:layout_anchor="@+id/profile_name"
         app:layout_anchorGravity="bottom|start"/>
 

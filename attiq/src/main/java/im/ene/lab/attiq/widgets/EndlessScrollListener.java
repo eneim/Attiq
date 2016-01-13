@@ -27,7 +27,7 @@ public abstract class EndlessScrollListener extends RecyclerView.OnScrollListene
     }
 
     if (mLayoutManager.findLastCompletelyVisibleItemPosition() >=
-        mLayoutManager.getItemCount() - mVisibleThreshold * 4 / 5) {
+        mLayoutManager.getItemCount() - mVisibleThreshold * 0.2) {
       loadMore();
     }
   }

@@ -2,9 +2,13 @@
 <resources>
     <color name="colorPrimary">#28475C</color>
     <color name="colorPrimaryDark">#1A2F4B</color>
-    <color name="colorAccent">#C98B70</color>
+    <color name="colorAccent">#ac6141</color>
 
     <color name="colorPrimaryLight">#F8E796</color>
+
+    <color name="searchColorPrimaryDark">#2E3A87</color>
+    <color name="searchColorPrimary">#1972A4</color>
+    <color name="searchColorAccent">#4C0B2F</color>
 
     <!-- ref: http://www.colorhexa.com/3e3639 -->
     <color name="very_dark_grayish_pink">#3e3639</color>
@@ -108,5 +112,4 @@
     <color name="event_button_attend">#47BB3C</color>
     <color name="event_button_attended">#ABAAAA</color>
 
-    <color name="ripple_light">#99ffffff</color>
 </resources>

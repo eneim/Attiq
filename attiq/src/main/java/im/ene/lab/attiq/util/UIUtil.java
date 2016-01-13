@@ -4,17 +4,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
-import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.URLSpan;
+import android.util.Property;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,24 +59,8 @@ public class UIUtil {
     return list == null || list.size() == 0;
   }
 
-  public static int getColor(@NonNull Context context, @ColorRes int colorId) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      return context.getResources().getColor(colorId, context.getTheme());
-    } else {
-      return context.getResources().getColor(colorId);
-    }
-  }
-
   public static int getDimen(Context context, @DimenRes int dimenId) {
     return context.getResources().getDimensionPixelSize(dimenId);
-  }
-
-  public static Drawable getDrawable(@NonNull Context context, @DrawableRes int id) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      return context.getResources().getDrawable(id, context.getTheme());
-    } else {
-      return context.getResources().getDrawable(id);
-    }
   }
 
   public static void commingSoon(Context context) {
@@ -145,4 +130,22 @@ public class UIUtil {
       ds.setUnderlineText(false);
     }
   }
+
+  public static final Property<View, Integer> BACKGROUND_COLOR
+      = new AnimUtils.IntProperty<View>("backgroundColor") {
+
+    @Override
+    public void setValue(View view, int value) {
+      view.setBackgroundColor(value);
+    }
+
+    @Override
+    public Integer get(View view) {
+      Drawable d = view.getBackground();
+      if (d instanceof ColorDrawable) {
+        return ((ColorDrawable) d).getColor();
+      }
+      return Color.TRANSPARENT;
+    }
+  };
 }

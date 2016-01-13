@@ -17,6 +17,8 @@
 package im.ene.lab.attiq.util;
 
 import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.transition.Transition;
 import android.util.ArrayMap;
@@ -119,7 +121,9 @@ public class AnimUtils {
     @Override
     public void cancel() {
       mAnimator.cancel();
-    }    @Override
+    }
+
+    @Override
     public void addListener(AnimatorListener listener) {
       AnimatorListener wrapper = new AnimatorListenerWrapper(this, listener);
       if (!mListeners.containsKey(listener)) {
@@ -152,7 +156,9 @@ public class AnimUtils {
     public Animator setDuration(long durationMS) {
       mAnimator.setDuration(durationMS);
       return this;
-    }    @Override
+    }
+
+    @Override
     public TimeInterpolator getInterpolator() {
       return mAnimator.getInterpolator();
     }
@@ -168,13 +174,10 @@ public class AnimUtils {
     }
 
 
-
     @Override
     public ArrayList<AnimatorListener> getListeners() {
       return new ArrayList<AnimatorListener>(mListeners.keySet());
     }
-
-
 
 
     @Override
@@ -299,5 +302,14 @@ public class AnimUtils {
 
     @Override public void onAnimationRepeat(Animator animation) {
     }
+  }
+
+  private static final ArgbEvaluator ARGB_EVALUATOR = new ArgbEvaluator();
+
+  public static <T> ObjectAnimator ofArgb(T target, Property<T, Integer> property,
+                                          int... values) {
+    ObjectAnimator animator = ObjectAnimator.ofInt(target, property, values);
+    animator.setEvaluator(ARGB_EVALUATOR);
+    return animator;
   }
 }

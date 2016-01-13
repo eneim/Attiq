@@ -235,8 +235,9 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
       final Resources res = mItemTags.getResources();
       if (!UIUtil.isEmpty(item.getTags())) {
         for (PublicTag tag : item.getTags()) {
-          final TextView tagName = (TextView) mInflater
+          TextView tagName = (TextView) mInflater
               .inflate(R.layout.widget_tag_textview, mItemTags, false);
+
           tagName.setClickable(true);
           tagName.setMovementMethod(LinkMovementMethod.getInstance());
           tagName.setText(Html.fromHtml(mContext.getString(R.string.local_tag_url,
