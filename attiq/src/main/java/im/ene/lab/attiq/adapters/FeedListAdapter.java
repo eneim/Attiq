@@ -221,6 +221,8 @@ public class FeedListAdapter extends ListAdapter<FeedItem> {
             item.getFollowableName(), item.getFollowableName())));
 
         Attiq.picasso().load(item.getFollowableImageUrl())
+            .placeholder(R.drawable.ic_lens_16dp)
+            .error(R.drawable.ic_lens_16dp)
             .resize(0, mTagIconSize)
             .transform(new RoundedTransformation(
                 mIconBorderWidth, mIconBorderColor, mTagIconSizeHalf))

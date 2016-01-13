@@ -80,15 +80,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="?attr/actionBarSize"
-        android:background="@color/background_dark"
-        android:elevation="@dimen/z_app_bar">
+        android:background="#ffffff"
+        android:elevation="@dimen/z_app_bar_low">
 
         <ProgressBar
             android:id="@android:id/empty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:indeterminate="true"
-            android:indeterminateTint="?attr/colorAccent"
+            android:indeterminateTint="@color/primary_super_dark"
             android:indeterminateTintMode="src_in"
             android:paddingBottom="@dimen/spacing_huge"
             android:paddingTop="@dimen/spacing_huge"

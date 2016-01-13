@@ -4,6 +4,7 @@
     <color name="scrim">#99323232</color>
     <color name="scrim_attiq">#99fefefe</color>
     <dimen name="z_app_bar">4dp</dimen>
+    <dimen name="z_app_bar_low">2dp</dimen>
 
     <color name="background_dark">#ff333333</color>
     <dimen name="padding_normal">16dp</dimen>
@@ -84,7 +85,7 @@
     <style name="Attiq.Widget.EmptyText">
         <item name="android:textAppearance">@style/Attiq.TextAppearance.DialogContent</item>
         <item name="lineHeightHint">24sp</item>
-        <item name="android:textColor">@color/text_primary_light</item>
+        <item name="android:textColor">@color/text_primary_dark</item>
     </style>
 
     <style name="Attiq.TextAppearance.DialogContent" parent="TextAppearance.AppCompat.Subhead">

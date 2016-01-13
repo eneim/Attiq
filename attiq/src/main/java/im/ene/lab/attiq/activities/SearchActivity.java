@@ -43,15 +43,17 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.ArticleListAdapter;
-import im.ene.lab.attiq.data.SearchDataManager;
+import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.util.AnimUtils;
 import im.ene.lab.attiq.util.ImeUtils;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.BaselineGridTextView;
+import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import im.ene.lab.attiq.widgets.EndlessScrollListener;
 import io.codetail.animation.ViewAnimationUtils;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.util.List;
 
@@ -62,8 +64,6 @@ public class SearchActivity extends BaseActivity {
   public static final String EXTRA_MENU_LEFT = "EXTRA_MENU_LEFT";
   public static final String EXTRA_MENU_CENTER_X = "EXTRA_MENU_CENTER_X";
   public static final String EXTRA_QUERY = "EXTRA_QUERY";
-  public static final String EXTRA_SAVE_DRIBBBLE = "EXTRA_SAVE_DRIBBBLE";
-  public static final String EXTRA_SAVE_DESIGNER_NEWS = "EXTRA_SAVE_DESIGNER_NEWS";
   public static final int RESULT_CODE_SAVE = 7;
 
   @Bind(R.id.searchback) ImageButton mSearchNavButton;
@@ -85,7 +85,8 @@ public class SearchActivity extends BaseActivity {
 
   private int mSearchBackDistanceX;
   private int mSearchIconCenterX;
-  private SearchDataManager mDataManager;
+  // private SearchDataManager mDataManager;
+  private Callback<List<Article>> mSearchResultCallback;
   private ArticleListAdapter mAdapter;
 
   public static Intent createStartIntent(Context context, int menuIconLeft, int menuIconCenterX) {
@@ -94,6 +95,9 @@ public class SearchActivity extends BaseActivity {
     starter.putExtra(EXTRA_MENU_CENTER_X, menuIconCenterX);
     return starter;
   }
+
+  private int mPage;
+  private String mQuery;
 
   private final Interpolator LINEAR_OUT_SLOW_INT =
       PathInterpolatorCompat.create(0.4f, 0.f, 0.2f, 1.f);
@@ -107,9 +111,10 @@ public class SearchActivity extends BaseActivity {
     mAutoTransition = TransitionInflater.from(this)
         .inflateTransition(R.transition.auto).setInterpolator(LINEAR_OUT_SLOW_INT);
 
-    mDataManager = new SearchDataManager() {
-      @Override public void onDataLoaded(List<Article> data) {
-        if (data != null && data.size() > 0) {
+    mSearchResultCallback = new Callback<List<Article>>() {
+      @Override public void onResponse(Response<List<Article>> response) {
+        List<Article> data = response.body();
+        if (!UIUtil.isEmpty(data)) {
           if (mRecyclerView.getVisibility() != View.VISIBLE) {
             TransitionManager.beginDelayedTransition(mMainContainer, mAutoTransition);
             mProgress.setVisibility(View.GONE);
@@ -122,17 +127,23 @@ public class SearchActivity extends BaseActivity {
           setNoResultsVisibility(View.VISIBLE);
         }
       }
+
+      @Override public void onFailure(Throwable t) {
+
+      }
     };
 
     mAdapter = new ArticleListAdapter() {
       @Override
       public void loadItems(boolean isLoadingMore, int page, int pageLimit,
                             @Nullable String query, Callback<List<Article>> callback) {
-
+        ApiClient.items(page, pageLimit, query).enqueue(callback);
       }
     };
 
     mRecyclerView.setAdapter(mAdapter);
+    mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
+        DividerItemDecoration.VERTICAL_LIST));
     GridLayoutManager layoutManager = new GridLayoutManager(this, mColumns);
     layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
       @Override
@@ -144,12 +155,13 @@ public class SearchActivity extends BaseActivity {
     mRecyclerView.setLayoutManager(layoutManager);
     mRecyclerView.addOnScrollListener(new EndlessScrollListener(layoutManager, 99) {
       @Override protected void loadMore() {
-
+        mPage++;
+        mAdapter.loadItems(true, mPage, 99, mQuery, mSearchResultCallback);
       }
     });
 
     mRecyclerView.setHasFixedSize(true);
-    mRecyclerView.addOnScrollListener(gridScroll);
+    mRecyclerView.addOnScrollListener(mOnGridScroll);
 
     // extract the search icon's location passed from the launching activity, minus 4dp to
     // compensate for different paddings in the views
@@ -241,6 +253,32 @@ public class SearchActivity extends BaseActivity {
 
   @OnClick({R.id.scrim, R.id.searchback})
   protected void dismiss() {
+
+    // if we're showing search mRecyclerView, circular hide them
+    if (mResultsContainer.getHeight() > 0) {
+      mResultsContainer.animate().alpha(0.f)
+          .setDuration(400L)
+          .setInterpolator(LINEAR_OUT_SLOW_INT)
+          .start();
+
+      Animator closeResults = ViewAnimationUtils.createCircularReveal(
+          mResultsContainer,
+          mSearchIconCenterX,
+          0,
+          (float) Math.hypot(mSearchIconCenterX, mResultsContainer.getHeight()),
+          0f);
+      closeResults.setDuration(500L);
+      closeResults.setInterpolator(LINEAR_OUT_SLOW_INT);
+      closeResults.addListener(new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+          mResultsContainer.setVisibility(View.INVISIBLE);
+        }
+      });
+
+      closeResults.start();
+    }
+
     // translate the icon to match position in the launching activity
     mSearchNavButtonContainer.animate()
         .translationX(mSearchBackDistanceX)
@@ -279,25 +317,6 @@ public class SearchActivity extends BaseActivity {
           .setDuration(600L)
           .setInterpolator(LINEAR_OUT_SLOW_INT)
           .start();
-    }
-
-    // if we're showing search mRecyclerView, circular hide them
-    if (mResultsContainer.getHeight() > 0) {
-      Animator closeResults = ViewAnimationUtils.createCircularReveal(
-          mResultsContainer,
-          mSearchIconCenterX,
-          0,
-          (float) Math.hypot(mSearchIconCenterX, mResultsContainer.getHeight()),
-          0f);
-      closeResults.setDuration(500L);
-      closeResults.setInterpolator(LINEAR_OUT_SLOW_INT);
-      closeResults.addListener(new AnimatorListenerAdapter() {
-        @Override
-        public void onAnimationEnd(Animator animation) {
-          mResultsContainer.setVisibility(View.INVISIBLE);
-        }
-      });
-      closeResults.start();
     }
 
     // fade out the mScrim
@@ -344,7 +363,6 @@ public class SearchActivity extends BaseActivity {
 
   private void clearResults() {
     mAdapter.clear();
-    mDataManager.clear();
     TransitionManager.beginDelayedTransition(mMainContainer, mAutoTransition);
     mRecyclerView.setVisibility(View.GONE);
     mProgress.setVisibility(View.GONE);
@@ -385,21 +403,24 @@ public class SearchActivity extends BaseActivity {
     mProgress.setVisibility(View.VISIBLE);
     ImeUtils.hideIme(mSearchView);
     mSearchView.clearFocus();
-    mDataManager.searchFor(query);
+
+    mQuery = query;
+    mPage = 1;
+    mAdapter.loadItems(false, mPage, 99, mQuery, mSearchResultCallback);
   }
 
-  private int gridScrollY = 0;
-  private RecyclerView.OnScrollListener gridScroll = new RecyclerView.OnScrollListener() {
+  private int mGridScrollY = 0;
+  private RecyclerView.OnScrollListener mOnGridScroll = new RecyclerView.OnScrollListener() {
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-      gridScrollY += dy;
-      if (gridScrollY > 0 && ViewCompat.getTranslationZ(mSearchToolbar) != mAppBarElevation) {
+      mGridScrollY += dy;
+      if (mGridScrollY > 0 && ViewCompat.getTranslationZ(mSearchToolbar) != mAppBarElevation) {
         ViewCompat.animate(mSearchToolbar)
             .translationZ(mAppBarElevation)
             .setDuration(300L)
             .setInterpolator(LINEAR_OUT_SLOW_INT)
             .start();
-      } else if (gridScrollY == 0 && ViewCompat.getTranslationZ(mSearchToolbar) != 0) {
+      } else if (mGridScrollY == 0 && ViewCompat.getTranslationZ(mSearchToolbar) != 0) {
         ViewCompat.animate(mSearchToolbar).translationZ(0f)
             .setDuration(300L)
             .setInterpolator(LINEAR_OUT_SLOW_INT)
