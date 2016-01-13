@@ -8,14 +8,23 @@
         <attr name="backgroundTint"/>
         <attr name="backgroundTintMode"/>
         <attr name="rippleColor" format="color"/>
-        <attr name="exFabSize">
-            <enum name="normal" value="0"/>
-            <enum name="mini" value="1"/>
-            <enum name="big" value="2"/>
-        </attr>
+        <attr name="exFabSize"/>
         <attr name="elevation"/>
         <attr name="pressedTranslationZ" format="dimension"/>
         <attr name="borderWidth" format="dimension"/>
     </declare-styleable>
 
+    <attr name="exFabSize">
+        <enum name="normal" value="0"/>
+        <enum name="mini" value="1"/>
+        <enum name="big" value="2"/>
+    </attr>
+
+    <declare-styleable name="ImageButton">
+        <attr name="backgroundTint"/>
+        <attr name="backgroundTintMode"/>
+        <attr name="elevation"/>
+        <attr name="rippleColor"/>
+        <attr name="exFabSize"/>
+    </declare-styleable>
 </resources>

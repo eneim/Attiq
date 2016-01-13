@@ -16,19 +16,18 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 
 import im.ene.lab.attiq.R;
 
 import java.util.List;
 
 /**
- * Created by eneim on 1/7/16.
+ * Created by eneim on 1/13/16.
  */
-@CoordinatorLayout.DefaultBehavior(FabImageButton.Behavior.class)
-public class FabImageButton extends ImageButton {
+@CoordinatorLayout.DefaultBehavior(ImageButton.Behavior.class)
+public class ImageButton extends android.widget.ImageButton {
 
-  private static final String LOG_TAG = "FabImageButton";
+  private final ImageButtonImpl mImpl;
 
   /**
    * Callback to be invoked when the visibility of a FloatingActionButton changes.
@@ -40,7 +39,7 @@ public class FabImageButton extends ImageButton {
      *
      * @param fab the FloatingActionButton that was shown.
      */
-    public void onShown(FabImageButton fab) {
+    public void onShown(ImageButton fab) {
     }
 
     /**
@@ -49,7 +48,7 @@ public class FabImageButton extends ImageButton {
      *
      * @param fab the FloatingActionButton that was hidden.
      */
-    public void onHidden(FabImageButton fab) {
+    public void onHidden(ImageButton fab) {
     }
   }
 
@@ -62,83 +61,40 @@ public class FabImageButton extends ImageButton {
   private ColorStateList mBackgroundTint;
   private PorterDuff.Mode mBackgroundTintMode;
 
-  private int mBorderWidth;
   private int mRippleColor;
-  private int mSize;
-  private int mContentPadding;
 
-  private final Rect mShadowPadding;
-
-  private final FloatingActionButtonImpl mImpl;
-
-  public FabImageButton(Context context) {
+  public ImageButton(Context context) {
     this(context, null);
   }
 
-  public FabImageButton(Context context, AttributeSet attrs) {
+  public ImageButton(Context context, AttributeSet attrs) {
     this(context, attrs, 0);
   }
 
-  public FabImageButton(Context context, AttributeSet attrs, int defStyleAttr) {
+  public ImageButton(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-
     ThemeUtils.checkAppCompatTheme(context);
 
-    mShadowPadding = new Rect();
-
     TypedArray a = context.obtainStyledAttributes(attrs,
-        R.styleable.FloatingActionButton, defStyleAttr, R.style.Widget_Design_FloatingActionButton);
-    mBackgroundTint = a.getColorStateList(R.styleable.FloatingActionButton_backgroundTint);
+        R.styleable.ImageButton, defStyleAttr, 0);
+    mBackgroundTint = a.getColorStateList(R.styleable.ImageButton_backgroundTint);
     mBackgroundTintMode = parseTintMode(a.getInt(
-        R.styleable.FloatingActionButton_backgroundTintMode, -1), null);
-    mRippleColor = a.getColor(R.styleable.FloatingActionButton_rippleColor, 0);
-    mSize = a.getInt(R.styleable.FloatingActionButton_exFabSize, SIZE_NORMAL);
-    mBorderWidth = a.getDimensionPixelSize(R.styleable.FloatingActionButton_borderWidth, 0);
-    final float elevation = a.getDimension(R.styleable.FloatingActionButton_elevation, 0f);
-    final float pressedTranslationZ = a.getDimension(
-        R.styleable.FloatingActionButton_pressedTranslationZ, 0f);
+        R.styleable.ImageButton_backgroundTintMode, -1), null);
+    mRippleColor = a.getColor(R.styleable.ImageButton_rippleColor, 0);
+    mSize = a.getInt(R.styleable.ImageButton_exFabSize, SIZE_NORMAL);
+    final float elevation = a.getDimension(R.styleable.ImageButton_elevation, 0f);
     a.recycle();
 
-    final ShadowViewDelegate delegate = new ShadowViewDelegate() {
-      @Override
-      public float getRadius() {
-        return getSizeDimension() / 2f;
-      }
-
-      @Override
-      public void setShadowPadding(int left, int top, int right, int bottom) {
-        mShadowPadding.set(left, top, right, bottom);
-
-        setPadding(left + mContentPadding, top + mContentPadding,
-            right + mContentPadding, bottom + mContentPadding);
-      }
-
-      @Override
-      public void setBackgroundDrawable(Drawable background) {
-        FabImageButton.super.setBackgroundDrawable(background);
-      }
-    };
+    ViewCompat.setElevation(this, elevation);
 
     final int sdk = Build.VERSION.SDK_INT;
-    if (sdk >= 21) {
-      mImpl = new FloatingActionButtonLollipop(this, delegate);
-    } else if (sdk >= 12) {
-      mImpl = new FloatingActionButtonHoneycombMr1(this, delegate);
+    if (sdk >= 12) {
+      mImpl = new ImageButtonHoneycombMr1(this);
     } else {
-      mImpl = new FloatingActionButtonEclairMr1(this, delegate);
+      mImpl = new ImageButtonImplEclairMr1(this);
     }
 
-    int maxContentSize = (int) getResources().getDimension(R.dimen.design_fab_content_size);
-    if (maxContentSize > (mSizeDimension = getSizeDimension())) {
-      maxContentSize = getSizeDimension();
-    }
-
-    mContentPadding = (getSizeDimension() - maxContentSize) / 2;
-
-    mImpl.setBackgroundDrawable(mBackgroundTint, mBackgroundTintMode,
-        mRippleColor, mBorderWidth);
-    mImpl.setElevation(elevation);
-    mImpl.setPressedTranslationZ(pressedTranslationZ);
+    mImpl.setBackgroundDrawable(mBackgroundTint, mBackgroundTintMode, mRippleColor);
   }
 
   @Override
@@ -148,14 +104,10 @@ public class FabImageButton extends ImageButton {
     final int w = resolveAdjustedSize(preferredSize, widthMeasureSpec);
     final int h = resolveAdjustedSize(preferredSize, heightMeasureSpec);
 
-    // As we want to stay circular, we set both dimensions to be the
-    // smallest resolved dimension
     final int d = Math.min(w, h);
 
     // We add the shadow's padding to the measured dimension
-    setMeasuredDimension(
-        d + mShadowPadding.left + mShadowPadding.right,
-        d + mShadowPadding.top + mShadowPadding.bottom);
+    setMeasuredDimension(d, d);
   }
 
   /**
@@ -226,19 +178,21 @@ public class FabImageButton extends ImageButton {
     }
   }
 
+  private static final String TAG = "ImageButton";
+
   @Override
   public void setBackgroundDrawable(Drawable background) {
-    Log.i(LOG_TAG, "Setting a custom background is not supported.");
+    Log.i(TAG, "Setting a custom background is not supported.");
   }
 
   @Override
   public void setBackgroundResource(int resid) {
-    Log.i(LOG_TAG, "Setting a custom background is not supported.");
+    Log.i(TAG, "Setting a custom background is not supported.");
   }
 
   @Override
   public void setBackgroundColor(int color) {
-    Log.i(LOG_TAG, "Setting a custom background is not supported.");
+    Log.i(TAG, "Setting a custom background is not supported.");
   }
 
   /**
@@ -278,27 +232,28 @@ public class FabImageButton extends ImageButton {
   }
 
   @Nullable
-  private FloatingActionButtonImpl.InternalVisibilityChangedListener
+  private ImageButtonImpl.InternalVisibilityChangedListener
   wrapOnVisibilityChangedListener(
       @Nullable final OnVisibilityChangedListener listener) {
     if (listener == null) {
       return null;
     }
 
-    return new FloatingActionButtonImpl.InternalVisibilityChangedListener() {
+    return new ImageButtonImpl.InternalVisibilityChangedListener() {
       @Override
       public void onShown() {
-        listener.onShown(FabImageButton.this);
+        listener.onShown(ImageButton.this);
       }
 
       @Override
       public void onHidden() {
-        listener.onHidden(FabImageButton.this);
+        listener.onHidden(ImageButton.this);
       }
     };
   }
 
   private Integer mSizeDimension;
+  private int mSize;
 
   final int getSizeDimension() {
     if (mSizeDimension != null) {
@@ -389,7 +344,7 @@ public class FabImageButton extends ImageButton {
    * is to move {@link FabImageButton} views so that any displayed {@link Snackbar}s do
    * not cover them.
    */
-  public static class Behavior extends CoordinatorLayout.Behavior<FabImageButton> {
+  public static class Behavior extends CoordinatorLayout.Behavior<ImageButton> {
     // We only support the FAB <> Snackbar shift movement on Honeycomb and above. This is
     // because we can use view translation properties which greatly simplifies the code.
     private static final boolean SNACKBAR_BEHAVIOR_ENABLED = Build.VERSION.SDK_INT >= 11;
@@ -407,13 +362,13 @@ public class FabImageButton extends ImageButton {
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent,
-                                   FabImageButton child, View dependency) {
+                                   ImageButton child, View dependency) {
       // We're dependent on all SnackbarLayouts (if enabled)
       return SNACKBAR_BEHAVIOR_ENABLED && dependency instanceof Snackbar.SnackbarLayout;
     }
 
     @Override
-    public boolean onDependentViewChanged(CoordinatorLayout parent, FabImageButton child,
+    public boolean onDependentViewChanged(CoordinatorLayout parent, ImageButton child,
                                           View dependency) {
       if (dependency instanceof Snackbar.SnackbarLayout) {
         updateFabTranslationForSnackbar(parent, child, dependency);
@@ -426,7 +381,7 @@ public class FabImageButton extends ImageButton {
     }
 
     private boolean updateFabVisibility(CoordinatorLayout parent,
-                                        AppBarLayout appBarLayout, FabImageButton child) {
+                                        AppBarLayout appBarLayout, ImageButton child) {
       final CoordinatorLayout.LayoutParams lp =
           (CoordinatorLayout.LayoutParams) child.getLayoutParams();
       if (lp.getAnchorId() != appBarLayout.getId()) {
@@ -454,7 +409,7 @@ public class FabImageButton extends ImageButton {
     }
 
     private void updateFabTranslationForSnackbar(CoordinatorLayout parent,
-                                                 final FabImageButton fab, View snackbar) {
+                                                 final ImageButton fab, View snackbar) {
       if (fab.getVisibility() != View.VISIBLE) {
         return;
       }
@@ -499,7 +454,7 @@ public class FabImageButton extends ImageButton {
     }
 
     private float getFabTranslationYForSnackbar(CoordinatorLayout parent,
-                                                FabImageButton fab) {
+                                                ImageButton fab) {
       float minOffset = 0;
       final List<View> dependencies = parent.getDependencies(fab);
       for (int i = 0, z = dependencies.size(); i < z; i++) {
@@ -514,7 +469,7 @@ public class FabImageButton extends ImageButton {
     }
 
     @Override
-    public boolean onLayoutChild(CoordinatorLayout parent, FabImageButton child,
+    public boolean onLayoutChild(CoordinatorLayout parent, ImageButton child,
                                  int layoutDirection) {
       // First, lets make sure that the visibility of the FAB is consistent
       final List<View> dependencies = parent.getDependencies(child);
@@ -528,42 +483,8 @@ public class FabImageButton extends ImageButton {
       // Now let the CoordinatorLayout lay out the FAB
       parent.onLayoutChild(child, layoutDirection);
       // Now offset it if needed
-      offsetIfNeeded(parent, child);
+      // offsetIfNeeded(parent, child);
       return true;
-    }
-
-    /**
-     * Pre-Lollipop we use padding so that the shadow has enough space to be drawn. This method
-     * offsets our layout position so that we're positioned correctly if we're on one of
-     * our parent's edges.
-     */
-    private void offsetIfNeeded(CoordinatorLayout parent, FabImageButton fab) {
-      final Rect padding = fab.mShadowPadding;
-
-      if (padding != null && padding.centerX() > 0 && padding.centerY() > 0) {
-        final CoordinatorLayout.LayoutParams lp =
-            (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
-
-        int offsetTB = 0, offsetLR = 0;
-
-        if (fab.getRight() >= parent.getWidth() - lp.rightMargin) {
-          // If we're on the left edge, shift it the right
-          offsetLR = padding.right;
-        } else if (fab.getLeft() <= lp.leftMargin) {
-          // If we're on the left edge, shift it the left
-          offsetLR = -padding.left;
-        }
-        if (fab.getBottom() >= parent.getBottom() - lp.bottomMargin) {
-          // If we're on the bottom edge, shift it down
-          offsetTB = padding.bottom;
-        } else if (fab.getTop() <= lp.topMargin) {
-          // If we're on the top edge, shift it up
-          offsetTB = -padding.top;
-        }
-
-        fab.offsetTopAndBottom(offsetTB);
-        fab.offsetLeftAndRight(offsetLR);
-      }
     }
   }
 }

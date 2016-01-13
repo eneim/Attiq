@@ -49,7 +49,6 @@ import im.ene.lab.attiq.widgets.UserInfoRowTextView;
 import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AppBarLayout;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
-import im.ene.support.design.widget.FabImageButton;
 import im.ene.support.design.widget.MathUtils;
 import io.realm.Realm;
 import retrofit2.Callback;
@@ -75,7 +74,7 @@ public class ProfileActivity extends BaseActivity {
   @Bind(R.id.toolbar_overlay) View mOverlayContainer;
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.tab_layout) TabLayout mTabLayout;
-  @Bind(R.id.profile_image) FabImageButton mProfileImage;
+  @Bind(R.id.profile_image) ImageButton mProfileImage;
   @Bind(R.id.social_button_container) View mSocialButtonContainer;
   @Bind(R.id.profile_social_buttons) LinearLayout mSocialButtonView;
   @Bind(R.id.text_action_follow) TextView mBtnFollow;

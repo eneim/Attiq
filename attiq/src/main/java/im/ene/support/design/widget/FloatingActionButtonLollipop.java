@@ -10,7 +10,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewCompat;
 import android.view.View;
@@ -28,9 +27,7 @@ class FloatingActionButtonLollipop extends FloatingActionButtonHoneycombMr1 {
     super(view, shadowViewDelegate);
 
     if (!view.isInEditMode()) {
-      mInterpolator = android.view.animation.AnimationUtils.loadInterpolator(mView
-              .getContext(),
-          android.R.interpolator.fast_out_slow_in);
+      mInterpolator = AnimationUtils.FAST_OUT_SLOW_IN_INTERPOLATOR;
     }
   }
 
@@ -67,8 +64,6 @@ class FloatingActionButtonLollipop extends FloatingActionButtonHoneycombMr1 {
       super.setRippleColor(rippleColor);
     }
   }
-
-  FloatingActionButton test;
 
   @Override
   public void setElevation(float elevation) {
