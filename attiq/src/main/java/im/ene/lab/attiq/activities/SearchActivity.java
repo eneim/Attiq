@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -25,6 +27,7 @@ import android.text.style.StyleSpan;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +66,6 @@ public class SearchActivity extends BaseActivity {
 
   public static final String EXTRA_MENU_LEFT = "EXTRA_MENU_LEFT";
   public static final String EXTRA_MENU_CENTER_X = "EXTRA_MENU_CENTER_X";
-  public static final String EXTRA_QUERY = "EXTRA_QUERY";
   public static final int RESULT_CODE_SAVE = 7;
 
   @Bind(R.id.searchback) ImageButton mSearchNavButton;
@@ -82,6 +84,22 @@ public class SearchActivity extends BaseActivity {
   @BindDimen(R.dimen.z_app_bar) float mAppBarElevation;
 
   private Transition mAutoTransition;
+
+  private static final int MESSAGE_LOADMORE = 1000;
+
+  private Handler.Callback mHandlerCallback = new Handler.Callback() {
+    @Override public boolean handleMessage(Message msg) {
+      if (MESSAGE_LOADMORE == msg.what) {
+        mPage++;
+        mAdapter.loadItems(true, mPage, 99, mQuery, mSearchResultCallback);
+        Log.d(SearchActivity.class.getSimpleName(), "loadMore: " + mPage);
+        return true;
+      }
+      return false;
+    }
+  };
+
+  private Handler mHandler = new Handler(mHandlerCallback);
 
   private int mSearchBackDistanceX;
   private int mSearchIconCenterX;
@@ -129,7 +147,6 @@ public class SearchActivity extends BaseActivity {
       }
 
       @Override public void onFailure(Throwable t) {
-
       }
     };
 
@@ -155,8 +172,8 @@ public class SearchActivity extends BaseActivity {
     mRecyclerView.setLayoutManager(layoutManager);
     mRecyclerView.addOnScrollListener(new EndlessScrollListener(layoutManager, 99) {
       @Override protected void loadMore() {
-        mPage++;
-        mAdapter.loadItems(true, mPage, 99, mQuery, mSearchResultCallback);
+        mHandler.removeMessages(MESSAGE_LOADMORE);
+        mHandler.sendEmptyMessageDelayed(MESSAGE_LOADMORE, 200);
       }
     });
 
@@ -241,7 +258,14 @@ public class SearchActivity extends BaseActivity {
 
   @Override
   public void onBackPressed() {
-    dismiss();
+    if (mResultsContainer.getHeight() > 0) {
+      clearResults();
+      mSearchView.setQuery("", false);
+      mSearchView.requestFocus();
+      ImeUtils.showIme(mSearchView);
+    } else {
+      dismiss();
+    }
   }
 
   @Override

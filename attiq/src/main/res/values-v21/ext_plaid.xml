@@ -15,7 +15,7 @@
     <style name="Attiq.Theme.NoActionBar.Translucent">
         <item name="android:colorPrimary">@color/primary</item>
         <item name="android:colorBackground">@color/background_light</item>
-        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
         <item name="android:navigationBarColor">@color/primary_super_dark</item>
         <item name="android:statusBarColor">@color/background_super_dark</item>
         <item name="android:textColorHint">@color/hint_disabled_dark</item>

@@ -49,4 +49,6 @@
     <string name="menu_item_application">アプリケーション</string>
     <string name="action_about">アプリについて</string>
 
+    <string name="search_hint">Qiitaで検索</string>
+    <string name="no_search_results">「%1$s」の結果がありません</string>
 </resources>
