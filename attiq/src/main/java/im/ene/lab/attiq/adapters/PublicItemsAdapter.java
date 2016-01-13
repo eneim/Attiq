@@ -2,7 +2,11 @@ package im.ene.lab.attiq.adapters;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -12,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.wefika.flowlayout.FlowLayout;
 
@@ -21,9 +26,11 @@ import butterknife.BindDimen;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
+import im.ene.lab.attiq.data.one.PublicTag;
 import im.ene.lab.attiq.data.one.PublicUser;
 import im.ene.lab.attiq.data.zero.Post;
 import im.ene.lab.attiq.util.PrefUtil;
+import im.ene.lab.attiq.util.TextViewTarget;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
@@ -226,36 +233,36 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
 
       mItemTags.removeAllViews();
       final Resources res = mItemTags.getResources();
-//      if (!UIUtil.isEmpty(item.getTags())) {
-//        for (PublicTag tag : item.getTags()) {
-//          TextView tagName = (TextView) mInflater
-//              .inflate(R.layout.widget_tag_textview, mItemTags, false);
-//
-//          tagName.setClickable(true);
-//          tagName.setMovementMethod(LinkMovementMethod.getInstance());
-//          tagName.setText(Html.fromHtml(mContext.getString(R.string.local_tag_url,
-//              tag.getName(), tag.getName())));
-//
-//          Attiq.picasso().load(tag.getIconUrl())
-//              .placeholder(R.drawable.ic_dnd_forwardslash_16dp)
-//              .error(R.drawable.ic_dnd_forwardslash_16dp)
-//              .resize(0, mTagIconSize)
-//              .transform(new RoundedTransformation(
-//                  mIconBorderWidth, mIconBorderColor, mTagIconSizeHalf))
-//              .into(new TextViewTarget(tagName) {
-//                @Override
-//                public void onBitmapLoaded(TextView textView,
-//                                           Bitmap bitmap, Picasso.LoadedFrom from) {
-//                  RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, bitmap);
-//                  TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView,
-//                      drawable, null, null, null);
-//                }
-//              });
-//
-//          UIUtil.stripUnderlines(tagName);
-//          mItemTags.addView(tagName);
-//        }
-//      }
+      if (!UIUtil.isEmpty(item.getTags())) {
+        for (PublicTag tag : item.getTags()) {
+          TextView tagName = (TextView) mInflater
+              .inflate(R.layout.widget_tag_textview, mItemTags, false);
+
+          tagName.setClickable(true);
+          tagName.setMovementMethod(LinkMovementMethod.getInstance());
+          tagName.setText(Html.fromHtml(mContext.getString(R.string.local_tag_url,
+              tag.getName(), tag.getName())));
+
+          Attiq.picasso().load(tag.getIconUrl())
+              .placeholder(R.drawable.ic_dnd_forwardslash_16dp)
+              .error(R.drawable.ic_dnd_forwardslash_16dp)
+              .resize(0, mTagIconSize)
+              .transform(new RoundedTransformation(
+                  mIconBorderWidth, mIconBorderColor, mTagIconSizeHalf))
+              .into(new TextViewTarget(tagName) {
+                @Override
+                public void onBitmapLoaded(TextView textView,
+                                           Bitmap bitmap, Picasso.LoadedFrom from) {
+                  RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, bitmap);
+                  TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView,
+                      drawable, null, null, null);
+                }
+              });
+
+          UIUtil.stripUnderlines(tagName);
+          mItemTags.addView(tagName);
+        }
+      }
     }
   }
 }
