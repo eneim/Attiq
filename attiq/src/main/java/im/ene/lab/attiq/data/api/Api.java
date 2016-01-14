@@ -25,9 +25,9 @@ import java.util.List;
 /**
  * Created by eneim on 12/13/15.
  */
-interface Api {
+final class Api {
 
-  String BASE_URL = "https://qiita.com";
+  static String BASE_URL = "https://qiita.com";
 
   /**
    * APIs directly get from qiita.com website.

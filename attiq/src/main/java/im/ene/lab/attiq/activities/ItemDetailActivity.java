@@ -56,7 +56,6 @@ import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.Comment;
 import im.ene.lab.attiq.data.two.User;
-import im.ene.lab.attiq.data.zero.Post;
 import im.ene.lab.attiq.util.AnimUtils;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
@@ -128,8 +127,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private MenuItem mArticleHeaderMenu;
 
   private Realm mRealm;
-  private Post mReferItem;
-  private Boolean mIsItemStocked = null;
   private Article mArticle;
   private boolean mIsFirstTimeLoaded = false;
   private Element mMenuAnchor;
@@ -258,7 +255,11 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
     mItemUuid = getIntent().getStringExtra(EXTRA_DETAIL_ITEM_UUID);
     mRealm = Attiq.realm();
-    mReferItem = mRealm.where(Post.class).equalTo("uuid", mItemUuid).findFirst();
+
+    Article article = mRealm.where(Article.class).equalTo("id", mItemUuid).findFirst();
+    if (article != null) {
+      EventBus.getDefault().post(new ItemDetailEvent(true, null, article));
+    }
 
     ApiClient.isStocked(mItemUuid).enqueue(mStockStatusResponse);
   }
@@ -389,6 +390,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Override public void onResponse(Response<Article> response) {
     Article article = response.body();
     if (article != null) {
+      mRealm.beginTransaction();
+      mRealm.copyToRealmOrUpdate(article);
+      mRealm.commitTransaction();
       EventBus.getDefault().post(new ItemDetailEvent(true, null, article));
     } else {
       EventBus.getDefault().post(new ItemDetailEvent(false,

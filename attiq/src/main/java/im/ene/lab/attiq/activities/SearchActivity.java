@@ -85,11 +85,11 @@ public class SearchActivity extends BaseActivity {
 
   private Transition mAutoTransition;
 
-  private static final int MESSAGE_LOADMORE = 1000;
+  private static final int MESSAGE_LOAD_MORE = 1000;
 
   private Handler.Callback mHandlerCallback = new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
-      if (MESSAGE_LOADMORE == msg.what) {
+      if (MESSAGE_LOAD_MORE == msg.what) {
         mPage++;
         mAdapter.loadItems(true, mPage, 99, mQuery, mSearchResultCallback);
         Log.d(SearchActivity.class.getSimpleName(), "loadMore: " + mPage);
@@ -103,7 +103,6 @@ public class SearchActivity extends BaseActivity {
 
   private int mSearchBackDistanceX;
   private int mSearchIconCenterX;
-  // private SearchDataManager mDataManager;
   private Callback<List<Article>> mSearchResultCallback;
   private ArticleListAdapter mAdapter;
 
@@ -172,8 +171,8 @@ public class SearchActivity extends BaseActivity {
     mRecyclerView.setLayoutManager(layoutManager);
     mRecyclerView.addOnScrollListener(new EndlessScrollListener(layoutManager, 99) {
       @Override protected void loadMore() {
-        mHandler.removeMessages(MESSAGE_LOADMORE);
-        mHandler.sendEmptyMessageDelayed(MESSAGE_LOADMORE, 200);
+        mHandler.removeMessages(MESSAGE_LOAD_MORE);
+        mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_MORE, 200);
       }
     });
 
