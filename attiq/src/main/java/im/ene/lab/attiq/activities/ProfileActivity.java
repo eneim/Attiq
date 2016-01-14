@@ -81,7 +81,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
   private static final int TWITTER_BUTTON_INDEX = 2;
   private static final int GITHUB_BUTTON_INDEX = 3;
   private static final int LINKEDIN_BUTTON_INDEX = 4;
-  private static final int HANDLER_DELAY = 200;
+  private static final int HANDLER_DELAY = 200; // To prevent stress events
 
   @Bind(R.id.view_pager) ViewPager mViewPager;
   @Bind(R.id.app_bar) AppBarLayout mAppBarLayout;
@@ -231,6 +231,13 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     mViewPager.setAdapter(mPagerAdapter);
     mViewPager.setOffscreenPageLimit(mPagerAdapter.getCount());
     mTabLayout.setupWithViewPager(mViewPager);
+
+    // find a local user, if there is one, update current profile
+    User user = mRealm.where(User.class).equalTo("id", mUserId).findFirst();
+    if (user != null) {
+      EventBus.getDefault().post(new UserFetchedEvent(true, null, user));
+    }
+
   }
 
   @Override protected void onDestroy() {
@@ -429,7 +436,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
       return;
     }
 
-    mDescription.removeAllViews();
+    // mDescription.removeAllViews();
     final Context context = mDescription.getContext();
 
     if (mProfile.getContributionCount() != null) {
@@ -438,7 +445,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
         contribution = (TextView) LayoutInflater.from(context)
             .inflate(R.layout.widget_info_textview, mDescription, false);
         contribution.setId(R.id.profile_info_contribution);
-        mDescription.addView(contribution);
+        mDescription.addView(contribution, 0);
       }
 
       contribution.setText(getResources().getQuantityString(
@@ -452,6 +459,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
       if (description == null) {
         description = (TextView) LayoutInflater.from(context)
             .inflate(R.layout.widget_info_textview, mDescription, false);
+        description.setId(R.id.profile_info_description);
         mDescription.addView(description);
       }
       description.setText(UIUtil.beautify(mProfile.getDescription()));
@@ -462,6 +470,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
           (UserInfoRowTextView) mDescription.findViewById(R.id.profile_info_organization);
       if (organization == null) {
         organization = new UserInfoRowTextView(mDescription.getContext());
+        organization.setId(R.id.profile_info_organization);
         mDescription.addView(organization);
       }
 

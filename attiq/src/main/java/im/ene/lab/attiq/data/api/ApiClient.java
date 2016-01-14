@@ -43,7 +43,7 @@ public final class ApiClient {
   private static final Api.One ONE;
   private static final Api.Two TWO;
 
-  private static final Converter<ResponseBody, HttpError> ERROR_CONVERTER;
+  private static final Converter<ResponseBody, QiitaError> ERROR_CONVERTER;
 
   public static final int DEFAULT_PAGE_LIMIT = 99; // save API calls...
 
@@ -62,14 +62,14 @@ public final class ApiClient {
     ONE = RETROFIT.create(Api.One.class);
     TWO = RETROFIT.create(Api.Two.class);
 
-    ERROR_CONVERTER = RETROFIT.responseBodyConverter(HttpError.class, new Annotation[0]);
+    ERROR_CONVERTER = RETROFIT.responseBodyConverter(QiitaError.class, new Annotation[0]);
   }
 
-  public static HttpError parseError(Response response) {
+  public static QiitaError parseError(Response response) {
     try {
       return ERROR_CONVERTER.convert(response.errorBody());
     } catch (IOException e) {
-      return new HttpError();
+      return new QiitaError();
     }
   }
 

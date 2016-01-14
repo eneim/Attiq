@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by eneim on 1/11/16.
  */
-public class HttpError {
+public class QiitaError {
 
   @SerializedName("type")
   @Expose
@@ -16,12 +16,12 @@ public class HttpError {
   @Expose
   public String message;
 
-  HttpError(String type, String message) {
+  QiitaError(String type, String message) {
     this.type = type;
     this.message = message;
   }
 
-  public HttpError() {
+  public QiitaError() {
     this("unknown", "Unknown Error");
   }
 

@@ -68,7 +68,7 @@ public class Attiq extends Application {
     // Delete old data by default
     if (BuildConfig.DEBUG) {
       try {
-        Realm.deleteRealm(config);
+        // Realm.deleteRealm(config);
       } catch (IllegalStateException er) {
         er.printStackTrace();
       }

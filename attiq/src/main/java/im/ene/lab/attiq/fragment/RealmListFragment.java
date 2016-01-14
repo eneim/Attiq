@@ -209,6 +209,18 @@ public abstract class RealmListFragment<E extends RealmObject>
     if (error != null && !UIUtil.isEmpty(error.message) && mErrorView != null) {
       mErrorView.setText(error.message);
     }
+
+    if (mSwipeRefreshLayout != null) {
+      mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    if (mRecyclerView != null) {
+      mRecyclerView.setErrorViewShown(event.error != null);
+    }
+
+    if (mLoadingView != null) {
+      mLoadingView.setVisibility(View.GONE);
+    }
   }
 
   @Override public void onResponse(Response<List<E>> response) {
@@ -237,35 +249,11 @@ public abstract class RealmListFragment<E extends RealmObject>
         });
       }
     }
-
-    if (mSwipeRefreshLayout != null) {
-      mSwipeRefreshLayout.setRefreshing(false);
-    }
-
-    if (mRecyclerView != null) {
-      mRecyclerView.setErrorViewShown(response.code() != 200);
-    }
-
-    if (mLoadingView != null) {
-      mLoadingView.setVisibility(View.GONE);
-    }
   }
 
   @Override public void onFailure(Throwable t) {
     Log.d(TAG, "onFailure() called with: " + "t = [" + t + "]");
     EventBus.getDefault().post(new TypedEvent<>(false,
         new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null, mPage));
-
-    if (mSwipeRefreshLayout != null) {
-      mSwipeRefreshLayout.setRefreshing(false);
-    }
-
-    if (mRecyclerView != null) {
-      mRecyclerView.setErrorViewShown(true);
-    }
-
-    if (mLoadingView != null) {
-      mLoadingView.setVisibility(View.GONE);
-    }
   }
 }

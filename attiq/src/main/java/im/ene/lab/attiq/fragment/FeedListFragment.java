@@ -98,6 +98,8 @@ public class FeedListFragment extends ListFragment<FeedItem> {
 
   @Override public void onFailure(Throwable t) {
     super.onFailure(t);
+    EventBus.getDefault().post(new TypedEvent<>(false,
+        new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null, 1));
   }
 
   @Override public void onResponse(Response<List<FeedItem>> response) {
@@ -110,18 +112,6 @@ public class FeedListFragment extends ListFragment<FeedItem> {
         mAdapter.addItems(items);
         EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), 1));
       }
-    }
-
-    if (mSwipeRefreshLayout != null) {
-      mSwipeRefreshLayout.setRefreshing(false);
-    }
-
-    if (mRecyclerView != null) {
-      mRecyclerView.setErrorViewShown(response.code() != 200);
-    }
-
-    if (mLoadingView != null) {
-      mLoadingView.setVisibility(View.GONE);
     }
   }
 }
