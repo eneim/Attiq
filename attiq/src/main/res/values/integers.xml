@@ -9,4 +9,9 @@
     <item name="feed_view_id_tag" type="id"/>
     <item name="feed_view_id_info" type="id"/>
     <item name="profile_info_tags" type="id"/>
+
+    <!-- Description IDs -->
+    <item name="profile_info_contribution" type="id"/>
+    <item name="profile_info_description" type="id"/>
+    <item name="profile_info_organization" type="id"/>
 </resources>

@@ -160,9 +160,6 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
     @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
     @BindColor(R.color.colorAccent) int mIconBorderColor;
 
-    @BindDimen(R.dimen.tag_icon_size) int mTagIconSize;
-    @BindDimen(R.dimen.tag_icon_size_half) int mTagIconSizeHalf;
-
     public ViewHolder(View view) {
       super(view);
       mContext = itemView.getContext();

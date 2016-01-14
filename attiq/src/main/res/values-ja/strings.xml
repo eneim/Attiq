@@ -48,6 +48,7 @@
     <string name="text_attiq_intro">非公式Qiitaクライアント</string>
     <string name="menu_item_application">アプリケーション</string>
     <string name="action_about">アプリについて</string>
+    <string name="title_activity_settings">設定</string>
 
     <string name="search_hint">Qiitaで検索</string>
     <string name="no_search_results">「%1$s」の結果がありません</string>
@@ -55,5 +56,10 @@
     <plurals name="title_activity_tag_quantity">
         <item quantity="one">%1$d投稿</item>
         <item quantity="other">%1$d投稿</item>
+    </plurals>
+
+    <plurals name="user_contribution_quantity">
+        <item quantity="one">%1$d コントリビューション</item>
+        <item quantity="other">%1$d コントリビューション</item>
     </plurals>
 </resources>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="im.ene.lab.attiq"
-          xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools">
+<manifest
+    package="im.ene.lab.attiq"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -77,6 +78,7 @@
         <activity
             android:name=".activities.TagItemsActivity"
             android:label="@string/title_activity_tag_detail"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Attiq.Theme.NoActionBar">
         </activity>
@@ -92,15 +94,25 @@
             android:launchMode="singleTop"
             android:theme="@style/Attiq.Theme.NoActionBar.Translucent.Search">
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
+                <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="com.google.android.gms.actions.SEARCH_ACTION" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.google.android.gms.actions.SEARCH_ACTION"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
+                android:resource="@xml/searchable"/>
+        </activity>
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="im.ene.lab.attiq.activities.MainActivity"/>
         </activity>
     </application>
 

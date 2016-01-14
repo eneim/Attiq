@@ -336,7 +336,10 @@ public class MainActivity extends BaseActivity
       if (mMyProfile != null) {
         startActivity(ProfileActivity.createIntent(this, mMyProfile.getId()));
       }
+    } else if (id == R.id.nav_share) {
+      startActivity(new Intent(this, SettingsActivity.class));
     }
+
     mDrawerLayout.closeDrawer(GravityCompat.START);
     return true;
   }
@@ -450,7 +453,7 @@ public class MainActivity extends BaseActivity
       int[] loc = new int[2];
       searchMenuView.getLocationOnScreen(loc);
       startActivityForResult(SearchActivity.createStartIntent(this, loc[0], loc[0] +
-          (searchMenuView.getWidth() / 2)), RC_SEARCH,
+              (searchMenuView.getWidth() / 2)), RC_SEARCH,
           ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
       // searchMenuView.setAlpha(0.f);
       return true;

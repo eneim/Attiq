@@ -51,6 +51,7 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.data.DocumentCallback;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.Comment;
@@ -70,13 +71,10 @@ import im.ene.support.design.widget.AlphaForegroundColorSpan;
 import im.ene.support.design.widget.AppBarLayout;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
 import io.realm.Realm;
-import okhttp3.Request;
-import okhttp3.ResponseBody;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -602,7 +600,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       final String baseUrl = "http://qiita.com/api/items/" + mItemUuid;
 
       mDocumentCallback = new DocumentCallback(baseUrl) {
-        @Override void onDocument(Document response) {
+        @Override public void onDocument(Document response) {
           if (response != null) {
             EventBus.getDefault().post(new DocumentEvent(true, null, response));
           }
@@ -642,30 +640,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         );
       }
     }
-  }
-
-  private static abstract class DocumentCallback implements okhttp3.Callback {
-
-    private final String baseUrl;
-
-    public DocumentCallback(String baseUrl) {
-      this.baseUrl = baseUrl;
-    }
-
-    @Override public void onFailure(Request request, IOException e) {
-      onDocument(null);
-    }
-
-    @Override public void onResponse(okhttp3.Response response) throws IOException {
-      ResponseBody body = response.body();
-      InputStream stream = body == null ? null : body.byteStream();
-      if (stream != null) {
-        Document document = Jsoup.parse(stream, "utf-8", baseUrl);
-        onDocument(document);
-      }
-    }
-
-    abstract void onDocument(Document response);
   }
 
   private static class State {

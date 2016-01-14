@@ -78,7 +78,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:gravity="start|center_vertical"
+                    android:gravity="start|top"
                     android:maxLines="2"
                     android:minHeight="@dimen/tab_layout_height"
                     android:paddingLeft="@dimen/profile_image_size_margin"

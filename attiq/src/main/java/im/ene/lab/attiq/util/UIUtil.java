@@ -107,27 +107,59 @@ public class UIUtil {
     return text == null ? null : text.trim();
   }
 
-  public static void stripUnderlines(TextView textView) {
+  public static void stripUnderlines(TextView textView, Spannable ignoredUrl) {
     Spannable s = (Spannable) textView.getText();
     URLSpan[] spans = s.getSpans(0, s.length(), URLSpan.class);
     for (URLSpan span : spans) {
       int start = s.getSpanStart(span);
       int end = s.getSpanEnd(span);
       s.removeSpan(span);
-      span = new NoUnderlineURLSpan(span.getURL());
+      span = new NoUnderlineURLSpan(span.getURL(), ignoredUrl);
       s.setSpan(span, start, end, 0);
     }
     textView.setText(s);
   }
 
+  public static void stripUnderlines(TextView textView) {
+    stripUnderlines(textView, null);
+  }
+
   private static class NoUnderlineURLSpan extends URLSpan {
-    public NoUnderlineURLSpan(String url) {
+
+    private static final String TAG = "NoUnderlineURLSpan";
+
+    private final Spannable mIgnoredUrl;
+
+    public NoUnderlineURLSpan(String url, Spannable ignoredUrl) {
       super(url);
+      this.mIgnoredUrl = ignoredUrl;
     }
 
     @Override public void updateDrawState(TextPaint ds) {
       super.updateDrawState(ds);
       ds.setUnderlineText(false);
+    }
+
+    @Override public void onClick(View widget) {
+      URLSpan[] spans = mIgnoredUrl != null ? mIgnoredUrl.getSpans(0, mIgnoredUrl.length(),
+          URLSpan.class) : null;
+      boolean isClickable = true; // true at first
+      if (spans == null) {
+        isClickable = true;       // no reference, then true
+      } else {
+        for (URLSpan span : spans) {
+          if (span.getURL().equals(getURL())) {
+            isClickable = false;  // find an existed url, break
+            break;
+          }
+        }
+      }
+
+      if (isClickable) {
+        super.onClick(widget);
+      } else {
+
+      }
     }
   }
 

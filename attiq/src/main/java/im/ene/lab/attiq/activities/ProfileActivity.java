@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
@@ -26,6 +25,12 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.RequestCreator;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import butterknife.Bind;
 import butterknife.BindColor;
 import butterknife.BindDimen;
@@ -34,7 +39,9 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.data.DocumentCallback;
 import im.ene.lab.attiq.data.api.ApiClient;
+import im.ene.lab.attiq.data.local.RProfile;
 import im.ene.lab.attiq.data.two.Profile;
 import im.ene.lab.attiq.data.two.User;
 import im.ene.lab.attiq.fragment.DummyFragment;
@@ -43,8 +50,10 @@ import im.ene.lab.attiq.fragment.UserStockedItemsFragment;
 import im.ene.lab.attiq.fragment.UserTagsFragment;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.util.WebUtil;
+import im.ene.lab.attiq.util.event.DocumentEvent;
 import im.ene.lab.attiq.util.event.Event;
-import im.ene.lab.attiq.util.event.ProfileFetchedEvent;
+import im.ene.lab.attiq.util.event.ProfileUpdatedEvent;
 import im.ene.lab.attiq.util.event.UserFetchedEvent;
 import im.ene.lab.attiq.widgets.NotBadImageButton;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
@@ -54,12 +63,15 @@ import im.ene.support.design.widget.AppBarLayout;
 import im.ene.support.design.widget.CollapsingToolbarLayout;
 import im.ene.support.design.widget.MathUtils;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ProfileActivity extends BaseActivity {
+public class ProfileActivity extends BaseActivity implements RealmChangeListener {
 
   private static final int MESSAGE_ACTION_FOLLOW = 1;
+
+  private static final int MESSAGE_DATA_UPDATE = 1 << 1;
 
   private static final String EXTRA_USER_NAME = "attiq_profile_user_name";
   private static final String TAG = "ProfileActivity";
@@ -107,6 +119,7 @@ public class ProfileActivity extends BaseActivity {
       R.id.profile_social_github,
       R.id.profile_social_linkedin
   }) ImageButton[] mSocialButtons;
+
   private ProfileViewPagerAdapter mPagerAdapter;
   // Title support
   private AlphaForegroundColorSpan mTitleColorSpan;
@@ -127,13 +140,15 @@ public class ProfileActivity extends BaseActivity {
         }
       };
   private Realm mRealm;
+  private RProfile mProfile;
   private Profile mRefUser;
-  private User mUser;
+  // private User mUser;
   private State mState = new State();
   private String mUserId; // actually the User name
   private Callback<Void> mOnFollowStateCallback;
   private Callback<Void> mOnUnFollowStateCallback;
   private Callback<User> mOnUserCallback;
+  private DocumentCallback mDocumentCallback;
   private Handler.Callback mHandlerCallback = new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
       if (msg.what == MESSAGE_ACTION_FOLLOW) {
@@ -148,7 +163,12 @@ public class ProfileActivity extends BaseActivity {
         }
 
         return true;
+      } else if (msg.what == MESSAGE_DATA_UPDATE) {
+        EventBus.getDefault().post(new ProfileUpdatedEvent(
+            true, null, mProfile
+        ));
       }
+
       return false;
     }
   };
@@ -187,10 +207,19 @@ public class ProfileActivity extends BaseActivity {
     mTitleColorSpan = new AlphaForegroundColorSpan(ContextCompat.getColor(this, titleColorId));
 
     mRealm = Attiq.realm();
+    mRealm.addChangeListener(this);
+
     mUserId = getIntent().getStringExtra(EXTRA_USER_NAME);
 
     mRefUser = mRealm.where(Profile.class).equalTo("token", PrefUtil.getCurrentToken()).findFirst();
-    mUser = mRealm.where(User.class).equalTo("id", mUserId).findFirst();
+
+    mProfile = mRealm.where(RProfile.class).equalTo(RProfile.FIELD_USER_NAME, mUserId).findFirst();
+    if (mProfile == null) {
+      mRealm.beginTransaction();
+      mProfile = mRealm.createObject(RProfile.class);
+      mProfile.setUserName(mUserId);
+      mRealm.commitTransaction();
+    }
 
     if (getSupportFragmentManager().findFragmentById(R.id.profile_info_tags) == null) {
       mTagFragment = UserTagsFragment.newInstance(mUserId);
@@ -206,6 +235,7 @@ public class ProfileActivity extends BaseActivity {
 
   @Override protected void onDestroy() {
     if (mRealm != null) {
+      mRealm.removeChangeListener(this);
       mRealm.close();
     }
     ButterKnife.unbind(this);
@@ -255,14 +285,26 @@ public class ProfileActivity extends BaseActivity {
       }
 
       @Override public void onFailure(Throwable error) {
-        EventBus.getDefault().post(new ProfileFetchedEvent(false,
+        EventBus.getDefault().post(new UserFetchedEvent(false,
             new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
     };
 
+    final String baseUrl = "http://qiita.com/" + mUserId;
+
+    mDocumentCallback = new DocumentCallback(baseUrl) {
+      @Override public void onDocument(Document response) {
+        if (response != null) {
+          EventBus.getDefault().post(new DocumentEvent(true, null, response));
+        }
+      }
+    };
+
+    WebUtil.loadWeb(baseUrl).enqueue(mDocumentCallback);
+
     // update UI
-    if (mUser != null) {
-      EventBus.getDefault().post(new UserFetchedEvent(true, null, mUser));
+    if (mProfile != null) {
+      EventBus.getDefault().post(new ProfileUpdatedEvent(true, null, mProfile));
     }
 
     ApiClient.isFollowing(mUserId).enqueue(mOnFollowStateCallback);
@@ -295,27 +337,63 @@ public class ProfileActivity extends BaseActivity {
           event.state.isFollowing ?
               R.drawable.rounded_background_active : R.drawable.rounded_background_normal
       );
+
+      mRealm.beginTransaction();
+      mProfile.setContributionCount(event.state.contribution);
+      mRealm.commitTransaction();
     }
   }
 
   @SuppressWarnings("unused")
+  public void onEventMainThread(ProfileUpdatedEvent event) {
+    mProfileName.setText(mProfile.getUserName());
+    mProfileDescription.setText(mProfile.getBrief());
+
+    final RequestCreator profileImageRequest;
+    if (!UIUtil.isEmpty(mProfile.getProfileImageUrl())) {
+      profileImageRequest = Attiq.picasso().load(mProfile.getProfileImageUrl());
+    } else {
+      profileImageRequest = Attiq.picasso().load(R.drawable.blank_profile_icon_large);
+    }
+
+    profileImageRequest
+        .placeholder(R.drawable.blank_profile_icon_large)
+        .error(R.drawable.blank_profile_icon_large)
+        .resize(mProfileImageSize, 0)
+        .transform(new RoundedTransformation(
+            mImageBorderWidth, mImageBorderColor, mProfileImageRadius))
+        .into(mProfileImage);
+
+    mSpannableTitle = new SpannableString(mUserId);
+    if (!UIUtil.isEmpty(mProfile.getFullName())) {
+      mSpannableSubtitle = new SpannableString(mProfile.getFullName());
+    }
+
+    updateTitle();
+    updateDescription();
+    updateQuantities();
+    updateSocialButtons();
+  }
+
+  @SuppressWarnings("unused")
   public void onEventMainThread(UserFetchedEvent event) {
-    mUser = event.user;
     Log.d(TAG, "onEventMainThread() called with: " + "event = [" + event + "]");
-    if (mUser != null) {
-      mProfileName.setText(mUser.getId());
+    if (event.user != null) {
+      mRealm.beginTransaction();
+
+      mProfile.setProfileImageUrl(event.user.getProfileImageUrl());
 
       StringBuilder description = new StringBuilder();
 
       boolean willBreakLine = false;
       boolean willSeparate = false;
 
-      if (!UIUtil.isEmpty(mUser.getName())) {
-        description.append(mUser.getName());
+      if (!UIUtil.isEmpty(event.user.getName())) {
+        description.append(event.user.getName());
         willBreakLine = true;
       }
 
-      if (!UIUtil.isEmpty(mUser.getLocation())) {
+      if (!UIUtil.isEmpty(event.user.getLocation())) {
         if (willSeparate) {
           description.append(", ");
         }
@@ -324,74 +402,92 @@ public class ProfileActivity extends BaseActivity {
           description.append(System.lineSeparator());
         }
 
-        description.append(mUser.getLocation());
+        description.append(event.user.getLocation());
       }
 
-      mProfileDescription.setText(description.toString());
+      mProfile.setBrief(description.toString());
 
-      Attiq.picasso()
-          .load(mUser.getProfileImageUrl())
-          .placeholder(R.mipmap.ic_launcher)
-          .error(R.mipmap.ic_launcher)
-          .resize(mProfileImageSize, 0)
-          .transform(new RoundedTransformation(
-              mImageBorderWidth, mImageBorderColor, mProfileImageRadius))
-          .into(mProfileImage);
+      mProfile.setDescription(event.user.getDescription());
+      mProfile.setOrganization(event.user.getOrganization());
 
-      mSpannableTitle = new SpannableString(mUserId);
-      if (!UIUtil.isEmpty(mUser.getName())) {
-        mSpannableSubtitle = new SpannableString(mUser.getName());
-      }
+      mProfile.setItemCount(event.user.getItemsCount());
+      mProfile.setFollowerCount(event.user.getFollowersCount());
+      mProfile.setFollowingCount(event.user.getFolloweesCount());
 
-      updateTitle();
-      updateDescription();
-      updateQuantities();
-      updateSocialButtons();
+      mProfile.setWebsite(event.user.getWebsiteUrl());
+      mProfile.setFacebookName(event.user.getFacebookId());
+      mProfile.setTwitterName(event.user.getTwitterScreenName());
+      mProfile.setGithubName(event.user.getGithubLoginName());
+      mProfile.setLinkedinName(event.user.getLinkedinId());
+
+      mRealm.commitTransaction();
     }
   }
 
   private void updateDescription() {
-    if (mUser == null || mDescription == null) {
+    if (mProfile == null || mDescription == null) {
       return;
     }
 
     mDescription.removeAllViews();
     final Context context = mDescription.getContext();
 
-    if (!UIUtil.isEmpty(mUser.getDescription())) {
-      TextView description = (TextView) LayoutInflater.from(context)
-          .inflate(R.layout.widget_info_textview, mDescription, false);
-      description.setText(UIUtil.beautify(mUser.getDescription()));
-      mDescription.addView(description);
+    if (mProfile.getContributionCount() != null) {
+      TextView contribution = (TextView) mDescription.findViewById(R.id.profile_info_contribution);
+      if (contribution == null) {
+        contribution = (TextView) LayoutInflater.from(context)
+            .inflate(R.layout.widget_info_textview, mDescription, false);
+        contribution.setId(R.id.profile_info_contribution);
+        mDescription.addView(contribution);
+      }
+
+      contribution.setText(getResources().getQuantityString(
+          R.plurals.user_contribution_quantity,
+          mProfile.getContributionCount(), mProfile.getContributionCount()
+      ));
     }
 
-    if (!UIUtil.isEmpty(mUser.getOrganization())) {
-      UserInfoRowTextView view = new UserInfoRowTextView(mDescription.getContext());
-      view.setText(UIUtil.beautify(mUser.getOrganization()));
-      view.setIcon(R.drawable.ic_organization);
+    if (!UIUtil.isEmpty(mProfile.getDescription())) {
+      TextView description = (TextView) mDescription.findViewById(R.id.profile_info_description);
+      if (description == null) {
+        description = (TextView) LayoutInflater.from(context)
+            .inflate(R.layout.widget_info_textview, mDescription, false);
+        mDescription.addView(description);
+      }
+      description.setText(UIUtil.beautify(mProfile.getDescription()));
+    }
 
-      mDescription.addView(view);
+    if (!UIUtil.isEmpty(mProfile.getOrganization())) {
+      UserInfoRowTextView organization =
+          (UserInfoRowTextView) mDescription.findViewById(R.id.profile_info_organization);
+      if (organization == null) {
+        organization = new UserInfoRowTextView(mDescription.getContext());
+        mDescription.addView(organization);
+      }
+
+      organization.setText(UIUtil.beautify(mProfile.getOrganization()));
+      organization.setIcon(R.drawable.ic_organization);
     }
   }
 
   private UserTagsFragment mTagFragment;
 
   private void updateQuantities() {
-    if (mUser == null || isFinishing()) {
+    if (mProfile == null || isFinishing()) {
       return;
     }
 
     final Resources res = getResources();
-    mItemCount.setText(mUser.getItemsCount() + "");
-    mItemQuantity.setText(res.getQuantityString(R.plurals.user_items, mUser.getItemsCount()));
+    mItemCount.setText(mProfile.getItemCount() + "");
+    mItemQuantity.setText(res.getQuantityString(R.plurals.user_items, mProfile.getItemCount()));
 
-    mFollowerCount.setText(mUser.getFollowersCount() + "");
+    mFollowerCount.setText(mProfile.getFollowerCount() + "");
     mFollowerQuantity.setText(
-        res.getQuantityString(R.plurals.user_followers, mUser.getFollowersCount()));
+        res.getQuantityString(R.plurals.user_followers, mProfile.getFollowerCount()));
 
-    mFollowingCount.setText(mUser.getFolloweesCount() + "");
+    mFollowingCount.setText(mProfile.getFollowingCount() + "");
     mFollowingQuantity.setText(
-        res.getQuantityString(R.plurals.user_following, mUser.getFolloweesCount()));
+        res.getQuantityString(R.plurals.user_following, mProfile.getFollowingCount()));
   }
 
   private void updateTitle() {
@@ -412,7 +508,7 @@ public class ProfileActivity extends BaseActivity {
   }
 
   private void updateSocialButtons() {
-    if (mUser == null || mSocialButtonView == null || mSocialButtonContainer == null) {
+    if (mProfile == null || mSocialButtonView == null || mSocialButtonContainer == null) {
       return;
     }
 
@@ -422,27 +518,27 @@ public class ProfileActivity extends BaseActivity {
       button.setVisibility(View.GONE);
     }
 
-    if (!UIUtil.isEmpty(mUser.getWebsiteUrl())) {
+    if (!UIUtil.isEmpty(mProfile.getWebsite())) {
       hasSocialButton = true;
       mSocialButtons[WEBSITE_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
 
-    if (!UIUtil.isEmpty(mUser.getFacebookId())) {
+    if (!UIUtil.isEmpty(mProfile.getFacebookName())) {
       hasSocialButton = true;
       mSocialButtons[FACEBOOK_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
 
-    if (!UIUtil.isEmpty(mUser.getTwitterScreenName())) {
+    if (!UIUtil.isEmpty(mProfile.getTwitterName())) {
       hasSocialButton = true;
       mSocialButtons[TWITTER_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
 
-    if (!UIUtil.isEmpty(mUser.getGithubLoginName())) {
+    if (!UIUtil.isEmpty(mProfile.getGithubName())) {
       hasSocialButton = true;
       mSocialButtons[GITHUB_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
 
-    if (!UIUtil.isEmpty(mUser.getLinkedinId())) {
+    if (!UIUtil.isEmpty(mProfile.getLinkedinName())) {
       hasSocialButton = true;
       mSocialButtons[LINKEDIN_BUTTON_INDEX].setVisibility(View.VISIBLE);
     }
@@ -452,36 +548,36 @@ public class ProfileActivity extends BaseActivity {
 
   @SuppressWarnings("unused")
   @OnClick(R.id.profile_social_website) void openWebsite() {
-    if (mUser != null) {
-      UIUtil.openWebsite(this, mUser.getWebsiteUrl());
+    if (mProfile != null) {
+      UIUtil.openWebsite(this, mProfile.getWebsite());
     }
   }
 
   @SuppressWarnings("unused")
   @OnClick(R.id.profile_social_facebook) void openFacebook() {
-    if (mUser != null) {
-      UIUtil.openFacebookUser(this, mUser.getFacebookId());
+    if (mProfile != null) {
+      UIUtil.openFacebookUser(this, mProfile.getFacebookName());
     }
   }
 
   @SuppressWarnings("unused")
   @OnClick(R.id.profile_social_twitter) void openTwitter() {
-    if (mUser != null) {
-      UIUtil.openTwitterUser(this, mUser.getTwitterScreenName());
+    if (mProfile != null) {
+      UIUtil.openTwitterUser(this, mProfile.getTwitterName());
     }
   }
 
   @SuppressWarnings("unused")
   @OnClick(R.id.profile_social_github) void openGithub() {
-    if (mUser != null) {
-      UIUtil.openGithubUser(this, mUser.getGithubLoginName());
+    if (mProfile != null) {
+      UIUtil.openGithubUser(this, mProfile.getGithubName());
     }
   }
 
   @SuppressWarnings("unused")
   @OnClick(R.id.profile_social_linkedin) void openLinkedin() {
-    if (mUser != null) {
-      UIUtil.openLinkedinUser(this, mUser.getLinkedinId());
+    if (mProfile != null) {
+      UIUtil.openLinkedinUser(this, mProfile.getLinkedinName());
     }
   }
 
@@ -489,6 +585,11 @@ public class ProfileActivity extends BaseActivity {
   @OnClick(R.id.text_action_follow) void followUnFollow() {
     mHandler.removeMessages(MESSAGE_ACTION_FOLLOW);
     mHandler.sendEmptyMessageDelayed(MESSAGE_ACTION_FOLLOW, HANDLER_DELAY);
+  }
+
+  @Override public void onChange() {
+    mHandler.removeMessages(MESSAGE_DATA_UPDATE);
+    mHandler.sendEmptyMessageDelayed(MESSAGE_DATA_UPDATE, HANDLER_DELAY);
   }
 
   private static class ProfileViewPagerAdapter extends FragmentStatePagerAdapter {
@@ -529,9 +630,42 @@ public class ProfileActivity extends BaseActivity {
     }
   }
 
+  @SuppressWarnings("unused")
+  public void onEventMainThread(DocumentEvent event) {
+    if (event.document != null) {
+      Elements stats = event.document.getElementsByClass("userActivityChart_stats");
+      Element statBlock;
+      if (!UIUtil.isEmpty(stats) && (statBlock = stats.first()) != null) {
+        Elements statElements = statBlock.children();
+        Integer contribution = null;
+        for (Element element : statElements) {
+          String unit = element.getElementsByClass("userActivityChart_statUnit").text();
+          if ("Contribution".equals(unit.trim())) {
+            try {
+              contribution = Integer.valueOf(
+                  element.getElementsByClass("userActivityChart_statCount").text()
+              );
+            } catch (NumberFormatException er) {
+              er.printStackTrace();
+            }
+
+            break;
+          }
+        }
+
+        if (contribution != null) {
+          mState.contribution = contribution;
+          EventBus.getDefault().post(new StateEvent(true, null, mState));
+        }
+      }
+    }
+  }
+
   private static class State {
 
     private boolean isFollowing;
+
+    private Integer contribution;
   }
 
   private static class StateEvent extends Event {

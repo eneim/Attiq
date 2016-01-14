@@ -92,6 +92,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
 
+    compile "com.android.support:support-v4:${support_libraries_version}"
     compile "com.android.support:appcompat-v7:${support_libraries_version}"
     compile "com.android.support:design:${support_libraries_version}"
     compile "com.android.support:palette-v7:${support_libraries_version}"
@@ -118,6 +119,9 @@ dependencies {
     compile 'com.sothree.slidinguppanel:library:3.2.1'
     // compile project(":RVP:rvp")
     compile "us.feras.mdv:markdownview:1.1.0"
+
+    // compile 'com.facebook.rebound:rebound:0.3.8'
+    // compile 'com.tumblr:backboard:0.1.0'
 
     compile 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
     compile "de.greenrobot:eventbus:2.4.0"

@@ -49,11 +49,11 @@
         <menu>
             <item
                 android:id="@+id/nav_share"
-                android:enabled="false"
+                android:icon="@drawable/ic_settings_24dp"
                 android:title="@string/action_settings"/>
             <item
                 android:id="@+id/nav_send"
-                android:enabled="false"
+                android:icon="@drawable/ic_about"
                 android:title="@string/action_about"/>
         </menu>
     </item>
