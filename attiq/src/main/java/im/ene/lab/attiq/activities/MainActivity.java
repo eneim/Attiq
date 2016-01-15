@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -16,7 +17,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -44,6 +44,7 @@ import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ProfileFetchedEvent;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
+import im.ene.lab.attiq.widgets.SmoothActionBarDrawerToggle;
 import io.realm.Realm;
 import io.realm.RealmAsyncTask;
 import retrofit2.Callback;
@@ -74,6 +75,7 @@ public class MainActivity extends BaseActivity
   private Realm mRealm;
   private View mHeaderView;
   private DrawerLayout mDrawerLayout;
+  private SmoothActionBarDrawerToggle mDrawerToggle;
   private TabLayout mMainTabs;
   private Fragment mFragment;
   private NavigationView mNavigationView;
@@ -107,13 +109,30 @@ public class MainActivity extends BaseActivity
     setSupportActionBar(mToolBar);
 
     mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+    mDrawerToggle = new SmoothActionBarDrawerToggle(
         this, mDrawerLayout, mToolBar,
         R.string.navigation_drawer_open,
         R.string.navigation_drawer_close) {
+      @Override protected void onDrawerClosedByMenu(View drawerView, @NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+        if (id == R.id.nav_login) {
+          if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
+            login();
+          } else {
+            logout();
+          }
+        } else if (id == R.id.nav_profile) {
+          if (mMyProfile != null) {
+            startActivity(ProfileActivity.createIntent(MainActivity.this, mMyProfile.getId()));
+          }
+        } else if (id == R.id.nav_setting) {
+          startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+        }
+      }
     };
-    mDrawerLayout.setDrawerListener(toggle);
-    toggle.syncState();
+    mDrawerLayout.setDrawerListener(mDrawerToggle);
+    mDrawerToggle.syncState();
 
     mNavigationView = (NavigationView) findViewById(R.id.nav_actions);
     mAuthMenuItem = mNavigationView.getMenu().findItem(R.id.nav_login);
@@ -324,23 +343,8 @@ public class MainActivity extends BaseActivity
 
   @SuppressWarnings("StatementWithEmptyBody")
   @Override public boolean onNavigationItemSelected(MenuItem item) {
-    // Handle navigation view item clicks here.
-    int id = item.getItemId();
-    if (id == R.id.nav_login) {
-      if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
-        login();
-      } else {
-        logout();
-      }
-    } else if (id == R.id.nav_profile) {
-      if (mMyProfile != null) {
-        startActivity(ProfileActivity.createIntent(this, mMyProfile.getId()));
-      }
-    } else if (id == R.id.nav_share) {
-      startActivity(new Intent(this, SettingsActivity.class));
-    }
-
-    mDrawerLayout.closeDrawer(GravityCompat.START);
+    mDrawerToggle.closeDrawer(mDrawerLayout, GravityCompat.START, item);
+    // mDrawerLayout.closeDrawer(GravityCompat.START);
     return true;
   }
 
