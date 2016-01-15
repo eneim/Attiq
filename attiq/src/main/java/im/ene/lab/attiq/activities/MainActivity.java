@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -337,7 +338,10 @@ public class MainActivity extends BaseActivity
         startActivity(ProfileActivity.createIntent(this, mMyProfile.getId()));
       }
     } else if (id == R.id.nav_share) {
-      startActivity(new Intent(this, SettingsActivity.class));
+      Intent intent = new Intent(this, SettingsActivity.class);
+      intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT,
+          SettingsActivity.GeneralPreferenceFragment.class.getName());
+      startActivity(intent);
     }
 
     mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -345,7 +349,7 @@ public class MainActivity extends BaseActivity
   }
 
   private void login() {
-    Intent intent = new Intent(this, WebViewActivity.class);
+    Intent intent = new Intent(this, AuthActivity.class);
     startActivityForResult(intent, RC_LOGIN);
   }
 
