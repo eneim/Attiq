@@ -79,8 +79,6 @@ import java.util.List;
 
 public class ItemDetailActivity extends BaseActivity implements Callback<Article> {
 
-  private static final String EXTRA_DETAIL_ITEM_UUID = "attiq_item_detail_extra_uuid";
-
   private static final String TAG = "ItemDetailActivity";
 
   private static final int MESSAGE_STOCK = 1;
@@ -207,7 +205,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   public static Intent createIntent(Context context, String uuid) {
     Intent intent = createIntent(context);
-    intent.putExtra(EXTRA_DETAIL_ITEM_UUID, uuid);
+    Uri data = Uri.parse(context.getString(R.string.data_items_url, uuid));
+    intent.setData(data);
     return intent;
   }
 
@@ -253,7 +252,20 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     int titleColorId = typedValue.resourceId;
     mTitleColorSpan = new AlphaForegroundColorSpan(ContextCompat.getColor(this, titleColorId));
 
-    mItemUuid = getIntent().getStringExtra(EXTRA_DETAIL_ITEM_UUID);
+    Uri data = getIntent().getData();
+    if (data != null) {
+      List<String> paths = data.getPathSegments();
+      if (!UIUtil.isEmpty(paths)) {
+        Iterator<String> iterator = paths.iterator();
+        while (iterator.hasNext()) {
+          if ("items".equals(iterator.next())) {
+            mItemUuid = iterator.next();
+            break;
+          }
+        }
+      }
+    }
+
     mRealm = Attiq.realm();
 
     Article article = mRealm.where(Article.class).equalTo("id", mItemUuid).findFirst();
@@ -644,6 +656,15 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         );
       }
     }
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      navigateUpOrBack(this, null);
+      return true;
+    }
+
+    return super.onOptionsItemSelected(item);
   }
 
   private static class State {

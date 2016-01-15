@@ -15,7 +15,7 @@
     <string name="action_item_menu">メニュー</string>
     <string name="item_posted_info">%1$s さんが%2$s投稿した</string>
     <string name="item_user_info">
-        <![CDATA[<a href="attiq://qiita.com/user/%1$s">%2$s</a>、%3$s]]>
+        <![CDATA[<a href="attiq://qiita.com/users/%1$s">%2$s</a>、%3$s]]>
     </string>
 
     <string name="title_activity_item_detail">アイテム詳細</string>

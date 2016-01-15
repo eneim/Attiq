@@ -10,26 +10,28 @@
 
     <string name="item_posted_info">%1$s posted %2$s ago</string>
     <string name="item_user_info">
-        &lt;a href="attiq://qiita.com/user/%1$s">%2$s&lt;/a> posted %3$s
+        &lt;a href="attiq://qiita.com/users/%1$s">%2$s&lt;/a> posted %3$s
     </string>
-
-    <string name="item_url">https://qiita.com/%1$s/items/%2$s</string>
 
     <string name="item_info_one">%1$d stocked, 1 comment</string>
     <string name="item_info_many">%1$d stocked, %2$d comments</string>
 
     <string name="user_stocked">
-        &lt;a href="attiq://qiita.com/user/%1$s">%2$s&lt;/a> stocked</string>
+        &lt;a href="attiq://qiita.com/users/%1$s">%2$s&lt;/a> stocked</string>
     <string name="user_follow">
-        &lt;a href="attiq://qiita.com/user/%1$s">%2$s&lt;/a> followed</string>
+        &lt;a href="attiq://qiita.com/users/%1$s">%2$s&lt;/a> followed</string>
     <string name="user_commented">
-        &lt;a href="attiq://qiita.com/user/%1$s">%2$s&lt;/a> commented</string>
+        &lt;a href="attiq://qiita.com/users/%1$s">%2$s&lt;/a> commented</string>
     <string name="user_name">
-        &lt;a href="attiq://qiita.com/user/%1$s">%2$s&lt;/a>
+        &lt;a href="attiq://qiita.com/users/%1$s">%2$s&lt;/a>
     </string>
     <string name="tag_new_post">has new post</string>
 
-    <string name="local_tag_url">&lt;a href="attiq://qiita.com/tag/%1$s">%2$s&lt;/a></string>
+    <string name="local_tag_url">&lt;a href="attiq://qiita.com/tags/%1$s">%2$s&lt;/a></string>
+
+    <string name="data_tags_url">attiq://qiita.com/tags/%1$s</string>
+    <string name="data_items_url">attiq://qiita.com/items/%1$s</string>
+    <string name="data_users_url">attiq://qiita.com/users/%1$s</string>
     <!-- somehow doesn't work well, need help! -->
 
     <!--<plurals name="plural_item_info">-->

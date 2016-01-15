@@ -3,6 +3,7 @@ package im.ene.lab.attiq.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -67,13 +68,15 @@ import io.realm.RealmChangeListener;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.util.Iterator;
+import java.util.List;
+
 public class ProfileActivity extends BaseActivity implements RealmChangeListener {
 
   private static final int MESSAGE_ACTION_FOLLOW = 1;
 
   private static final int MESSAGE_DATA_UPDATE = 1 << 1;
 
-  private static final String EXTRA_USER_NAME = "attiq_profile_user_name";
   private static final String TAG = "ProfileActivity";
   // Used to keep track of index
   private static final int WEBSITE_BUTTON_INDEX = 0;
@@ -176,7 +179,8 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
 
   public static Intent createIntent(Context context, String userName) {
     Intent intent = createIntent(context);
-    intent.putExtra(EXTRA_USER_NAME, userName);
+    Uri data = Uri.parse(context.getString(R.string.data_users_url, userName));
+    intent.setData(data);
     return intent;
   }
 
@@ -209,7 +213,19 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     mRealm = Attiq.realm();
     mRealm.addChangeListener(this);
 
-    mUserId = getIntent().getStringExtra(EXTRA_USER_NAME);
+    Uri data = getIntent().getData();
+    if (data != null) {
+      List<String> paths = data.getPathSegments();
+      if (!UIUtil.isEmpty(paths)) {
+        Iterator<String> iterator = paths.iterator();
+        while (iterator.hasNext()) {
+          if ("users".equals(iterator.next())) {
+            mUserId = iterator.next();
+            break;
+          }
+        }
+      }
+    }
 
     mRefUser = mRealm.where(Profile.class).equalTo("token", PrefUtil.getCurrentToken()).findFirst();
 
