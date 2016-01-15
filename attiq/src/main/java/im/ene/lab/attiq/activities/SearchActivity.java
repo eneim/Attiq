@@ -46,8 +46,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.ArticleListAdapter;
+import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.Article;
+import im.ene.lab.attiq.data.two.User;
 import im.ene.lab.attiq.util.AnimUtils;
 import im.ene.lab.attiq.util.ImeUtils;
 import im.ene.lab.attiq.util.UIUtil;
@@ -84,6 +86,8 @@ public class SearchActivity extends BaseActivity {
   @BindDimen(R.dimen.z_app_bar) float mAppBarElevation;
 
   private Transition mAutoTransition;
+
+  private BaseAdapter.OnItemClickListener mOnResutlItemClick;
 
   private static final int MESSAGE_LOAD_MORE = 1000;
 
@@ -156,6 +160,18 @@ public class SearchActivity extends BaseActivity {
         ApiClient.items(page, pageLimit, query).enqueue(callback);
       }
     };
+
+    mOnResutlItemClick = new ArticleListAdapter.OnArticleClickListener() {
+      @Override public void onUserClick(User user) {
+        startActivity(ProfileActivity.createIntent(SearchActivity.this, user.getId()));
+      }
+
+      @Override public void onItemContentClick(Article item) {
+        startActivity(ItemDetailActivity.createIntent(SearchActivity.this, item.getId()));
+      }
+    };
+
+    mAdapter.setOnItemClickListener(mOnResutlItemClick);
 
     mRecyclerView.setAdapter(mAdapter);
     mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
@@ -382,6 +398,11 @@ public class SearchActivity extends BaseActivity {
         }
       }
     });
+  }
+
+  @Override protected void onDestroy() {
+    mOnResutlItemClick = null;
+    super.onDestroy();
   }
 
   private void clearResults() {
