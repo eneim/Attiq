@@ -30,6 +30,7 @@
     <string name="comment_singular">コメント</string>
     <string name="comment_plural">コメント</string>
     <string name="menu_item_home">ホーム</string>
+    <string name="menu_item_feedback">フィードバック</string>
     <string name="menu_item_profile">プロフィル</string>
     <string name="menu_item_my_page">マイページ</string>
     <string name="action_follow">フォローする</string>

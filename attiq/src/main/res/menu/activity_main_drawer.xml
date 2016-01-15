@@ -58,4 +58,10 @@
         </menu>
     </item>
 
+    <group
+        android:id="@+id/group_help">
+        <item
+            android:id="@+id/nav_feedback"
+            android:title="@string/menu_item_feedback"/>
+    </group>
 </menu>

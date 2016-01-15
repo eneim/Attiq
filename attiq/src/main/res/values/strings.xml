@@ -152,6 +152,7 @@
     <string name="comment_singular">comment</string>
     <string name="comment_plural">comments</string>
     <string name="menu_item_home">Home</string>
+    <string name="menu_item_feedback">Feedback</string>
     <string name="menu_item_profile">Profile</string>
     <string name="menu_item_my_page">My page</string>
     <string name="action_follow">Follow</string>
