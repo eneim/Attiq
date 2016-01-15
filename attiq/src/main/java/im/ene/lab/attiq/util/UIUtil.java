@@ -107,17 +107,21 @@ public class UIUtil {
     return text == null ? null : text.trim();
   }
 
-  public static void stripUnderlines(TextView textView, Spannable ignoredUrl) {
+  public static void stripUnderlines(TextView textView, Spannable ignoredUrl, boolean strip) {
     Spannable s = (Spannable) textView.getText();
     URLSpan[] spans = s.getSpans(0, s.length(), URLSpan.class);
     for (URLSpan span : spans) {
       int start = s.getSpanStart(span);
       int end = s.getSpanEnd(span);
       s.removeSpan(span);
-      span = new NoUnderlineURLSpan(span.getURL(), ignoredUrl);
+      span = new NoUnderlineURLSpan(span.getURL(), ignoredUrl, strip);
       s.setSpan(span, start, end, 0);
     }
     textView.setText(s);
+  }
+
+  public static void stripUnderlines(TextView textView, Spannable ignoredUrl) {
+    stripUnderlines(textView, ignoredUrl, true);
   }
 
   public static void stripUnderlines(TextView textView) {
@@ -128,20 +132,22 @@ public class UIUtil {
 
     private static final String TAG = "NoUnderlineURLSpan";
 
-    private final Spannable mIgnoredUrl;
+    private final Spannable ignoredUrl;
+    private final boolean isStrip;
 
-    public NoUnderlineURLSpan(String url, Spannable ignoredUrl) {
+    public NoUnderlineURLSpan(String url, Spannable ignoredUrl, boolean isStrip) {
       super(url);
-      this.mIgnoredUrl = ignoredUrl;
+      this.ignoredUrl = ignoredUrl;
+      this.isStrip = isStrip;
     }
 
     @Override public void updateDrawState(TextPaint ds) {
       super.updateDrawState(ds);
-      ds.setUnderlineText(false);
+      ds.setUnderlineText(!isStrip);
     }
 
     @Override public void onClick(View widget) {
-      URLSpan[] spans = mIgnoredUrl != null ? mIgnoredUrl.getSpans(0, mIgnoredUrl.length(),
+      URLSpan[] spans = ignoredUrl != null ? ignoredUrl.getSpans(0, ignoredUrl.length(),
           URLSpan.class) : null;
       boolean isClickable = true; // true at first
       if (spans == null) {
