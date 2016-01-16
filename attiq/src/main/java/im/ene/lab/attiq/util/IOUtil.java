@@ -68,7 +68,7 @@ public class IOUtil {
     String[] files = assetManager.list("licenses");
     if (files != null && files.length > 0) {
       Iterator<String> filesIterator = Arrays.asList(files).iterator();
-      String divider = System.lineSeparator() + "---" + System.lineSeparator();
+      String divider = "\n\n---\n\n";
       while (filesIterator.hasNext()) {
         stringBuilder.append(readAssets("licenses/" + filesIterator.next()));
         if (filesIterator.hasNext()) {

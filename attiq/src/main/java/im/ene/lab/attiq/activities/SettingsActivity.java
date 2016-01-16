@@ -23,7 +23,7 @@ import android.view.MenuItem;
 
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.util.AsyncTaskUtil;
-import us.feras.mdv.MarkdownView;
+import im.ene.lab.attiq.widgets.MarkdownView;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On

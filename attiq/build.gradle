@@ -114,8 +114,8 @@ dependencies {
     compile 'com.wefika:flowlayout:0.4.1'
     compile 'com.google.code.gson:gson:2.5'
     compile 'org.jsoup:jsoup:1.8.3'
-    compile "us.feras.mdv:markdownview:1.1.0"
 
+    compile 'com.commonsware.cwac:anddown:0.2.4'
     compile 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
     compile "de.greenrobot:eventbus:2.4.0"
     compile 'com.jakewharton.threetenabp:threetenabp:1.0.3'

@@ -17,6 +17,7 @@ allprojects {
         jcenter()
         maven { url "https://jitpack.io" }
         maven { url 'https://github.com/uPhyca/stetho-realm/raw/master/maven-repo' }
+        maven { url "https://s3.amazonaws.com/repo.commonsware.com" }
     }
 }
 
