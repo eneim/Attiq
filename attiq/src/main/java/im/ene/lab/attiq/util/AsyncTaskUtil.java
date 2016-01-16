@@ -17,7 +17,7 @@ public class AsyncTaskUtil {
     protected abstract void onFinished(T object);
   }
 
-  public static void loadLicenses(final Callback<String> callback) {
+  public static void load(final String folder, final Callback<String> callback) {
     new AsyncTask<Void, Void, String>() {
 
       @Override protected void onPreExecute() {
@@ -29,7 +29,7 @@ public class AsyncTaskUtil {
 
       @Override protected String doInBackground(Void... params) {
         try {
-          return IOUtil.readLicenses();
+          return IOUtil.readAssetFolder(folder);
         } catch (IOException e) {
           e.printStackTrace();
           return null;
@@ -43,4 +43,5 @@ public class AsyncTaskUtil {
       }
     }.execute();
   }
+
 }

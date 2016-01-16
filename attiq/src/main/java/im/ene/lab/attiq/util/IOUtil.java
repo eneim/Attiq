@@ -62,15 +62,15 @@ public class IOUtil {
     return buffer.readString(Charset.forName("utf-8"));
   }
 
-  public static String readLicenses() throws IOException {
+  public static String readAssetFolder(String folder) throws IOException {
     final StringBuilder stringBuilder = new StringBuilder();
     AssetManager assetManager = Attiq.creator().getAssets();
-    String[] files = assetManager.list("licenses");
+    String[] files = assetManager.list(folder);
     if (files != null && files.length > 0) {
       Iterator<String> filesIterator = Arrays.asList(files).iterator();
       String divider = "\n\n---\n\n";
       while (filesIterator.hasNext()) {
-        stringBuilder.append(readAssets("licenses/" + filesIterator.next()));
+        stringBuilder.append(readAssets(folder + "/" + filesIterator.next()));
         if (filesIterator.hasNext()) {
           stringBuilder.append(divider);
         }

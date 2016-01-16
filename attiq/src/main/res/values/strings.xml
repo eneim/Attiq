@@ -149,4 +149,6 @@
     <string name="prefs_privacy">Privacy Policy</string>
     <string name="pref_general">General</string>
     <string name="title_licenses">Open Source Licenses</string>
+    <string name="title_licenses_others">Other Resources</string>
+    <string name="title_resources">Other Resources</string>
 </resources>

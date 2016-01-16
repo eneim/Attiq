@@ -153,10 +153,26 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 .setView(view)
                 .create().show();
 
-            AsyncTaskUtil.loadLicenses(new AsyncTaskUtil.Callback<String>() {
-              @Override protected void onFinished(String object) {
-                if (object != null) {
-                  view.loadMarkdown(object, "file:///android_asset/html/css/github.css");
+            AsyncTaskUtil.load("licenses", new AsyncTaskUtil.Callback<String>() {
+              @Override protected void onFinished(String markdown) {
+                if (markdown != null) {
+                  view.loadMarkdown(markdown, "file:///android_asset/html/css/github.css");
+                }
+              }
+            });
+
+            return true;
+          } else if ("pref_other_resources".equals(preference.getKey())) {
+            final MarkdownView view = new MarkdownView(preference.getContext());
+            new AlertDialog.Builder(preference.getContext())
+                .setTitle(R.string.title_resources)
+                .setView(view)
+                .create().show();
+
+            AsyncTaskUtil.load("resources", new AsyncTaskUtil.Callback<String>() {
+              @Override protected void onFinished(String markdown) {
+                if (markdown != null) {
+                  view.loadMarkdown(markdown, "file:///android_asset/html/css/github.css");
                 }
               }
             });
@@ -215,6 +231,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
       bindPreferenceSummaryToValue(findPreference("example_text"));
       bindPreferenceSummaryToValue(findPreference("example_list"));
       bindPreferenceClickListener(findPreference("pref_open_source"));
+      bindPreferenceClickListener(findPreference("pref_other_resources"));
     }
   }
 

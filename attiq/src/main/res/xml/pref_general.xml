@@ -55,5 +55,9 @@
             android:key="pref_open_source"
             android:title="@string/title_licenses"/>
 
+        <Preference
+            android:key="pref_other_resources"
+            android:title="@string/title_licenses_others"/>
+
     </PreferenceCategory>
 </PreferenceScreen>
