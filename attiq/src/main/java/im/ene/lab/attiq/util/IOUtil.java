@@ -19,6 +19,8 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Created by eneim on 12/13/15.
@@ -54,10 +56,28 @@ public class IOUtil {
   }
 
   public static String readAssets(String fileName) throws IOException {
-    AssetManager assetManager = Attiq.creator().getResources().getAssets();
+    AssetManager assetManager = Attiq.creator().getAssets();
     InputStream stream = assetManager.open(fileName);
     BufferedSource buffer = Okio.buffer(Okio.source(stream));
     return buffer.readString(Charset.forName("utf-8"));
+  }
+
+  public static String readAssetFolder(String folder) throws IOException {
+    final StringBuilder stringBuilder = new StringBuilder();
+    AssetManager assetManager = Attiq.creator().getAssets();
+    String[] files = assetManager.list(folder);
+    if (files != null && files.length > 0) {
+      Iterator<String> filesIterator = Arrays.asList(files).iterator();
+      String divider = "\n\n---\n\n";
+      while (filesIterator.hasNext()) {
+        stringBuilder.append(readAssets(folder + "/" + filesIterator.next()));
+        if (filesIterator.hasNext()) {
+          stringBuilder.append(divider);
+        }
+      }
+    }
+
+    return stringBuilder.toString();
   }
 
   public static String toString(FeedItem item) {

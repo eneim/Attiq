@@ -15,6 +15,10 @@
         <!--<item name="android:windowBackground">@drawable/attiq_icon</item>-->
     </style>
 
+    <style name="Attiq.Theme.Dialog" parent="AlertDialog.AppCompat.Light">
+
+    </style>
+
     <style name="Attiq.Theme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

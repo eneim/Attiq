@@ -218,7 +218,7 @@ public class FeedListAdapter extends ListAdapter<FeedItem> {
         tagName.setMovementMethod(LinkMovementMethod.getInstance());
 
         tagName.setText(Html.fromHtml(itemView.getContext().getString(R.string.local_tag_url,
-            item.getFollowableName(), item.getFollowableName())));
+            item.getFollowableName() + "", item.getFollowableName() + "")));
 
         Attiq.picasso().load(item.getFollowableImageUrl())
             .placeholder(R.drawable.ic_lens_16dp)
