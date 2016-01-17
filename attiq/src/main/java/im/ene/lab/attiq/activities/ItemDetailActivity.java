@@ -39,6 +39,8 @@ import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -115,6 +117,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Bind(R.id.drawer_layout) DrawerLayout mMenuLayout;
   @Bind(R.id.html_headers_container) LinearLayout mMenuContainer;
   @Bind(R.id.loading_container) View mLoadingView;
+
+  @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingPanel;
+  @Bind(R.id.dragView) View mCommentComposer;
 
   @BindDimen(R.dimen.header_depth_width) int mHeaderDepthWidth;
   @BindDimen(R.dimen.header_depth_gap) int mHeaderDepthGap;
@@ -224,6 +229,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     if (getSupportActionBar() != null) {
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
+    mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
 
     // empty title at start
     setTitle("");
@@ -385,7 +392,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   @SuppressWarnings("unused")
   @OnClick(R.id.item_comments) void commentArticle() {
-
+    mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
   }
 
   @SuppressWarnings("unused")

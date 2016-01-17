@@ -111,6 +111,7 @@ dependencies {
         transitive = true;
     }
 
+    compile 'com.sothree.slidinguppanel:library:3.2.1'
     compile 'com.wefika:flowlayout:0.4.1'
     compile 'com.google.code.gson:gson:2.5'
     compile 'org.jsoup:jsoup:1.8.3'
