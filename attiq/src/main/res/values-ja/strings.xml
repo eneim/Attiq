@@ -60,6 +60,7 @@
     <string name="title_licenses">オープンソースライセンス</string>
     <string name="title_licenses_others">他のリソース</string>
     <string name="title_resources">他のリソース</string>
+    <string name="logout_confirm">本当にAttiqからログアウトしますか？</string>
 
     <plurals name="title_activity_tag_quantity">
         <item quantity="one">%1$d投稿</item>

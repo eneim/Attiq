@@ -356,7 +356,7 @@ public class MainActivity extends BaseActivity
   private void logout() {
     // Show a dialog
     new AlertDialog.Builder(this)
-        .setMessage("本当にAttiqからログアウトしますか？")
+        .setMessage(R.string.logout_confirm)
         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
             if (dialog != null) {
@@ -370,14 +370,9 @@ public class MainActivity extends BaseActivity
               dialog.dismiss();
             }
 
-            // 1. find current profile
-            Profile profile = mRealm.where(Profile.class)
-                .equalTo("token", PrefUtil.getCurrentToken()).findFirst();
-            if (profile != null) {
-              mRealm.beginTransaction();
-              profile.removeFromRealm();
-              mRealm.commitTransaction();
-            }
+            mRealm.beginTransaction();
+            mRealm.clear(Profile.class);
+            mRealm.commitTransaction();
 
             mMyProfile = null;
             PrefUtil.setCurrentToken(null);
