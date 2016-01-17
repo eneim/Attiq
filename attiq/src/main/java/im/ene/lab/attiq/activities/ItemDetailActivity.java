@@ -66,9 +66,9 @@ import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemCommentsEvent;
 import im.ene.lab.attiq.util.event.ItemDetailEvent;
 import im.ene.lab.attiq.widgets.drawable.ThreadedCommentDrawable;
-import im.ene.support.design.widget.AlphaForegroundColorSpan;
-import im.ene.support.design.widget.AppBarLayout;
-import im.ene.support.design.widget.CollapsingToolbarLayout;
+import im.ene.lab.design.widget.AlphaForegroundColorSpan;
+import im.ene.lab.design.widget.AppBarLayout;
+import im.ene.lab.design.widget.CollapsingToolbarLayout;
 import io.realm.Realm;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -301,7 +301,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private void trySetupContentView() {
     mContentView.setVerticalScrollBarEnabled(false);
     mContentView.setHorizontalScrollBarEnabled(false);
-    mContentView.getSettings().setJavaScriptEnabled(true);
+    // mContentView.getSettings().setJavaScriptEnabled(true);
 
     mContentView.setWebChromeClient(new WebChromeClient() {
       @Override public void onProgressChanged(WebView view, int newProgress) {

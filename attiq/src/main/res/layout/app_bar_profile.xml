@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<im.ene.support.design.widget.AppBarLayout
+<im.ene.lab.design.widget.AppBarLayout
     android:id="@+id/app_bar"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,7 +10,7 @@
     android:fitsSystemWindows="true"
     tools:showIn="@layout/activity_profile">
 
-    <im.ene.support.design.widget.CollapsingToolbarLayout
+    <im.ene.lab.design.widget.CollapsingToolbarLayout
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -195,7 +195,7 @@
             app:layout_collapseMode="pin"
             app:subtitleTextAppearance="@style/Attiq.Widget.Profile.Toolbar.Subtitle"/>
 
-    </im.ene.support.design.widget.CollapsingToolbarLayout>
+    </im.ene.lab.design.widget.CollapsingToolbarLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -243,4 +243,4 @@
             app:tabMode="scrollable"/>
     </RelativeLayout>
 
-</im.ene.support.design.widget.AppBarLayout>
+</im.ene.lab.design.widget.AppBarLayout>
