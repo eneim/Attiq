@@ -48,7 +48,7 @@
         android:title="@string/menu_item_application">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_setting"
                 android:icon="@drawable/ic_settings_24dp"
                 android:title="@string/action_settings"/>
             <item
