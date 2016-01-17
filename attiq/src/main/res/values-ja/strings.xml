@@ -61,6 +61,10 @@
     <string name="title_licenses_others">他のリソース</string>
     <string name="title_resources">他のリソース</string>
     <string name="logout_confirm">本当にAttiqからログアウトしますか？</string>
+    <string name="comment_tab_composer">コメント作成</string>
+    <string name="comment_tab_previewer">プレビュー</string>
+    <string name="editor_comment">コメント</string>
+    <string name="article_comment_hint"># Markdownでコメント作成</string>
 
     <plurals name="title_activity_tag_quantity">
         <item quantity="one">%1$d投稿</item>

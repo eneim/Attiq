@@ -2,16 +2,16 @@
 <com.sothree.slidinguppanel.SlidingUpPanelLayout
     android:id="@+id/sliding_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    sothree:umanoDragView="@+id/dragView"
-    sothree:umanoFadeColor="#20000000"
-    sothree:umanoOverlay="false"
-    sothree:umanoPanelHeight="48dp"
-    sothree:umanoShadowHeight="0dp">
+    app:umanoDragView="@+id/comment_composer_container"
+    app:umanoFadeColor="#20000000"
+    app:umanoOverlay="false"
+    app:umanoPanelHeight="48dp"
+    app:umanoShadowHeight="1dp">
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
@@ -47,14 +47,57 @@
 
     </android.support.v4.widget.DrawerLayout>
 
-
-    <LinearLayout
-        android:id="@id/dragView"
+    <RelativeLayout
+        android:id="@id/comment_composer_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="80dp"
-        android:background="#ff0000"
-        android:fitsSystemWindows="true"
-        android:orientation="vertical"/>
+        android:layout_marginTop="80dp">
+
+        <RelativeLayout
+            android:id="@+id/comment_composer_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="@android:color/white">
+
+            <ImageView
+                android:id="@+id/handle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:minWidth="?attr/actionBarSize"
+                android:scaleType="center"
+                android:src="@drawable/ic_action_comment"/>
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/comment_composer_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/tab_layout_height"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/handle"
+                android:layout_toRightOf="@id/handle"
+                android:paddingEnd="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingStart="8dp"
+                android:theme="@style/Theme.AppCompat.Light"
+                app:tabGravity="fill"
+                app:tabIndicatorColor="@android:color/black"
+                app:tabIndicatorHeight="0.5dp"
+                app:tabMode="scrollable"/>
+        </RelativeLayout>
+
+        <im.ene.lab.attiq.widgets.CommentComposerView
+            android:id="@+id/comment_composer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/comment_composer_header"
+            android:background="#e5e5e5"
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"
+            android:padding="8dp"/>
+    </RelativeLayout>
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

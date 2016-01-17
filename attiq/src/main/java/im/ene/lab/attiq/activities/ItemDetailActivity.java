@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
@@ -67,6 +68,7 @@ import im.ene.lab.attiq.util.event.DocumentEvent;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemCommentsEvent;
 import im.ene.lab.attiq.util.event.ItemDetailEvent;
+import im.ene.lab.attiq.widgets.CommentComposerView;
 import im.ene.lab.attiq.widgets.drawable.ThreadedCommentDrawable;
 import im.ene.lab.design.widget.AlphaForegroundColorSpan;
 import im.ene.lab.design.widget.AppBarLayout;
@@ -85,6 +87,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   private static final int MESSAGE_STOCK = 1;
   private static final int MESSAGE_UNSTOCK = 1 << 1;
+  private static final int MESSAGE_PREVIEW_COMMENT = 1 << 2;
 
   private Handler.Callback mHandlerCallback = new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
@@ -93,6 +96,10 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         return true;
       } else if (msg.what == MESSAGE_STOCK) {
         ApiClient.stockItem(mItemUuid).enqueue(mItemStockedResponse);
+        return true;
+      } else if (msg.what == MESSAGE_PREVIEW_COMMENT) {
+        // String source = mComposer.getText().toString();
+        // mPreview.loadMarkdown(source, "file:///android_asset/html/css/github.css");
         return true;
       }
 
@@ -119,7 +126,10 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Bind(R.id.loading_container) View mLoadingView;
 
   @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingPanel;
-  @Bind(R.id.dragView) View mCommentComposer;
+  @Bind(R.id.comment_composer) CommentComposerView mCommentComposer;
+  @Bind(R.id.comment_composer_tabs) TabLayout mComposerTabs;
+  // @Bind(R.id.preview) MarkdownView mPreview;
+  // @Bind(R.id.compose) EditText mComposer;
 
   @BindDimen(R.dimen.header_depth_width) int mHeaderDepthWidth;
   @BindDimen(R.dimen.header_depth_gap) int mHeaderDepthGap;
@@ -231,6 +241,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
 
     mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+    mComposerTabs.setupWithViewPager(mCommentComposer);
 
     // empty title at start
     setTitle("");
@@ -258,6 +269,21 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         .resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
     int titleColorId = typedValue.resourceId;
     mTitleColorSpan = new AlphaForegroundColorSpan(ContextCompat.getColor(this, titleColorId));
+
+//    mComposer.addTextChangedListener(new TextWatcher() {
+//      @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//      }
+//
+//      @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+//        mHandler.removeMessages(MESSAGE_PREVIEW_COMMENT);
+//        mHandler.sendEmptyMessageDelayed(MESSAGE_PREVIEW_COMMENT, 200);
+//      }
+//
+//      @Override public void afterTextChanged(Editable s) {
+//
+//      }
+//    });
 
     Uri data = getIntent().getData();
     if (data != null) {
@@ -422,9 +448,13 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @SuppressWarnings("unused")
   public void onEventMainThread(ItemDetailEvent event) {
     Article article = event.article;
-    mArticle = article;
     String userName = null;
     if (article != null) {
+      mArticle = article;
+      mRealm.beginTransaction();
+      mRealm.copyToRealmOrUpdate(mArticle);
+      mRealm.commitTransaction();
+
       User user = article.getUser();
 
       mArticleName.setText(article.getTitle());
@@ -674,6 +704,15 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     return super.onOptionsItemSelected(item);
   }
 
+  @Override public void onBackPressed() {
+    if (mSlidingPanel.getPanelState() != SlidingUpPanelLayout.PanelState.HIDDEN) {
+      mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+      // TODO save comment draft
+    } else {
+      super.onBackPressed();
+    }
+  }
+
   private static class State {
 
     private boolean isStocked;
@@ -690,6 +729,5 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       this.state = state;
     }
   }
-
 
 }

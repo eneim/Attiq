@@ -152,4 +152,8 @@
     <string name="title_licenses_others">Other Resources</string>
     <string name="title_resources">Other Resources</string>
     <string name="logout_confirm">Do you want to logout from Attiq?</string>
+    <string name="comment_tab_composer">Editor</string>
+    <string name="comment_tab_previewer">Preview</string>
+    <string name="editor_comment">Comment</string>
+    <string name="article_comment_hint"># Compose in Markdown</string>
 </resources>
