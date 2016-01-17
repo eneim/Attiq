@@ -142,8 +142,7 @@
 
         <activity
             android:name=".activities.WebViewActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".activities.MainActivity">
+            android:label="@string/app_name">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -156,9 +155,6 @@
                     android:scheme="attiq"/>
 
             </intent-filter>
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="im.ene.lab.attiq.activities.MainActivity"/>
         </activity>
 
         <meta-data
