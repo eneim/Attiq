@@ -65,6 +65,7 @@
     <string name="comment_tab_previewer">プレビュー</string>
     <string name="editor_comment">コメント</string>
     <string name="article_comment_hint"># Markdownでコメント作成</string>
+    <string name="notify_comment_saved">下書きが保存されました</string>
 
     <plurals name="title_activity_tag_quantity">
         <item quantity="one">%1$d投稿</item>

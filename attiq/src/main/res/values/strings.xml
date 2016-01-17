@@ -156,4 +156,5 @@
     <string name="comment_tab_previewer">Preview</string>
     <string name="editor_comment">Comment</string>
     <string name="article_comment_hint"># Compose in Markdown</string>
+    <string name="notify_comment_saved">Your comment has been saved</string>
 </resources>

@@ -71,13 +71,44 @@
                 android:scaleType="center"
                 android:src="@drawable/ic_action_comment"/>
 
+            <LinearLayout
+                android:id="@+id/editor_buttons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btn_submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:minHeight="@dimen/tab_layout_height"
+                    android:minWidth="@dimen/tab_layout_height"
+                    android:src="@drawable/ic_check_24dp"/>
+
+                <ImageButton
+                    android:id="@+id/btn_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:minHeight="@dimen/tab_layout_height"
+                    android:minWidth="@dimen/tab_layout_height"
+                    android:src="@drawable/ic_close_24dp"/>
+
+            </LinearLayout>
+
             <android.support.design.widget.TabLayout
                 android:id="@+id/comment_composer_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/tab_layout_height"
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@id/handle"
+                android:layout_toLeftOf="@id/editor_buttons"
                 android:layout_toRightOf="@id/handle"
+                android:layout_toStartOf="@id/editor_buttons"
                 android:paddingEnd="8dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"

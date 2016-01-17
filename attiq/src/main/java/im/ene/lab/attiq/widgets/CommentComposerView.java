@@ -14,6 +14,7 @@ import android.widget.EditText;
 
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.util.ImeUtils;
 
 /**
  * Created by eneim on 1/17/16.
@@ -27,6 +28,8 @@ public class CommentComposerView extends ViewPager {
 
   private Handler.Callback mHandlerCallback;
   private Handler mHandler;
+
+  private OnPageChangeListener mPageChangeListener;
 
   public CommentComposerView(Context context) {
     this(context, null);
@@ -64,6 +67,15 @@ public class CommentComposerView extends ViewPager {
       }
     };
     mComposer.addTextChangedListener(mTextChanged);
+    mPageChangeListener = new SimpleOnPageChangeListener() {
+      @Override public void onPageSelected(int position) {
+        super.onPageSelected(position);
+        if (position == 1) {  // preview view
+          ImeUtils.hideIme(CommentComposerView.this);
+        }
+      }
+    };
+    addOnPageChangeListener(mPageChangeListener);
   }
 
   public String getComment() {
@@ -75,6 +87,8 @@ public class CommentComposerView extends ViewPager {
     mComposer.removeTextChangedListener(mTextChanged);
     mHandlerCallback = null;
     mTextChanged = null;
+    removeOnPageChangeListener(mPageChangeListener);
+    mPageChangeListener = null;
     super.onDetachedFromWindow();
   }
 

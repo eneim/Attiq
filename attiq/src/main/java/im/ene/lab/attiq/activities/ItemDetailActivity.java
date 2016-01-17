@@ -61,6 +61,7 @@ import im.ene.lab.attiq.data.two.Comment;
 import im.ene.lab.attiq.data.two.User;
 import im.ene.lab.attiq.util.AnimUtils;
 import im.ene.lab.attiq.util.IOUtil;
+import im.ene.lab.attiq.util.ImeUtils;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.WebUtil;
@@ -86,12 +87,12 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private static final String TAG = "ItemDetailActivity";
 
   private static final int MESSAGE_STOCK = 1;
-  private static final int MESSAGE_UNSTOCK = 1 << 1;
+  private static final int MESSAGE_UN_STOCK = 1 << 1;
   private static final int MESSAGE_PREVIEW_COMMENT = 1 << 2;
 
   private Handler.Callback mHandlerCallback = new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
-      if (msg.what == MESSAGE_UNSTOCK) {
+      if (msg.what == MESSAGE_UN_STOCK) {
         ApiClient.unStockItem(mItemUuid).enqueue(mItemUnStockedResponse);
         return true;
       } else if (msg.what == MESSAGE_STOCK) {
@@ -128,8 +129,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingPanel;
   @Bind(R.id.comment_composer) CommentComposerView mCommentComposer;
   @Bind(R.id.comment_composer_tabs) TabLayout mComposerTabs;
-  // @Bind(R.id.preview) MarkdownView mPreview;
-  // @Bind(R.id.compose) EditText mComposer;
 
   @BindDimen(R.dimen.header_depth_width) int mHeaderDepthWidth;
   @BindDimen(R.dimen.header_depth_gap) int mHeaderDepthGap;
@@ -184,6 +183,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
     }
   };
+
   private Callback<Void> mStockStatusResponse = new Callback<Void>() {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override public void onResponse(Response<Void> response) {
@@ -240,6 +240,28 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    mSlidingPanel.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+      @Override public void onPanelSlide(View panel, float slideOffset) {
+
+      }
+
+      @Override public void onPanelCollapsed(View panel) {
+        ImeUtils.hideIme(panel);
+      }
+
+      @Override public void onPanelExpanded(View panel) {
+
+      }
+
+      @Override public void onPanelAnchored(View panel) {
+        ImeUtils.hideIme(panel);
+      }
+
+      @Override public void onPanelHidden(View panel) {
+        ImeUtils.hideIme(panel);
+      }
+    });
+
     mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
     mComposerTabs.setupWithViewPager(mCommentComposer);
 
@@ -269,21 +291,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         .resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
     int titleColorId = typedValue.resourceId;
     mTitleColorSpan = new AlphaForegroundColorSpan(ContextCompat.getColor(this, titleColorId));
-
-//    mComposer.addTextChangedListener(new TextWatcher() {
-//      @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//      }
-//
-//      @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-//        mHandler.removeMessages(MESSAGE_PREVIEW_COMMENT);
-//        mHandler.sendEmptyMessageDelayed(MESSAGE_PREVIEW_COMMENT, 200);
-//      }
-//
-//      @Override public void afterTextChanged(Editable s) {
-//
-//      }
-//    });
 
     Uri data = getIntent().getData();
     if (data != null) {
@@ -418,17 +425,39 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   @SuppressWarnings("unused")
   @OnClick(R.id.item_comments) void commentArticle() {
-    mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+    mAppBarLayout.setExpanded(false, true);
+    mHandler.postDelayed(new Runnable() {
+      @Override public void run() {
+        mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+      }
+    }, 250);
+  }
+
+  @SuppressWarnings("unused")
+  @OnClick(R.id.btn_close) void cancelComment() {
+    ImeUtils.hideIme(mCommentComposer);
+    mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+    mHandler.postDelayed(new Runnable() {
+      @Override public void run() {
+        Snackbar.make(mContentView, R.string.notify_comment_saved, Snackbar.LENGTH_LONG).show();
+      }
+    }, 250);
+  }
+
+  @SuppressWarnings("unused")
+  @OnClick(R.id.btn_submit) void summitComment() {
+    ImeUtils.hideIme(mCommentComposer);
+    String comment = mCommentComposer.getComment();
   }
 
   @SuppressWarnings("unused")
   @OnClick(R.id.item_stocks) void stockArticle() {
     mHandler.removeMessages(MESSAGE_STOCK);
-    mHandler.removeMessages(MESSAGE_UNSTOCK);
+    mHandler.removeMessages(MESSAGE_UN_STOCK);
     if (!mState.isStocked) {
       mHandler.sendEmptyMessageDelayed(MESSAGE_STOCK, 200);
     } else {
-      mHandler.sendEmptyMessageDelayed(MESSAGE_UNSTOCK, 200);
+      mHandler.sendEmptyMessageDelayed(MESSAGE_UN_STOCK, 200);
     }
   }
 
