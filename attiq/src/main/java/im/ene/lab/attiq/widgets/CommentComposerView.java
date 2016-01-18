@@ -10,14 +10,12 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.widget.EditText;
 
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.ImeUtils;
-
-import java.io.IOException;
 
 /**
  * Created by eneim on 1/17/16.
@@ -54,6 +52,8 @@ public class CommentComposerView extends ViewPager {
     mAdapter = new Adapter(mComposerContainer, mPreviewerContainer);
     setAdapter(mAdapter);
 
+    mPreviewer.setWebChromeClient(new WebChromeClient() {
+    });
   }
 
   @Override protected void onAttachedToWindow() {
@@ -62,15 +62,10 @@ public class CommentComposerView extends ViewPager {
       @Override public boolean handleMessage(Message msg) {
         if (msg.what == MESSAGE_TEXT_CHANGED) {
           // Update preview
-          try {
-            mPreviewer.loadMarkdown(
-                // mComposer.getText().toString(),
-                IOUtil.readAssets("sample.md"),
-                "file:///android_asset/html/css/github.css"
-            );
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
+          mPreviewer.loadMarkdown(
+              mComposer.getText().toString(),
+              "file:///android_asset/html/css/github.css"
+          );
         }
         return false;
       }

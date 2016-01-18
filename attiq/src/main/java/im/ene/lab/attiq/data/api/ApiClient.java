@@ -36,38 +36,38 @@ import java.util.UUID;
  */
 public final class ApiClient {
 
-  private static final OkHttpClient HTTP_CLIENT;
-  private static final Retrofit RETROFIT;
+  private static final OkHttpClient sHttpClient;
+  private static final Retrofit sRetrofit;
 
-  private static final Api.Zero ZERO;
-  private static final Api.One ONE;
-  private static final Api.Two TWO;
+  private static final Api.Zero sZero;
+  private static final Api.One sOne;
+  private static final Api.Two sTwo;
 
-  private static final Converter<ResponseBody, QiitaError> ERROR_CONVERTER;
+  private static final Converter<ResponseBody, QiitaError> sErrorConverter;
 
   public static final int DEFAULT_PAGE_LIMIT = 99; // save API calls...
 
   static {
-    HTTP_CLIENT = Attiq.httpClient().newBuilder()
+    sHttpClient = Attiq.httpClient().newBuilder()
         .addInterceptor(PrefUtil.ok3Auth())
         .build();
 
-    RETROFIT = new Retrofit.Builder()
+    sRetrofit = new Retrofit.Builder()
         .baseUrl(Api.BASE_URL)
-        .client(HTTP_CLIENT)
+        .client(sHttpClient)
         .addConverterFactory(GsonConverterFactory.create(IOUtil.gson()))
         .build();
 
-    ZERO = RETROFIT.create(Api.Zero.class);
-    ONE = RETROFIT.create(Api.One.class);
-    TWO = RETROFIT.create(Api.Two.class);
+    sZero = sRetrofit.create(Api.Zero.class);
+    sOne = sRetrofit.create(Api.One.class);
+    sTwo = sRetrofit.create(Api.Two.class);
 
-    ERROR_CONVERTER = RETROFIT.responseBodyConverter(QiitaError.class, new Annotation[0]);
+    sErrorConverter = sRetrofit.responseBodyConverter(QiitaError.class, new Annotation[0]);
   }
 
   public static QiitaError parseError(Response response) {
     try {
-      return ERROR_CONVERTER.convert(response.errorBody());
+      return sErrorConverter.convert(response.errorBody());
     } catch (IOException e) {
       return new QiitaError();
     }
@@ -79,58 +79,58 @@ public final class ApiClient {
   }
 
   public static Call<List<Post>> publicStream(@Nullable Long bottomId) {
-    return ZERO.stream(bottomId, "id");
+    return sZero.stream(bottomId, "id");
   }
 
   public static Call<List<FeedItem>> feed(@Nullable Long maxCreatedAt) {
-    return ZERO.feed(maxCreatedAt);
+    return sZero.feed(maxCreatedAt);
   }
 
   public static Call<List<Post>> openStream(int page, int limit) {
-    return ONE.stream(page, limit);
+    return sOne.stream(page, limit);
   }
 
   public static Call<List<Article>> items(int page, int pageLimit, String query) {
-    return TWO.searchItems(page, pageLimit, query);
+    return sTwo.searchItems(page, pageLimit, query);
   }
 
   public static Call<List<Article>> userItems(String userId, int page, int pageLimit) {
-    return TWO.userItems(userId, page, pageLimit);
+    return sTwo.userItems(userId, page, pageLimit);
   }
 
   public static Call<List<Article>> userStockedItems(String userId, int page, int pageLimit) {
-    return TWO.userStockedItems(userId, page, pageLimit);
+    return sTwo.userStockedItems(userId, page, pageLimit);
   }
 
   public static Call<List<Tag>> userFollowingTags(String userId, int page, int pageLimit) {
-    return TWO.userFollowingTags(userId, page, pageLimit);
+    return sTwo.userFollowingTags(userId, page, pageLimit);
   }
 
   public static Call<List<PublicTag>> userFollowingTagsV1(String userId, int page, int pageLimit) {
-    return ONE.userFollowingTags(userId, page, pageLimit);
+    return sOne.userFollowingTags(userId, page, pageLimit);
   }
 
   public static Call<List<Article>> tagItems(String tagUrlName, int page, int pageLimit) {
-    return TWO.tagItems(tagUrlName, page, pageLimit);
+    return sTwo.tagItems(tagUrlName, page, pageLimit);
   }
 
   public static Call<Article> itemDetail(String id) {
-    return TWO.itemDetail(id);
+    return sTwo.itemDetail(id);
   }
 
   public static Call<List<Tag>> tags(int page) {
     // default page limit: 99
     // default sort type: count
-    return TWO.tags(page, DEFAULT_PAGE_LIMIT, "count");
+    return sTwo.tags(page, DEFAULT_PAGE_LIMIT, "count");
   }
 
   public static Call<List<Comment>> itemComments(String id) {
-    return TWO.comments(id);
+    return sTwo.comments(id);
   }
 
   public static Call<AccessToken> accessToken(String code) {
     Resources resources = Attiq.creator().getResources();
-    return TWO.accessToken(
+    return sTwo.accessToken(
         new AccessTokenRequest(
             false,
             resources.getString(R.string.client_id),
@@ -141,46 +141,46 @@ public final class ApiClient {
   }
 
   public static Call<Profile> me() {
-    return TWO.me();
+    return sTwo.me();
   }
 
   public static Call<List<Tag>> myTags(int page, int limit) {
-    return TWO.tags("", page, limit);
+    return sTwo.tags("", page, limit);
   }
 
   public static Call<User> user(@NonNull String userName) {
-    return TWO.user(userName);
+    return sTwo.user(userName);
   }
 
   public static Call<List<Post>> userItems(String userId, int page) {
-    return ONE.userItems(userId, page, DEFAULT_PAGE_LIMIT);
+    return sOne.userItems(userId, page, DEFAULT_PAGE_LIMIT);
   }
 
   public static Call<List<Post>> userStockedItemsV1(String userId, int page) {
-    return ONE.userStockedItems(userId, page, DEFAULT_PAGE_LIMIT);
+    return sOne.userStockedItems(userId, page, DEFAULT_PAGE_LIMIT);
   }
 
   public static Call<Void> isStocked(String id) {
-    return TWO.getStock(id);
+    return sTwo.getStock(id);
   }
 
   public static Call<Void> stockItem(String id) {
-    return TWO.putStock(id);
+    return sTwo.putStock(id);
   }
 
   public static Call<Void> unStockItem(String id) {
-    return TWO.deleteStock(id);
+    return sTwo.deleteStock(id);
   }
 
   public static Call<Void> isFollowing(String userId) {
-    return TWO.getFollow(userId);
+    return sTwo.getFollow(userId);
   }
 
   public static Call<Void> followUser(String userId) {
-    return TWO.putFollow(userId);
+    return sTwo.putFollow(userId);
   }
 
   public static Call<Void> unFollowUser(String userId) {
-    return TWO.deleteFollow(userId);
+    return sTwo.deleteFollow(userId);
   }
 }
