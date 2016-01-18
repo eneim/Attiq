@@ -1,9 +1,11 @@
-package im.ene.lab.attiq;
+package im.ene.lab.attiq.util;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
 import android.content.Context;
+
+import im.ene.lab.attiq.R;
 
 import java.util.HashMap;
 import java.util.Map;

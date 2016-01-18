@@ -8,6 +8,9 @@ import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.facebook.stetho.Stetho;
 import com.jakewharton.picasso.OkHttp3Downloader;
+import com.parse.Parse;
+import com.parse.ParseACL;
+import com.parse.ParseInstallation;
 import com.squareup.picasso.Picasso;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
@@ -52,6 +55,11 @@ public class Attiq extends Application {
   @Override public void onCreate() {
     super.onCreate();
     INSTANCE = this;
+    Parse.enableLocalDatastore(getApplicationContext());
+    Parse.initialize(this);
+    ParseInstallation.getCurrentInstallation().saveInBackground();
+    ParseACL defaultACL = new ParseACL();
+    ParseACL.setDefaultACL(defaultACL, true);
     // Fabric, Answer, Crashlytics, ...
     Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
     // Date, Time, ...

@@ -28,6 +28,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.parse.ParseUser;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -423,6 +425,15 @@ public class MainActivity extends BaseActivity
       updateMasterUser(event.profile);
 
       if (event.profile != null && PrefUtil.getCurrentToken().equals(event.profile.getToken())) {
+        // Update User to Parse
+        // Create an anonymous User, save a bunch of local data
+        if (ParseUser.getCurrentUser() == null) {
+          ParseUser.enableAutomaticUser();
+          ParseUser user = ParseUser.getCurrentUser();
+          user.put("qiitaUserName", event.profile.getId());
+          user.saveInBackground();
+        }
+
         if (PrefUtil.isFirstStart()) {
           PrefUtil.setFirstStart(false);
           mDrawerLayout.openDrawer(GravityCompat.START);

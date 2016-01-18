@@ -50,8 +50,9 @@ android {
         versionName VERSION_NAME
         manifestPlaceholders = [fabric_api_key: "${attiq_fabric_api_key}"]
 
-        // resValue "string", "twitter_consumer_key", "${attiq_twitter_consumer_key}"
-        // resValue "string", "twitter_consumer_secret", "${attiq_twitter_consumer_secret}"
+        resValue "string", "attiq_parse_app_id", "${attiq_parse_client_key}"
+        resValue "string", "attiq_parse_client_key", "${attiq_parse_client_key}"
+        resValue "string", "attiq_gcm_sender_id", "${attiq_gcm_sender_id}"
     }
     packagingOptions {
         exclude 'META-INF/NOTICE.txt'
@@ -110,7 +111,9 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
 
+    compile 'com.google.android.gms:play-services-gcm:8.3.0'
     compile 'com.google.android.gms:play-services-analytics:8.3.0'
+    compile 'com.parse:parse-android:1.12.0'
 
     compile "com.android.support:support-v4:${support_libraries_version}"
     compile "com.android.support:appcompat-v7:${support_libraries_version}"
