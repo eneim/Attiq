@@ -20,6 +20,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -63,6 +64,7 @@ import im.ene.lab.attiq.data.two.User;
 import im.ene.lab.attiq.util.AnimUtils;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.ImeUtils;
+import im.ene.lab.attiq.util.SuccessCallback;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.WebUtil;
@@ -109,6 +111,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private final Handler mHandler = new Handler(mHandlerCallback);
 
   @Bind(R.id.content_container) CoordinatorLayout mContentContainer;
+  @Bind(R.id.content_scrollview) NestedScrollView mCommentScrollView;
   @Bind(R.id.comments_header) TextView mCommentInfo;
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.item_content_web) WebView mContentView;
@@ -335,6 +338,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
     mCommentComposer.removeOnPageChangeListener(mCommentComposerPageChange);
     mCommentComposerPageChange = null;
+    mCommentCallback = null;
     mStockStatusResponse = null;
     mDocumentCallback = null;
     mHandler.removeCallbacksAndMessages(null);
@@ -459,25 +463,28 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }, 250);
   }
 
+  private Callback<Comment> mCommentCallback = new SuccessCallback<Comment>() {
+    @Override public void onResponse(Response<Comment> response) {
+      Comment newComment = response.body();
+      if (newComment != null) {
+        mComments.add(0, newComment);
+      }
+      if (mCommentScrollView != null && mCommentInfo != null) {
+        mCommentScrollView.scrollTo(mCommentInfo.getTop(), 0);
+      }
+
+      EventBus.getDefault().post(new ItemCommentsEvent(true, null, mComments));
+    }
+  };
+
   @SuppressWarnings("unused")
   @OnClick(R.id.btn_submit) void summitComment() {
     ImeUtils.hideIme(mCommentComposer);
     String comment = mCommentComposer.getComment();
     mCommentComposer.clearComment();
-    ApiClient.postComment(mItemUuid, comment).enqueue(new Callback<Comment>() {
-      @Override public void onResponse(Response<Comment> response) {
-        Comment newComment = response.body();
-        if (newComment != null) {
-          mComments.add(0, newComment);
-        }
-
-        EventBus.getDefault().post(new ItemCommentsEvent(true, null, mComments));
-      }
-
-      @Override public void onFailure(Throwable t) {
-
-      }
-    });
+    if (!UIUtil.isEmpty(comment)) {
+      ApiClient.postComment(mItemUuid, comment).enqueue(mCommentCallback);
+    }
     ImeUtils.hideIme(mCommentComposer);
     mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
   }

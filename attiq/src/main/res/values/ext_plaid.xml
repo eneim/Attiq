@@ -27,9 +27,9 @@
 
     <integer name="num_columns">1</integer>
 
-    <string name="confirm_save_dribbble_search">Save Dribbble</string>
-    <string name="confirm_save_designer_news_search">Save Designer News</string>
-    <string name="confirm_save_search">Save</string>
+    <!--<string name="confirm_save_dribbble_search">Save Dribbble</string>-->
+    <!--<string name="confirm_save_designer_news_search">Save Designer News</string>-->
+    <!--<string name="confirm_save_search">Save</string>-->
 
     <string name="search_hint">Search Qiita</string>
     <string name="no_search_results">No results for\n“%1$s”</string>
