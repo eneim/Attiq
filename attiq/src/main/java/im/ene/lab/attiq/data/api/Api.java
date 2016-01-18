@@ -2,6 +2,7 @@ package im.ene.lab.attiq.data.api;
 
 import im.ene.lab.attiq.data.one.PublicTag;
 import im.ene.lab.attiq.data.request.AccessTokenRequest;
+import im.ene.lab.attiq.data.request.PostCommentRequest;
 import im.ene.lab.attiq.data.two.AccessToken;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.Comment;
@@ -20,6 +21,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -122,7 +124,7 @@ final class Api {
         @Path("item_id") String id
     );
 
-    @GET("/api/v2/items/{item_id}/comments") Call<List<Comment>> comments(
+    @GET("/api/v2/items/{item_id}/comments") Call<ArrayList<Comment>> comments(
         @Path("item_id") String id
     );
 
@@ -171,5 +173,10 @@ final class Api {
         @Path("user_id") String userId
     );
 
+    // Success POST will return code 201
+    @POST("/api/v2/items/{item_id}/comments") Call<Comment> postComment(
+        @Path("item_id") String itemId,
+        @Body PostCommentRequest body
+    );
   }
 }

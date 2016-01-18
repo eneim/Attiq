@@ -81,6 +81,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -90,7 +91,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   private static final int MESSAGE_STOCK = 1;
   private static final int MESSAGE_UN_STOCK = 1 << 1;
-  private static final int MESSAGE_PREVIEW_COMMENT = 1 << 2;
 
   private Handler.Callback mHandlerCallback = new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
@@ -99,10 +99,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         return true;
       } else if (msg.what == MESSAGE_STOCK) {
         ApiClient.stockItem(mItemUuid).enqueue(mItemStockedResponse);
-        return true;
-      } else if (msg.what == MESSAGE_PREVIEW_COMMENT) {
-        // String source = mComposer.getText().toString();
-        // mPreview.loadMarkdown(source, "file:///android_asset/html/css/github.css");
         return true;
       }
 
@@ -116,7 +112,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Bind(R.id.comments_header) TextView mCommentInfo;
   @Bind(R.id.toolbar) Toolbar mToolbar;
   @Bind(R.id.item_content_web) WebView mContentView;
-  @Bind(R.id.item_comments_web) WebView mComments;
+  @Bind(R.id.item_comments_web) WebView mCommentsView;
   @Bind(R.id.item_stocks) TextView mStockCount;
   @Bind(R.id.item_comments) TextView mCommentCount;
   @Bind(R.id.toolbar_overlay) View mOverLayView;
@@ -136,6 +132,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @BindDimen(R.dimen.header_depth_gap) int mHeaderDepthGap;
   @BindDimen(R.dimen.app_bar_max_elevation) float mMaxAppbarElevation;
   @BindDimen(R.dimen.app_bar_min_elevation) float mMinAppbarElevation;
+
+  private ArrayList<Comment> mComments = new ArrayList<>();
 
   // private Document mArticleDocument;
   private MenuItem mArticleHeaderMenu;
@@ -418,8 +416,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   }
 
   private void trySetupCommentView() {
-    mComments.setVerticalScrollBarEnabled(true);
-    mComments.setHorizontalScrollBarEnabled(false);
+    mCommentsView.setVerticalScrollBarEnabled(true);
+    mCommentsView.setHorizontalScrollBarEnabled(false);
   }
 
   @SuppressWarnings("unused")
@@ -465,6 +463,23 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @OnClick(R.id.btn_submit) void summitComment() {
     ImeUtils.hideIme(mCommentComposer);
     String comment = mCommentComposer.getComment();
+    mCommentComposer.clearComment();
+    ApiClient.postComment(mItemUuid, comment).enqueue(new Callback<Comment>() {
+      @Override public void onResponse(Response<Comment> response) {
+        Comment newComment = response.body();
+        if (newComment != null) {
+          mComments.add(0, newComment);
+        }
+
+        EventBus.getDefault().post(new ItemCommentsEvent(true, null, mComments));
+      }
+
+      @Override public void onFailure(Throwable t) {
+
+      }
+    });
+    ImeUtils.hideIme(mCommentComposer);
+    mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
   }
 
   @SuppressWarnings("unused")
@@ -557,11 +572,13 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   }
 
   private void buildArticleComments(@NonNull final Article article) {
-    ApiClient.itemComments(article.getId()).enqueue(new Callback<List<Comment>>() {
-      @Override public void onResponse(Response<List<Comment>> response) {
-        if (response.code() == 200) {
-          EventBus.getDefault().post(new ItemCommentsEvent(true, null, response.body()));
+    ApiClient.itemComments(article.getId()).enqueue(new Callback<ArrayList<Comment>>() {
+      @Override public void onResponse(Response<ArrayList<Comment>> response) {
+        mComments = response.body();
+        if (mComments != null) {
+          EventBus.getDefault().post(new ItemCommentsEvent(true, null, mComments));
         } else {
+          mComments = new ArrayList<>();
           EventBus.getDefault().post(new ItemCommentsEvent(false,
               new Event.Error(response.code(), response.message()), null));
         }
@@ -679,7 +696,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         }
 
         String result = fullBody.outerHtml();
-        mComments.loadDataWithBaseURL(
+        mCommentsView.loadDataWithBaseURL(
             "http://qiita.com/", result, null, null, null);
       } catch (IOException e) {
         e.printStackTrace();

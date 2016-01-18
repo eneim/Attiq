@@ -93,6 +93,12 @@ public class CommentComposerView extends ViewPager {
     return mComposer != null ? mComposer.getText().toString() : null;
   }
 
+  public void clearComment() {
+    if (mComposer != null) {
+      mComposer.setText("");
+    }
+  }
+
   public View getCurrentView() {
     return findViewWithTag("comment_composer:adapter:view:" + getCurrentItem());
   }

@@ -8,6 +8,7 @@ import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.one.PublicTag;
 import im.ene.lab.attiq.data.request.AccessTokenRequest;
+import im.ene.lab.attiq.data.request.PostCommentRequest;
 import im.ene.lab.attiq.data.two.AccessToken;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.Comment;
@@ -28,6 +29,7 @@ import retrofit2.Retrofit;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -124,7 +126,7 @@ public final class ApiClient {
     return sTwo.tags(page, DEFAULT_PAGE_LIMIT, "count");
   }
 
-  public static Call<List<Comment>> itemComments(String id) {
+  public static Call<ArrayList<Comment>> itemComments(String id) {
     return sTwo.comments(id);
   }
 
@@ -182,5 +184,9 @@ public final class ApiClient {
 
   public static Call<Void> unFollowUser(String userId) {
     return sTwo.deleteFollow(userId);
+  }
+
+  public static Call<Comment> postComment(String itemId, String comment) {
+    return sTwo.postComment(itemId, new PostCommentRequest(comment));
   }
 }
