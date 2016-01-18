@@ -14,7 +14,10 @@ import android.widget.EditText;
 
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.ImeUtils;
+
+import java.io.IOException;
 
 /**
  * Created by eneim on 1/17/16.
@@ -23,12 +26,15 @@ public class CommentComposerView extends ViewPager {
 
   private static final int MESSAGE_TEXT_CHANGED = 1;
 
+  private View mComposerContainer;
+  private View mPreviewerContainer;
   private final EditText mComposer;
   private final MarkdownView mPreviewer;
 
   private Handler.Callback mHandlerCallback;
   private Handler mHandler;
 
+  private Adapter mAdapter;
   private OnPageChangeListener mPageChangeListener;
 
   public CommentComposerView(Context context) {
@@ -37,12 +43,17 @@ public class CommentComposerView extends ViewPager {
 
   public CommentComposerView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    mComposer = (EditText) LayoutInflater.from(context)
+    mComposerContainer = LayoutInflater.from(context)
         .inflate(R.layout.comment_composer_edittext, this, false);
-    mPreviewer = (MarkdownView) LayoutInflater.from(context)
+    mComposer = (EditText) mComposerContainer.findViewById(R.id.composer);
+
+    mPreviewerContainer = LayoutInflater.from(context)
         .inflate(R.layout.comment_composer_preview, this, false);
-    Adapter adapter = new Adapter(mComposer, mPreviewer);
-    setAdapter(adapter);
+    mPreviewer = (MarkdownView) mPreviewerContainer.findViewById(R.id.previewer);
+
+    mAdapter = new Adapter(mComposerContainer, mPreviewerContainer);
+    setAdapter(mAdapter);
+
   }
 
   @Override protected void onAttachedToWindow() {
@@ -51,10 +62,15 @@ public class CommentComposerView extends ViewPager {
       @Override public boolean handleMessage(Message msg) {
         if (msg.what == MESSAGE_TEXT_CHANGED) {
           // Update preview
-          mPreviewer.loadMarkdown(
-              mComposer.getText().toString(),
-              "file:///android_asset/html/css/github.css"
-          );
+          try {
+            mPreviewer.loadMarkdown(
+                // mComposer.getText().toString(),
+                IOUtil.readAssets("sample.md"),
+                "file:///android_asset/html/css/github.css"
+            );
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
         }
         return false;
       }
@@ -80,6 +96,10 @@ public class CommentComposerView extends ViewPager {
 
   public String getComment() {
     return mComposer != null ? mComposer.getText().toString() : null;
+  }
+
+  public View getCurrentView() {
+    return findViewWithTag("comment_composer:adapter:view:" + getCurrentItem());
   }
 
   @Override protected void onDetachedFromWindow() {
@@ -116,6 +136,7 @@ public class CommentComposerView extends ViewPager {
 
     @Override public Object instantiateItem(ViewGroup container, int position) {
       View view = mViews[position];
+      view.setTag("comment_composer:adapter:view:" + position);
       container.addView(view);
       return view;
     }

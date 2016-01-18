@@ -42,4 +42,5 @@ public class MarkdownView extends WebView {
     }
     loadDataWithBaseURL("fake://", html, "text/html", "UTF-8", null);
   }
+
 }

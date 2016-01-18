@@ -18,6 +18,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -70,6 +71,7 @@ import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemCommentsEvent;
 import im.ene.lab.attiq.util.event.ItemDetailEvent;
 import im.ene.lab.attiq.widgets.CommentComposerView;
+import im.ene.lab.attiq.widgets.NestedScrollableViewHelper;
 import im.ene.lab.attiq.widgets.drawable.ThreadedCommentDrawable;
 import im.ene.lab.design.widget.AlphaForegroundColorSpan;
 import im.ene.lab.design.widget.AppBarLayout;
@@ -162,6 +164,17 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
           }
         }
       };
+  private ViewPager.OnPageChangeListener mCommentComposerPageChange = new ViewPager
+      .SimpleOnPageChangeListener() {
+    @Override public void onPageSelected(int position) {
+      super.onPageSelected(position);
+      View currentView = null;
+      if (mCommentComposer != null && mSlidingPanel != null &&
+          (currentView = mCommentComposer.getCurrentView()) != null) {
+        mSlidingPanel.setScrollableView(currentView);
+      }
+    }
+  };
   private String mItemUuid;
   private okhttp3.Callback mDocumentCallback;
   private Callback<Void> mItemUnStockedResponse = new Callback<Void>() {
@@ -240,6 +253,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    mSlidingPanel.setScrollableViewHelper(new NestedScrollableViewHelper());
     mSlidingPanel.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
       @Override public void onPanelSlide(View panel, float slideOffset) {
 
@@ -262,6 +276,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       }
     });
 
+    mCommentComposer.addOnPageChangeListener(mCommentComposerPageChange);
     mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
     mComposerTabs.setupWithViewPager(mCommentComposer);
 
@@ -320,6 +335,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     if (mRealm != null) {
       mRealm.close();
     }
+    mCommentComposer.removeOnPageChangeListener(mCommentComposerPageChange);
+    mCommentComposerPageChange = null;
     mStockStatusResponse = null;
     mDocumentCallback = null;
     mHandler.removeCallbacksAndMessages(null);

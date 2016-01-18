@@ -19,9 +19,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.commonsware.cwac.anddown.AndDown;
-
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.util.markdown.Marked;
 
 import java.util.Collection;
 
@@ -30,18 +29,12 @@ import java.util.Collection;
  */
 public class UIUtil {
 
-  private static final AndDown sAndDown;
-
-  static {
-    sAndDown = new AndDown();
-  }
-
   private UIUtil() {
     throw new AssertionError("Not supported");
   }
 
   public static String parseMarkdown(String markdown) {
-    return sAndDown.markdownToHtml(markdown);
+    return Marked.marked(markdown);
   }
 
   /**
