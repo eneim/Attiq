@@ -1,10 +1,15 @@
 package im.ene.lab.attiq.util;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
+import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 
 import java.util.HashMap;
@@ -21,6 +26,8 @@ import java.util.Map;
  * before using this!
  */
 public final class AnalyticsTrackers {
+
+  private static final String TAG = "AnalyticsTrackers";
 
   public enum Target {
     APP,
@@ -53,6 +60,7 @@ public final class AnalyticsTrackers {
    */
   private AnalyticsTrackers(Context context) {
     mContext = context.getApplicationContext();
+    setupPreferenceChangeListener();
   }
 
   public synchronized Tracker get(Target target) {
@@ -69,5 +77,109 @@ public final class AnalyticsTrackers {
     }
 
     return mTrackers.get(target);
+  }
+
+  /**
+   * The {@link PreferenceManager doesn't store a strong references to preference change
+   * listeners.  To prevent one from being garbage collected, a strong reference must be
+   * created in app code.
+   */
+  private static SharedPreferences.OnSharedPreferenceChangeListener sPrefListener;
+
+  /**
+   * Log a specific screen view under the {@code screenName} string.
+   */
+  public static void sendScreenView(String screenName) {
+    if (isInitialized()) {
+      sInstance.get(Target.APP).setScreenName(screenName);
+      sInstance.get(Target.APP).send(new HitBuilders.AppViewBuilder().build());
+      Log.d(TAG, "Screen View recorded: " + screenName);
+    }
+  }
+
+  /**
+   * Log a specific event under the {@code category}, {@code action}, and {@code label}.
+   */
+  public static void sendEvent(String category, String action, String label, long value,
+                               HitBuilders.EventBuilder eventBuilder) {
+    if (isInitialized()) {
+      sInstance.get(Target.APP).send(eventBuilder
+          .setCategory(category)
+          .setAction(action)
+          .setLabel(label)
+          .setValue(value)
+          .build());
+
+      Log.d(TAG, "Event recorded: \n" +
+          "\tCategory: " + category +
+          "\tAction: " + action +
+          "\tLabel: " + label +
+          "\tValue: " + value);
+    }
+  }
+
+  /**
+   * Log an specific event under the {@code category}, {@code action}, and {@code label}.
+   */
+  public static void sendEvent(String category, String action, String label) {
+    HitBuilders.EventBuilder eventBuilder = new HitBuilders.EventBuilder();
+    sendEvent(category, action, label, 0, eventBuilder);
+  }
+
+  /**
+   * Log an specific event under the {@code category}, {@code action}, and {@code label}.  Attach
+   * a custom dimension using the provided {@code dimensionIndex} and {@code dimensionValue}
+   */
+  public static void sendEventWithCustomDimension(String category, String action, String label,
+                                                  int dimensionIndex, String dimensionValue) {
+    // Create a new HitBuilder, populate it with the custom dimension, and send it along
+    // to the rest of the event building process.
+    HitBuilders.EventBuilder eventBuilder = new HitBuilders.EventBuilder();
+    eventBuilder.setCustomDimension(dimensionIndex, dimensionValue);
+    sendEvent(category, action, label, 0, eventBuilder);
+
+    Log.d(TAG, "Custom Dimension Attached:\n" +
+        "\tindex: " + dimensionIndex +
+        "\tvalue: " + dimensionValue);
+  }
+
+  /**
+   * Return the current initialization state which indicates whether events can be logged.
+   */
+  private static boolean isInitialized() {
+    // Google Analytics is initialized when this class has a reference to an app context and
+    // an Analytics tracker has been created.
+    return sInstance != null
+        && sInstance.mContext != null &&
+        sInstance.get(Target.APP) != null;
+  }
+
+  private static String getAction(SharedPreferences prefs, String key) {
+    return prefs.getBoolean(key, true) ? "Checked" : "Unchecked";
+  }
+
+  /**
+   * Listens for preference changes.  When a preference change relevant to toggling Analytics
+   * is detected, {@link AnalyticsHelper#enableOrDisableAnalyticsAsNecessary()} is called, which
+   * will decide whether Analytics should be enabled or disabled based on settings_prefs and
+   * application state.
+   */
+  private static void setupPreferenceChangeListener() {
+    SharedPreferences userPrefs = Attiq.pref();
+    sPrefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+
+      @Override
+      public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+
+        // Most of the preferences will use these defaults.
+        String category = "Preference";
+
+        if (key != null) {
+          // TODO
+        }
+      }
+    };
+
+    userPrefs.registerOnSharedPreferenceChangeListener(sPrefListener);
   }
 }

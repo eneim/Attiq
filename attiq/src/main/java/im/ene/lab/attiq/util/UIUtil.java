@@ -112,6 +112,13 @@ public class UIUtil {
     return text == null ? null : text.trim();
   }
 
+  /**
+   * Strip an URL Spannable
+   *
+   * @param textView   to be stripped
+   * @param ignoredUrl to be ignored, in case we don't want to enable click event on specific URL
+   * @param strip      true if we want to remove the underline, false otherwise
+   */
   public static void stripUnderlines(TextView textView, Spannable ignoredUrl, boolean strip) {
     Spannable s = (Spannable) textView.getText();
     URLSpan[] spans = s.getSpans(0, s.length(), URLSpan.class);
@@ -125,10 +132,21 @@ public class UIUtil {
     textView.setText(s);
   }
 
+  /**
+   * Strip an URL Spannable. Remove underline by default
+   *
+   * @param textView   to be stripped
+   * @param ignoredUrl to be ignored, in case we don't want to enable click event on specific URL
+   */
   public static void stripUnderlines(TextView textView, Spannable ignoredUrl) {
     stripUnderlines(textView, ignoredUrl, true);
   }
 
+  /**
+   * Strip an URL Spannable. Remove underline by default. No URL is ignored.
+   *
+   * @param textView to be stripped
+   */
   public static void stripUnderlines(TextView textView) {
     stripUnderlines(textView, null);
   }

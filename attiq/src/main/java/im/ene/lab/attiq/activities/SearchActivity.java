@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v4.view.animation.PathInterpolatorCompat;
 import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.GridLayoutManager;
@@ -66,10 +67,15 @@ import java.util.List;
 
 public class SearchActivity extends BaseActivity {
 
-  public static final String EXTRA_MENU_LEFT = "EXTRA_MENU_LEFT";
-  public static final String EXTRA_MENU_CENTER_X = "EXTRA_MENU_CENTER_X";
-  public static final int RESULT_CODE_SAVE = 7;
+  public static final String EXTRA_MENU_LEFT = "extra_menu_left";
+  public static final String EXTRA_MENU_CENTER_X = "extra_menu_center_x";
 
+  private static final int MESSAGE_LOAD_MORE = 1;
+
+  private final Interpolator LINEAR_OUT_SLOW_INT =
+      PathInterpolatorCompat.create(0.4f, 0.f, 0.2f, 1.f);
+
+  // UI Components
   @Bind(R.id.searchback) ImageButton mSearchNavButton;
   @Bind(R.id.searchback_container) ViewGroup mSearchNavButtonContainer;
   @Bind(R.id.search_view) SearchView mSearchView;
@@ -81,16 +87,18 @@ public class SearchActivity extends BaseActivity {
   @Bind(R.id.results_container) ViewGroup mResultsContainer;
   @Bind(R.id.scrim) View mScrim;
   @Bind(R.id.results_scrim) View mResultsScrim;
-  private BaselineGridTextView mNoResults;
   @BindInt(R.integer.num_columns) int mColumns;
   @BindDimen(R.dimen.z_app_bar) float mAppBarElevation;
-
+  private BaselineGridTextView mNoResults;
   private Transition mAutoTransition;
+  private BaseAdapter.OnItemClickListener mOnResultItemClick;
 
-  private BaseAdapter.OnItemClickListener mOnResutlItemClick;
-
-  private static final int MESSAGE_LOAD_MORE = 1000;
-
+  private int mSearchBackDistanceX;
+  private int mSearchIconCenterX;
+  private Callback<List<Article>> mSearchResultCallback;
+  private ArticleListAdapter mAdapter;
+  private int mPage;
+  private String mQuery;
   private Handler.Callback mHandlerCallback = new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
       if (MESSAGE_LOAD_MORE == msg.what) {
@@ -102,13 +110,26 @@ public class SearchActivity extends BaseActivity {
       return false;
     }
   };
-
   private Handler mHandler = new Handler(mHandlerCallback);
-
-  private int mSearchBackDistanceX;
-  private int mSearchIconCenterX;
-  private Callback<List<Article>> mSearchResultCallback;
-  private ArticleListAdapter mAdapter;
+  private int mGridScrollY = 0;
+  private RecyclerView.OnScrollListener mOnGridScroll = new RecyclerView.OnScrollListener() {
+    @Override
+    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+      mGridScrollY += dy;
+      if (mGridScrollY > 0 && ViewCompat.getTranslationZ(mSearchToolbar) != mAppBarElevation) {
+        ViewCompat.animate(mSearchToolbar)
+            .translationZ(mAppBarElevation)
+            .setDuration(300L)
+            .setInterpolator(LINEAR_OUT_SLOW_INT)
+            .start();
+      } else if (mGridScrollY == 0 && ViewCompat.getTranslationZ(mSearchToolbar) != 0) {
+        ViewCompat.animate(mSearchToolbar).translationZ(0f)
+            .setDuration(300L)
+            .setInterpolator(LINEAR_OUT_SLOW_INT)
+            .start();
+      }
+    }
+  };
 
   public static Intent createStartIntent(Context context, int menuIconLeft, int menuIconCenterX) {
     Intent starter = new Intent(context, SearchActivity.class);
@@ -116,12 +137,6 @@ public class SearchActivity extends BaseActivity {
     starter.putExtra(EXTRA_MENU_CENTER_X, menuIconCenterX);
     return starter;
   }
-
-  private int mPage;
-  private String mQuery;
-
-  private final Interpolator LINEAR_OUT_SLOW_INT =
-      PathInterpolatorCompat.create(0.4f, 0.f, 0.2f, 1.f);
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -161,7 +176,7 @@ public class SearchActivity extends BaseActivity {
       }
     };
 
-    mOnResutlItemClick = new ArticleListAdapter.OnArticleClickListener() {
+    mOnResultItemClick = new ArticleListAdapter.OnArticleClickListener() {
       @Override public void onUserClick(User user) {
         startActivity(ProfileActivity.createIntent(SearchActivity.this, user.getId()));
       }
@@ -171,7 +186,7 @@ public class SearchActivity extends BaseActivity {
       }
     };
 
-    mAdapter.setOnItemClickListener(mOnResutlItemClick);
+    mAdapter.setOnItemClickListener(mOnResultItemClick);
 
     mRecyclerView.setAdapter(mAdapter);
     mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
@@ -261,14 +276,15 @@ public class SearchActivity extends BaseActivity {
   }
 
   @Override
-  protected void onNewIntent(Intent intent) {
-    if (intent.hasExtra(SearchManager.QUERY)) {
-      String query = intent.getStringExtra(SearchManager.QUERY);
-      if (!TextUtils.isEmpty(query)) {
-        mSearchView.setQuery(query, false);
-        searchFor(query);
-      }
-    }
+  protected void onPause() {
+    // needed to suppress the default window animation when closing the activity
+    overridePendingTransition(0, 0);
+    super.onPause();
+  }
+
+  @Override protected void onDestroy() {
+    mOnResultItemClick = null;
+    super.onDestroy();
   }
 
   @Override
@@ -284,10 +300,23 @@ public class SearchActivity extends BaseActivity {
   }
 
   @Override
-  protected void onPause() {
-    // needed to suppress the default window animation when closing the activity
-    overridePendingTransition(0, 0);
-    super.onPause();
+  protected void onNewIntent(Intent intent) {
+    if (intent.hasExtra(SearchManager.QUERY)) {
+      String query = intent.getStringExtra(SearchManager.QUERY);
+      if (!TextUtils.isEmpty(query)) {
+        mSearchView.setQuery(query, false);
+        searchFor(query);
+      }
+    }
+  }
+
+  private void clearResults() {
+    mAdapter.clear();
+    TransitionManager.beginDelayedTransition(mMainContainer, mAutoTransition);
+    mRecyclerView.setVisibility(View.GONE);
+    mProgress.setVisibility(View.GONE);
+    mResultsScrim.setVisibility(View.GONE);
+    setNoResultsVisibility(View.GONE);
   }
 
   @OnClick({R.id.scrim, R.id.searchback})
@@ -295,7 +324,8 @@ public class SearchActivity extends BaseActivity {
 
     // if we're showing search mRecyclerView, circular hide them
     if (mResultsContainer.getHeight() > 0) {
-      mResultsContainer.animate().alpha(0.f)
+      ViewCompat.animate(mResultsContainer)
+          .alpha(0.f)
           .setDuration(400L)
           .setInterpolator(LINEAR_OUT_SLOW_INT)
           .start();
@@ -319,14 +349,13 @@ public class SearchActivity extends BaseActivity {
     }
 
     // translate the icon to match position in the launching activity
-    mSearchNavButtonContainer.animate()
+    ViewCompat.animate(mSearchNavButtonContainer)
         .translationX(mSearchBackDistanceX)
         .alpha(0.f)
         .setDuration(600L)
         .setInterpolator(LINEAR_OUT_SLOW_INT)
-        .setListener(new AnimatorListenerAdapter() {
-          @Override
-          public void onAnimationEnd(Animator animation) {
+        .setListener(new ViewPropertyAnimatorListenerAdapter() {
+          @Override public void onAnimationEnd(View view) {
             ActivityCompat.finishAfterTransition(SearchActivity.this);
           }
         })
@@ -336,14 +365,14 @@ public class SearchActivity extends BaseActivity {
     // clear the background else the touch ripple moves with the translation which looks bad
     mSearchNavButton.setBackground(null);
     // fade out the other search chrome
-    mSearchView.animate()
+    ViewCompat.animate(mSearchView)
         .alpha(0f)
         .setStartDelay(0L)
         .setDuration(120L)
         .setInterpolator(LINEAR_OUT_SLOW_INT)
         .setListener(null)
         .start();
-    mSearchBackground.animate()
+    ViewCompat.animate(mSearchBackground)
         .alpha(0f)
         .setStartDelay(300L)
         .setDuration(160L)
@@ -359,59 +388,12 @@ public class SearchActivity extends BaseActivity {
     }
 
     // fade out the mScrim
-    mScrim.animate()
+    ViewCompat.animate(mScrim)
         .alpha(0f)
         .setDuration(400L)
         .setInterpolator(LINEAR_OUT_SLOW_INT)
         .setListener(null)
         .start();
-  }
-
-  private void setupSearchView() {
-    SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-    mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-    // hint, inputType & ime options seem to be ignored from XML! Set in code
-    mSearchView.setQueryHint(getString(R.string.search_hint));
-    mSearchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
-    mSearchView.setImeOptions(mSearchView.getImeOptions() | EditorInfo.IME_ACTION_SEARCH |
-        EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN);
-    mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-      @Override
-      public boolean onQueryTextSubmit(String query) {
-        searchFor(query);
-        return true;
-      }
-
-      @Override
-      public boolean onQueryTextChange(String query) {
-        if (TextUtils.isEmpty(query)) {
-          clearResults();
-        }
-        return true;
-      }
-    });
-    mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-      @Override
-      public void onFocusChange(View v, boolean hasFocus) {
-        if (hasFocus) {
-
-        }
-      }
-    });
-  }
-
-  @Override protected void onDestroy() {
-    mOnResutlItemClick = null;
-    super.onDestroy();
-  }
-
-  private void clearResults() {
-    mAdapter.clear();
-    TransitionManager.beginDelayedTransition(mMainContainer, mAutoTransition);
-    mRecyclerView.setVisibility(View.GONE);
-    mProgress.setVisibility(View.GONE);
-    mResultsScrim.setVisibility(View.GONE);
-    setNoResultsVisibility(View.GONE);
   }
 
   private void setNoResultsVisibility(int visibility) {
@@ -442,34 +424,48 @@ public class SearchActivity extends BaseActivity {
     }
   }
 
+  private void setupSearchView() {
+    SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+    mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+    // hint, inputType & ime options seem to be ignored from XML! Set in code
+    mSearchView.setQueryHint(getString(R.string.search_hint));
+    mSearchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+    mSearchView.setImeOptions(mSearchView.getImeOptions() | EditorInfo.IME_ACTION_SEARCH |
+        EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN);
+    mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+      @Override
+      public boolean onQueryTextSubmit(String query) {
+        searchFor(query);
+        return true;
+      }
+
+      @Override
+      public boolean onQueryTextChange(String query) {
+        if (TextUtils.isEmpty(query)) {
+          clearResults();
+        }
+        return true;
+      }
+    });
+    mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View v, boolean hasFocus) {
+        if (hasFocus) {
+          ImeUtils.showIme(v);
+        } else {
+          ImeUtils.hideIme(v);
+        }
+      }
+    });
+  }
+
   private void searchFor(String query) {
     clearResults();
     mProgress.setVisibility(View.VISIBLE);
     ImeUtils.hideIme(mSearchView);
     mSearchView.clearFocus();
-
     mQuery = query;
     mPage = 1;
     mAdapter.loadItems(false, mPage, 99, mQuery, mSearchResultCallback);
   }
-
-  private int mGridScrollY = 0;
-  private RecyclerView.OnScrollListener mOnGridScroll = new RecyclerView.OnScrollListener() {
-    @Override
-    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-      mGridScrollY += dy;
-      if (mGridScrollY > 0 && ViewCompat.getTranslationZ(mSearchToolbar) != mAppBarElevation) {
-        ViewCompat.animate(mSearchToolbar)
-            .translationZ(mAppBarElevation)
-            .setDuration(300L)
-            .setInterpolator(LINEAR_OUT_SLOW_INT)
-            .start();
-      } else if (mGridScrollY == 0 && ViewCompat.getTranslationZ(mSearchToolbar) != 0) {
-        ViewCompat.animate(mSearchToolbar).translationZ(0f)
-            .setDuration(300L)
-            .setInterpolator(LINEAR_OUT_SLOW_INT)
-            .start();
-      }
-    }
-  };
 }

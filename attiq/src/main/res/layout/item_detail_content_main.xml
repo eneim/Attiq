@@ -14,7 +14,7 @@
         android:fitsSystemWindows="true"
         tools:context="im.ene.lab.attiq.activities.ItemDetailActivity">
 
-        <im.ene.lab.design.widget.AppBarLayout
+        <im.ene.lab.support.widget.AppBarLayout
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
             android:theme="@style/Attiq.Theme.AppBarOverlay"
             app:elevation="0dp">
 
-            <im.ene.lab.design.widget.CollapsingToolbarLayout
+            <im.ene.lab.support.widget.CollapsingToolbarLayout
                 android:id="@+id/toolbar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
                     app:popupTheme="@style/Attiq.Theme.PopupOverlay"
                     app:subtitleTextAppearance="@style/Attiq.Widget.Toolbar.Subtitle"/>
 
-            </im.ene.lab.design.widget.CollapsingToolbarLayout>
+            </im.ene.lab.support.widget.CollapsingToolbarLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -142,7 +142,7 @@
 
             </RelativeLayout>
 
-        </im.ene.lab.design.widget.AppBarLayout>
+        </im.ene.lab.support.widget.AppBarLayout>
 
         <include layout="@layout/content_item_detail"/>
 

@@ -23,6 +23,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 
 import im.ene.lab.attiq.R;
+import im.ene.lab.support.widget.FontTextView;
 
 public class BaselineGridTextView extends FontTextView {
 

@@ -14,6 +14,7 @@ import com.parse.ParseInstallation;
 import com.squareup.picasso.Picasso;
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
+import im.ene.lab.attiq.util.AnalyticsTrackers;
 import im.ene.lab.attiq.util.TimeUtil;
 import io.fabric.sdk.android.Fabric;
 import io.realm.DynamicRealm;
@@ -55,6 +56,11 @@ public class Attiq extends Application {
   @Override public void onCreate() {
     super.onCreate();
     INSTANCE = this;
+
+    mPreference = getSharedPreferences(getPackageName() + "_pref", Context.MODE_PRIVATE);
+    // Call only once
+    AnalyticsTrackers.initialize(this);
+
     Parse.enableLocalDatastore(getApplicationContext());
     Parse.initialize(this);
     ParseInstallation.getCurrentInstallation().saveInBackground();
@@ -85,7 +91,6 @@ public class Attiq extends Application {
     Realm.setDefaultConfiguration(config);
 
     mHttpClient = new OkHttpClient();
-    mPreference = getSharedPreferences(getPackageName() + "_pref", Context.MODE_PRIVATE);
     mPicasso = new Picasso.Builder(this)
         // .defaultBitmapConfig(Bitmap.Config.RGB_565)
         .downloader(new OkHttp3Downloader(mHttpClient))  // a separated client
