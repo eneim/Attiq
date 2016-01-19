@@ -178,6 +178,12 @@ public class MainActivity extends BaseActivity
     mMyPageMenuItem = mNavigationView.getMenu().findItem(R.id.nav_profile);
     mNavigationView.setNavigationItemSelectedListener(this);
 
+    if (mState.isAuthorized) {
+      mMyPageMenuItem.setEnabled(true);
+    } else {
+      mMyPageMenuItem.setEnabled(false);
+    }
+
     if (mNavigationView.getHeaderCount() > 0) {
       mHeaderView = mNavigationView.getHeaderView(0);
       // update padding top by status bar height.

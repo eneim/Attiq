@@ -72,14 +72,6 @@
     <style name="Attiq.Theme.SearchView" parent="ThemeOverlay.AppCompat.Light">
         <item name="colorPrimary">#FFFFFFFF</item>
         <item name="colorControlActivated">?attr/colorAccent</item>
-        <item name="searchViewStyle">@style/Attiq.Widget.SearchView</item>
-    </style>
-
-    <style name="Attiq.Widget.SearchView" parent="Widget.AppCompat.SearchView">
-        <item name="searchIcon">@null</item>
-        <item name="searchHintIcon">@null</item>
-        <item name="queryBackground">@android:color/transparent</item>
-        <item name="submitBackground">@android:color/transparent</item>
     </style>
 
     <style name="Attiq.Widget.EmptyText">

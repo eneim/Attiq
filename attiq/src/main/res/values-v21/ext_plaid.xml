@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Attiq.Theme.SearchView" parent="ThemeOverlay.AppCompat.Light">
-        <item name="colorControlActivated">?android:colorAccent</item>
-        <item name="android:searchViewStyle">@style/Attiq.Widget.SearchView</item>
-    </style>
-
     <style name="Attiq.TextAppearance.DialogContent" parent="TextAppearance.AppCompat.Subhead">
         <item name="android:textColor">@color/text_secondary_dark</item>
         <item name="android:fontFamily">sans-serif-medium</item>

@@ -14,23 +14,34 @@
  * limitations under the License.
  */
 
-package im.ene.lab.attiq.activities;
+package im.ene.lab.attiq.widgets;
 
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
+import android.view.View;
+
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 /**
- * Created by eneim on 1/15/16.
+ * Created by eneim on 1/19/16.
  */
-public class WebViewActivity extends AppCompatActivity {
+public class PanelSlideListenerAdapter implements SlidingUpPanelLayout.PanelSlideListener {
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    WebView mWebView = new WebView(this);
-    setContentView(mWebView);
-    mWebView.setWebChromeClient(new WebChromeClient());
-    mWebView.loadUrl(getIntent().getDataString().replace("attiq://helper.", "http://"));
+  @Override public void onPanelSlide(View panel, float slideOffset) {
+
+  }
+
+  @Override public void onPanelCollapsed(View panel) {
+
+  }
+
+  @Override public void onPanelExpanded(View panel) {
+
+  }
+
+  @Override public void onPanelAnchored(View panel) {
+
+  }
+
+  @Override public void onPanelHidden(View panel) {
+
   }
 }

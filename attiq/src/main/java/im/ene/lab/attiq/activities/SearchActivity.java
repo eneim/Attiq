@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package im.ene.lab.attiq.activities;
 
 import android.animation.Animator;
@@ -20,6 +36,7 @@ import android.support.v4.view.animation.PathInterpolatorCompat;
 import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.InputType;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -38,7 +55,6 @@ import android.view.animation.Interpolator;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 
 import butterknife.Bind;
 import butterknife.BindDimen;
@@ -62,8 +78,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.util.List;
-
-//import android.view.ViewAnimationUtils;
 
 public class SearchActivity extends BaseActivity {
 
@@ -321,7 +335,6 @@ public class SearchActivity extends BaseActivity {
 
   @OnClick({R.id.scrim, R.id.searchback})
   protected void dismiss() {
-
     // if we're showing search mRecyclerView, circular hide them
     if (mResultsContainer.getHeight() > 0) {
       ViewCompat.animate(mResultsContainer)
@@ -450,14 +463,13 @@ public class SearchActivity extends BaseActivity {
     mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
       @Override
       public void onFocusChange(View v, boolean hasFocus) {
-        if (hasFocus) {
-          ImeUtils.showIme(v);
-        } else {
-          ImeUtils.hideIme(v);
-        }
+        Log.d(TAG, "onFocusChange() called with: " + "v = [" + v + "], hasFocus = [" + hasFocus +
+            "]");
       }
     });
   }
+
+  private static final String TAG = "SearchActivity";
 
   private void searchFor(String query) {
     clearResults();

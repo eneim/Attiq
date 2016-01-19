@@ -1,6 +1,21 @@
+/*
+ * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package im.ene.lab.attiq.activities;
 
-import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +26,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -19,6 +33,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.TextViewCompat;
@@ -54,14 +69,12 @@ import butterknife.BindDimen;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
-import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.DocumentCallback;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.Comment;
 import im.ene.lab.attiq.data.two.User;
-import im.ene.lab.attiq.util.AnimUtils;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.ImeUtils;
 import im.ene.lab.attiq.util.SuccessCallback;
@@ -74,11 +87,11 @@ import im.ene.lab.attiq.util.event.ItemCommentsEvent;
 import im.ene.lab.attiq.util.event.ItemDetailEvent;
 import im.ene.lab.attiq.widgets.CommentComposerView;
 import im.ene.lab.attiq.widgets.NestedScrollableViewHelper;
+import im.ene.lab.attiq.widgets.PanelSlideListenerAdapter;
 import im.ene.lab.attiq.widgets.drawable.ThreadedCommentDrawable;
 import im.ene.lab.support.widget.AlphaForegroundColorSpan;
 import im.ene.lab.support.widget.AppBarLayout;
 import im.ene.lab.support.widget.CollapsingToolbarLayout;
-import io.realm.Realm;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -93,22 +106,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   private static final int MESSAGE_STOCK = 1;
   private static final int MESSAGE_UN_STOCK = 1 << 1;
-
-  private Handler.Callback mHandlerCallback = new Handler.Callback() {
-    @Override public boolean handleMessage(Message msg) {
-      if (msg.what == MESSAGE_UN_STOCK) {
-        ApiClient.unStockItem(mItemUuid).enqueue(mItemUnStockedResponse);
-        return true;
-      } else if (msg.what == MESSAGE_STOCK) {
-        ApiClient.stockItem(mItemUuid).enqueue(mItemStockedResponse);
-        return true;
-      }
-
-      return false;
-    }
-  };
-
-  private final Handler mHandler = new Handler(mHandlerCallback);
 
   @Bind(R.id.content_container) CoordinatorLayout mContentContainer;
   @Bind(R.id.content_scrollview) NestedScrollView mCommentScrollView;
@@ -126,22 +123,16 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Bind(R.id.drawer_layout) DrawerLayout mMenuLayout;
   @Bind(R.id.html_headers_container) LinearLayout mMenuContainer;
   @Bind(R.id.loading_container) View mLoadingView;
-
   @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingPanel;
   @Bind(R.id.comment_composer) CommentComposerView mCommentComposer;
   @Bind(R.id.comment_composer_tabs) TabLayout mComposerTabs;
-
   @BindDimen(R.dimen.header_depth_width) int mHeaderDepthWidth;
   @BindDimen(R.dimen.header_depth_gap) int mHeaderDepthGap;
   @BindDimen(R.dimen.app_bar_max_elevation) float mMaxAppbarElevation;
   @BindDimen(R.dimen.app_bar_min_elevation) float mMinAppbarElevation;
 
   private ArrayList<Comment> mComments = new ArrayList<>();
-
-  // private Document mArticleDocument;
   private MenuItem mArticleHeaderMenu;
-
-  private Realm mRealm;
   private Article mArticle;
   private boolean mIsFirstTimeLoaded = false;
   private Element mMenuAnchor;
@@ -169,7 +160,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       .SimpleOnPageChangeListener() {
     @Override public void onPageSelected(int position) {
       super.onPageSelected(position);
-      View currentView = null;
+      View currentView;
       if (mCommentComposer != null && mSlidingPanel != null &&
           (currentView = mCommentComposer.getCurrentView()) != null) {
         mSlidingPanel.setScrollableView(currentView);
@@ -178,69 +169,77 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   };
   private String mItemUuid;
   private okhttp3.Callback mDocumentCallback;
-  private Callback<Void> mItemUnStockedResponse = new Callback<Void>() {
+
+  private Callback<Void> mItemUnStockedResponse = new SuccessCallback<Void>() {
     @Override public void onResponse(Response<Void> response) {
       if (response.code() == 204) {
-        mState.isStocked = false;
-        int newStockCount = (Integer.parseInt(mState.stockCount) - 1);
+        ((State) mState).isStocked = false;
+        int newStockCount = (Integer.parseInt(((State) mState).stockCount) - 1);
         if (newStockCount < 0) {
           newStockCount = 0;
         }
-
-        mState.stockCount = "" + newStockCount;
+        ((State) mState).stockCount = "" + newStockCount;
       }
 
-      EventBus.getDefault().post(new StateEvent(true, null, mState));
-    }
-
-    @Override public void onFailure(Throwable t) {
-
+      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
     }
   };
-
-  private Callback<Void> mStockStatusResponse = new Callback<Void>() {
+  private Callback<Void> mStockStatusResponse = new SuccessCallback<Void>() {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override public void onResponse(Response<Void> response) {
       if (response.code() == 204) {
-        mState.isStocked = true;
+        ((State) mState).isStocked = true;
       } else {
-        mState.isStocked = false;
+        ((State) mState).isStocked = false;
       }
 
-      EventBus.getDefault().post(new StateEvent(true, null, mState));
-    }
-
-    @Override public void onFailure(Throwable t) {
-
+      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
     }
   };
-
-  private Callback<Void> mItemStockedResponse = new Callback<Void>() {
+  private Callback<Void> mItemStockedResponse = new SuccessCallback<Void>() {
     @Override public void onResponse(Response<Void> response) {
       if (response.code() == 204) {
-        mState.isStocked = true;
-        mState.stockCount = "" + (1 + Integer.parseInt(mState.stockCount));
+        ((State) mState).isStocked = true;
+        ((State) mState).stockCount = "" + (1 + Integer.parseInt(((State) mState).stockCount));
       }
 
-      EventBus.getDefault().post(new StateEvent(true, null, mState));
+      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
     }
+  };
+  private Handler.Callback mHandlerCallback = new Handler.Callback() {
+    @Override public boolean handleMessage(Message msg) {
+      if (msg.what == MESSAGE_UN_STOCK) {
+        ApiClient.unStockItem(mItemUuid).enqueue(mItemUnStockedResponse);
+        return true;
+      } else if (msg.what == MESSAGE_STOCK) {
+        ApiClient.stockItem(mItemUuid).enqueue(mItemStockedResponse);
+        return true;
+      }
 
-    @Override public void onFailure(Throwable t) {
+      return false;
+    }
+  };
+  private final Handler mHandler = new Handler(mHandlerCallback);
 
+  private Callback<Comment> mCommentCallback = new SuccessCallback<Comment>() {
+    @Override public void onResponse(Response<Comment> response) {
+      Comment newComment = response.body();
+      if (newComment != null) {
+        mComments.add(0, newComment);
+      }
+      if (mCommentScrollView != null && mCommentInfo != null) {
+        mCommentScrollView.scrollTo(mCommentInfo.getTop(), 0);
+      }
+
+      EventBus.getDefault().post(new ItemCommentsEvent(true, null, mComments));
     }
   };
 
-  private State mState = new State();
-
   public static Intent createIntent(Context context, String uuid) {
-    Intent intent = createIntent(context);
+    Intent intent = new Intent(context, ItemDetailActivity.class);
     Uri data = Uri.parse(context.getString(R.string.data_items_url, uuid));
     intent.setData(data);
     return intent;
-  }
-
-  private static Intent createIntent(Context context) {
-    return new Intent(context, ItemDetailActivity.class);
   }
 
   @Override
@@ -255,17 +254,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
 
     mSlidingPanel.setScrollableViewHelper(new NestedScrollableViewHelper());
-    mSlidingPanel.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
-      @Override public void onPanelSlide(View panel, float slideOffset) {
-
-      }
-
+    mSlidingPanel.setPanelSlideListener(new PanelSlideListenerAdapter() {
       @Override public void onPanelCollapsed(View panel) {
         ImeUtils.hideIme(panel);
-      }
-
-      @Override public void onPanelExpanded(View panel) {
-
       }
 
       @Override public void onPanelAnchored(View panel) {
@@ -322,28 +313,12 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       }
     }
 
-    mRealm = Attiq.realm();
-
     Article article = mRealm.where(Article.class).equalTo("id", mItemUuid).findFirst();
     if (article != null) {
       EventBus.getDefault().post(new ItemDetailEvent(true, null, article));
     }
 
     ApiClient.isStocked(mItemUuid).enqueue(mStockStatusResponse);
-  }
-
-  @Override protected void onDestroy() {
-    if (mRealm != null) {
-      mRealm.close();
-    }
-    mCommentComposer.removeOnPageChangeListener(mCommentComposerPageChange);
-    mCommentComposerPageChange = null;
-    mCommentCallback = null;
-    mStockStatusResponse = null;
-    mDocumentCallback = null;
-    mHandler.removeCallbacksAndMessages(null);
-    mHandlerCallback = null;
-    super.onDestroy();
   }
 
   private void trySetupMenuDrawerLayout() {
@@ -391,9 +366,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         super.onPageFinished(view, url);
         mIsFirstTimeLoaded = true;
         if (mLoadingView != null) {
-          mLoadingView.animate().alpha(0.f).setDuration(300)
-              .setListener(new AnimUtils.AnimationEndListener() {
-                @Override public void onAnimationEnd(Animator animation) {
+          ViewCompat.animate(mLoadingView).alpha(0.f).setDuration(300)
+              .setListener(new ViewPropertyAnimatorListenerAdapter() {
+                @Override public void onAnimationEnd(View view) {
                   if (mLoadingView != null) {
                     mLoadingView.setVisibility(View.GONE);
                   }
@@ -412,6 +387,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         }
         if (numberOfMatches > 0 && mMenuAnchor != null && mContentView != null) {
           // mContentView.clearMatches();
+          // Suppose to jump to matched text
           // FIXME Doesn't work now, because WebView is staying inside ScrollView
           mContentView.loadUrl("javascript:scrollToElement(\"" + mMenuAnchor.text() + "\");");
         }
@@ -424,13 +400,46 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mCommentsView.setHorizontalScrollBarEnabled(false);
   }
 
+  @Override protected void onResume() {
+    super.onResume();
+    if (mItemUuid != null) {
+      ApiClient.itemDetail(mItemUuid).enqueue(this);
+
+      final String baseUrl = getString(R.string.item_url, mItemUuid);
+
+      mDocumentCallback = new DocumentCallback(baseUrl) {
+        @Override public void onDocument(Document response) {
+          if (response != null) {
+            EventBus.getDefault().post(new DocumentEvent(true, null, response));
+          }
+        }
+      };
+
+      WebUtil.loadWeb(baseUrl).enqueue(mDocumentCallback);
+    }
+  }
+
+  @Override protected void onDestroy() {
+    mCommentComposer.removeOnPageChangeListener(mCommentComposerPageChange);
+    mCommentComposerPageChange = null;
+    mCommentCallback = null;
+    mStockStatusResponse = null;
+    mDocumentCallback = null;
+    mHandler.removeCallbacksAndMessages(null);
+    mHandlerCallback = null;
+    super.onDestroy();
+  }
+
+  @Override protected void initState() {
+    mState = new State();
+  }
+
   @SuppressWarnings("unused")
   @OnClick(R.id.button_action_share) void shareArticle() {
     if (mArticle == null) {
       return;
     }
 
-    boolean found = false;
     Intent share = new Intent(android.content.Intent.ACTION_SEND);
     share.setType("text/plain");
 
@@ -438,7 +447,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     Intent intent = new Intent(Intent.ACTION_SEND);
     intent.setType("text/plain");
     intent.putExtra(Intent.EXTRA_SUBJECT, mArticle.getTitle());
-    intent.putExtra(Intent.EXTRA_TEXT, "I want to share this URL: " + shareUrl);
+    intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_content, shareUrl));
     startActivity(intent);
   }
 
@@ -463,20 +472,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }, 250);
   }
 
-  private Callback<Comment> mCommentCallback = new SuccessCallback<Comment>() {
-    @Override public void onResponse(Response<Comment> response) {
-      Comment newComment = response.body();
-      if (newComment != null) {
-        mComments.add(0, newComment);
-      }
-      if (mCommentScrollView != null && mCommentInfo != null) {
-        mCommentScrollView.scrollTo(mCommentInfo.getTop(), 0);
-      }
-
-      EventBus.getDefault().post(new ItemCommentsEvent(true, null, mComments));
-    }
-  };
-
   @SuppressWarnings("unused")
   @OnClick(R.id.btn_submit) void summitComment() {
     ImeUtils.hideIme(mCommentComposer);
@@ -489,17 +484,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
   }
 
-  @SuppressWarnings("unused")
-  @OnClick(R.id.item_stocks) void stockArticle() {
-    mHandler.removeMessages(MESSAGE_STOCK);
-    mHandler.removeMessages(MESSAGE_UN_STOCK);
-    if (!mState.isStocked) {
-      mHandler.sendEmptyMessageDelayed(MESSAGE_STOCK, 200);
-    } else {
-      mHandler.sendEmptyMessageDelayed(MESSAGE_UN_STOCK, 200);
-    }
-  }
-
   @Override public void onResponse(Response<Article> response) {
     Article article = response.body();
     if (article != null) {
@@ -510,6 +494,17 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     } else {
       EventBus.getDefault().post(new ItemDetailEvent(false,
           new Event.Error(response.code(), response.message()), null));
+    }
+  }
+
+  @SuppressWarnings("unused")
+  @OnClick(R.id.item_stocks) void stockArticle() {
+    mHandler.removeMessages(MESSAGE_STOCK);
+    mHandler.removeMessages(MESSAGE_UN_STOCK);
+    if (!((State) mState).isStocked) {
+      mHandler.sendEmptyMessageDelayed(MESSAGE_STOCK, 200);
+    } else {
+      mHandler.sendEmptyMessageDelayed(MESSAGE_UN_STOCK, 200);
     }
   }
 
@@ -664,8 +659,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @SuppressWarnings("unused")
   public void onEventMainThread(DocumentEvent event) {
     if (event.document != null) {
-      mState.stockCount = event.document.getElementsByClass("js-stocksCount").first().text();
-      EventBus.getDefault().post(new StateEvent(true, null, mState));
+      ((State) mState).stockCount =
+          event.document.getElementsByClass("js-stocksCount").first().text();
+      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
     }
   }
 
@@ -715,30 +711,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   }
 
-  @Override protected void onResume() {
-    super.onResume();
-    if (mItemUuid != null) {
-      ApiClient.itemDetail(mItemUuid).enqueue(this);
-
-      final String baseUrl = "http://qiita.com/api/items/" + mItemUuid;
-
-      mDocumentCallback = new DocumentCallback(baseUrl) {
-        @Override public void onDocument(Document response) {
-          if (response != null) {
-            EventBus.getDefault().post(new DocumentEvent(true, null, response));
-          }
-        }
-      };
-
-      WebUtil.loadWeb(baseUrl).enqueue(mDocumentCallback);
-    }
-  }
-
-  @Override public void onFailure(Throwable error) {
-    EventBus.getDefault().post(new ItemDetailEvent(false,
-        new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
-  }
-
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
@@ -748,7 +720,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   }
 
   @SuppressWarnings("unused")
-  public void onEventMainThread(StateEvent event) {
+  public void onEventMainThread(StateEvent<State> event) {
     if (event.state != null) {
       mStockCount.setText(event.state.stockCount);
       if (event.state.isStocked) {
@@ -765,15 +737,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == android.R.id.home) {
-      navigateUpOrBack(this, null);
-      return true;
-    }
-
-    return super.onOptionsItemSelected(item);
-  }
-
   @Override public void onBackPressed() {
     if (mSlidingPanel.getPanelState() != SlidingUpPanelLayout.PanelState.HIDDEN) {
       mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
@@ -783,21 +746,16 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   }
 
-  private static class State {
+  @Override public void onFailure(Throwable error) {
+    EventBus.getDefault().post(new ItemDetailEvent(false,
+        new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
+  }
+
+  private static class State extends BaseState {
 
     private boolean isStocked;
 
     private String stockCount;
-  }
-
-  private static class StateEvent extends Event {
-
-    private final State state;
-
-    public StateEvent(boolean success, @Nullable Error error, State state) {
-      super(success, error);
-      this.state = state;
-    }
   }
 
 }

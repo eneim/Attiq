@@ -18,6 +18,7 @@
 <io.codetail.widget.RevealFrameLayout
     android:id="@+id/container"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -42,14 +43,18 @@
             android:alpha="0"
             android:background="@color/white"/>
 
-        <SearchView
+        <android.support.v7.widget.SearchView
             android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/padding_normal"
             android:layout_marginRight="@dimen/padding_normal"
             android:alpha="0"
-            android:iconifiedByDefault="false"/>
+            app:iconifiedByDefault="false"
+            app:queryBackground="@android:color/transparent"
+            app:searchHintIcon="@null"
+            app:searchIcon="@drawable/icon_placeholder"
+            app:submitBackground="@android:color/transparent"/>
 
         <!-- wrapping layout needed for the touch ripple -->
         <FrameLayout

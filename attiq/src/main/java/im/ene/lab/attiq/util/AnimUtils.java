@@ -20,7 +20,6 @@ import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
-import android.transition.Transition;
 import android.util.ArrayMap;
 import android.util.Property;
 
@@ -262,45 +261,6 @@ public class AnimUtils {
     @Override
     public void onAnimationRepeat(Animator animator) {
       mListener.onAnimationRepeat(mAnimator);
-    }
-  }
-
-  public static class TransitionListenerAdapter implements Transition.TransitionListener {
-
-    @Override
-    public void onTransitionStart(Transition transition) {
-
-    }
-
-    @Override
-    public void onTransitionEnd(Transition transition) {
-
-    }
-
-    @Override
-    public void onTransitionCancel(Transition transition) {
-
-    }
-
-    @Override
-    public void onTransitionPause(Transition transition) {
-
-    }
-
-    @Override
-    public void onTransitionResume(Transition transition) {
-
-    }
-  }
-
-  public static abstract class AnimationEndListener implements Animator.AnimatorListener {
-    @Override public void onAnimationStart(Animator animation) {
-    }
-
-    @Override public void onAnimationCancel(Animator animation) {
-    }
-
-    @Override public void onAnimationRepeat(Animator animation) {
     }
   }
 

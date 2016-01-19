@@ -76,4 +76,6 @@
         <item quantity="one">%1$d コントリビューション</item>
         <item quantity="other">%1$d コントリビューション</item>
     </plurals>
+
+    <string name="share_content">%1$s</string>
 </resources>
