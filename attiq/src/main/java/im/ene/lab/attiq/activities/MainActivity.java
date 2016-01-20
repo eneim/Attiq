@@ -139,6 +139,7 @@ public class MainActivity extends BaseActivity
     setContentView(R.layout.activity_main);
     mMainContainer = findViewById(R.id.container);
     mViewPager = (ViewPager) findViewById(R.id.view_pager);
+    mViewPager.setOffscreenPageLimit(3);
 
     mIconCornerRadius = UIUtil.getDimen(this, R.dimen.header_icon_size_half);
     mIconBorderWidth = UIUtil.getDimen(this, R.dimen.dimen_unit);

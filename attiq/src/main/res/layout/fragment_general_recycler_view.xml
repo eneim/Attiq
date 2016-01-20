@@ -23,19 +23,29 @@
     </im.ene.lab.attiq.widgets.MultiSwipeRefreshLayout>
 
     <TextView
-        android:id="@+id/view_error"
+        android:id="@+id/view_error_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:drawablePadding="@dimen/activity_vertical_margin"
+        android:drawableTop="@drawable/ic_network_error"
         android:gravity="center"
-        android:text="ERROR"
+        android:padding="@dimen/activity_vertical_margin"
+        android:text="@string/response_error"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
     <TextView
-        android:id="@+id/view_empty"
+        android:id="@+id/view_empty_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:drawablePadding="@dimen/activity_vertical_margin"
+        android:drawableTop="@drawable/ic_empty"
         android:gravity="center"
-        android:text="EMPTY"
+        android:padding="@dimen/activity_vertical_margin"
+        android:text="@string/response_empty"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
     <RelativeLayout

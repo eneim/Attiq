@@ -9,25 +9,21 @@ import android.support.v7.widget.RecyclerView;
  */
 public abstract class EndlessScrollListener extends RecyclerView.OnScrollListener {
 
-  private final int mVisibleThreshold;
+  // The minimum number of items remaining before we should loading more.
+  private static final int VISIBLE_THRESHOLD = 5;
   private final LinearLayoutManager mLayoutManager;
 
-  public EndlessScrollListener(@NonNull LinearLayoutManager layoutManager, int threshold) {
+  public EndlessScrollListener(@NonNull LinearLayoutManager layoutManager) {
     super();
     this.mLayoutManager = layoutManager;
-    this.mVisibleThreshold = threshold;
   }
 
   @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-    super.onScrolled(recyclerView, dx, dy);
-    if ((mLayoutManager.getOrientation() == LinearLayoutManager.VERTICAL && dy == 0)
-        || (mLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL && dx == 0)) {
-      // so the view didn't make a real scroll, do nothing
-      return;
-    }
+    final int visibleItemCount = recyclerView.getChildCount();
+    final int totalItemCount = mLayoutManager.getItemCount();
+    final int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
 
-    if (mLayoutManager.findLastCompletelyVisibleItemPosition() >=
-        mLayoutManager.getItemCount() - mVisibleThreshold * 0.2) {
+    if ((totalItemCount - visibleItemCount) <= (firstVisibleItem + VISIBLE_THRESHOLD)) {
       loadMore();
     }
   }

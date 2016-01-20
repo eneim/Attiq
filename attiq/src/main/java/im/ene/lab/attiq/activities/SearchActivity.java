@@ -214,7 +214,7 @@ public class SearchActivity extends BaseActivity {
       }
     });
     mRecyclerView.setLayoutManager(layoutManager);
-    mRecyclerView.addOnScrollListener(new EndlessScrollListener(layoutManager, 99) {
+    mRecyclerView.addOnScrollListener(new EndlessScrollListener(layoutManager) {
       @Override protected void loadMore() {
         mHandler.removeMessages(MESSAGE_LOAD_MORE);
         mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_MORE, 200);

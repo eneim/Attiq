@@ -1,6 +1,5 @@
 package im.ene.lab.attiq.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,10 +46,6 @@ public class UserStockedItemsFragment extends ListFragment<Article> {
   }
 
   private BaseAdapter.OnItemClickListener mItemClickListener;
-
-  @Override public void onAttach(Context context) {
-    super.onAttach(context);
-  }
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

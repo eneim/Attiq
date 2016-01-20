@@ -159,4 +159,10 @@
     <string name="editor_comment">Comment</string>
     <string name="article_comment_hint"># Compose in Markdown</string>
     <string name="notify_comment_saved">Your comment has been saved</string>
+    <string name="icon_error_description">
+        https://www.iconfinder.com/icons/183558/cloud_rain_icon#size=512
+    </string>
+    <string name="response_error">There\'s problem here v__v</string>
+    <string name="response_empty">There\'s nothing here〜</string>
+    <string name="icon_empty_description">https://www.iconfinder.com/icons/183438/cloud_sun_icon#size=512</string>
 </resources>

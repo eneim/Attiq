@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package im.ene.lab.attiq.fragment;
 
 import android.os.Bundle;
@@ -12,7 +28,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
@@ -37,53 +52,45 @@ public abstract class ListFragment<E>
     extends BaseFragment
     implements SwipeRefreshLayout.OnRefreshListener, Handler.Callback, Callback<List<E>> {
 
-  private static final String TAG = "ListFragment";
   /**
    * Message sent from #onChange, used to update current list by change event from Realm
    */
   protected static final int MESSAGE_UPDATE_DATA = 1 << 1;
-
   /**
    * Message sent from anywhere we want to load/reload data (refresh to reload, or scroll down to
    * load more items)
    */
   protected static final int MESSAGE_LOAD_RELOAD = 1 << 2;
-
   /**
    * Default item count per page
    */
   protected static final int DEFAULT_THRESHOLD = ApiClient.DEFAULT_PAGE_LIMIT;
-
   /**
    * Default first page for API call
    */
   protected static final int DEFAULT_FIRST_PAGE = 1;
-
+  private static final String TAG = "ListFragment";
   // In my experience, GridLayout provide more accurate Cell's measurement. It may have worse
   // performance (comparing to its super class LinearLayoutManager), but this a reasonable trade
   // off
   protected GridLayoutManager mLayoutManager;
+  protected ListAdapter<E> mAdapter;
+  protected int mPage = DEFAULT_FIRST_PAGE;
   /**
    * UI components
    */
   @Bind(R.id.recycler_view) NonEmptyRecyclerView mRecyclerView;
   @Bind(R.id.swipe_refresh_layout) MultiSwipeRefreshLayout mSwipeRefreshLayout;
   @Bind(R.id.loading_container) View mLoadingView;
-  @Bind(R.id.view_empty) View mEmptyView;
-  @Bind(R.id.view_error) TextView mErrorView;
-
-  protected ListAdapter<E> mAdapter;
-
+  @Bind(R.id.view_empty_container) View mEmptyViewContainer;
+  @Bind(R.id.view_error_container) View mErrorViewContainer;
   // User a handler to prevent too frequently calling of methods. For example Realm may trigger
   // #onChange a lot of time, since it doesn't support type-specific change event now. So we
   // should queue the Change event up, and remove the duplicated ones to save resources
   private Handler mHandler = new Handler(this);
-
   // This object requires a LayoutManager, so it must be initialized after we create our
   // LayoutManager.
   private EndlessScrollListener mEndlessScrollListener;
-
-  protected int mPage = DEFAULT_FIRST_PAGE;
 
   @Override public boolean handleMessage(Message msg) {
     // TODO consider using switch cases if we have more Messages to handle
@@ -128,7 +135,7 @@ public abstract class ListFragment<E>
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mLayoutManager = new GridLayoutManager(getContext(), 1, LinearLayoutManager.VERTICAL, false);
-    mEndlessScrollListener = new EndlessScrollListener(mLayoutManager, DEFAULT_THRESHOLD) {
+    mEndlessScrollListener = new EndlessScrollListener(mLayoutManager) {
       @Override protected void loadMore() {
         mHandler.removeMessages(MESSAGE_LOAD_RELOAD);
         mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
@@ -139,13 +146,13 @@ public abstract class ListFragment<E>
     mRecyclerView.addOnScrollListener(mEndlessScrollListener);
 
     mSwipeRefreshLayout.setSwipeableChildren(
-        mRecyclerView.getId(), mEmptyView.getId(), mErrorView.getId());
+        mEmptyViewContainer.getId(), mErrorViewContainer.getId(), mRecyclerView.getId());
     mSwipeRefreshLayout.setOnRefreshListener(this);
 
     mAdapter = createAdapter();
     mRecyclerView.setAdapter(mAdapter);
-    mRecyclerView.setErrorView(mErrorView);
-    mRecyclerView.setEmptyView(mEmptyView);
+    mRecyclerView.setErrorView(mErrorViewContainer);
+    mRecyclerView.setEmptyView(mEmptyViewContainer);
 
     mHandler.removeMessages(MESSAGE_LOAD_RELOAD);
     mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
@@ -173,9 +180,6 @@ public abstract class ListFragment<E>
   @SuppressWarnings("unused")
   public void onEventMainThread(TypedEvent<E> event) {
     Event.Error error = event.error;
-    if (error != null && !UIUtil.isEmpty(error.message) && mErrorView != null) {
-      mErrorView.setText(error.message);
-    }
 
     if (mSwipeRefreshLayout != null) {
       mSwipeRefreshLayout.setRefreshing(false);
@@ -195,7 +199,7 @@ public abstract class ListFragment<E>
         "onResponse() called with: " + "response = [" + response + "]");
     if (response.code() != 200) {
       EventBus.getDefault().post(new TypedEvent<>(false,
-          new Event.Error(response.code(), ApiClient.parseError(response).message), null, mPage));
+          new Event.Error(response.code(), getString(R.string.response_error)), null, mPage));
     } else {
       List<E> items = response.body();
       if (!UIUtil.isEmpty(items)) {
@@ -208,6 +212,7 @@ public abstract class ListFragment<E>
   @Override public void onFailure(Throwable t) {
     Log.d(getClass().getSimpleName(), "onFailure() called with: " + "t = [" + t + "]");
     EventBus.getDefault().post(new TypedEvent<>(false,
-        new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null, mPage));
+        new Event.Error(Event.Error.ERROR_UNKNOWN,
+            getString(R.string.response_error)), null, mPage));
   }
 }
