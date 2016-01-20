@@ -41,7 +41,7 @@ public abstract class ListFragment<E>
   /**
    * Message sent from #onChange, used to update current list by change event from Realm
    */
-  private static final int MESSAGE_UPDATE_DATA = 1 << 1;
+  protected static final int MESSAGE_UPDATE_DATA = 1 << 1;
 
   /**
    * Message sent from anywhere we want to load/reload data (refresh to reload, or scroll down to
@@ -52,12 +52,12 @@ public abstract class ListFragment<E>
   /**
    * Default item count per page
    */
-  private static final int DEFAULT_THRESHOLD = ApiClient.DEFAULT_PAGE_LIMIT;
+  protected static final int DEFAULT_THRESHOLD = ApiClient.DEFAULT_PAGE_LIMIT;
 
   /**
    * Default first page for API call
    */
-  private static final int DEFAULT_FIRST_PAGE = 1;
+  protected static final int DEFAULT_FIRST_PAGE = 1;
 
   // In my experience, GridLayout provide more accurate Cell's measurement. It may have worse
   // performance (comparing to its super class LinearLayoutManager), but this a reasonable trade
@@ -83,7 +83,7 @@ public abstract class ListFragment<E>
   // LayoutManager.
   private EndlessScrollListener mEndlessScrollListener;
 
-  private int mPage = DEFAULT_FIRST_PAGE;
+  protected int mPage = DEFAULT_FIRST_PAGE;
 
   @Override public boolean handleMessage(Message msg) {
     // TODO consider using switch cases if we have more Messages to handle
@@ -123,10 +123,6 @@ public abstract class ListFragment<E>
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
     return inflater.inflate(R.layout.fragment_general_recycler_view, container, false);
-  }
-
-  @Override public void onDetach() {
-    super.onDetach();
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

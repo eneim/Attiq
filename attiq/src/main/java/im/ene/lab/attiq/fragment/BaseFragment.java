@@ -39,4 +39,5 @@ public class BaseFragment extends Fragment {
   @SuppressWarnings("unused")
   public void onEvent(Event event) {
   }
+
 }
