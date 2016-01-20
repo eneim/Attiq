@@ -21,6 +21,7 @@ import im.ene.lab.attiq.adapters.ListAdapter;
 import im.ene.lab.attiq.adapters.UserTagsAdapter;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.one.PublicTag;
+import im.ene.lab.attiq.util.AnalyticsTrackers;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.TypedEvent;
@@ -35,6 +36,8 @@ import java.util.List;
  */
 public class UserTagsFragment extends BaseFragment
     implements Handler.Callback, Callback<List<PublicTag>> {
+
+  private static final String SCREEN_NAME = "attiq:user:tags";
 
   protected static final String ARGS_USER_ID = "attiq_fragment_args_user_id";
   /**
@@ -76,6 +79,13 @@ public class UserTagsFragment extends BaseFragment
   }
 
   private ArrayList<PublicTag> mItems;
+
+  @Override protected void onVisibilityChange(boolean isVisibleToUser) {
+    super.onVisibilityChange(isVisibleToUser);
+    if (isVisibleToUser) {
+      AnalyticsTrackers.sendScreenView(SCREEN_NAME);
+    }
+  }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);

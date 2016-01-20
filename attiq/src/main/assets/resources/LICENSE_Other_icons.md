@@ -1,5 +1,4 @@
-# <a href="https://www.iconfinder.com/icons/753929/cooking_eating_food_kitchen_restaurant_icon">
-App icon and other icons from https://www.iconfinder.com</a>
+# <a href="https://www.iconfinder.com/icons/753929/cooking_eating_food_kitchen_restaurant_icon">App icon and other icons from https://www.iconfinder.com</a>
 
 <img src="file:///android_asset/art/soup-bowl.png" width="64">
 

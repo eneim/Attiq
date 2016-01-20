@@ -3,6 +3,7 @@ package im.ene.lab.attiq.fragment;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 
 import butterknife.ButterKnife;
@@ -14,6 +15,10 @@ import im.ene.lab.attiq.util.event.Event;
  */
 public class BaseFragment extends Fragment {
 
+  private static final String TAG = "BaseFragment";
+
+  private boolean mIsVisibleToUser = false;
+
   @CallSuper
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -23,6 +28,18 @@ public class BaseFragment extends Fragment {
   @Override public void onResume() {
     super.onResume();
     EventBus.getDefault().register(this);
+    if (mIsVisibleToUser != getUserVisibleHint()) {
+      onVisibilityChange(getUserVisibleHint());
+      mIsVisibleToUser = getUserVisibleHint();
+    }
+  }
+
+  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
+    super.setUserVisibleHint(isVisibleToUser);
+    if (mIsVisibleToUser != isVisibleToUser) {
+      onVisibilityChange(isVisibleToUser);
+      mIsVisibleToUser = isVisibleToUser;
+    }
   }
 
   @Override public void onPause() {
@@ -40,4 +57,8 @@ public class BaseFragment extends Fragment {
   public void onEvent(Event event) {
   }
 
+  protected void onVisibilityChange(boolean isVisibleToUser) {
+    Log.e(TAG, getClass().getSimpleName() + "#onVisibilityChange() called with: "
+        + "isVisibleToUser = [" + isVisibleToUser + "]");
+  }
 }

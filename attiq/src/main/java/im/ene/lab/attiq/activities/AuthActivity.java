@@ -21,17 +21,19 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.webkit.CookieManager;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
+import im.ene.lab.attiq.util.AnalyticsTrackers;
 
 /**
  * Created by eneim on 12/13/15.
  */
 public class AuthActivity extends AppCompatActivity {
+
+  private static final String SCREEN_NAME = "attiq:activity:auth";
 
   private static final String TAG = "WebViewActivity";
   private WebViewClient mWebClient = new WebViewClient() {
@@ -63,10 +65,6 @@ public class AuthActivity extends AppCompatActivity {
     }
   };
 
-  private WebChromeClient mChromeClient = new WebChromeClient() {
-
-  };
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -76,4 +74,8 @@ public class AuthActivity extends AppCompatActivity {
     webView.loadUrl(ApiClient.authCallback());
   }
 
+  @Override protected void onResume() {
+    super.onResume();
+    AnalyticsTrackers.sendScreenView(SCREEN_NAME);
+  }
 }

@@ -50,8 +50,7 @@
     <RelativeLayout
         android:id="@id/comment_composer_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="80dp">
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:id="@+id/comment_composer_header"

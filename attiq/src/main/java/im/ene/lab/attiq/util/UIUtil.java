@@ -15,6 +15,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.URLSpan;
 import android.util.Property;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +55,21 @@ public class UIUtil {
       result = resources.getDimensionPixelSize(R.dimen.status_bar_height);
     }
     return result;
+  }
+
+  // Won't use this
+  @Deprecated
+  public static int getActionBarHeight(@NonNull Context context) {
+    int actionBarHeight;
+    TypedValue tv = new TypedValue();
+    if (context.getTheme().resolveAttribute(R.attr.actionBarSize, tv, true)) {
+      actionBarHeight = TypedValue.complexToDimensionPixelSize(
+          tv.data, context.getResources().getDisplayMetrics());
+    } else {
+      actionBarHeight = 0;
+    }
+
+    return actionBarHeight;
   }
 
   public static boolean isEmpty(CharSequence text) {

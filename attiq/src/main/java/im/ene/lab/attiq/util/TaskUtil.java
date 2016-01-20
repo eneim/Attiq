@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * Created by eneim on 1/16/16.
  */
-public class AsyncTaskUtil {
+public class TaskUtil {
 
   public static abstract class Callback<T> {
 

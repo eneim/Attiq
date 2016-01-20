@@ -169,10 +169,6 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
       mItemUserInfo.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
-    @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {
-      super.setOnViewHolderClickListener(listener);
-    }
-
     @Override public void bind(final Article item) {
       if (item.getUser() != null) {
         String userName = item.getUser().getId();

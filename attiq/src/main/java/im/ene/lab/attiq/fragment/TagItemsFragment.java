@@ -14,6 +14,7 @@ import im.ene.lab.attiq.adapters.ListAdapter;
 import im.ene.lab.attiq.adapters.TagItemsAdapter;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.User;
+import im.ene.lab.attiq.util.AnalyticsTrackers;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import okhttp3.Headers;
 import retrofit2.Response;
@@ -27,6 +28,8 @@ public class TagItemsFragment extends ListFragment<Article> {
 
   private static final String ARGS_TAG_ID = "attiq_fragment_args_tag_id";
 
+  private static final String SCREEN_NAME = "attiq:user:tag_items";
+
   private String mTagId;
   private BaseAdapter.OnItemClickListener mOnItemClickListener;
   private Callback mCallback;
@@ -37,6 +40,13 @@ public class TagItemsFragment extends ListFragment<Article> {
     args.putString(ARGS_TAG_ID, tagId);
     fragment.setArguments(args);
     return fragment;
+  }
+
+  @Override protected void onVisibilityChange(boolean isVisibleToUser) {
+    super.onVisibilityChange(isVisibleToUser);
+    if (isVisibleToUser) {
+      AnalyticsTrackers.sendScreenView(SCREEN_NAME);
+    }
   }
 
   @Override public void onAttach(Context context) {

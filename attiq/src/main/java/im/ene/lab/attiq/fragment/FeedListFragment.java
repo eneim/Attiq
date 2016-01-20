@@ -15,6 +15,7 @@ import im.ene.lab.attiq.adapters.ListAdapter;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.zero.FeedItem;
+import im.ene.lab.attiq.util.AnalyticsTrackers;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemDetailEvent;
@@ -30,8 +31,17 @@ import java.util.List;
  */
 public class FeedListFragment extends ListFragment<FeedItem> {
 
+  private static final String SCREEN_NAME = "attiq:home:feed_list";
+
   public FeedListFragment() {
 
+  }
+
+  @Override protected void onVisibilityChange(boolean isVisibleToUser) {
+    super.onVisibilityChange(isVisibleToUser);
+    if (isVisibleToUser) {
+      AnalyticsTrackers.sendScreenView(SCREEN_NAME);
+    }
   }
 
   public static FeedListFragment newInstance() {

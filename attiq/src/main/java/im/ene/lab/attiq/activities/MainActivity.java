@@ -19,6 +19,7 @@ package im.ene.lab.attiq.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -39,6 +40,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.CookieManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -243,6 +245,12 @@ public class MainActivity extends BaseActivity
             mRealm.commitTransaction();
 
             mMyProfile = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+              CookieManager.getInstance().removeAllCookies(null);
+            } else {
+              CookieManager.getInstance().removeAllCookie();
+            }
+
             PrefUtil.setCurrentToken(null);
             EventBus.getDefault().post(new ProfileEvent(true, null, null));
           }

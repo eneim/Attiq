@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
@@ -50,6 +51,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -124,6 +126,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Bind(R.id.html_headers_container) LinearLayout mMenuContainer;
   @Bind(R.id.loading_container) View mLoadingView;
   @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingPanel;
+  @Bind(R.id.comment_composer_container) View mCommentComposerContainer;
   @Bind(R.id.comment_composer) CommentComposerView mCommentComposer;
   @Bind(R.id.comment_composer_tabs) TabLayout mComposerTabs;
   @BindDimen(R.dimen.header_depth_width) int mHeaderDepthWidth;
@@ -252,6 +255,24 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     if (getSupportActionBar() != null) {
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
+    // To get Toolbar's height, there are several methods. But all of them depends on Toolbar's
+    // theme or the host activity spec. In AppCompat, it's not guarantee that it contains a
+    // custom Toolbar or default ActionBar/Toolbar, so we'd better get the real Toolbar's dimen.
+    mToolbar.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override public void onGlobalLayout() {
+            mToolbar.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            // Dynamically update top margin, depending on device's spec
+            SlidingUpPanelLayout.LayoutParams lp =
+                ((SlidingUpPanelLayout.LayoutParams) mCommentComposerContainer.getLayoutParams());
+            if (lp != null) {
+              lp.topMargin =
+                  UIUtil.getStatusBarHeight(ItemDetailActivity.this) + mToolbar.getHeight();
+              mCommentComposerContainer.setLayoutParams(lp);
+            }
+          }
+        });
 
     mSlidingPanel.setScrollableViewHelper(new NestedScrollableViewHelper());
     mSlidingPanel.setPanelSlideListener(new PanelSlideListenerAdapter() {
@@ -440,15 +461,14 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       return;
     }
 
-    Intent share = new Intent(android.content.Intent.ACTION_SEND);
-    share.setType("text/plain");
+    Intent share = ShareCompat.IntentBuilder.from(this)
+        .setChooserTitle("Share")
+        .setType("text/plain")
+        .setText(mArticle.getUrl())
+        .setSubject(mArticle.getTitle())
+        .createChooserIntent();
 
-    String shareUrl = mArticle.getUrl();
-    Intent intent = new Intent(Intent.ACTION_SEND);
-    intent.setType("text/plain");
-    intent.putExtra(Intent.EXTRA_SUBJECT, mArticle.getTitle());
-    intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_content, shareUrl));
-    startActivity(intent);
+    startActivity(share);
   }
 
   @SuppressWarnings("unused")

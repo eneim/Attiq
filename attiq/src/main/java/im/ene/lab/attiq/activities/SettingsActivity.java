@@ -22,7 +22,7 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.util.AsyncTaskUtil;
+import im.ene.lab.attiq.util.TaskUtil;
 import im.ene.lab.attiq.widgets.MarkdownView;
 
 /**
@@ -153,7 +153,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 .setView(view)
                 .create().show();
 
-            AsyncTaskUtil.load("licenses", new AsyncTaskUtil.Callback<String>() {
+            TaskUtil.load("licenses", new TaskUtil.Callback<String>() {
               @Override protected void onFinished(String markdown) {
                 if (markdown != null) {
                   view.loadMarkdown(markdown, "file:///android_asset/html/css/github.css");
@@ -169,7 +169,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 .setView(view)
                 .create().show();
 
-            AsyncTaskUtil.load("resources", new AsyncTaskUtil.Callback<String>() {
+            TaskUtil.load("resources", new TaskUtil.Callback<String>() {
               @Override protected void onFinished(String markdown) {
                 if (markdown != null) {
                   view.loadMarkdown(markdown, "file:///android_asset/html/css/github.css");

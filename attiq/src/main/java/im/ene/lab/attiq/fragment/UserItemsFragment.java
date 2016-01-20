@@ -12,6 +12,7 @@ import im.ene.lab.attiq.adapters.ListAdapter;
 import im.ene.lab.attiq.adapters.UserArticlesAdapter;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.User;
+import im.ene.lab.attiq.util.AnalyticsTrackers;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
 
 /**
@@ -20,6 +21,8 @@ import im.ene.lab.attiq.widgets.DividerItemDecoration;
 public class UserItemsFragment extends ListFragment<Article> {
 
   private static final String ARGS_USER_ID = "attiq_fragment_args_user_id";
+
+  private static final String SCREEN_NAME = "attiq:user:items";
 
   private String mUserId;
 
@@ -33,6 +36,13 @@ public class UserItemsFragment extends ListFragment<Article> {
     args.putString(ARGS_USER_ID, userId);
     fragment.setArguments(args);
     return fragment;
+  }
+
+  @Override protected void onVisibilityChange(boolean isVisibleToUser) {
+    super.onVisibilityChange(isVisibleToUser);
+    if (isVisibleToUser) {
+      AnalyticsTrackers.sendScreenView(SCREEN_NAME);
+    }
   }
 
   @NonNull @Override protected ListAdapter<Article> createAdapter() {

@@ -80,6 +80,7 @@ public class IOUtil {
     return stringBuilder.toString();
   }
 
+  // Since RealmObject doesn't support toString()
   public static String toString(FeedItem item) {
     return "FeedItem{" +
         "createdAtInUnixtime=" + item.getCreatedAtInUnixtime() +

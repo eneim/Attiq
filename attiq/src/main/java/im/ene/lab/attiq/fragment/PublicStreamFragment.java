@@ -13,6 +13,7 @@ import im.ene.lab.attiq.adapters.PublicItemsAdapter;
 import im.ene.lab.attiq.adapters.RealmListAdapter;
 import im.ene.lab.attiq.data.one.PublicUser;
 import im.ene.lab.attiq.data.zero.Post;
+import im.ene.lab.attiq.util.AnalyticsTrackers;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -22,12 +23,21 @@ import io.realm.Sort;
  */
 public class PublicStreamFragment extends RealmListFragment<Post> {
 
+  private static final String SCREEN_NAME = "attiq:home:public_items";
+
   public PublicStreamFragment() {
 
   }
 
   public static PublicStreamFragment newInstance() {
     return new PublicStreamFragment();
+  }
+
+  @Override protected void onVisibilityChange(boolean isVisibleToUser) {
+    super.onVisibilityChange(isVisibleToUser);
+    if (isVisibleToUser) {
+      AnalyticsTrackers.sendScreenView(SCREEN_NAME);
+    }
   }
 
   @NonNull @Override protected RealmListAdapter<Post> createRealmAdapter() {
