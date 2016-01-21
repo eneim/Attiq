@@ -6,6 +6,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.mopub.common.MoPub;
+import com.mopub.nativeads.MoPubRecyclerAdapter;
+import com.mopub.nativeads.MoPubStaticNativeAdRenderer;
+import com.mopub.nativeads.RequestParameters;
+import com.mopub.nativeads.ViewBinder;
+
+import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
 import im.ene.lab.attiq.adapters.BaseAdapter;
@@ -33,6 +40,11 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
     return new PublicStreamFragment();
   }
 
+  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    MoPub.setLocationAwareness(MoPub.LocationAwareness.NORMAL);
+  }
+
   @Override protected void onVisibilityChange(boolean isVisibleToUser) {
     super.onVisibilityChange(isVisibleToUser);
     if (isVisibleToUser) {
@@ -48,16 +60,30 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
 
   private BaseAdapter.OnItemClickListener mItemClickListener;
 
+  private MoPubRecyclerAdapter mMopubAdapter;
+
   @Override public void onAttach(Context context) {
     super.onAttach(context);
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    mMopubAdapter = new MoPubRecyclerAdapter(getActivity(), mAdapter);
+    ViewBinder viewBinder = new ViewBinder.Builder(NativeAdsView.LAYOUT_RES)
+        .titleId(NativeAdsView.AD_VIEW_TITLE)
+        .iconImageId(NativeAdsView.AD_VIEW_ICON)
+        .textId(NativeAdsView.AD_VIEW_TEXT)
+        .mainImageId(NativeAdsView.AD_VIEW_IMAGE)
+        .build();
+    MoPubStaticNativeAdRenderer adViewRenderer = new MoPubStaticNativeAdRenderer(viewBinder);
+    mMopubAdapter.registerAdRenderer(adViewRenderer);
+
+    // replace by mMopubAdapter
+    mRecyclerView.setAdapter(mMopubAdapter);
     mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
         DividerItemDecoration.VERTICAL_LIST));
 
-    mItemClickListener = new PublicItemsAdapter.OnPublicItemClickListener() {
+    mItemClickListener = new OnMopubItemClickListener() {
       @Override public void onUserClick(PublicUser user) {
         startActivity(ProfileActivity.createIntent(getContext(), user.getUrlName()));
       }
@@ -68,11 +94,41 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
     };
 
     mAdapter.setOnItemClickListener(mItemClickListener);
+    // Optional targeting parameters
+    RequestParameters parameters = new RequestParameters.Builder()
+        //.keywords("your target words here")
+        .build();
+    // Request ads when the user returns to this activity
+    mMopubAdapter.loadAds(getString(R.string.attiq_mopub_add_id), parameters);
   }
 
   @Override public void onDestroyView() {
+    mMopubAdapter.destroy();
     // no UI interaction after this point;
     mItemClickListener = null;
     super.onDestroyView();
+  }
+
+  private abstract class OnMopubItemClickListener
+      extends PublicItemsAdapter.OnPublicItemClickListener {
+
+    @Override
+    public void onItemClick(BaseAdapter adapter, BaseAdapter.ViewHolder viewHolder, View view,
+                            int adapterPos, long itemId) {
+      int originPos = mMopubAdapter.getOriginalPosition(adapterPos);
+      super.onItemClick(adapter, viewHolder, view, originPos, itemId);
+    }
+  }
+
+  /**
+   * Native Ads on Public timeline
+   */
+  private static class NativeAdsView {
+    private static final int LAYOUT_RES = R.layout.ads_item_view_public;
+
+    private static final int AD_VIEW_TITLE = R.id.ads_title;
+    private static final int AD_VIEW_ICON = R.id.ads_icon;
+    private static final int AD_VIEW_IMAGE = R.id.ads_image;
+    private static final int AD_VIEW_TEXT = R.id.ads_text;
   }
 }

@@ -82,21 +82,18 @@ public class IOUtil {
 
   // Since RealmObject doesn't support toString()
   public static String toString(FeedItem item) {
-    return "FeedItem{" +
-        "createdAtInUnixtime=" + item.getCreatedAtInUnixtime() +
-        ", createdAtInWords='" + item.getCreatedAtInWords() + '\'' +
-        ", followableImageUrl='" + item.getFollowableImageUrl() + '\'' +
-        ", followableName='" + item.getFollowableName() + '\'' +
-        ", followableType='" + item.getFollowableType() + '\'' +
-        ", followableUrl='" + item.getFollowableUrl() + '\'' +
-        ", mentionedObjectBody='" + item.getMentionedObjectBody() + '\'' +
-        ", mentionedObjectCommentsCount=" + item.getMentionedObjectCommentsCount() +
-        ", mentionedObjectImageUrl='" + item.getMentionedObjectImageUrl() + '\'' +
-        ", mentionedObjectName='" + item.getMentionedObjectName() + '\'' +
-        ", mentionedObjectStocksCount=" + item.getMentionedObjectStocksCount() +
-        ", mentionedObjectUrl='" + item.getMentionedObjectUrl() + '\'' +
-        // ", mentionedObjectUuid='" + item.getMentionedObjectUuid() + '\'' +
-        ", trackableType='" + item.getTrackableType() + '\'' +
+    return "item{" +
+        ", f_image='" + item.getFollowableImageUrl() + '\'' +
+        ", f_name='" + item.getFollowableName() + '\'' +
+        ", f_type='" + item.getFollowableType() + '\'' +
+        ", f_url='" + item.getFollowableUrl() + '\'' +
+        ", m_body='" + item.getMentionedObjectBody() + '\'' +
+        ", m_comments=" + item.getMentionedObjectCommentsCount() +
+        ", m_image='" + item.getMentionedObjectImageUrl() + '\'' +
+        ", m_name='" + item.getMentionedObjectName() + '\'' +
+        ", m_stock=" + item.getMentionedObjectStocksCount() +
+        ", m_url='" + item.getMentionedObjectUrl() + '\'' +
+        ", track='" + item.getTrackableType() + '\'' +
         '}';
   }
 

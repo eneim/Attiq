@@ -64,12 +64,13 @@ public abstract class RealmListFragment<E extends RealmObject>
     }
   };
 
+  @Override
   protected void loadReload() {
     boolean isRefreshing = mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing();
-    boolean isLoadingMore = mAdapter.getItemCount() > 0 && !isRefreshing;
+    boolean isLoadingMore = !isRefreshing;
     if (isLoadingMore) {
       mPage++;
-    } else if (isRefreshing) {
+    } else {
       mPage = DEFAULT_FIRST_PAGE;
     }
 

@@ -17,7 +17,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
-                android:padding="@dimen/recycler_view_padding"/>
+                android:padding="@dimen/recycler_view_padding"
+                android:scrollbarFadeDuration="250"
+                android:scrollbars="vertical"/>
         </FrameLayout>
 
     </im.ene.lab.attiq.widgets.MultiSwipeRefreshLayout>

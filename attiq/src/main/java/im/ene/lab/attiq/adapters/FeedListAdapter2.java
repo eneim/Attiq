@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package im.ene.lab.attiq.adapters;
 
 import android.content.Context;
@@ -11,6 +27,7 @@ import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,24 +50,23 @@ import im.ene.lab.attiq.util.TextViewTarget;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
+import io.realm.RealmResults;
 import retrofit2.Callback;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by eneim on 12/25/15.
  */
-public class FeedListAdapter extends ListAdapter<FeedItem> {
+public class FeedListAdapter2 extends RealmListAdapter<FeedItem> {
 
   private static final int VIEW_TYPE_ITEM = 1 << 1;
   private static final int VIEW_TYPE_FOLLOW = 1 << 2;
-  private final ArrayList<FeedItem> mItems;
-  private final Object LOCK = new Object();
+  private final RealmResults<FeedItem> mItems;
 
-  public FeedListAdapter() {
+  public FeedListAdapter2(RealmResults<FeedItem> items) {
     super();
-    this.mItems = new ArrayList<>();
+    this.mItems = items;
     setHasStableIds(true);
   }
 
@@ -71,7 +87,7 @@ public class FeedListAdapter extends ListAdapter<FeedItem> {
       @Override public void onClick(View view) {
         int position = viewHolder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-          mOnItemClickListener.onItemClick(FeedListAdapter.this, viewHolder, view, position,
+          mOnItemClickListener.onItemClick(FeedListAdapter2.this, viewHolder, view, position,
               getItemId(position));
         }
       }
@@ -115,29 +131,9 @@ public class FeedListAdapter extends ListAdapter<FeedItem> {
     ApiClient.feed(createdAt).enqueue(callback);
   }
 
-  @Override public void addItem(FeedItem item) {
-    synchronized (LOCK) {
-      mItems.add(item);
-      notifyItemInserted(getItemCount() - 1);
-    }
-  }
-
-  @Override public void addItems(List<FeedItem> items) {
-    synchronized (LOCK) {
-      int oldLen = getItemCount();
-      mItems.addAll(items);
-      notifyItemRangeInserted(oldLen, items.size());
-    }
-  }
-
-  @Override public void clear() {
-    synchronized (LOCK) {
-      mItems.clear();
-      notifyDataSetChanged();
-    }
-  }
-
   public static class FeedViewHolder extends ViewHolder<FeedItem> {
+
+    private static final String TAG = "FeedViewHolder";
 
     static final int LAYOUT_RES = R.layout.feed_item_view;
 
@@ -230,6 +226,9 @@ public class FeedListAdapter extends ListAdapter<FeedItem> {
               @Override
               public void onBitmapLoaded(TextView textView, Bitmap bitmap,
                                          Picasso.LoadedFrom from) {
+                Log.d(TAG, "onBitmapLoaded() called with: " + "textView = [" + textView + "], " +
+                    "bitmap = [" + bitmap.getWidth() + " - " + bitmap.getHeight() +
+                    "], from = [" + from + "]");
                 RoundedBitmapDrawable drawable =
                     RoundedBitmapDrawableFactory.create(itemView.getResources(), bitmap);
                 TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView,

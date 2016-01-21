@@ -56,7 +56,7 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.AccessToken;
 import im.ene.lab.attiq.data.two.Profile;
-import im.ene.lab.attiq.fragment.FeedListFragment;
+import im.ene.lab.attiq.fragment.FeedListFragment2;
 import im.ene.lab.attiq.fragment.PublicStreamFragment;
 import im.ene.lab.attiq.fragment.UserStockedItemsFragment;
 import im.ene.lab.attiq.util.PrefUtil;
@@ -532,7 +532,7 @@ public class MainActivity extends BaseActivity
       if (position == 0) {
         return PublicStreamFragment.newInstance();
       } else if (position == 1) {
-        return FeedListFragment.newInstance();
+        return FeedListFragment2.newInstance();
       } else if (position == 2) {
         return UserStockedItemsFragment.newInstance(mUserId);
       }

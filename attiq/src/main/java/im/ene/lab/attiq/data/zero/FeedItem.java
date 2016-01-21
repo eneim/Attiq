@@ -68,13 +68,23 @@ public class FeedItem extends RealmObject {
   @SerializedName("mentioned_object_url")
   @Expose
   private String mentionedObjectUrl;
-  @PrimaryKey
   @SerializedName("mentioned_object_uuid")
   @Expose
   private String mentionedObjectUuid;
   @SerializedName("trackable_type")
   @Expose
   private String trackableType;
+
+  @PrimaryKey
+  private String id;
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
 
   public Long getCreatedAtInUnixtime() {
     return createdAtInUnixtime;

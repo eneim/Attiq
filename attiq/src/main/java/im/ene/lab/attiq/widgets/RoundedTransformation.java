@@ -2,6 +2,7 @@ package im.ene.lab.attiq.widgets;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -18,15 +19,22 @@ public class RoundedTransformation implements Transformation {
   private int mCornerRadius = 0;
   private int mColor;
 
+  private int halfBorder;
+
   public RoundedTransformation(int borderSize, int color) {
     this.mBorderSize = borderSize;
     this.mColor = color;
+    this.halfBorder = mBorderSize / 2;
   }
 
   public RoundedTransformation(int borderSize, int color, int cornerRadius) {
     this.mBorderSize = borderSize;
     this.mColor = color;
     this.mCornerRadius = cornerRadius;
+    this.halfBorder = mBorderSize / 2;
+    if (halfBorder < 1) {
+      halfBorder = 1;
+    }
   }
 
   @Override
@@ -40,7 +48,6 @@ public class RoundedTransformation implements Transformation {
 
     Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     Rect rect = new Rect(0, 0, width, height);
-
 
     if (this.mCornerRadius == 0) {
       canvas.drawRect(rect, paint);
@@ -64,15 +71,23 @@ public class RoundedTransformation implements Transformation {
       canvas.setBitmap(output);
       canvas.drawARGB(0, 0, 0, 0);
 
-      rect = new Rect(0, 0, width, height);
+      rect = new Rect(halfBorder, halfBorder, width - halfBorder, height - halfBorder);
 
       paint.setXfermode(null);
       paint.setColor(this.mColor);
-      paint.setStyle(Paint.Style.FILL);
+      paint.setStyle(Paint.Style.STROKE);
+      paint.setStrokeWidth(mBorderSize);
 
       canvas.drawRoundRect(new RectF(rect),
-          this.mCornerRadius + this.mBorderSize,
-          this.mCornerRadius + this.mBorderSize, paint);
+          this.mCornerRadius + halfBorder,
+          this.mCornerRadius + halfBorder, paint);
+
+      paint.setColor(Color.WHITE);
+      paint.setStyle(Paint.Style.FILL);
+
+      canvas.drawRoundRect(new RectF(halfBorder, halfBorder,
+              width - halfBorder, height - halfBorder),
+          this.mCornerRadius + halfBorder, this.mCornerRadius + halfBorder, paint);
 
       canvas.drawBitmap(image, this.mBorderSize, this.mBorderSize, null);
     }

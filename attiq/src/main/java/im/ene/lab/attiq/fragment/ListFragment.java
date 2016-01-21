@@ -150,10 +150,12 @@ public abstract class ListFragment<E>
     mSwipeRefreshLayout.setOnRefreshListener(this);
 
     mAdapter = createAdapter();
+
     mRecyclerView.setAdapter(mAdapter);
     mRecyclerView.setErrorView(mErrorViewContainer);
     mRecyclerView.setEmptyView(mEmptyViewContainer);
 
+    mSwipeRefreshLayout.setRefreshing(true);
     mHandler.removeMessages(MESSAGE_LOAD_RELOAD);
     mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
   }

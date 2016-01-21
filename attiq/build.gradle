@@ -9,11 +9,13 @@ buildscript {
 
     dependencies {
         classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.3.1'
     }
 }
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'io.fabric'
+apply plugin: 'com.getkeepsafe.dexcount'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -25,10 +27,7 @@ def VERSION_NAME = "1.0.0"
 android {
     signingConfigs {
         release {
-            keyAlias "${keyAlias}"
-            keyPassword "${keyPassword}"
-            storeFile file("${storeFile}")
-            storePassword "${storePassword}"
+
         }
 
         debug {
@@ -49,11 +48,12 @@ android {
         versionCode VERSION_CODE
         versionName VERSION_NAME
         manifestPlaceholders = [fabric_api_key: "${attiq_fabric_api_key}"]
-
+        multiDexEnabled false
         resValue "string", "attiq_parse_app_id", "${attiq_parse_client_key}"
         resValue "string", "attiq_parse_client_key", "${attiq_parse_client_key}"
         resValue "string", "attiq_gcm_sender_id", "${attiq_gcm_sender_id}"
     }
+
     packagingOptions {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/LICENSE.txt'
@@ -67,8 +67,11 @@ android {
         release {
             signingConfig signingConfigs.release
             debuggable false
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules-release.pro'
+            resValue "string", "attiq_mopub_add_id", "${attiq_mopub_ad_unit_id}"
+            resValue "string", "ga_track_id", "${attiq_ga_track_id_release}"
         }
 
         prerelease {
@@ -77,6 +80,8 @@ android {
             debuggable false
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "attiq_mopub_add_id", "6eaafa8a1f9d44d2961112d17f3fd168"
+            resValue "string", "ga_track_id", "${attiq_ga_track_id_debug}"
         }
 
         debug {
@@ -85,6 +90,8 @@ android {
             debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "attiq_mopub_add_id", "6eaafa8a1f9d44d2961112d17f3fd168"
+            resValue "string", "ga_track_id", "${attiq_ga_track_id_debug}"
         }
     }
     productFlavors {
@@ -101,6 +108,26 @@ android {
     }
 }
 
+def Properties props = new Properties()
+def propFile = new File('signing.properties')
+if (propFile.canRead()) {
+    props.load(new FileInputStream(propFile))
+
+    if (props != null && props.containsKey('storeFile') && props.containsKey('storePassword') &&
+            props.containsKey('keyAlias') && props.containsKey('keyPassword')) {
+        android.signingConfigs.release.storeFile = file(props['storeFile'])
+        android.signingConfigs.release.storePassword = props['storePassword']
+        android.signingConfigs.release.keyAlias = props['keyAlias']
+        android.signingConfigs.release.keyPassword = props['keyPassword']
+    } else {
+        println 'signing.properties found but some entries are missing'
+        android.buildTypes.release.signingConfig = null
+    }
+} else {
+    println 'signing.properties not found'
+    android.buildTypes.release.signingConfig = null
+}
+
 ext {
     support_libraries_version = '23.1.1'
     okhttp3_version = "3.0.0-RC1"
@@ -113,6 +140,8 @@ dependencies {
 
     compile 'com.google.android.gms:play-services-gcm:8.3.0'
     compile 'com.google.android.gms:play-services-analytics:8.3.0'
+    // compile 'com.google.android.gms:play-services-ads:8.3.0'
+
     compile 'com.parse:parse-android:1.12.0'
 
     compile "com.android.support:support-v4:${support_libraries_version}"
@@ -147,15 +176,19 @@ dependencies {
 
     compile "io.realm:realm-android:0.87.2"
 
-    compile "com.facebook.stetho:stetho:1.2.0"
-    compile "com.facebook.stetho:stetho-okhttp:1.2.0"
-    compile "com.uphyca:stetho_realm:0.7.2"
+    // compile "com.facebook.stetho:stetho:1.2.0"
+    // compile "com.facebook.stetho:stetho-okhttp:1.2.0"
+    // compile "com.uphyca:stetho_realm:0.7.2"
 
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
 
     compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.2@aar') {
+        transitive = true;
+    }
+
+    compile('com.mopub.sdk.android:mopub:4.2.0@aar') {
         transitive = true;
     }
 

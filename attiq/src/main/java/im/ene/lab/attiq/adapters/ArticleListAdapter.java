@@ -157,7 +157,7 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
     @Bind(R.id.item_posted_info) TextView mItemUserInfo;
     // Others
     @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
-    @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
+    @BindDimen(R.dimen.image_border_small) int mIconBorderWidth;
     @BindColor(R.color.colorAccent) int mIconBorderColor;
 
     public ViewHolder(View view) {

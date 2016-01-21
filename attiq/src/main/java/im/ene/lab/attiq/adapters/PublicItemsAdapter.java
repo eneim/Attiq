@@ -10,6 +10,7 @@ import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +64,8 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
     viewHolder.setOnViewHolderClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         int position = viewHolder.getAdapterPosition();
+        Log.d(TAG, "onClick() called with: " + "view = [" + view + "]" + " position = " +
+            "[" + position + "]");
         if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
           mOnItemClickListener.onItemClick(PublicItemsAdapter.this, viewHolder, view, position,
               getItemId(position));
@@ -92,9 +95,14 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
     return getItem(getItemCount() - 1);
   }
 
+  private static final String TAG = "PublicItemsAdapter";
+
   @Override
   public void loadItems(final boolean isLoadingMore, int page, int pageLimit,
                         @Nullable String query, final Callback<List<Post>> callback) {
+    Log.d(TAG, "loadItems() called with: " + "isLoadingMore = [" + isLoadingMore + "], page = ["
+        + page + "], pageLimit = [" + pageLimit + "]");
+
     final Call<List<Post>> data;
     if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
       data = ApiClient.openStream(page, pageLimit);
@@ -177,7 +185,7 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
 
     // Others
     @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
-    @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
+    @BindDimen(R.dimen.image_border_small) int mIconBorderWidth;
     @BindColor(R.color.colorAccent) int mIconBorderColor;
 
     @BindDimen(R.dimen.tag_icon_size) int mTagIconSize;

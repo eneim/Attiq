@@ -6,21 +6,17 @@ import android.content.SharedPreferences;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
-import com.facebook.stetho.Stetho;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseInstallation;
 import com.squareup.picasso.Picasso;
-import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 
 import im.ene.lab.attiq.util.AnalyticsTrackers;
 import im.ene.lab.attiq.util.TimeUtil;
 import io.fabric.sdk.android.Fabric;
-import io.realm.DynamicRealm;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmMigration;
 import okhttp3.OkHttpClient;
 
 /**
@@ -68,25 +64,15 @@ public class Attiq extends Application {
     ParseACL.setDefaultACL(defaultACL, true);
     // Fabric, Answer, Crashlytics, ...
     Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
+
     // Date, Time, ...
     TimeUtil.init(this);
     // Realm
-    RealmConfiguration config = new RealmConfiguration.Builder(this)
+    final RealmConfiguration config = new RealmConfiguration.Builder(this)
         .name(getString(R.string.realm_name))
         .schemaVersion(R.integer.realm_version)
-        .migration(new RealmMigration() {
-          @Override public void migrate(DynamicRealm dynamicRealm, long oldVer, long newVer) {
-
-          }
-        }).build();
-    // Delete old data by default
-    if (BuildConfig.DEBUG) {
-      try {
-        // Realm.deleteRealm(config);
-      } catch (IllegalStateException er) {
-        er.printStackTrace();
-      }
-    }
+        .deleteRealmIfMigrationNeeded()
+        .build();
 
     Realm.setDefaultConfiguration(config);
 
@@ -96,11 +82,11 @@ public class Attiq extends Application {
         .downloader(new OkHttp3Downloader(mHttpClient))  // a separated client
         .build();
 
-    Stetho.initialize(
-        Stetho.newInitializerBuilder(this)
-            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-            .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
-            .build());
+//    Stetho.initialize(
+//        Stetho.newInitializerBuilder(this)
+//            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+//            .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
+//            .build());
 
   }
 }

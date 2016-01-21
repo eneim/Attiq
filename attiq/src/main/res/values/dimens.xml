@@ -48,7 +48,8 @@
     <dimen name="recycler_view_padding">0dp</dimen>
     <dimen name="item_padding">8dp</dimen>
     <dimen name="item_padding_half">4dp</dimen>
-    <dimen name="dimen_unit">1px</dimen>
+    <dimen name="dimen_unit">1dp</dimen>
+    <dimen name="image_border_small">2dp</dimen>
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="app_bar_max_elevation">4dp</dimen>
     <dimen name="app_bar_min_elevation">0dp</dimen>
