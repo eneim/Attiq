@@ -33,8 +33,6 @@ import io.realm.Realm;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
@@ -156,19 +154,12 @@ public class FeedListFragment extends ListFragment<FeedItem> {
       List<FeedItem> items = response.body();
       if (!UIUtil.isEmpty(items)) {
         final Realm realm = Attiq.realm();
-        try {
-          realm.beginTransaction();
-          for (FeedItem item : items) {
-            item.setId(IOUtil.sha1(IOUtil.toString(item)));
-            realm.copyToRealmOrUpdate(item);
-          }
-          realm.commitTransaction();
-        } catch (NoSuchAlgorithmException e) {
-          e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-          e.printStackTrace();
+        realm.beginTransaction();
+        for (FeedItem item : items) {
+          item.setId(IOUtil.hashCode(item) + "");
+          realm.copyToRealmOrUpdate(item);
         }
-
+        realm.commitTransaction();
         mAdapter.addItems(items);
         EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), 1));
       }

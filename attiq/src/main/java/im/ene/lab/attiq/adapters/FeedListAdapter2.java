@@ -46,6 +46,7 @@ import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.zero.FeedItem;
+import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TextViewTarget;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
@@ -111,7 +112,7 @@ public class FeedListAdapter2 extends RealmListAdapter<FeedItem> {
   }
 
   @Override public long getItemId(int position) {
-    return getItem(position).getCreatedAtInUnixtime();
+    return IOUtil.hashCode(getItem(position));
   }
 
   @Override public int getItemCount() {
@@ -150,7 +151,7 @@ public class FeedListAdapter2 extends RealmListAdapter<FeedItem> {
     @BindDimen(R.dimen.tag_icon_size) int mTagIconSize;
     @BindDimen(R.dimen.tag_icon_size_half) int mTagIconSizeHalf;
     @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
-    @BindDimen(R.dimen.image_border_small) int mIconBorderWidth;
+    @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
     @BindColor(R.color.colorAccent) int mIconBorderColor;
 
     public FeedViewHolder(View view) {

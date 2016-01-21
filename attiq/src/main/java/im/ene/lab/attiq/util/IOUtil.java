@@ -97,6 +97,30 @@ public class IOUtil {
         '}';
   }
 
+  public static int hashCode(FeedItem item) {
+    int result = item.getCreatedAtInUnixtime().hashCode();
+    result = 31 * result + item.getFollowableImageUrl().hashCode();
+    result = 31 * result + item.getFollowableName().hashCode();
+    result = 31 * result + item.getFollowableType().hashCode();
+    result = 31 * result + item.getFollowableUrl().hashCode();
+    result = 31 * result + (item.getMentionedObjectBody() != null ?
+        item.getMentionedObjectBody().hashCode() : 0);
+    result = 31 * result + (item.getMentionedObjectCommentsCount() != null ?
+        item.getMentionedObjectCommentsCount().hashCode() : 0);
+    result = 31 * result + (item.getMentionedObjectImageUrl() != null ?
+        item.getMentionedObjectImageUrl().hashCode() : 0);
+    result = 31 * result + item.getMentionedObjectName().hashCode();
+    result = 31 * result + (item.getMentionedObjectStocksCount() != null ?
+        item.getMentionedObjectStocksCount().hashCode() : 0);
+    result = 31 * result + (item.getMentionedObjectTags() != null ?
+        item.getMentionedObjectTags().toString().hashCode() : 0);
+    result = 31 * result + item.getMentionedObjectUrl().hashCode();
+    result = 31 * result + (item.getMentionedObjectUuid() != null ?
+        item.getMentionedObjectUuid().hashCode() : 0);
+    result = 31 * result + item.getTrackableType().hashCode();
+    return result;
+  }
+
   public static String sha1(String text) throws NoSuchAlgorithmException,
       UnsupportedEncodingException {
     MessageDigest digest = MessageDigest.getInstance("SHA-1");

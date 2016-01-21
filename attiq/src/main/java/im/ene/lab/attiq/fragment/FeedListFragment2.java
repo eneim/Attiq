@@ -51,8 +51,6 @@ import io.realm.Sort;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
@@ -117,7 +115,7 @@ public class FeedListFragment2 extends RealmListFragment<FeedItem> {
     mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
         DividerItemDecoration.VERTICAL_LIST));
 
-    mOnItemClickListener = new FeedListAdapter2.OnFeedItemClickListener() {
+    mOnItemClickListener = new OnMopubItemClickListener() {
       @Override public void onMentionedUserClick(FeedItem host) {
         Uri itemUri = Uri.parse(host.getMentionedObjectUrl());
         ApiClient.itemDetail(itemUri.getLastPathSegment()).enqueue(mOnArticleLoaded);
@@ -177,15 +175,9 @@ public class FeedListFragment2 extends RealmListFragment<FeedItem> {
       if (!UIUtil.isEmpty(items)) {
         mTransactionTask = Attiq.realm().executeTransaction(new Realm.Transaction() {
           @Override public void execute(Realm realm) {
-            try {
-              for (FeedItem item : items) {
-                item.setId(IOUtil.sha1(IOUtil.toString(item)));
-                realm.copyToRealmOrUpdate(item);
-              }
-            } catch (NoSuchAlgorithmException e) {
-              e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
-              e.printStackTrace();
+            for (FeedItem item : items) {
+              item.setId(IOUtil.hashCode(item) + "");
+              realm.copyToRealmOrUpdate(item);
             }
           }
         }, new Realm.Transaction.Callback() {
@@ -200,6 +192,17 @@ public class FeedListFragment2 extends RealmListFragment<FeedItem> {
           }
         });
       }
+    }
+  }
+
+  private abstract class OnMopubItemClickListener
+      extends FeedListAdapter2.OnFeedItemClickListener {
+
+    @Override
+    public void onItemClick(BaseAdapter adapter, BaseAdapter.ViewHolder viewHolder, View view,
+                            int adapterPos, long itemId) {
+      int originPos = mMopubAdapter.getOriginalPosition(adapterPos);
+      super.onItemClick(adapter, viewHolder, view, originPos, itemId);
     }
   }
 

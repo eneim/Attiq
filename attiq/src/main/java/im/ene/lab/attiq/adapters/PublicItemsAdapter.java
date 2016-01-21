@@ -185,7 +185,7 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
 
     // Others
     @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
-    @BindDimen(R.dimen.image_border_small) int mIconBorderWidth;
+    @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
     @BindColor(R.color.colorAccent) int mIconBorderColor;
 
     @BindDimen(R.dimen.tag_icon_size) int mTagIconSize;
