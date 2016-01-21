@@ -67,8 +67,7 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
         Log.d(TAG, "onClick() called with: " + "view = [" + view + "]" + " position = " +
             "[" + position + "]");
         if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-          mOnItemClickListener.onItemClick(PublicItemsAdapter.this, viewHolder, view, position,
-              getItemId(position));
+          mOnItemClickListener.onItemClick(PublicItemsAdapter.this, viewHolder, view, position, 0);
         }
       }
     });
@@ -142,8 +141,7 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
     }
   }
 
-  public static abstract class OnPublicItemClickListener
-      implements BaseAdapter.OnItemClickListener {
+  public static abstract class OnPublicItemClickListener implements OnItemClickListener {
 
     public abstract void onUserClick(PublicUser user);
 

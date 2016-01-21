@@ -9,8 +9,8 @@ import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
 import im.ene.lab.attiq.adapters.ArticleListAdapter;
-import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.adapters.ListAdapter;
+import im.ene.lab.attiq.adapters.OnItemClickListener;
 import im.ene.lab.attiq.adapters.UserStockArticlesAdapter;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.User;
@@ -55,7 +55,7 @@ public class UserStockedItemsFragment extends ListFragment<Article> {
     return new UserStockArticlesAdapter(mUserId);
   }
 
-  private BaseAdapter.OnItemClickListener mItemClickListener;
+  private OnItemClickListener mItemClickListener;
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

@@ -7,8 +7,8 @@ import android.view.View;
 
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.adapters.ArticleListAdapter;
-import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.adapters.ListAdapter;
+import im.ene.lab.attiq.adapters.OnItemClickListener;
 import im.ene.lab.attiq.adapters.UserArticlesAdapter;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.User;
@@ -49,7 +49,7 @@ public class UserItemsFragment extends ListFragment<Article> {
     return new UserArticlesAdapter(mUserId);
   }
 
-  private BaseAdapter.OnItemClickListener mItemClickListener;
+  private OnItemClickListener mItemClickListener;
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

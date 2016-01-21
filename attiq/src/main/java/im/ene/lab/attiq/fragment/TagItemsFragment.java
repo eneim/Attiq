@@ -9,8 +9,8 @@ import android.view.View;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
 import im.ene.lab.attiq.adapters.ArticleListAdapter;
-import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.adapters.ListAdapter;
+import im.ene.lab.attiq.adapters.OnItemClickListener;
 import im.ene.lab.attiq.adapters.TagItemsAdapter;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.User;
@@ -31,7 +31,7 @@ public class TagItemsFragment extends ListFragment<Article> {
   private static final String SCREEN_NAME = "attiq:user:tag_items";
 
   private String mTagId;
-  private BaseAdapter.OnItemClickListener mOnItemClickListener;
+  private OnItemClickListener mOnItemClickListener;
   private Callback mCallback;
 
   public static TagItemsFragment newInstance(String tagId) {

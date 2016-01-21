@@ -123,7 +123,7 @@ public class FeedListAdapter2 extends RealmListAdapter<FeedItem> {
   public void loadItems(boolean isLoadingMore, int page, int pageLimit,
                         @Nullable String query, Callback<List<FeedItem>> callback) {
     final Long createdAt;
-    if (getItemCount() == 0) {
+    if (getItemCount() == 0 || !isLoadingMore) {
       createdAt = null;
     } else {
       createdAt = getItem(getItemCount() - 1).getCreatedAtInUnixtime();

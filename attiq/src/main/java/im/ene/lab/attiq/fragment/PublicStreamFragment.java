@@ -4,7 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.mopub.common.MoPub;
 import com.mopub.nativeads.MoPubRecyclerAdapter;
@@ -15,7 +17,7 @@ import com.mopub.nativeads.ViewBinder;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
-import im.ene.lab.attiq.adapters.BaseAdapter;
+import im.ene.lab.attiq.adapters.OnItemClickListener;
 import im.ene.lab.attiq.adapters.PublicItemsAdapter;
 import im.ene.lab.attiq.adapters.RealmListAdapter;
 import im.ene.lab.attiq.data.one.PublicUser;
@@ -55,10 +57,10 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
   @NonNull @Override protected RealmListAdapter<Post> createRealmAdapter() {
     RealmResults<Post> items = mRealm.where(Post.class)
         .findAllSorted("createdAtAsSeconds", Sort.DESCENDING);
-    return new PublicItemsAdapter(items);
+    return new PublicItemsWithAdsAdapter(items);
   }
 
-  private BaseAdapter.OnItemClickListener mItemClickListener;
+  private OnItemClickListener mItemClickListener;
 
   private MoPubRecyclerAdapter mMopubAdapter;
 
@@ -83,7 +85,7 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
     mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
         DividerItemDecoration.VERTICAL_LIST));
 
-    mItemClickListener = new OnMopubItemClickListener() {
+    mItemClickListener = new PublicItemsAdapter.OnPublicItemClickListener() {
       @Override public void onUserClick(PublicUser user) {
         startActivity(ProfileActivity.createIntent(getContext(), user.getUrlName()));
       }
@@ -109,17 +111,6 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
     super.onDestroyView();
   }
 
-  private abstract class OnMopubItemClickListener
-      extends PublicItemsAdapter.OnPublicItemClickListener {
-
-    @Override
-    public void onItemClick(BaseAdapter adapter, BaseAdapter.ViewHolder viewHolder, View view,
-                            int adapterPos, long itemId) {
-      int originPos = mMopubAdapter.getOriginalPosition(adapterPos);
-      super.onItemClick(adapter, viewHolder, view, originPos, itemId);
-    }
-  }
-
   /**
    * Native Ads on Public timeline
    */
@@ -130,5 +121,30 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
     private static final int AD_VIEW_ICON = R.id.ads_icon;
     private static final int AD_VIEW_IMAGE = R.id.ads_image;
     private static final int AD_VIEW_TEXT = R.id.ads_text;
+  }
+
+  private class PublicItemsWithAdsAdapter extends PublicItemsAdapter {
+
+    public PublicItemsWithAdsAdapter(RealmResults<Post> items) {
+      super(items);
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      final ViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);
+      viewHolder.setOnViewHolderClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          int position = viewHolder.getAdapterPosition();
+          if (mMopubAdapter != null) {
+            position = mMopubAdapter.getOriginalPosition(position);
+            if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
+              mOnItemClickListener.onItemClick(PublicItemsWithAdsAdapter.this,
+                  viewHolder, v, position, getItemId(position));
+            }
+          }
+        }
+      });
+      return viewHolder;
+    }
   }
 }

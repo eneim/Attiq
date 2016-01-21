@@ -137,7 +137,7 @@ public class UserTagsAdapter extends ListAdapter<PublicTag> {
     }
   }
 
-  public static abstract class OnTagClickListener implements BaseAdapter.OnItemClickListener {
+  public static abstract class OnTagClickListener implements OnItemClickListener {
 
     public abstract void onTagClick(String tagName);
 

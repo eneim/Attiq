@@ -16,9 +16,9 @@ import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
-import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.adapters.FeedListAdapter;
 import im.ene.lab.attiq.adapters.ListAdapter;
+import im.ene.lab.attiq.adapters.OnItemClickListener;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.zero.FeedItem;
@@ -59,7 +59,7 @@ public class FeedListFragment extends ListFragment<FeedItem> {
 
   private static final String TAG = "FeedListFragment";
 
-  private BaseAdapter.OnItemClickListener mOnItemClickListener;
+  private OnItemClickListener mOnItemClickListener;
 
   private MoPubRecyclerAdapter mMopubAdapter;
 
@@ -156,7 +156,7 @@ public class FeedListFragment extends ListFragment<FeedItem> {
         final Realm realm = Attiq.realm();
         realm.beginTransaction();
         for (FeedItem item : items) {
-          item.setId(IOUtil.hashCode(item) + "");
+          item.setId(IOUtil.hashCode(item));
           realm.copyToRealmOrUpdate(item);
         }
         realm.commitTransaction();

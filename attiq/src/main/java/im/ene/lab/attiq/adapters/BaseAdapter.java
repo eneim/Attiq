@@ -49,19 +49,4 @@ public abstract class BaseAdapter<VH extends BaseAdapter.ViewHolder>
     }
   }
 
-  public interface OnItemClickListener {
-
-    /**
-     * Interact with RecyclerView's item on click event
-     *
-     * @param adapter         who holds data
-     * @param viewHolder      the #ViewHolder who receives click event
-     * @param view            the view under the click event
-     * @param adapterPosition position of clicked item in adapter
-     * @param itemId          retrieve from
-     *                        {@link RecyclerView.Adapter#getItemId(int)}
-     */
-    void onItemClick(BaseAdapter adapter, ViewHolder viewHolder, View view,
-                     int adapterPosition, long itemId);
-  }
 }

@@ -16,8 +16,8 @@ import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.activities.TagItemsActivity;
-import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.adapters.ListAdapter;
+import im.ene.lab.attiq.adapters.OnItemClickListener;
 import im.ene.lab.attiq.adapters.UserTagsAdapter;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.one.PublicTag;
@@ -68,7 +68,7 @@ public class UserTagsFragment extends BaseFragment
   private Handler mHandler = new Handler(this);
   private int mPage = DEFAULT_FIRST_PAGE;
 
-  private BaseAdapter.OnItemClickListener mOnItemClickListener;
+  private OnItemClickListener mOnItemClickListener;
 
   public static UserTagsFragment newInstance(String userId) {
     UserTagsFragment fragment = new UserTagsFragment();

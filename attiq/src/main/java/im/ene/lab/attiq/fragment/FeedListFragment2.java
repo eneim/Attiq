@@ -20,8 +20,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 
+import com.mopub.common.MoPub;
 import com.mopub.nativeads.MoPubRecyclerAdapter;
 import com.mopub.nativeads.MoPubStaticNativeAdRenderer;
 import com.mopub.nativeads.RequestParameters;
@@ -32,8 +35,8 @@ import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
-import im.ene.lab.attiq.adapters.BaseAdapter;
 import im.ene.lab.attiq.adapters.FeedListAdapter2;
+import im.ene.lab.attiq.adapters.OnItemClickListener;
 import im.ene.lab.attiq.adapters.RealmListAdapter;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.Article;
@@ -77,7 +80,7 @@ public class FeedListFragment2 extends RealmListFragment<FeedItem> {
 
   private static final String TAG = "FeedListFragment";
 
-  private BaseAdapter.OnItemClickListener mOnItemClickListener;
+  private OnItemClickListener mOnItemClickListener;
 
   private MoPubRecyclerAdapter mMopubAdapter;
 
@@ -98,6 +101,11 @@ public class FeedListFragment2 extends RealmListFragment<FeedItem> {
     }
   };
 
+  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    MoPub.setLocationAwareness(MoPub.LocationAwareness.NORMAL);
+  }
+
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mMopubAdapter = new MoPubRecyclerAdapter(getActivity(), mAdapter);
@@ -115,7 +123,7 @@ public class FeedListFragment2 extends RealmListFragment<FeedItem> {
     mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
         DividerItemDecoration.VERTICAL_LIST));
 
-    mOnItemClickListener = new OnMopubItemClickListener() {
+    mOnItemClickListener = new FeedListAdapter2.OnFeedItemClickListener() {
       @Override public void onMentionedUserClick(FeedItem host) {
         Uri itemUri = Uri.parse(host.getMentionedObjectUrl());
         ApiClient.itemDetail(itemUri.getLastPathSegment()).enqueue(mOnArticleLoaded);
@@ -157,7 +165,7 @@ public class FeedListFragment2 extends RealmListFragment<FeedItem> {
   @NonNull @Override protected RealmListAdapter<FeedItem> createRealmAdapter() {
     RealmResults<FeedItem> items = mRealm.where(FeedItem.class)
         .findAllSorted("createdAtInUnixtime", Sort.DESCENDING);
-    return new FeedListAdapter2(items);
+    return new FeedListWithAdsAdapter(items);
   }
 
   @Override public void onFailure(Throwable t) {
@@ -176,12 +184,11 @@ public class FeedListFragment2 extends RealmListFragment<FeedItem> {
         mTransactionTask = Attiq.realm().executeTransaction(new Realm.Transaction() {
           @Override public void execute(Realm realm) {
             for (FeedItem item : items) {
-              item.setId(IOUtil.hashCode(item) + "");
-              realm.copyToRealmOrUpdate(item);
+              item.setId(IOUtil.hashCode(item));
             }
+            realm.copyToRealmOrUpdate(items);
           }
         }, new Realm.Transaction.Callback() {
-
           @Override public void onSuccess() {
             EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), mPage));
           }
@@ -195,17 +202,6 @@ public class FeedListFragment2 extends RealmListFragment<FeedItem> {
     }
   }
 
-  private abstract class OnMopubItemClickListener
-      extends FeedListAdapter2.OnFeedItemClickListener {
-
-    @Override
-    public void onItemClick(BaseAdapter adapter, BaseAdapter.ViewHolder viewHolder, View view,
-                            int adapterPos, long itemId) {
-      int originPos = mMopubAdapter.getOriginalPosition(adapterPos);
-      super.onItemClick(adapter, viewHolder, view, originPos, itemId);
-    }
-  }
-
   /**
    * Native Ads on Public timeline
    */
@@ -216,5 +212,30 @@ public class FeedListFragment2 extends RealmListFragment<FeedItem> {
     private static final int AD_VIEW_ICON = R.id.ads_icon;
     private static final int AD_VIEW_IMAGE = R.id.ads_image;
     private static final int AD_VIEW_TEXT = R.id.ads_text;
+  }
+
+  private class FeedListWithAdsAdapter extends FeedListAdapter2 {
+
+    public FeedListWithAdsAdapter(RealmResults<FeedItem> items) {
+      super(items);
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      final ViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);
+      viewHolder.setOnViewHolderClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          int position = viewHolder.getAdapterPosition();
+          if (mMopubAdapter != null) {
+            position = mMopubAdapter.getOriginalPosition(position);
+            if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
+              mOnItemClickListener.onItemClick(FeedListWithAdsAdapter.this,
+                  viewHolder, v, position, getItemId(position));
+            }
+          }
+        }
+      });
+      return viewHolder;
+    }
   }
 }

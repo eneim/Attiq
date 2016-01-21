@@ -63,7 +63,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.adapters.ArticleListAdapter;
-import im.ene.lab.attiq.adapters.BaseAdapter;
+import im.ene.lab.attiq.adapters.OnItemClickListener;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.two.User;
@@ -105,7 +105,7 @@ public class SearchActivity extends BaseActivity {
   @BindDimen(R.dimen.z_app_bar) float mAppBarElevation;
   private BaselineGridTextView mNoResults;
   private Transition mAutoTransition;
-  private BaseAdapter.OnItemClickListener mOnResultItemClick;
+  private OnItemClickListener mOnResultItemClick;
 
   private int mSearchBackDistanceX;
   private int mSearchIconCenterX;
