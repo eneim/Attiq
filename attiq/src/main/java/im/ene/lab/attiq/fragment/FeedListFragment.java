@@ -1,11 +1,30 @@
+/*
+ * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package im.ene.lab.attiq.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 
+import com.mopub.common.MoPub;
 import com.mopub.nativeads.MoPubRecyclerAdapter;
 import com.mopub.nativeads.MoPubStaticNativeAdRenderer;
 import com.mopub.nativeads.RequestParameters;
@@ -17,8 +36,8 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.activities.ItemDetailActivity;
 import im.ene.lab.attiq.activities.ProfileActivity;
 import im.ene.lab.attiq.adapters.FeedListAdapter;
-import im.ene.lab.attiq.adapters.ListAdapter;
 import im.ene.lab.attiq.adapters.OnItemClickListener;
+import im.ene.lab.attiq.adapters.RealmListAdapter;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.two.Article;
 import im.ene.lab.attiq.data.zero.FeedItem;
@@ -30,6 +49,8 @@ import im.ene.lab.attiq.util.event.ItemDetailEvent;
 import im.ene.lab.attiq.util.event.TypedEvent;
 import im.ene.lab.attiq.widgets.DividerItemDecoration;
 import io.realm.Realm;
+import io.realm.RealmResults;
+import io.realm.Sort;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -38,7 +59,7 @@ import java.util.List;
 /**
  * Created by eneim on 12/25/15.
  */
-public class FeedListFragment extends ListFragment<FeedItem> {
+public class FeedListFragment extends RealmListFragment<FeedItem> {
 
   private static final String SCREEN_NAME = "attiq:home:feed_list";
 
@@ -79,6 +100,11 @@ public class FeedListFragment extends ListFragment<FeedItem> {
           new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
     }
   };
+
+  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    MoPub.setLocationAwareness(MoPub.LocationAwareness.NORMAL);
+  }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -136,8 +162,10 @@ public class FeedListFragment extends ListFragment<FeedItem> {
     }
   }
 
-  @NonNull @Override protected ListAdapter<FeedItem> createAdapter() {
-    return new FeedListAdapter();
+  @NonNull @Override protected RealmListAdapter<FeedItem> createRealmAdapter() {
+    RealmResults<FeedItem> items = mRealm.where(FeedItem.class)
+        .findAllSorted("createdAtInUnixtime", Sort.DESCENDING);
+    return new FeedListWithAdsAdapter(items);
   }
 
   @Override public void onFailure(Throwable t) {
@@ -151,17 +179,25 @@ public class FeedListFragment extends ListFragment<FeedItem> {
       EventBus.getDefault().post(new TypedEvent<>(false,
           new Event.Error(response.code(), ApiClient.parseError(response).message), null, 1));
     } else {
-      List<FeedItem> items = response.body();
+      final List<FeedItem> items = response.body();
       if (!UIUtil.isEmpty(items)) {
-        final Realm realm = Attiq.realm();
-        realm.beginTransaction();
-        for (FeedItem item : items) {
-          item.setId(IOUtil.hashCode(item));
-          realm.copyToRealmOrUpdate(item);
-        }
-        realm.commitTransaction();
-        mAdapter.addItems(items);
-        EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), 1));
+        mTransactionTask = Attiq.realm().executeTransaction(new Realm.Transaction() {
+          @Override public void execute(Realm realm) {
+            for (FeedItem item : items) {
+              item.setId(IOUtil.hashCode(item));
+            }
+            realm.copyToRealmOrUpdate(items);
+          }
+        }, new Realm.Transaction.Callback() {
+          @Override public void onSuccess() {
+            EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), mPage));
+          }
+
+          @Override public void onError(Exception e) {
+            EventBus.getDefault().post(new TypedEvent<>(false,
+                new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), null, mPage));
+          }
+        });
       }
     }
   }
@@ -176,5 +212,30 @@ public class FeedListFragment extends ListFragment<FeedItem> {
     private static final int AD_VIEW_ICON = R.id.ads_icon;
     private static final int AD_VIEW_IMAGE = R.id.ads_image;
     private static final int AD_VIEW_TEXT = R.id.ads_text;
+  }
+
+  private class FeedListWithAdsAdapter extends FeedListAdapter {
+
+    public FeedListWithAdsAdapter(RealmResults<FeedItem> items) {
+      super(items);
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      final ViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);
+      viewHolder.setOnViewHolderClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          int position = viewHolder.getAdapterPosition();
+          if (mMopubAdapter != null) {
+            position = mMopubAdapter.getOriginalPosition(position);
+            if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
+              mOnItemClickListener.onItemClick(FeedListWithAdsAdapter.this,
+                  viewHolder, v, position, getItemId(position));
+            }
+          }
+        }
+      });
+      return viewHolder;
+    }
   }
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package im.ene.lab.attiq.adapters;
 
 import android.content.Context;
@@ -11,6 +27,7 @@ import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,28 +46,28 @@ import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.zero.FeedItem;
+import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TextViewTarget;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.widgets.RoundedTransformation;
+import io.realm.RealmResults;
 import retrofit2.Callback;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by eneim on 12/25/15.
  */
-public class FeedListAdapter extends ListAdapter<FeedItem> {
+public class FeedListAdapter extends RealmListAdapter<FeedItem> {
 
   private static final int VIEW_TYPE_ITEM = 1 << 1;
   private static final int VIEW_TYPE_FOLLOW = 1 << 2;
-  private final ArrayList<FeedItem> mItems;
-  private final Object LOCK = new Object();
+  private final RealmResults<FeedItem> mItems;
 
-  public FeedListAdapter() {
+  public FeedListAdapter(RealmResults<FeedItem> items) {
     super();
-    this.mItems = new ArrayList<>();
+    this.mItems = items;
     setHasStableIds(true);
   }
 
@@ -95,7 +112,7 @@ public class FeedListAdapter extends ListAdapter<FeedItem> {
   }
 
   @Override public long getItemId(int position) {
-    return getItem(position).getCreatedAtInUnixtime();
+    return IOUtil.hashCode(getItem(position));
   }
 
   @Override public int getItemCount() {
@@ -106,7 +123,7 @@ public class FeedListAdapter extends ListAdapter<FeedItem> {
   public void loadItems(boolean isLoadingMore, int page, int pageLimit,
                         @Nullable String query, Callback<List<FeedItem>> callback) {
     final Long createdAt;
-    if (getItemCount() == 0) {
+    if (getItemCount() == 0 || !isLoadingMore) {
       createdAt = null;
     } else {
       createdAt = getItem(getItemCount() - 1).getCreatedAtInUnixtime();
@@ -115,29 +132,9 @@ public class FeedListAdapter extends ListAdapter<FeedItem> {
     ApiClient.feed(createdAt).enqueue(callback);
   }
 
-  @Override public void addItem(FeedItem item) {
-    synchronized (LOCK) {
-      mItems.add(item);
-      notifyItemInserted(getItemCount() - 1);
-    }
-  }
-
-  @Override public void addItems(List<FeedItem> items) {
-    synchronized (LOCK) {
-      int oldLen = getItemCount();
-      mItems.addAll(items);
-      notifyItemRangeInserted(oldLen, items.size());
-    }
-  }
-
-  @Override public void clear() {
-    synchronized (LOCK) {
-      mItems.clear();
-      notifyDataSetChanged();
-    }
-  }
-
   public static class FeedViewHolder extends ViewHolder<FeedItem> {
+
+    private static final String TAG = "FeedViewHolder";
 
     static final int LAYOUT_RES = R.layout.feed_item_view;
 
@@ -154,7 +151,7 @@ public class FeedListAdapter extends ListAdapter<FeedItem> {
     @BindDimen(R.dimen.tag_icon_size) int mTagIconSize;
     @BindDimen(R.dimen.tag_icon_size_half) int mTagIconSizeHalf;
     @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
-    @BindDimen(R.dimen.image_border_small) int mIconBorderWidth;
+    @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
     @BindColor(R.color.colorAccent) int mIconBorderColor;
 
     public FeedViewHolder(View view) {
@@ -230,6 +227,9 @@ public class FeedListAdapter extends ListAdapter<FeedItem> {
               @Override
               public void onBitmapLoaded(TextView textView, Bitmap bitmap,
                                          Picasso.LoadedFrom from) {
+                Log.d(TAG, "onBitmapLoaded() called with: " + "textView = [" + textView + "], " +
+                    "bitmap = [" + bitmap.getWidth() + " - " + bitmap.getHeight() +
+                    "], from = [" + from + "]");
                 RoundedBitmapDrawable drawable =
                     RoundedBitmapDrawableFactory.create(itemView.getResources(), bitmap);
                 TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView,
