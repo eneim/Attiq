@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 
-<im.ene.lab.attiq.widgets.BaselineGridTextView
+<im.ene.lab.attiq.ui.widgets.BaselineGridTextView
     android:id="@+id/no_search_results"
     style="@style/Attiq.Widget.EmptyText"
     xmlns:android="http://schemas.android.com/apk/res/android"

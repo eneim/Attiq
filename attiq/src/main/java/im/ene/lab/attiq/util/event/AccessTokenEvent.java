@@ -2,7 +2,7 @@ package im.ene.lab.attiq.util.event;
 
 import android.support.annotation.Nullable;
 
-import im.ene.lab.attiq.data.two.AccessToken;
+import im.ene.lab.attiq.data.model.two.AccessToken;
 
 /**
  * Created by eneim on 12/13/15.

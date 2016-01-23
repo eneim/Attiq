@@ -2,7 +2,7 @@ package im.ene.lab.attiq.util.event;
 
 import android.support.annotation.Nullable;
 
-import im.ene.lab.attiq.data.two.Article;
+import im.ene.lab.attiq.data.model.two.Article;
 
 /**
  * Created by eneim on 12/15/15.

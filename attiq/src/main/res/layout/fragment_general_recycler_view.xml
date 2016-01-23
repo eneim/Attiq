@@ -3,7 +3,7 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <im.ene.lab.attiq.widgets.MultiSwipeRefreshLayout
+    <im.ene.lab.attiq.ui.widgets.MultiSwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -12,7 +12,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <im.ene.lab.attiq.widgets.NonEmptyRecyclerView
+            <im.ene.lab.attiq.ui.widgets.NonEmptyRecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -22,7 +22,7 @@
                 android:scrollbars="vertical"/>
         </FrameLayout>
 
-    </im.ene.lab.attiq.widgets.MultiSwipeRefreshLayout>
+    </im.ene.lab.attiq.ui.widgets.MultiSwipeRefreshLayout>
 
     <TextView
         android:id="@+id/view_error_container"

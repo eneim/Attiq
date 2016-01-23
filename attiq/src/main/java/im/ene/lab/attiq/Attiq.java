@@ -10,6 +10,7 @@ import com.jakewharton.picasso.OkHttp3Downloader;
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseInstallation;
+import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
 import im.ene.lab.attiq.util.AnalyticsTrackers;
@@ -62,6 +63,14 @@ public class Attiq extends Application {
     ParseInstallation.getCurrentInstallation().saveInBackground();
     ParseACL defaultACL = new ParseACL();
     ParseACL.setDefaultACL(defaultACL, true);
+    if (ParseUser.getCurrentUser() == null) {
+      ParseUser.enableAutomaticUser();
+    }
+
+    if (ParseUser.getCurrentUser() != null) {
+      ParseUser.getCurrentUser().increment("runCount");
+      ParseUser.getCurrentUser().saveInBackground();
+    }
     // Fabric, Answer, Crashlytics, ...
     Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
 
@@ -81,12 +90,6 @@ public class Attiq extends Application {
         // .defaultBitmapConfig(Bitmap.Config.RGB_565)
         .downloader(new OkHttp3Downloader(mHttpClient))  // a separated client
         .build();
-
-//    Stetho.initialize(
-//        Stetho.newInitializerBuilder(this)
-//            .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-//            .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
-//            .build());
 
   }
 }

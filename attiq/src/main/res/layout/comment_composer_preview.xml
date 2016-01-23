@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <im.ene.lab.attiq.widgets.MarkdownView
+    <im.ene.lab.attiq.ui.widgets.MarkdownView
         android:id="@+id/previewer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -8,7 +8,7 @@ import com.google.gson.GsonBuilder;
 import android.content.res.AssetManager;
 
 import im.ene.lab.attiq.Attiq;
-import im.ene.lab.attiq.data.zero.FeedItem;
+import im.ene.lab.attiq.data.model.zero.FeedItem;
 import io.realm.RealmObject;
 import okio.BufferedSource;
 import okio.Okio;

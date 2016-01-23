@@ -49,7 +49,7 @@ android {
         versionName VERSION_NAME
         manifestPlaceholders = [fabric_api_key: "${attiq_fabric_api_key}"]
         multiDexEnabled false
-        resValue "string", "attiq_parse_app_id", "${attiq_parse_client_key}"
+        resValue "string", "attiq_parse_app_id", "${attiq_parse_app_id}"
         resValue "string", "attiq_parse_client_key", "${attiq_parse_client_key}"
         resValue "string", "attiq_gcm_sender_id", "${attiq_gcm_sender_id}"
     }

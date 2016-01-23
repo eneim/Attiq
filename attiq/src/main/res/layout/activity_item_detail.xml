@@ -22,7 +22,7 @@
 
         <include layout="@layout/item_detail_content_main"/>
 
-        <im.ene.lab.attiq.widgets.NotBadNavView
+        <im.ene.lab.attiq.ui.widgets.NotBadNavView
             android:layout_width="@dimen/menu_container_width"
             android:layout_height="match_parent"
             android:layout_gravity="end|right"
@@ -43,7 +43,7 @@
 
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
-        </im.ene.lab.attiq.widgets.NotBadNavView>
+        </im.ene.lab.attiq.ui.widgets.NotBadNavView>
 
     </android.support.v4.widget.DrawerLayout>
 
@@ -119,7 +119,7 @@
                 app:tabMode="scrollable"/>
         </RelativeLayout>
 
-        <im.ene.lab.attiq.widgets.CommentComposerView
+        <im.ene.lab.attiq.ui.widgets.CommentComposerView
             android:id="@+id/comment_composer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

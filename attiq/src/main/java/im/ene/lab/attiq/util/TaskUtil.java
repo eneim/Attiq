@@ -21,7 +21,6 @@ public class TaskUtil {
     new AsyncTask<Void, Void, String>() {
 
       @Override protected void onPreExecute() {
-        super.onPreExecute();
         if (callback != null) {
           callback.onStart();
         }
