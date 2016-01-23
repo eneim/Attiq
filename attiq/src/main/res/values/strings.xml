@@ -167,4 +167,6 @@
     <string name="icon_empty_description" translatable="false">
         https://www.iconfinder.com/icons/183438/cloud_sun_icon#size=512
     </string>
+    <string name="article_read_status">last viewed: %1$s</string>
+    <string name="tab_title_history">History</string>
 </resources>

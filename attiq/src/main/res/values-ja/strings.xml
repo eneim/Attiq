@@ -80,4 +80,6 @@
     <string name="share_content">%1$s</string>
     <string name="response_error">問題がありました〜</string>
     <string name="response_empty">まだ何もないな〜</string>
+    <string name="article_read_status">"ラストビュー：%1$s"</string>
+    <string name="tab_title_history">閲覧履歴</string>
 </resources>

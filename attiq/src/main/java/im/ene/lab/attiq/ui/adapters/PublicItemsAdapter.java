@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.TextViewCompat;
@@ -27,6 +28,7 @@ import butterknife.BindDimen;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
+import im.ene.lab.attiq.data.model.local.ReadArticle;
 import im.ene.lab.attiq.data.model.one.PublicTag;
 import im.ene.lab.attiq.data.model.one.PublicUser;
 import im.ene.lab.attiq.data.model.zero.Post;
@@ -184,6 +186,7 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
     @Bind(R.id.item_tags) FlowLayout mItemTags;
     @Bind(R.id.item_info) TextView mItemInfo;
     @Bind(R.id.item_posted_info) TextView mItemUserInfo;
+    @Bind(R.id.item_read_status) TextView mReadStatus;
 
     // Others
     @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
@@ -209,6 +212,19 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
     }
 
     @Override public void bind(Post item) {
+      ReadArticle ref = Attiq.realm().where(ReadArticle.class)
+          .equalTo(ReadArticle.FIELD_ARTICLE_ID, item.getUuid()).findFirst();
+      // Update background if this item has already been read
+      if (ref != null) {
+        itemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.read_color_true));
+        mReadStatus.setText(mContext.getString(R.string.article_read_status,
+            TimeUtil.beautify(ref.getLastView())));
+        mReadStatus.setVisibility(View.VISIBLE);
+      } else {
+        itemView.setBackgroundColor(ContextCompat.getColor(mContext, android.R.color.white));
+        mReadStatus.setVisibility(View.GONE);
+      }
+
       String itemInfo = item.getCommentCount() == 1 ?
           mContext.getString(R.string.item_info_one, item.getStockCount()) :
           mContext.getString(R.string.item_info_many, item.getStockCount(), item.getCommentCount());

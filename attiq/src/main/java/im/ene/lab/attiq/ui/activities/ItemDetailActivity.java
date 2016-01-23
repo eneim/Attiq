@@ -73,13 +73,18 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.DocumentCallback;
+import im.ene.lab.attiq.data.SuccessCallback;
 import im.ene.lab.attiq.data.api.ApiClient;
+import im.ene.lab.attiq.data.model.local.ReadArticle;
 import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.two.Comment;
 import im.ene.lab.attiq.data.model.two.User;
+import im.ene.lab.attiq.ui.widgets.CommentComposerView;
+import im.ene.lab.attiq.ui.widgets.NestedScrollableViewHelper;
+import im.ene.lab.attiq.ui.widgets.PanelSlideListenerAdapter;
+import im.ene.lab.attiq.ui.widgets.drawable.ThreadedCommentDrawable;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.ImeUtils;
-import im.ene.lab.attiq.data.SuccessCallback;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.WebUtil;
@@ -87,10 +92,6 @@ import im.ene.lab.attiq.util.event.DocumentEvent;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemCommentsEvent;
 import im.ene.lab.attiq.util.event.ItemDetailEvent;
-import im.ene.lab.attiq.ui.widgets.CommentComposerView;
-import im.ene.lab.attiq.ui.widgets.NestedScrollableViewHelper;
-import im.ene.lab.attiq.ui.widgets.PanelSlideListenerAdapter;
-import im.ene.lab.attiq.ui.widgets.drawable.ThreadedCommentDrawable;
 import im.ene.lab.support.widget.AlphaForegroundColorSpan;
 import im.ene.lab.support.widget.AppBarLayout;
 import im.ene.lab.support.widget.CollapsingToolbarLayout;
@@ -173,42 +174,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private String mItemUuid;
   private okhttp3.Callback mDocumentCallback;
 
-  private Callback<Void> mItemUnStockedResponse = new SuccessCallback<Void>() {
-    @Override public void onResponse(Response<Void> response) {
-      if (response.code() == 204) {
-        ((State) mState).isStocked = false;
-        int newStockCount = (Integer.parseInt(((State) mState).stockCount) - 1);
-        if (newStockCount < 0) {
-          newStockCount = 0;
-        }
-        ((State) mState).stockCount = "" + newStockCount;
-      }
-
-      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
-    }
-  };
-  private Callback<Void> mStockStatusResponse = new SuccessCallback<Void>() {
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    @Override public void onResponse(Response<Void> response) {
-      if (response.code() == 204) {
-        ((State) mState).isStocked = true;
-      } else {
-        ((State) mState).isStocked = false;
-      }
-
-      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
-    }
-  };
-  private Callback<Void> mItemStockedResponse = new SuccessCallback<Void>() {
-    @Override public void onResponse(Response<Void> response) {
-      if (response.code() == 204) {
-        ((State) mState).isStocked = true;
-        ((State) mState).stockCount = "" + (1 + Integer.parseInt(((State) mState).stockCount));
-      }
-
-      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
-    }
-  };
   private Handler.Callback mHandlerCallback = new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
       if (msg.what == MESSAGE_UN_STOCK) {
@@ -223,20 +188,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   };
   private final Handler mHandler = new Handler(mHandlerCallback);
-
-  private Callback<Comment> mCommentCallback = new SuccessCallback<Comment>() {
-    @Override public void onResponse(Response<Comment> response) {
-      Comment newComment = response.body();
-      if (newComment != null) {
-        mComments.add(0, newComment);
-      }
-      if (mCommentScrollView != null && mCommentInfo != null) {
-        mCommentScrollView.scrollTo(mCommentInfo.getTop(), 0);
-      }
-
-      EventBus.getDefault().post(new ItemCommentsEvent(true, null, mComments));
-    }
-  };
 
   public static Intent createIntent(Context context, String uuid) {
     Intent intent = new Intent(context, ItemDetailActivity.class);
@@ -507,8 +458,19 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Override public void onResponse(Response<Article> response) {
     Article article = response.body();
     if (article != null) {
+      ReadArticle history = mRealm.where(ReadArticle.class)
+          .equalTo(ReadArticle.FIELD_ARTICLE_ID, mItemUuid).findFirst();
       mRealm.beginTransaction();
-      mRealm.copyToRealmOrUpdate(article);
+      // mRealm.copyToRealmOrUpdate(article);
+      if (history == null) {
+        history = mRealm.createObject(ReadArticle.class);
+        history.setArticleId(mItemUuid);
+        history.setArticle(mRealm.copyToRealmOrUpdate(article));
+      }
+      history.setLastView(TimeUtil.nowSecond());
+      mRealm.copyToRealmOrUpdate(history);
+      // mRealm.beginTransaction();
+      // mRealm.copyToRealmOrUpdate(article);
       mRealm.commitTransaction();
       EventBus.getDefault().post(new ItemDetailEvent(true, null, article));
     } else {
@@ -770,6 +732,57 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     EventBus.getDefault().post(new ItemDetailEvent(false,
         new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
   }
+
+  /* API Callbacks */
+  private Callback<Void> mItemUnStockedResponse = new SuccessCallback<Void>() {
+    @Override public void onResponse(Response<Void> response) {
+      if (response.code() == 204) {
+        ((State) mState).isStocked = false;
+        int newStockCount = (Integer.parseInt(((State) mState).stockCount) - 1);
+        if (newStockCount < 0) {
+          newStockCount = 0;
+        }
+        ((State) mState).stockCount = "" + newStockCount;
+      }
+
+      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
+    }
+  };
+  private Callback<Void> mStockStatusResponse = new SuccessCallback<Void>() {
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    @Override public void onResponse(Response<Void> response) {
+      if (response.code() == 204) {
+        ((State) mState).isStocked = true;
+      } else {
+        ((State) mState).isStocked = false;
+      }
+
+      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
+    }
+  };
+  private Callback<Void> mItemStockedResponse = new SuccessCallback<Void>() {
+    @Override public void onResponse(Response<Void> response) {
+      if (response.code() == 204) {
+        ((State) mState).isStocked = true;
+        ((State) mState).stockCount = "" + (1 + Integer.parseInt(((State) mState).stockCount));
+      }
+
+      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
+    }
+  };
+  private Callback<Comment> mCommentCallback = new SuccessCallback<Comment>() {
+    @Override public void onResponse(Response<Comment> response) {
+      Comment newComment = response.body();
+      if (newComment != null) {
+        mComments.add(0, newComment);
+      }
+      if (mCommentScrollView != null && mCommentInfo != null) {
+        mCommentScrollView.scrollTo(mCommentInfo.getTop(), 0);
+      }
+
+      EventBus.getDefault().post(new ItemCommentsEvent(true, null, mComments));
+    }
+  };
 
   private static class State extends BaseState {
 

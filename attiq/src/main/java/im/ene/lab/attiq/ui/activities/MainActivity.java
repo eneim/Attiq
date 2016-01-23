@@ -48,10 +48,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.LogOutCallback;
-import com.parse.ParseAnonymousUtils;
 import com.parse.ParseException;
 import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -63,23 +61,21 @@ import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.two.AccessToken;
 import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.data.model.zero.FeedItem;
+import im.ene.lab.attiq.services.ParseUserService;
 import im.ene.lab.attiq.ui.fragment.FeedListFragment;
+import im.ene.lab.attiq.ui.fragment.HistoryFragment;
 import im.ene.lab.attiq.ui.fragment.PublicStreamFragment;
 import im.ene.lab.attiq.ui.fragment.UserStockedItemsFragment;
-import im.ene.lab.attiq.util.IOUtil;
+import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ProfileEvent;
-import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import im.ene.lab.support.widget.SmoothActionBarDrawerToggle;
 import io.realm.Realm;
 import io.realm.RealmAsyncTask;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends BaseActivity
     implements NavigationView.OnNavigationItemSelectedListener {
@@ -497,25 +493,10 @@ public class MainActivity extends BaseActivity
 
       if (event.profile != null && PrefUtil.getCurrentToken().equals(event.profile.getToken())) {
         // Update User to Parse
-        // Create an anonymous User, save a bunch of local data
-        if (ParseAnonymousUtils.isLinked(ParseUser.getCurrentUser())) {
-          ParseUser.getCurrentUser().setUsername(String.valueOf(event.profile.getPermanentId()));
-          try {
-            ParseUser.getCurrentUser().setPassword(IOUtil.sha1(event.profile.getId()));
-          } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            e.printStackTrace();
-          }
-          ParseUser.getCurrentUser().put("qiitaUserName", event.profile.getId());
-          ParseUser.getCurrentUser().put("attiqToken", PrefUtil.getCurrentToken());
-          ParseUser.getCurrentUser().signUpInBackground(new SignUpCallback() {
-            @Override public void done(ParseException e) {
-              Log.d("Main#signup()", "done() called with: " + "e = [" + e + "]");
-            }
-          });
-        } else {
-          ParseUser.getCurrentUser().put("attiqToken", PrefUtil.getCurrentToken());
-          ParseUser.getCurrentUser().saveInBackground();
-        }
+        ParseUserService.Argument authArgument = new ParseUserService.Argument(event.profile);
+        Intent authService = new Intent(this, ParseUserService.class);
+        authService.putExtras(authArgument.getArguments());
+        startService(authService);
 
         if (PrefUtil.isFirstStart()) {
           PrefUtil.setFirstStart(false);
@@ -552,7 +533,10 @@ public class MainActivity extends BaseActivity
   private static class MainPagerAdapter extends FragmentStatePagerAdapter {
 
     private static final int TITLES[] = {
-        R.string.tab_home_public, R.string.tab_home_feed, R.string.tab_title_stocks
+        R.string.tab_home_public,
+        R.string.tab_home_feed,
+        R.string.tab_title_stocks,
+        R.string.tab_title_history
     };
     private final String mUserId;
 
@@ -568,6 +552,8 @@ public class MainActivity extends BaseActivity
         return FeedListFragment.newInstance();
       } else if (position == 2) {
         return UserStockedItemsFragment.newInstance(mUserId);
+      } else if (position == 3) {
+        return HistoryFragment.newInstance();
       }
 
       return PublicStreamFragment.newInstance();
@@ -577,7 +563,7 @@ public class MainActivity extends BaseActivity
       if (mUserId != null) {
         return TITLES.length;
       } else {
-        return TITLES.length - 1;
+        return TITLES.length - 2;
       }
     }
 
