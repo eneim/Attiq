@@ -1,16 +1,16 @@
 package im.ene.lab.attiq.data.api;
 
-import im.ene.lab.attiq.data.one.PublicTag;
+import im.ene.lab.attiq.data.model.one.PublicTag;
 import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.request.PostCommentRequest;
-import im.ene.lab.attiq.data.two.AccessToken;
-import im.ene.lab.attiq.data.two.Article;
-import im.ene.lab.attiq.data.two.Comment;
-import im.ene.lab.attiq.data.two.Profile;
-import im.ene.lab.attiq.data.two.Tag;
-import im.ene.lab.attiq.data.two.User;
-import im.ene.lab.attiq.data.zero.FeedItem;
-import im.ene.lab.attiq.data.zero.Post;
+import im.ene.lab.attiq.data.model.two.AccessToken;
+import im.ene.lab.attiq.data.model.two.Article;
+import im.ene.lab.attiq.data.model.two.Comment;
+import im.ene.lab.attiq.data.model.two.Profile;
+import im.ene.lab.attiq.data.model.two.Tag;
+import im.ene.lab.attiq.data.model.two.User;
+import im.ene.lab.attiq.data.model.zero.FeedItem;
+import im.ene.lab.attiq.data.model.zero.Post;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;

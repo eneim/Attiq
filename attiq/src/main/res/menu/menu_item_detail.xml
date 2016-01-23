@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context="im.ene.lab.attiq.activities.ItemDetailActivity">
+      tools:context=".ui.activities.ItemDetailActivity">
     <item
         android:id="@+id/action_item_menu"
         android:icon="@drawable/ic_menu_24dp"

@@ -8,7 +8,7 @@ import com.google.gson.GsonBuilder;
 import android.content.res.AssetManager;
 
 import im.ene.lab.attiq.Attiq;
-import im.ene.lab.attiq.data.zero.FeedItem;
+import im.ene.lab.attiq.data.model.zero.FeedItem;
 import io.realm.RealmObject;
 import okio.BufferedSource;
 import okio.Okio;
@@ -80,23 +80,39 @@ public class IOUtil {
     return stringBuilder.toString();
   }
 
+  // Since RealmObject doesn't support toString()
   public static String toString(FeedItem item) {
-    return "FeedItem{" +
-        "createdAtInUnixtime=" + item.getCreatedAtInUnixtime() +
-        ", createdAtInWords='" + item.getCreatedAtInWords() + '\'' +
-        ", followableImageUrl='" + item.getFollowableImageUrl() + '\'' +
-        ", followableName='" + item.getFollowableName() + '\'' +
-        ", followableType='" + item.getFollowableType() + '\'' +
-        ", followableUrl='" + item.getFollowableUrl() + '\'' +
-        ", mentionedObjectBody='" + item.getMentionedObjectBody() + '\'' +
-        ", mentionedObjectCommentsCount=" + item.getMentionedObjectCommentsCount() +
-        ", mentionedObjectImageUrl='" + item.getMentionedObjectImageUrl() + '\'' +
-        ", mentionedObjectName='" + item.getMentionedObjectName() + '\'' +
-        ", mentionedObjectStocksCount=" + item.getMentionedObjectStocksCount() +
-        ", mentionedObjectUrl='" + item.getMentionedObjectUrl() + '\'' +
-        // ", mentionedObjectUuid='" + item.getMentionedObjectUuid() + '\'' +
-        ", trackableType='" + item.getTrackableType() + '\'' +
+    return "item{" +
+        ", f_image='" + item.getFollowableImageUrl() + '\'' +
+        ", f_name='" + item.getFollowableName() + '\'' +
+        ", f_type='" + item.getFollowableType() + '\'' +
+        ", f_url='" + item.getFollowableUrl() + '\'' +
+        ", m_body='" + item.getMentionedObjectBody() + '\'' +
+        ", m_comments=" + item.getMentionedObjectCommentsCount() +
+        ", m_image='" + item.getMentionedObjectImageUrl() + '\'' +
+        ", m_name='" + item.getMentionedObjectName() + '\'' +
+        ", m_stock=" + item.getMentionedObjectStocksCount() +
+        ", m_url='" + item.getMentionedObjectUrl() + '\'' +
+        ", track='" + item.getTrackableType() + '\'' +
         '}';
+  }
+
+  private static final String TAG = "IOUtil";
+
+  public static int hashCode(FeedItem item) {
+    int result = item.getCreatedAtInUnixtime().hashCode();
+    result = 31 * result + item.getFollowableImageUrl().hashCode();
+    result = 31 * result + item.getFollowableName().hashCode();
+    result = 31 * result + item.getFollowableType().hashCode();
+    result = 31 * result + item.getFollowableUrl().hashCode();
+    result = 31 * result + (item.getMentionedObjectImageUrl() != null ?
+        item.getMentionedObjectImageUrl().hashCode() : 0);
+    result = 31 * result + item.getMentionedObjectName().hashCode();
+    result = 31 * result + item.getMentionedObjectUrl().hashCode();
+    result = 31 * result + (item.getMentionedObjectUuid() != null ?
+        item.getMentionedObjectUuid().hashCode() : 0);
+    result = 31 * result + item.getTrackableType().hashCode();
+    return result;
   }
 
   public static String sha1(String text) throws NoSuchAlgorithmException,

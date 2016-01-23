@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@android:color/white"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
@@ -60,6 +61,19 @@
             android:includeFontPadding="false"
             android:singleLine="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+
+        <TextView
+            android:id="@+id/item_read_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_read"
+            android:drawablePadding="@dimen/item_icon_padding"
+            android:drawableStart="@drawable/ic_read"
+            android:includeFontPadding="false"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/life_text_link"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

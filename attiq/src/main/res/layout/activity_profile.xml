@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="im.ene.lab.attiq.activities.ProfileActivity">
+    tools:context=".ui.activities.ProfileActivity">
 
     <include layout="@layout/app_bar_profile"/>
 
     <include layout="@layout/content_profile"/>
 
-    <im.ene.lab.attiq.widgets.NotBadImageButton
+    <im.ene.lab.attiq.ui.widgets.NotBadImageButton
         android:id="@+id/profile_image"
         android:layout_width="@dimen/design_fab_size_big"
         android:layout_height="@dimen/design_fab_size_big"

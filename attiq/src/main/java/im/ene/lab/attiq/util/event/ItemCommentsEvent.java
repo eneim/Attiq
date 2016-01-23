@@ -2,7 +2,7 @@ package im.ene.lab.attiq.util.event;
 
 import android.support.annotation.Nullable;
 
-import im.ene.lab.attiq.data.two.Comment;
+import im.ene.lab.attiq.data.model.two.Comment;
 
 import java.util.List;
 
