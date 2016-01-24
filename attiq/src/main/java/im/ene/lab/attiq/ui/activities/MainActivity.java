@@ -57,6 +57,7 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.data.SuccessCallback;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.two.AccessToken;
 import im.ene.lab.attiq.data.model.two.Profile;
@@ -115,17 +116,13 @@ public class MainActivity extends BaseActivity
 
   // Utils
   private RealmAsyncTask mTransactionTask;
-  private Callback<AccessToken> mOnTokenCallback = new Callback<AccessToken>() {
+  private Callback<AccessToken> mOnTokenCallback = new SuccessCallback<AccessToken>() {
     @Override public void onResponse(Response<AccessToken> response) {
       AccessToken accessToken = response.body();
       if (accessToken != null) {
         PrefUtil.setCurrentToken(accessToken.getToken());
         getMasterUser(accessToken.getToken());
       }
-    }
-
-    @Override public void onFailure(Throwable t) {
-
     }
   };
 

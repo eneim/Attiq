@@ -68,7 +68,9 @@ public final class AnalyticsTrackers {
       Tracker tracker;
       switch (target) {
         case APP:
-          tracker = GoogleAnalytics.getInstance(mContext).newTracker(R.xml.app_tracker);
+          tracker = GoogleAnalytics.getInstance(mContext).newTracker(R.xml.global_tracker);
+          tracker.setSessionTimeout(300);
+          tracker.enableAutoActivityTracking(true);
           break;
         default:
           throw new IllegalArgumentException("Unhandled analytics target " + target);

@@ -92,21 +92,6 @@
     <color name="bright_red_cc">#ccea5444</color>
     <color name="vivid_red">#e63421</color>
 
-    <array name="username_colors">
-        <item>@color/username0</item>
-        <item>@color/username1</item>
-        <item>@color/username2</item>
-        <item>@color/username3</item>
-        <item>@color/username4</item>
-        <item>@color/username5</item>
-        <item>@color/username6</item>
-        <item>@color/username7</item>
-        <item>@color/username8</item>
-        <item>@color/username9</item>
-        <item>@color/username10</item>
-        <item>@color/username11</item>
-    </array>
-
     <!-- Event detail button colors -->
     <color name="event_button_reserve">#EA5444</color>
     <color name="event_button_attend">#47BB3C</color>
