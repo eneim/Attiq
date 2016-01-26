@@ -134,6 +134,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @BindDimen(R.dimen.app_bar_max_elevation) float mMaxAppbarElevation;
   @BindDimen(R.dimen.app_bar_min_elevation) float mMinAppbarElevation;
 
+  private int mCommentThreadColor;  // this must be R.attr.colorPrimary
   private ArrayList<Comment> mComments = new ArrayList<>();
   private MenuItem mArticleHeaderMenu;
   private Article mArticle;
@@ -259,6 +260,10 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         .resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
     int titleColorId = typedValue.resourceId;
     mTitleColorSpan = new AlphaForegroundColorSpan(ContextCompat.getColor(this, titleColorId));
+
+    typedValue = new TypedValue();
+    getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+    mCommentThreadColor = ContextCompat.getColor(this, typedValue.resourceId);
 
     Uri data = getIntent().getData();
     if (data != null) {
@@ -595,7 +600,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         int currentLevel = WebUtil.getHeaderLevel(item.tagName());
         if (currentLevel - topLevel > 0) {
           menuContent.setCompoundDrawablesWithIntrinsicBounds(new ThreadedCommentDrawable(
-              mHeaderDepthWidth, mHeaderDepthGap, currentLevel - topLevel
+              mCommentThreadColor, mHeaderDepthWidth, mHeaderDepthGap, currentLevel - topLevel
           ), null, null, null);
         }
 

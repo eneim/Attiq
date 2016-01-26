@@ -20,14 +20,11 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
 
 /**
  * A drawable showing the depth of a threaded conversation
  */
 public class ThreadedCommentDrawable extends Drawable {
-
-  private static final @ColorInt int THREAD_COLOR = 0xffe5e5e5;
 
   private final int threadWidth;
   private final int gap;
@@ -39,18 +36,18 @@ public class ThreadedCommentDrawable extends Drawable {
    * @param threadWidth in pixels
    * @param gap         in pixels
    */
-  public ThreadedCommentDrawable(int threadWidth, int gap) {
+  public ThreadedCommentDrawable(int threadColor, int threadWidth, int gap) {
     this.threadWidth = threadWidth;
     this.gap = gap;
     halfThreadWidth = threadWidth / 2;
     paint = new Paint();
     paint.setStyle(Paint.Style.STROKE);
     paint.setStrokeWidth(threadWidth);
-    paint.setColor(THREAD_COLOR);
+    paint.setColor(threadColor);
   }
 
-  public ThreadedCommentDrawable(int threadWidth, int gap, int depth) {
-    this(threadWidth, gap);
+  public ThreadedCommentDrawable(int threadColor, int threadWidth, int gap, int depth) {
+    this(threadColor, threadWidth, gap);
     setDepth(depth);
   }
 
