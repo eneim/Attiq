@@ -42,7 +42,7 @@ import im.ene.lab.attiq.ui.adapters.FeedListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
-import im.ene.lab.attiq.util.AnalyticsTrackers;
+import im.ene.lab.attiq.util.AnalyticsUtil;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
@@ -70,7 +70,7 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
   @Override protected void onVisibilityChange(boolean isVisibleToUser) {
     super.onVisibilityChange(isVisibleToUser);
     if (isVisibleToUser) {
-      AnalyticsTrackers.sendScreenView(SCREEN_NAME);
+      AnalyticsUtil.sendScreenView(SCREEN_NAME);
     }
   }
 

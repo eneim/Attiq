@@ -267,7 +267,8 @@ public class MainActivity extends BaseActivity
               }
             });
             PrefUtil.setCurrentToken(null);
-            EventBus.getDefault().post(new ProfileEvent(true, null, null));
+            EventBus.getDefault().post(new ProfileEvent(MainActivity.class.getSimpleName(),
+                true, null, null));
           }
         }).create().show();
   }

@@ -15,16 +15,16 @@ import android.view.ViewGroup;
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.data.api.ApiClient;
+import im.ene.lab.attiq.data.model.one.PublicTag;
 import im.ene.lab.attiq.ui.activities.TagItemsActivity;
 import im.ene.lab.attiq.ui.adapters.ListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.UserTagsAdapter;
-import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.data.model.one.PublicTag;
-import im.ene.lab.attiq.util.AnalyticsTrackers;
+import im.ene.lab.attiq.util.AnalyticsUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
-import im.ene.lab.attiq.util.event.TypedEvent;
+import im.ene.lab.attiq.util.event.ItemsEvent;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -83,7 +83,7 @@ public class UserTagsFragment extends BaseFragment
   @Override protected void onVisibilityChange(boolean isVisibleToUser) {
     super.onVisibilityChange(isVisibleToUser);
     if (isVisibleToUser) {
-      AnalyticsTrackers.sendScreenView(SCREEN_NAME);
+      AnalyticsUtil.sendScreenView(SCREEN_NAME);
     }
   }
 
@@ -140,25 +140,27 @@ public class UserTagsFragment extends BaseFragment
     Log.d(TAG, "onResponse() called with: " + "response = [" + response + "]");
     if (response.code() != 200) {
       mState.hasFollowingTags = false;
-      EventBus.getDefault().post(new StateEvent(false,
+      EventBus.getDefault().post(new StateEvent(UserTagsFragment.class.getSimpleName(), false,
           new Event.Error(response.code(), response.message()), mState));
     } else {
       List<PublicTag> items = response.body();
       if (!UIUtil.isEmpty(items)) {
         mAdapter.addItems(items);
         mState.hasFollowingTags = true;
-        EventBus.getDefault().post(new StateEvent(true, null, mState));
+        EventBus.getDefault().post(new StateEvent(UserTagsFragment.class.getSimpleName(),
+            true, null, mState));
       } else {
         mState.hasFollowingTags = false;
-        EventBus.getDefault().post(new StateEvent(true, null, mState));
+        EventBus.getDefault().post(new StateEvent(UserTagsFragment.class.getSimpleName(),
+            true, null, mState));
       }
     }
   }
 
   @Override public void onFailure(Throwable t) {
     Log.d(TAG, "onFailure() called with: " + "t = [" + t + "]");
-    EventBus.getDefault().post(new TypedEvent<>(false,
-        new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null, mPage));
+    EventBus.getDefault().post(new ItemsEvent(UserTagsFragment.class.getSimpleName(), false,
+        new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), mPage));
   }
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -193,11 +195,6 @@ public class UserTagsFragment extends BaseFragment
   private static class StateEvent extends Event {
 
     private final State state;
-
-    @Deprecated
-    public StateEvent(boolean success, @Nullable Error error, State state) {
-      this(null, success, error, state);
-    }
 
     public StateEvent(@Nullable String tag, boolean success, @Nullable Error error, State state) {
       super(tag, success, error);

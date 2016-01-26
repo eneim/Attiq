@@ -84,7 +84,7 @@ import im.ene.lab.attiq.ui.widgets.NestedScrollableViewHelper;
 import im.ene.lab.attiq.ui.widgets.PanelSlideListenerAdapter;
 import im.ene.lab.attiq.ui.widgets.drawable.ThreadedCommentDrawable;
 import im.ene.lab.attiq.util.IOUtil;
-import im.ene.lab.attiq.util.ImeUtils;
+import im.ene.lab.attiq.util.ImeUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.WebUtil;
@@ -228,15 +228,15 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mSlidingPanel.setScrollableViewHelper(new NestedScrollableViewHelper());
     mSlidingPanel.setPanelSlideListener(new PanelSlideListenerAdapter() {
       @Override public void onPanelCollapsed(View panel) {
-        ImeUtils.hideIme(panel);
+        ImeUtil.hideIme(panel);
       }
 
       @Override public void onPanelAnchored(View panel) {
-        ImeUtils.hideIme(panel);
+        ImeUtil.hideIme(panel);
       }
 
       @Override public void onPanelHidden(View panel) {
-        ImeUtils.hideIme(panel);
+        ImeUtil.hideIme(panel);
       }
     });
 
@@ -383,7 +383,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       mDocumentCallback = new DocumentCallback(baseUrl) {
         @Override public void onDocument(Document response) {
           if (response != null) {
-            EventBus.getDefault().post(new DocumentEvent(true, null, response));
+            EventBus.getDefault().post(new DocumentEvent(ItemDetailActivity.class.getSimpleName(),
+                true, null, response));
           }
         }
       };
@@ -435,7 +436,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   @SuppressWarnings("unused")
   @OnClick(R.id.btn_close) void cancelComment() {
-    ImeUtils.hideIme(mCommentComposer);
+    ImeUtil.hideIme(mCommentComposer);
     mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
     mHandler.postDelayed(new Runnable() {
       @Override public void run() {
@@ -446,13 +447,13 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   @SuppressWarnings("unused")
   @OnClick(R.id.btn_submit) void summitComment() {
-    ImeUtils.hideIme(mCommentComposer);
+    ImeUtil.hideIme(mCommentComposer);
     String comment = mCommentComposer.getComment();
     mCommentComposer.clearComment();
     if (!UIUtil.isEmpty(comment)) {
       ApiClient.postComment(mItemUuid, comment).enqueue(mCommentCallback);
     }
-    ImeUtils.hideIme(mCommentComposer);
+    ImeUtil.hideIme(mCommentComposer);
     mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
   }
 

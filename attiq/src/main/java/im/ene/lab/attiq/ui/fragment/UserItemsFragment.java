@@ -12,7 +12,7 @@ import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.UserArticlesAdapter;
 import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.two.User;
-import im.ene.lab.attiq.util.AnalyticsTrackers;
+import im.ene.lab.attiq.util.AnalyticsUtil;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 
 /**
@@ -41,7 +41,7 @@ public class UserItemsFragment extends ListFragment<Article> {
   @Override protected void onVisibilityChange(boolean isVisibleToUser) {
     super.onVisibilityChange(isVisibleToUser);
     if (isVisibleToUser) {
-      AnalyticsTrackers.sendScreenView(SCREEN_NAME);
+      AnalyticsUtil.sendScreenView(SCREEN_NAME);
     }
   }
 

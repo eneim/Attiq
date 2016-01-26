@@ -6,15 +6,12 @@ import org.jsoup.nodes.Document;
 
 /**
  * Created by eneim on 1/7/16.
+ * <p/>
+ * Document which is parsed from {@link org.jsoup.Jsoup}
  */
 public class DocumentEvent extends Event {
 
   public final Document document;
-
-  @Deprecated
-  public DocumentEvent(boolean success, @Nullable Error error, Document document) {
-    this(DocumentEvent.class.getSimpleName(), success, error, document);
-  }
 
   public DocumentEvent(@Nullable String tag, boolean success, @Nullable Error error, Document
       document) {

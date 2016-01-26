@@ -35,6 +35,7 @@ import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
+import im.ene.lab.attiq.util.event.EventUtil;
 import io.realm.Realm;
 
 /**
@@ -50,6 +51,7 @@ public abstract class BaseActivity extends AppCompatActivity
   @Override protected void onCreate(Bundle savedInstanceState) {
     setTheme(lookupTheme(PrefUtil.getTheme()));
     super.onCreate(savedInstanceState);
+    EventUtil.init(this);
     PrefUtil.registerOnSharedPreferenceChangeListener(this);
     initState();
     mRealm = Attiq.realm();
@@ -75,6 +77,7 @@ public abstract class BaseActivity extends AppCompatActivity
   }
 
   @Override protected void onDestroy() {
+    EventUtil.shutdown(this);
     PrefUtil.unregisterOnSharedPreferenceChangeListener(this);
     if (mRealm != null) {
       mRealm.close();

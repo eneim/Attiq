@@ -25,7 +25,7 @@ import java.util.Map;
  * TODO: Call {@link #initialize(Context)} from an entry point in your app
  * before using this!
  */
-public final class AnalyticsTrackers {
+public final class AnalyticsUtil {
 
   private static final String TAG = "AnalyticsTrackers";
 
@@ -34,17 +34,17 @@ public final class AnalyticsTrackers {
     // Add more trackers here if you need, and update the code in #get(Target) below
   }
 
-  private static AnalyticsTrackers sInstance;
+  private static AnalyticsUtil sInstance;
 
   public static synchronized void initialize(Context context) {
     if (sInstance != null) {
       throw new IllegalStateException("Extra call to initialize analytics trackers");
     }
 
-    sInstance = new AnalyticsTrackers(context);
+    sInstance = new AnalyticsUtil(context);
   }
 
-  public static synchronized AnalyticsTrackers getInstance() {
+  public static synchronized AnalyticsUtil getInstance() {
     if (sInstance == null) {
       throw new IllegalStateException("Call initialize() before getInstance()");
     }
@@ -58,7 +58,7 @@ public final class AnalyticsTrackers {
   /**
    * Don't instantiate directly - use {@link #getInstance()} instead.
    */
-  private AnalyticsTrackers(Context context) {
+  private AnalyticsUtil(Context context) {
     mContext = context.getApplicationContext();
     setupPreferenceChangeListener();
   }

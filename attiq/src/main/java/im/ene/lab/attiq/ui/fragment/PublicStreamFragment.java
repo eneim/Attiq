@@ -23,7 +23,7 @@ import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.PublicItemsAdapter;
 import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
-import im.ene.lab.attiq.util.AnalyticsTrackers;
+import im.ene.lab.attiq.util.AnalyticsUtil;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -50,7 +50,7 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
   @Override protected void onVisibilityChange(boolean isVisibleToUser) {
     super.onVisibilityChange(isVisibleToUser);
     if (isVisibleToUser) {
-      AnalyticsTrackers.sendScreenView(SCREEN_NAME);
+      AnalyticsUtil.sendScreenView(SCREEN_NAME);
     }
   }
 

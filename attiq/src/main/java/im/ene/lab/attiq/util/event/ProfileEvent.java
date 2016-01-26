@@ -11,13 +11,8 @@ public class ProfileEvent extends Event {
 
   public final Profile profile;
 
-  @Deprecated
-  public ProfileEvent(boolean isSuccess, @Nullable Error error, Profile profile) {
-    this(ProfileEvent.class.getSimpleName(), isSuccess, error, profile);
-  }
-
-  public ProfileEvent(@Nullable String tag, boolean success, @Nullable Error error, Profile
-      profile) {
+  public ProfileEvent(@Nullable String tag, boolean success, @Nullable Error error,
+                      Profile profile) {
     super(tag, success, error);
     this.profile = profile;
   }

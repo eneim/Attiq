@@ -26,7 +26,7 @@ import android.webkit.WebViewClient;
 
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.util.AnalyticsTrackers;
+import im.ene.lab.attiq.util.AnalyticsUtil;
 
 /**
  * Created by eneim on 12/13/15.
@@ -76,6 +76,6 @@ public class AuthActivity extends AppCompatActivity {
 
   @Override protected void onResume() {
     super.onResume();
-    AnalyticsTrackers.sendScreenView(SCREEN_NAME);
+    AnalyticsUtil.sendScreenView(SCREEN_NAME);
   }
 }

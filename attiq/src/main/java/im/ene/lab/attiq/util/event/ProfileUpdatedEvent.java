@@ -9,12 +9,12 @@ import im.ene.lab.attiq.data.model.local.RProfile;
  */
 public class ProfileUpdatedEvent extends Event {
 
+  /**
+   * Local profile object
+   * <p/>
+   * see {@link RProfile}
+   */
   public final RProfile profile;
-
-  @Deprecated
-  public ProfileUpdatedEvent(boolean success, @Nullable Error error, RProfile profile) {
-    this(ProfileUpdatedEvent.class.getSimpleName(), success, error, profile);
-  }
 
   public ProfileUpdatedEvent(@Nullable String tag, boolean success, @Nullable Error error,
                              RProfile profile) {

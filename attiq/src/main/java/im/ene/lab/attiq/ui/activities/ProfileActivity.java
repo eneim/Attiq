@@ -55,8 +55,8 @@ import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.WebUtil;
 import im.ene.lab.attiq.util.event.DocumentEvent;
 import im.ene.lab.attiq.util.event.Event;
+import im.ene.lab.attiq.util.event.ProfileFetchedEvent;
 import im.ene.lab.attiq.util.event.ProfileUpdatedEvent;
-import im.ene.lab.attiq.util.event.UserFetchedEvent;
 import im.ene.lab.support.widget.AlphaForegroundColorSpan;
 import im.ene.lab.support.widget.AppBarLayout;
 import im.ene.lab.support.widget.CollapsingToolbarLayout;
@@ -181,14 +181,10 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
   private final Handler mHandler = new Handler(mHandlerCallback);
 
   public static Intent createIntent(Context context, String userName) {
-    Intent intent = createIntent(context);
+    Intent intent = new Intent(context, ProfileActivity.class);
     Uri data = Uri.parse(context.getString(R.string.data_users_url, userName));
     intent.setData(data);
     return intent;
-  }
-
-  private static Intent createIntent(Context context) {
-    return new Intent(context, ProfileActivity.class);
   }
 
   @Override
@@ -260,7 +256,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     User user = mRealm.where(User.class).equalTo("id", mUserId).findFirst();
     if (user != null) {
       EventBus.getDefault().post(
-          new UserFetchedEvent(getClass().getSimpleName(), true, null, user));
+          new ProfileFetchedEvent(getClass().getSimpleName(), true, null, user));
     }
 
   }
@@ -310,16 +306,16 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
           realm.copyToRealmOrUpdate(user);
           realm.commitTransaction();
           realm.close();
-          EventBus.getDefault().post(new UserFetchedEvent(ProfileActivity.class.getSimpleName(),
+          EventBus.getDefault().post(new ProfileFetchedEvent(ProfileActivity.class.getSimpleName(),
               true, null, user));
         } else {
-          EventBus.getDefault().post(new UserFetchedEvent(ProfileActivity.class.getSimpleName(),
+          EventBus.getDefault().post(new ProfileFetchedEvent(ProfileActivity.class.getSimpleName(),
               false, new Event.Error(response.code(), response.message()), null));
         }
       }
 
       @Override public void onFailure(Throwable error) {
-        EventBus.getDefault().post(new UserFetchedEvent(ProfileActivity.class.getSimpleName(),
+        EventBus.getDefault().post(new ProfileFetchedEvent(ProfileActivity.class.getSimpleName(),
             false, new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
     };
@@ -412,7 +408,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
   }
 
   @SuppressWarnings("unused")
-  public void onEventMainThread(UserFetchedEvent event) {
+  public void onEventMainThread(ProfileFetchedEvent event) {
     Log.d(TAG, "onEventMainThread() called with: " + "event = [" + event + "]");
     if (event.user != null) {
       mRealm.beginTransaction();

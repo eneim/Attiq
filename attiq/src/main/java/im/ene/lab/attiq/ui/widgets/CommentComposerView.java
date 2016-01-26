@@ -15,7 +15,7 @@ import android.widget.EditText;
 
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.util.ImeUtils;
+import im.ene.lab.attiq.util.ImeUtil;
 import im.ene.lab.support.widget.MarkdownView;
 
 /**
@@ -83,7 +83,7 @@ public class CommentComposerView extends ViewPager {
       @Override public void onPageSelected(int position) {
         super.onPageSelected(position);
         if (position == 1) {  // preview view
-          ImeUtils.hideIme(CommentComposerView.this);
+          ImeUtil.hideIme(CommentComposerView.this);
         }
       }
     };

@@ -211,7 +211,7 @@ public class UIUtil {
   }
 
   public static final Property<View, Integer> BACKGROUND_COLOR
-      = new AnimUtils.IntProperty<View>("backgroundColor") {
+      = new AnimUtil.IntProperty<View>("backgroundColor") {
 
     @Override
     public void setValue(View view, int value) {

@@ -27,9 +27,9 @@ import java.lang.reflect.Method;
 /**
  * Utility methods for working with the keyboard
  */
-public class ImeUtils {
+public class ImeUtil {
 
-  private ImeUtils() {
+  private ImeUtil() {
     throw new AssertionError("Not supported");
   }
 
@@ -43,13 +43,13 @@ public class ImeUtils {
       showSoftInputUnchecked.setAccessible(true);
       showSoftInputUnchecked.invoke(imm, 0, null);
     } catch (Exception e) {
-      // ho hum
+      e.printStackTrace();
     }
   }
 
   public static void hideIme(@NonNull View view) {
-    InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context
-        .INPUT_METHOD_SERVICE);
+    InputMethodManager imm = (InputMethodManager) view.getContext()
+        .getSystemService(Context.INPUT_METHOD_SERVICE);
     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
   }
 

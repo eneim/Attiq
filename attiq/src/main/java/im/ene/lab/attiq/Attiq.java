@@ -13,7 +13,7 @@ import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
-import im.ene.lab.attiq.util.AnalyticsTrackers;
+import im.ene.lab.attiq.util.AnalyticsUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
@@ -56,7 +56,7 @@ public class Attiq extends Application {
 
     mPreference = getSharedPreferences(getPackageName() + "_pref", Context.MODE_PRIVATE);
     // Call only once
-    AnalyticsTrackers.initialize(this);
+    AnalyticsUtil.initialize(this);
 
     Parse.enableLocalDatastore(getApplicationContext());
     Parse.initialize(this);

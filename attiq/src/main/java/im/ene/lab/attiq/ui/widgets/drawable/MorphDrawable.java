@@ -24,7 +24,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.util.Property;
 
-import im.ene.lab.attiq.util.AnimUtils;
+import im.ene.lab.attiq.util.AnimUtil;
 
 /**
  * A drawable that can morph size, shape (via it's corner radius) and color.  Specifically this is
@@ -33,7 +33,7 @@ import im.ene.lab.attiq.util.AnimUtils;
 public class MorphDrawable extends Drawable {
 
   private float cornerRadius;
-  public static final Property<MorphDrawable, Float> CORNER_RADIUS = new AnimUtils
+  public static final Property<MorphDrawable, Float> CORNER_RADIUS = new AnimUtil
       .FloatProperty<MorphDrawable>("cornerRadius") {
 
     @Override
@@ -47,7 +47,7 @@ public class MorphDrawable extends Drawable {
     }
   };
   private Paint paint;
-  public static final Property<MorphDrawable, Integer> COLOR = new AnimUtils
+  public static final Property<MorphDrawable, Integer> COLOR = new AnimUtil
       .IntProperty<MorphDrawable>("color") {
 
     @Override

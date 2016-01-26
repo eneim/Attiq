@@ -28,9 +28,9 @@ import java.util.ArrayList;
 /**
  * Utility methods for working with animations.
  */
-public class AnimUtils {
+public class AnimUtil {
 
-  private AnimUtils() {
+  private AnimUtil() {
   }
 
   /**

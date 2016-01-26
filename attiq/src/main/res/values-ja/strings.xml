@@ -84,6 +84,6 @@
     <string name="tab_title_history">閲覧履歴</string>
 
     <string name="setting_theme">テーマ</string>
-    <string name="setting_theme_dark">ダーク</string>
+    <string name="setting_theme_dark">ダーク（BETA）</string>
     <string name="setting_theme_light">ライト</string>
 </resources>

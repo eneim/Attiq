@@ -70,8 +70,8 @@ import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.widgets.BaselineGridTextView;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 import im.ene.lab.attiq.ui.widgets.EndlessScrollListener;
-import im.ene.lab.attiq.util.AnimUtils;
-import im.ene.lab.attiq.util.ImeUtils;
+import im.ene.lab.attiq.util.AnimUtil;
+import im.ene.lab.attiq.util.ImeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import io.codetail.animation.ViewAnimationUtils;
 import retrofit2.Callback;
@@ -256,7 +256,7 @@ public class SearchActivity extends BaseActivity {
           @Override
           public void onAnimationEnd(Animator animation) {
             mSearchView.requestFocus();
-            ImeUtils.showIme(mSearchView);
+            ImeUtil.showIme(mSearchView);
           }
         });
 
@@ -274,7 +274,7 @@ public class SearchActivity extends BaseActivity {
                 0,
                 (float) Math.hypot(mSearchBackDistanceX, mScrim.getHeight()
                     - mSearchBackground.getBottom())),
-            AnimUtils.ofArgb(
+            AnimUtil.ofArgb(
                 mScrim,
                 UIUtil.BACKGROUND_COLOR,
                 Color.TRANSPARENT,
@@ -307,7 +307,7 @@ public class SearchActivity extends BaseActivity {
       clearResults();
       mSearchView.setQuery("", false);
       mSearchView.requestFocus();
-      ImeUtils.showIme(mSearchView);
+      ImeUtil.showIme(mSearchView);
     } else {
       dismiss();
     }
@@ -419,7 +419,7 @@ public class SearchActivity extends BaseActivity {
           public void onClick(View v) {
             mSearchView.setQuery("", false);
             mSearchView.requestFocus();
-            ImeUtils.showIme(mSearchView);
+            ImeUtil.showIme(mSearchView);
           }
         });
       }
@@ -474,7 +474,7 @@ public class SearchActivity extends BaseActivity {
   private void searchFor(String query) {
     clearResults();
     mProgress.setVisibility(View.VISIBLE);
-    ImeUtils.hideIme(mSearchView);
+    ImeUtil.hideIme(mSearchView);
     mSearchView.clearFocus();
     mQuery = query;
     mPage = 1;
