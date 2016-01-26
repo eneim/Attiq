@@ -178,12 +178,14 @@ public abstract class ListFragment<E>
     }
   }
 
+  @Override public void onResume() {
+    super.onResume();
+    onEventMainThread(new ItemsEvent(eventTag(), true, null, mPage));
+  }
+
   // Just do nothing here
   @SuppressWarnings("unused")
   public void onEventMainThread(ItemsEvent event) {
-    Log.i(TAG, eventTag() + "#onEventMainThread() called with: " +
-        "event = [" + event + "]");
-
     // A child class MUST use its simple name as tag for ResponseEvent
     if (!eventTag().equals(event.tag)) {
       return;
