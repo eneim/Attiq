@@ -29,6 +29,10 @@ public class IOUtil {
 
   private static final Gson GSON;
 
+  public static final String LICENSES = "licenses";
+
+  public static final String RESOURCES = "resources";
+
   static {
     GSON = new GsonBuilder()
         .setExclusionStrategies(new ExclusionStrategy() {

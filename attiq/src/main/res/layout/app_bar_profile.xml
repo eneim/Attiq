@@ -34,7 +34,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:animateLayoutChanges="true"
-            android:background="@color/colorPrimary"
             android:fitsSystemWindows="true"
             android:minHeight="?attr/actionBarSize"
             android:orientation="vertical"
@@ -201,31 +200,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
-        android:background="@color/colorPrimaryDark"
         android:theme="@style/Attiq.Theme.AppBarOverlay">
 
-        <TextView
-            android:id="@+id/text_action_follow"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
+        <FrameLayout
+            android:id="@+id/text_action_follow_container"
+            android:layout_width="148dp"
+            android:layout_height="@dimen/tab_layout_height"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/activity_vertical_margin"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_vertical_margin"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:background="@drawable/rounded_background_normal"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:paddingEnd="@dimen/activity_vertical_margin"
-            android:paddingLeft="@dimen/activity_vertical_margin"
-            android:paddingRight="@dimen/activity_vertical_margin"
-            android:paddingStart="@dimen/activity_vertical_margin"
-            android:text="@string/action_follow"
-            android:visibility="gone"/>
+            android:paddingEnd="@dimen/activity_horizontal_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingStart="@dimen/activity_horizontal_margin"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/text_action_follow"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:background="@drawable/rounded_background_normal"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:paddingEnd="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/activity_vertical_margin"
+                android:paddingStart="@dimen/activity_vertical_margin"
+                android:text="@string/action_follow"/>
+
+        </FrameLayout>
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"
@@ -234,11 +240,11 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/text_action_follow"
-            android:layout_toStartOf="@id/text_action_follow"
+            android:layout_toLeftOf="@id/text_action_follow_container"
+            android:layout_toStartOf="@id/text_action_follow_container"
             app:tabContentStart="@dimen/tab_layout_start_inset"
             app:tabGravity="fill"
-            app:tabIndicatorColor="@android:color/white"
+            app:tabIndicatorColor="?attr/colorAccent"
             app:tabIndicatorHeight="1dp"
             app:tabMode="scrollable"/>
     </RelativeLayout>

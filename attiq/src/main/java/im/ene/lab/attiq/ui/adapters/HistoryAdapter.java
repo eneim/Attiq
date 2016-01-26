@@ -46,8 +46,10 @@ import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import io.realm.RealmResults;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -96,6 +98,10 @@ public class HistoryAdapter extends RealmListAdapter<ReadArticle> {
   public void loadItems(boolean isLoadingMore, int page, int pageLimit,
                         @Nullable String query, Callback<List<ReadArticle>> callback) {
     // do nothing
+    if (callback != null) {
+      List<ReadArticle> emptyList = Collections.emptyList();
+      callback.onResponse(Response.success(emptyList));
+    }
   }
 
   public static abstract class OnArticleClickListener implements OnItemClickListener {
@@ -104,18 +110,18 @@ public class HistoryAdapter extends RealmListAdapter<ReadArticle> {
     public void onItemClick(BaseAdapter adapter,
                             BaseAdapter.ViewHolder viewHolder,
                             View view, int adapterPos, long itemId) {
-      final Article item;
+      final ReadArticle item;
       if (adapter instanceof BaseListAdapter) {
-        item = (Article) ((BaseListAdapter) adapter).getItem(adapterPos);
+        item = (ReadArticle) ((BaseListAdapter) adapter).getItem(adapterPos);
       } else {
         item = null;
       }
 
       if (item != null && viewHolder instanceof ViewHolder) {
         if (view == ((ViewHolder) viewHolder).mItemUserImage) {
-          onUserClick(item.getUser());
+          onUserClick(item.getArticle().getUser());
         } else if (view == ((ViewHolder) viewHolder).itemView) {
-          onItemContentClick(item);
+          onItemContentClick(item.getArticle());
         }
       }
     }

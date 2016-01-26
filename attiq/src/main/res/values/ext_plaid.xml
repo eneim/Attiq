@@ -123,7 +123,7 @@
     <!-- search -->
     <color name="search_background_scrim">#33000000</color>
 
-    <style name="Attiq.Theme.NoActionBar.Translucent">
+    <style name="Attiq.Theme.Dark.NoActionBar.Translucent">
         <item name="colorPrimary">@color/primary</item>
         <item name="android:colorBackground">@color/background_light</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -142,7 +142,7 @@
         <item name="android:windowExitAnimation">@anim/fade_out_rapidly</item>
     </style>
 
-    <style name="Attiq.Theme.NoActionBar.Translucent.Search">
+    <style name="Attiq.Theme.Dark.NoActionBar.Translucent.Search">
         <!--<item name="colorAccent"></item>-->
         <item name="android:windowAnimationStyle">@style/SearchWindowAnimations</item>
     </style>

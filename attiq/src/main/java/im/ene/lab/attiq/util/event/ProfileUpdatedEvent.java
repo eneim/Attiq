@@ -11,8 +11,14 @@ public class ProfileUpdatedEvent extends Event {
 
   public final RProfile profile;
 
+  @Deprecated
   public ProfileUpdatedEvent(boolean success, @Nullable Error error, RProfile profile) {
-    super(success, error);
+    this(ProfileUpdatedEvent.class.getSimpleName(), success, error, profile);
+  }
+
+  public ProfileUpdatedEvent(@Nullable String tag, boolean success, @Nullable Error error,
+                             RProfile profile) {
+    super(tag, success, error);
     this.profile = profile;
   }
 }

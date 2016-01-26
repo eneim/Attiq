@@ -3,8 +3,8 @@ package im.ene.lab.attiq.ui.adapters;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.TextViewCompat;
@@ -216,12 +216,12 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
           .equalTo(ReadArticle.FIELD_ARTICLE_ID, item.getUuid()).findFirst();
       // Update background if this item has already been read
       if (ref != null) {
-        itemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.read_color_true));
+        // itemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.read_color_true));
         mReadStatus.setText(mContext.getString(R.string.article_read_status,
             TimeUtil.beautify(ref.getLastView())));
         mReadStatus.setVisibility(View.VISIBLE);
       } else {
-        itemView.setBackgroundColor(ContextCompat.getColor(mContext, android.R.color.white));
+        // itemView.setBackgroundColor(ContextCompat.getColor(mContext, android.R.color.white));
         mReadStatus.setVisibility(View.GONE);
       }
 
@@ -269,9 +269,9 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
           tagName.setText(Html.fromHtml(mContext.getString(R.string.local_tag_url,
               tag.getName(), tag.getName())));
 
-          Attiq.picasso().load(tag.getIconUrl())
-              .placeholder(R.drawable.ic_dnd_forwardslash_16dp)
-              .error(R.drawable.ic_dnd_forwardslash_16dp)
+          Picasso.with(itemView.getContext()).load(tag.getIconUrl())
+              .placeholder(R.drawable.ic_lens_16dp)
+              .error(R.drawable.ic_lens_16dp)
               .resize(0, mTagIconSize)
               .transform(new RoundedTransformation(
                   mIconBorderWidth, mIconBorderColor, mTagIconSizeHalf))
@@ -282,6 +282,12 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
                   RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(res, bitmap);
                   TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView,
                       drawable, null, null, null);
+                }
+
+                @Override public void onBitmapFailed(Drawable errorDrawable) {
+                }
+
+                @Override public void onPrepareLoad(Drawable placeHolderDrawable) {
                 }
               });
 

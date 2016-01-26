@@ -14,7 +14,12 @@ public class ItemCommentsEvent extends Event {
   public final List<Comment> comments;
 
   public ItemCommentsEvent(boolean isSuccess, @Nullable Error error, List<Comment> comments) {
-    super(isSuccess, error);
+    this(ItemCommentsEvent.class.getSimpleName(), isSuccess, error, comments);
+  }
+
+  public ItemCommentsEvent(@Nullable String tag, boolean success, @Nullable Error error,
+                           List<Comment> comments) {
+    super(tag, success, error);
     this.comments = comments;
   }
 }

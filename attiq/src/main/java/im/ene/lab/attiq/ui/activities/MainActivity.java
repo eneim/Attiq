@@ -216,7 +216,7 @@ public class MainActivity extends BaseActivity
       mState.isAuthorized = false;
     }
 
-    EventBus.getDefault().post(new StateEvent<>(true, null, mState));
+    EventBus.getDefault().post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
 
     trySetupToolBarTabs(savedInstanceState);
     getMasterUser(PrefUtil.getCurrentToken());
@@ -306,6 +306,10 @@ public class MainActivity extends BaseActivity
     }
   }
 
+  @Override protected void onResume() {
+    super.onResume();
+  }
+
   private void trySetupToolBarTabs(Bundle savedState) {
     if (savedState != null) {
       return;
@@ -328,24 +332,29 @@ public class MainActivity extends BaseActivity
           }, new Realm.Transaction.Callback() {
             @Override public void onSuccess() {
               super.onSuccess();
-              EventBus.getDefault().post(new ProfileEvent(true, null, mMyProfile));
+              EventBus.getDefault().post(
+                  new ProfileEvent(MainActivity.class.getSimpleName(),
+                      true, null, mMyProfile));
             }
 
             @Override public void onError(Exception e) {
               super.onError(e);
-              EventBus.getDefault().post(new ProfileEvent(false,
-                  new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), null));
+              EventBus.getDefault().post(
+                  new ProfileEvent(MainActivity.class.getSimpleName(), false,
+                      new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), null));
             }
           });
         } else {
-          EventBus.getDefault().post(new ProfileEvent(false,
-              new Event.Error(response.code(), response.message()), null));
+          EventBus.getDefault().post(
+              new ProfileEvent(MainActivity.class.getSimpleName(), false,
+                  new Event.Error(response.code(), response.message()), null));
         }
       }
 
       @Override public void onFailure(Throwable error) {
-        EventBus.getDefault().post(new ProfileEvent(false,
-            new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
+        EventBus.getDefault().post(
+            new ProfileEvent(MainActivity.class.getSimpleName(), false,
+                new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
     });
   }
@@ -506,7 +515,7 @@ public class MainActivity extends BaseActivity
         mState.isAuthorized = false;
       }
 
-      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
+      EventBus.getDefault().post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
     }
   }
 
@@ -532,8 +541,8 @@ public class MainActivity extends BaseActivity
     private static final int TITLES[] = {
         R.string.tab_home_public,
         R.string.tab_home_feed,
-        R.string.tab_title_stocks,
-        R.string.tab_title_history
+        R.string.tab_title_stocks
+        // , R.string.tab_title_history
     };
     private final String mUserId;
 
@@ -560,7 +569,7 @@ public class MainActivity extends BaseActivity
       if (mUserId != null) {
         return TITLES.length;
       } else {
-        return TITLES.length - 2;
+        return TITLES.length - 1;
       }
     }
 
@@ -576,4 +585,9 @@ public class MainActivity extends BaseActivity
     }
   }
 
+  @Override protected int lookupTheme(UIUtil.Themes themes) {
+    return themes == UIUtil.Themes.DARK ?
+        R.style.Attiq_Theme_Dark_NoActionBar :
+        R.style.Attiq_Theme_Light_NoActionBar;
+  }
 }

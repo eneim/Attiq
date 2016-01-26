@@ -194,8 +194,13 @@ public class UserTagsFragment extends BaseFragment
 
     private final State state;
 
+    @Deprecated
     public StateEvent(boolean success, @Nullable Error error, State state) {
-      super(success, error);
+      this(null, success, error, state);
+    }
+
+    public StateEvent(@Nullable String tag, boolean success, @Nullable Error error, State state) {
+      super(tag, success, error);
       this.state = state;
     }
   }

@@ -24,6 +24,8 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.util.markdown.Marked;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by eneim on 12/14/15.
@@ -225,4 +227,32 @@ public class UIUtil {
       return Color.TRANSPARENT;
     }
   };
+
+  public enum Themes {
+
+    DARK("DARK"), LIGHT("LIGHT");
+
+    private final String name;
+    private static final Map<String, Themes> valuesByName;
+
+    static {
+      valuesByName = new HashMap<>();
+      for (Themes vehicleType : Themes.values()) {
+        valuesByName.put(vehicleType.name, vehicleType);
+      }
+    }
+
+    Themes(String code) {
+      this.name = code;
+    }
+
+    public static Themes lookupByName(String name) {
+      return valuesByName.get(name);
+    }
+
+    public String getName() {
+      return name;
+    }
+
+  }
 }

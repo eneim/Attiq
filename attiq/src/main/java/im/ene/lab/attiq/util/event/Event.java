@@ -7,11 +7,14 @@ import android.support.annotation.Nullable;
  */
 public class Event {
 
+  public final String tag;
+
   public final boolean success;
 
   @Nullable public final Error error;
 
-  public Event(boolean success, @Nullable Error error) {
+  public Event(@Nullable String tag, boolean success, @Nullable Error error) {
+    this.tag = tag;
     this.success = success;
     this.error = error;
   }
@@ -28,5 +31,20 @@ public class Event {
     }
 
     public static final int ERROR_UNKNOWN = 0;
+
+    @Override public String toString() {
+      return "Error{" +
+          "code=" + code +
+          ", message='" + message + '\'' +
+          '}';
+    }
+  }
+
+  @Override public String toString() {
+    return "Event{" +
+        "tag='" + tag + '\'' +
+        ", success=" + success +
+        ", error=" + error +
+        '}';
   }
 }

@@ -18,32 +18,39 @@ package im.ene.lab.attiq.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
+import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.util.PrefUtil;
+import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import io.realm.Realm;
 
 /**
  * Created by eneim on 12/13/15.
  */
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity
+    implements SharedPreferences.OnSharedPreferenceChangeListener {
 
   protected Realm mRealm;
   protected Profile mMyProfile;
   protected BaseState mState;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
+    setTheme(lookupTheme(PrefUtil.getTheme()));
     super.onCreate(savedInstanceState);
+    PrefUtil.registerOnSharedPreferenceChangeListener(this);
     initState();
     mRealm = Attiq.realm();
     mMyProfile = mRealm.where(Profile.class)
@@ -68,6 +75,7 @@ public class BaseActivity extends AppCompatActivity {
   }
 
   @Override protected void onDestroy() {
+    PrefUtil.unregisterOnSharedPreferenceChangeListener(this);
     if (mRealm != null) {
       mRealm.close();
     }
@@ -133,10 +141,36 @@ public class BaseActivity extends AppCompatActivity {
   @Override public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == android.R.id.home) {
       navigateUpOrBack(this, null);
+//      overridePendingTransition(
+//          R.anim.activity_in, R.anim.activity_out
+//      );
       return true;
     }
 
     return super.onOptionsItemSelected(item);
+  }
+
+  @Override public void onBackPressed() {
+    super.onBackPressed();
+//    overridePendingTransition(
+//        R.anim.activity_in, R.anim.activity_out
+//    );
+  }
+
+  private static final String TAG = "BaseActivity";
+
+  @Override public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    Log.d(TAG, "onSharedPreferenceChanged: " + getClass());
+    if (PrefUtil.PREF_APP_THEME.equals(key)) {
+      if (!getClass().getSimpleName().equals(SettingsActivity.class.getSimpleName())) {
+        recreate();
+      } else {
+        startActivity(getIntent());
+        finish();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+      }
+      // Intent intent = new Intent(this, getClass());
+    }
   }
 
   /**
@@ -152,9 +186,19 @@ public class BaseActivity extends AppCompatActivity {
 
     protected final T state;
 
+    @Deprecated
     public StateEvent(boolean success, @Nullable Error error, T state) {
-      super(success, error);
+      this(null, success, error, state);
+    }
+
+    public StateEvent(@Nullable String tag, boolean success, @Nullable Error error, T state) {
+      super(tag, success, error);
       this.state = state;
     }
+  }
+
+  protected int lookupTheme(UIUtil.Themes themes) {
+    return themes == UIUtil.Themes.DARK ?
+        R.style.Attiq_Theme_Dark_NoActionBar : R.style.Attiq_Theme_Light_NoActionBar;
   }
 }

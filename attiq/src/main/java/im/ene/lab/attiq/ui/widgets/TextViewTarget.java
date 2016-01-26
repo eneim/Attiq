@@ -40,4 +40,18 @@ public abstract class TextViewTarget implements Target {
           placeHolderDrawable, null, null, null);
     }
   }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    TextViewTarget that = (TextViewTarget) o;
+
+    return textView.equals(that.textView);
+
+  }
+
+  @Override public int hashCode() {
+    return textView.hashCode();
+  }
 }

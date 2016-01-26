@@ -22,12 +22,12 @@
     android:viewportHeight="48.0"
     android:viewportWidth="48.0">
     <path
-        android:fillColor="#FF3e3639"
+        android:fillColor="?attr/colorAccent"
         android:pathData="M23,48.05c-0.15,0 -0.29,-0.03 -0.43,-0.1l-21,-10C1.22,37.79 1,37.44 1,37.05v-31c0,-0.34 0.18,-0.66 0.47,-0.85C1.75,5.02 2.12,5 2.43,5.15L23,14.94l20.57,-9.8c0.31,-0.15 0.67,-0.13 0.96,0.06C44.82,5.39 45,5.71 45,6.05v31c0,0.39 -0.22,0.74 -0.57,0.9l-21,10C23.29,48.02 23.15,48.05 23,48.05zM3,36.42l20,9.52l20,-9.52V7.63l-19.57,9.32c-0.27,0.13 -0.59,0.13 -0.86,0L3,7.63V36.42z"/>
     <path
-        android:fillColor="#FF3e3639"
+        android:fillColor="?attr/colorAccent"
         android:pathData="M23,12.2L5.57,3.9C5.07,3.66 4.86,3.07 5.09,2.57c0.24,-0.5 0.83,-0.71 1.33,-0.47L23,9.99l16.57,-7.89c0.5,-0.23 1.1,-0.03 1.33,0.47c0.24,0.5 0.03,1.1 -0.47,1.33L23,12.2z"/>
     <path
-        android:fillColor="#FF3e3639"
+        android:fillColor="?attr/colorAccent"
         android:pathData="M22,16.05h2v31h-2z"/>
 </vector>

@@ -7,6 +7,5 @@
     android:layout_height="match_parent"
     app:tabBackground="?attr/selectableItemBackground"
     app:tabGravity="fill"
-    app:tabIndicatorColor="@android:color/white"
     app:tabIndicatorHeight="1dp"
     app:tabMode="scrollable"/>

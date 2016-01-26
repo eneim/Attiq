@@ -15,15 +15,15 @@ import com.mopub.nativeads.RequestParameters;
 import com.mopub.nativeads.ViewBinder;
 
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.data.model.one.PublicUser;
+import im.ene.lab.attiq.data.model.zero.Post;
 import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.activities.ProfileActivity;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.PublicItemsAdapter;
 import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
-import im.ene.lab.attiq.data.model.one.PublicUser;
-import im.ene.lab.attiq.data.model.zero.Post;
-import im.ene.lab.attiq.util.AnalyticsTrackers;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
+import im.ene.lab.attiq.util.AnalyticsTrackers;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -103,6 +103,8 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
     // Request ads when the user returns to this activity
     mMopubAdapter.loadAds(getString(R.string.attiq_mopub_add_id), parameters);
   }
+
+  private static final String TAG = "PublicStreamFragment";
 
   @Override public void onDestroyView() {
     mMopubAdapter.destroy();

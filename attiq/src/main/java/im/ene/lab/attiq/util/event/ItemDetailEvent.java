@@ -11,8 +11,9 @@ public class ItemDetailEvent extends Event {
 
   public final Article article;
 
-  public ItemDetailEvent(boolean isSuccess, @Nullable Error error, Article article) {
-    super(isSuccess, error);
+  public ItemDetailEvent(@Nullable String tag, boolean success, @Nullable Error error, Article
+      article) {
+    super(tag, success, error);
     this.article = article;
   }
 }

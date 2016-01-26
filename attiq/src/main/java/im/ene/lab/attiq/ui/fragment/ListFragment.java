@@ -32,14 +32,14 @@ import android.view.ViewGroup;
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.ui.adapters.ListAdapter;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.util.UIUtil;
-import im.ene.lab.attiq.util.event.Event;
-import im.ene.lab.attiq.util.event.TypedEvent;
+import im.ene.lab.attiq.ui.adapters.ListAdapter;
 import im.ene.lab.attiq.ui.widgets.EndlessScrollListener;
 import im.ene.lab.attiq.ui.widgets.MultiSwipeRefreshLayout;
 import im.ene.lab.attiq.ui.widgets.NonEmptyRecyclerView;
+import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.util.event.Event;
+import im.ene.lab.attiq.util.event.ItemsEvent;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -180,8 +180,14 @@ public abstract class ListFragment<E>
 
   // Just do nothing here
   @SuppressWarnings("unused")
-  public void onEventMainThread(TypedEvent<E> event) {
-    Event.Error error = event.error;
+  public void onEventMainThread(ItemsEvent event) {
+    Log.i(TAG, eventTag() + "#onEventMainThread() called with: " +
+        "event = [" + event + "]");
+
+    // A child class MUST use its simple name as tag for ResponseEvent
+    if (!eventTag().equals(event.tag)) {
+      return;
+    }
 
     if (mSwipeRefreshLayout != null) {
       mSwipeRefreshLayout.setRefreshing(false);
@@ -197,24 +203,23 @@ public abstract class ListFragment<E>
   }
 
   @Override public void onResponse(Response<List<E>> response) {
-    Log.d(getClass().getSimpleName(),
-        "onResponse() called with: " + "response = [" + response + "]");
     if (response.code() != 200) {
-      EventBus.getDefault().post(new TypedEvent<>(false,
-          new Event.Error(response.code(), getString(R.string.response_error)), null, mPage));
+      EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
+          new Event.Error(response.code(), getString(R.string.response_error)), mPage));
     } else {
       List<E> items = response.body();
       if (!UIUtil.isEmpty(items)) {
         mAdapter.addItems(items);
-        EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), mPage));
       }
+      EventBus.getDefault().post(new ItemsEvent(eventTag(), true, null, mPage));
     }
   }
 
   @Override public void onFailure(Throwable t) {
     Log.d(getClass().getSimpleName(), "onFailure() called with: " + "t = [" + t + "]");
-    EventBus.getDefault().post(new TypedEvent<>(false,
+    EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
         new Event.Error(Event.Error.ERROR_UNKNOWN,
-            getString(R.string.response_error)), null, mPage));
+            getString(R.string.response_error)), mPage));
   }
+
 }

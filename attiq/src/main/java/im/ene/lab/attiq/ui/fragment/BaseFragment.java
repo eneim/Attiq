@@ -19,6 +19,14 @@ public class BaseFragment extends Fragment {
 
   private boolean mIsVisibleToUser = false;
 
+  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
+    super.setUserVisibleHint(isVisibleToUser);
+    if (mIsVisibleToUser != isVisibleToUser) {
+      onVisibilityChange(isVisibleToUser);
+      mIsVisibleToUser = isVisibleToUser;
+    }
+  }
+
   @CallSuper
   @Override public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -34,14 +42,6 @@ public class BaseFragment extends Fragment {
     }
   }
 
-  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
-    super.setUserVisibleHint(isVisibleToUser);
-    if (mIsVisibleToUser != isVisibleToUser) {
-      onVisibilityChange(isVisibleToUser);
-      mIsVisibleToUser = isVisibleToUser;
-    }
-  }
-
   @Override public void onPause() {
     super.onPause();
     EventBus.getDefault().unregister(this);
@@ -53,12 +53,20 @@ public class BaseFragment extends Fragment {
     super.onDestroyView();
   }
 
+  protected void onVisibilityChange(boolean isVisibleToUser) {
+    Log.e(TAG, getClass().getSimpleName() + "#onVisibilityChange() called with: "
+        + "isVisibleToUser = [" + isVisibleToUser + "]");
+  }
+
   @SuppressWarnings("unused")
   public void onEvent(Event event) {
   }
 
-  protected void onVisibilityChange(boolean isVisibleToUser) {
-    Log.e(TAG, getClass().getSimpleName() + "#onVisibilityChange() called with: "
-        + "isVisibleToUser = [" + isVisibleToUser + "]");
+  protected String eventTag() {
+    return getClass().getSimpleName();
+  }
+  
+  public boolean isVisibleToUser() {
+    return mIsVisibleToUser;
   }
 }

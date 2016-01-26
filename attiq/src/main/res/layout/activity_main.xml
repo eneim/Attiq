@@ -19,9 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#f8f8f8"
-        android:fitsSystemWindows="true"
-        app:insetForeground="#ff757575">
+        android:fitsSystemWindows="true">
 
         <View
             android:id="@+id/nav_bottom_bar"

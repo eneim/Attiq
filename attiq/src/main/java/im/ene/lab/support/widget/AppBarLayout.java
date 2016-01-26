@@ -14,7 +14,6 @@ import android.support.v4.view.ScrollingView;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.WindowInsetsCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
@@ -718,8 +717,7 @@ public class AppBarLayout extends LinearLayout {
                                         AppBarLayout header, int newOffset, int minOffset, int
                                             maxOffset) {
       final int curOffset = getTopBottomOffsetForScrollingSibling();
-      Log.d(TAG, "curOffset = [" + curOffset +  "], newOffset = [" + newOffset + "], " +
-          "minOffset = [" + minOffset + "], maxOffset = [" + maxOffset + "]");
+
       int consumed = 0;
       if (minOffset != 0 && curOffset >= minOffset
           && curOffset <= maxOffset) {

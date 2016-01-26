@@ -1,4 +1,4 @@
-package im.ene.lab.attiq.ui.widgets;
+package im.ene.lab.support.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -21,6 +21,8 @@ public class MarkdownView extends WebView {
 
   public MarkdownView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
+    ThemeUtils.checkAppCompatTheme(context);
+
   }
 
   /**

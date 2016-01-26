@@ -16,6 +16,7 @@ import android.widget.EditText;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.util.ImeUtils;
+import im.ene.lab.support.widget.MarkdownView;
 
 /**
  * Created by eneim on 1/17/16.

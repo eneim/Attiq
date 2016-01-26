@@ -83,7 +83,7 @@
                 android:layout_height="@dimen/tab_layout_height"
                 android:background="@android:color/white"
                 android:orientation="horizontal"
-                android:theme="@style/Attiq.Theme.NoActionBar">
+                android:theme="@style/Attiq.Theme.Dark.NoActionBar">
 
                 <ImageButton
                     android:id="@+id/button_action_share"

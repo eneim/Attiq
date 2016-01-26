@@ -11,9 +11,11 @@ public class TaskUtil {
 
   public static abstract class Callback<T> {
 
+    // optional
     protected void onStart() {
     }
 
+    // required to be called
     protected abstract void onFinished(T object);
   }
 

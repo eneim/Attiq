@@ -2,8 +2,6 @@ package im.ene.lab.attiq.ui.activities;
 
 
 import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -13,17 +11,20 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.util.IOUtil;
+import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.TaskUtil;
-import im.ene.lab.attiq.ui.widgets.MarkdownView;
+import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.support.widget.MarkdownView;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -36,7 +37,7 @@ import im.ene.lab.attiq.ui.widgets.MarkdownView;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends AppCompatPreferenceActivity {
+public class SettingsActivity extends BaseActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -60,34 +61,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
   }
 
-  @Override
-  public boolean onMenuItemSelected(int featureId, MenuItem item) {
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
     if (id == android.R.id.home) {
-      if (!super.onMenuItemSelected(featureId, item)) {
-        NavUtils.navigateUpFromSameTask(this);
-      }
+      NavUtils.navigateUpFromSameTask(this);
       return true;
     }
-    return super.onMenuItemSelected(featureId, item);
+
+    return super.onOptionsItemSelected(item);
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean onIsMultiPane() {
-    return isXLargeTablet(this);
-  }
-
-  /**
-   * Helper method to determine if the device has an extra-large screen. For
-   * example, 10" tablets are extra-large.
-   */
-  private static boolean isXLargeTablet(Context context) {
-    return (context.getResources().getConfiguration().screenLayout
-        & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-  }
+  private static final String TAG = "SettingsActivity";
 
   /**
    * A preference value change listener that updates the preference's summary
@@ -98,6 +82,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
+          Log.d(TAG, "onPreferenceChange() called with: " + "preference = [" + preference + "], " +
+              "value = [" + value + "]");
+
           String stringValue = value.toString();
 
           if (preference instanceof ListPreference) {
@@ -153,7 +140,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 .setView(view)
                 .create().show();
 
-            TaskUtil.load("licenses", new TaskUtil.Callback<String>() {
+            TaskUtil.load(IOUtil.LICENSES, new TaskUtil.Callback<String>() {
               @Override protected void onFinished(String markdown) {
                 if (markdown != null) {
                   view.loadMarkdown(markdown, "file:///android_asset/html/css/github.css");
@@ -169,7 +156,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 .setView(view)
                 .create().show();
 
-            TaskUtil.load("resources", new TaskUtil.Callback<String>() {
+            TaskUtil.load(IOUtil.RESOURCES, new TaskUtil.Callback<String>() {
               @Override protected void onFinished(String markdown) {
                 if (markdown != null) {
                   view.loadMarkdown(markdown, "file:///android_asset/html/css/github.css");
@@ -184,58 +171,60 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
       };
 
   /**
-   * This method stops fragment injection in malicious applications.
-   * Make sure to deny any unknown fragments here.
-   */
-  @Override
-  protected boolean isValidFragment(String fragmentName) {
-    return PreferenceFragment.class.getName().equals(fragmentName)
-        || GeneralPreferenceFragment.class.getName().equals(fragmentName);
-  }
-
-  /**
-   * Binds a preference's summary to its value. More specifically, when the
-   * preference's value is changed, its summary (line of text below the
-   * preference title) is updated to reflect the value. The summary is also
-   * immediately updated upon calling this method. The exact display format is
-   * dependent on the type of preference.
-   *
-   * @see #sBindPreferenceSummaryToValueListener
-   */
-  private static void bindPreferenceSummaryToValue(Preference preference) {
-    // Set the listener to watch for value changes.
-    preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-    // Trigger the listener immediately with the preference's
-    // current value.
-    sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-        PreferenceManager
-            .getDefaultSharedPreferences(preference.getContext())
-            .getString(preference.getKey(), ""));
-  }
-
-  /**
    * This fragment shows general preferences only. It is used when the
    * activity is showing a two-pane settings UI.
    */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public static class GeneralPreferenceFragment extends PreferenceFragment {
+
+    private Preference.OnPreferenceChangeListener mOnThemeSettingClick =
+        new Preference.OnPreferenceChangeListener() {
+
+          @Override public boolean onPreferenceChange(Preference preference, Object newValue) {
+            String stringValue = newValue.toString();
+
+            if (preference instanceof ListPreference) {
+              // For list preferences, look up the correct display value in
+              // the preference's 'entries' list.
+              ListPreference listPreference = (ListPreference) preference;
+              int index = listPreference.findIndexOfValue(stringValue);
+
+              // Set the summary to reflect the new value.
+              preference.setSummary(
+                  index >= 0
+                      ? listPreference.getEntries()[index]
+                      : null);
+
+              PrefUtil.setTheme(UIUtil.Themes.lookupByName(stringValue));
+            }
+
+            return true;
+          }
+        };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       addPreferencesFromResource(R.xml.pref_general);
-      // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-      // to their values. When their values change, their summaries are
-      // updated to reflect the new value, per the Android Design
-      // guidelines.
-      bindPreferenceSummaryToValue(findPreference("example_text"));
-      bindPreferenceSummaryToValue(findPreference("example_list"));
+
+      findPreference(PrefUtil.PREF_APP_THEME).setOnPreferenceChangeListener(mOnThemeSettingClick);
+      mOnThemeSettingClick.onPreferenceChange(
+          findPreference(PrefUtil.PREF_APP_THEME), PrefUtil.getTheme()
+      );
+
+      // bindPreferenceSummaryToValue(findPreference(PrefUtil.PREF_APP_THEME));
       bindPreferenceClickListener(findPreference("pref_open_source"));
       bindPreferenceClickListener(findPreference("pref_other_resources"));
     }
+
   }
 
   private static void bindPreferenceClickListener(Preference preference) {
     preference.setOnPreferenceClickListener(sOnPreferenceClickListener);
+  }
+
+  @Override protected int lookupTheme(UIUtil.Themes themes) {
+    return themes == UIUtil.Themes.DARK ?
+        R.style.Attiq_Theme_Dark_Setting : R.style.Attiq_Theme_Light_Setting;
   }
 }

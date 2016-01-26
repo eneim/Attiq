@@ -13,9 +13,14 @@ public class ItemListEvent extends Event {
 
   public final int page;
 
-  public ItemListEvent(boolean isSuccess, @Nullable Error error, Article topArticle, int page) {
-    super(isSuccess, error);
-    this.topArticle = topArticle;
+  public ItemListEvent(boolean isSuccess, @Nullable Error error, int page, Article topArticle) {
+    this(ItemListEvent.class.getSimpleName(), isSuccess, error, page, topArticle);
+  }
+
+  public ItemListEvent(@Nullable String tag, boolean success, @Nullable Error error, int page,
+                       Article topArticle) {
+    super(tag, success, error);
     this.page = page;
+    this.topArticle = topArticle;
   }
 }

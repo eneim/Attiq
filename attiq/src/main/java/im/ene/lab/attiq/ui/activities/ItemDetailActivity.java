@@ -287,7 +287,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
     Article article = mRealm.where(Article.class).equalTo("id", mItemUuid).findFirst();
     if (article != null) {
-      EventBus.getDefault().post(new ItemDetailEvent(true, null, article));
+      EventBus.getDefault().post(
+          new ItemDetailEvent(getClass().getSimpleName(), true, null, article));
     }
 
     ApiClient.isStocked(mItemUuid).enqueue(mStockStatusResponse);
@@ -472,9 +473,10 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       // mRealm.beginTransaction();
       // mRealm.copyToRealmOrUpdate(article);
       mRealm.commitTransaction();
-      EventBus.getDefault().post(new ItemDetailEvent(true, null, article));
+      EventBus.getDefault().post(
+          new ItemDetailEvent(getClass().getSimpleName(), true, null, article));
     } else {
-      EventBus.getDefault().post(new ItemDetailEvent(false,
+      EventBus.getDefault().post(new ItemDetailEvent(getClass().getSimpleName(), false,
           new Event.Error(response.code(), response.message()), null));
     }
   }
@@ -643,7 +645,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     if (event.document != null) {
       ((State) mState).stockCount =
           event.document.getElementsByClass("js-stocksCount").first().text();
-      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
+      EventBus.getDefault().post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
     }
   }
 
@@ -729,7 +731,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   }
 
   @Override public void onFailure(Throwable error) {
-    EventBus.getDefault().post(new ItemDetailEvent(false,
+    EventBus.getDefault().post(new ItemDetailEvent(getClass().getSimpleName(), false,
         new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
   }
 
@@ -745,7 +747,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         ((State) mState).stockCount = "" + newStockCount;
       }
 
-      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
+      EventBus.getDefault().post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
     }
   };
   private Callback<Void> mStockStatusResponse = new SuccessCallback<Void>() {
@@ -757,7 +759,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         ((State) mState).isStocked = false;
       }
 
-      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
+      EventBus.getDefault().post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
     }
   };
   private Callback<Void> mItemStockedResponse = new SuccessCallback<Void>() {
@@ -767,7 +769,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         ((State) mState).stockCount = "" + (1 + Integer.parseInt(((State) mState).stockCount));
       }
 
-      EventBus.getDefault().post(new StateEvent<>(true, null, mState));
+      EventBus.getDefault().post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
     }
   };
   private Callback<Comment> mCommentCallback = new SuccessCallback<Comment>() {
@@ -783,6 +785,11 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       EventBus.getDefault().post(new ItemCommentsEvent(true, null, mComments));
     }
   };
+
+  @Override protected int lookupTheme(UIUtil.Themes themes) {
+    return themes == UIUtil.Themes.DARK ?
+        R.style.Attiq_Theme_Dark_NoActionBar : R.style.Attiq_Theme_Light_NoActionBar;
+  }
 
   private static class State extends BaseState {
 

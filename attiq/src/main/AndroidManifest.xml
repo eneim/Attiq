@@ -33,14 +33,14 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Attiq.Theme"
+        android:theme="@style/Attiq.Theme.Light.NoActionBar"
         tools:replace="android:allowBackup">
         <activity
             android:name=".ui.activities.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/Attiq.Theme.NoActionBar">
+            android:theme="@style/Attiq.Theme.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -51,17 +51,17 @@
             android:name=".ui.activities.AuthActivity"
             android:label="@string/activity_login"
             android:launchMode="singleTop"
-            android:theme="@style/Attiq.Theme"/>
+            android:theme="@style/Attiq.Theme.Light"/>
         <activity
             android:name=".ui.activities.DeepLinkActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:theme="@style/Attiq.Theme.NoActionBar">
+            android:theme="@style/Attiq.Theme.Light.NoActionBar">
         </activity>
         <activity
             android:name=".ui.activities.ItemDetailActivity"
             android:label="@string/title_activity_item_detail"
-            android:theme="@style/Attiq.Theme.NoActionBar">
+            android:theme="@style/Attiq.Theme.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
@@ -83,7 +83,7 @@
             android:label="@string/title_activity_tag_detail"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/Attiq.Theme.NoActionBar">
+            android:theme="@style/Attiq.Theme.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
@@ -108,7 +108,7 @@
             android:name=".ui.activities.ProfileActivity"
             android:label="@string/title_activity_profile"
             android:screenOrientation="portrait"
-            android:theme="@style/Attiq.Theme.Profile">
+            android:theme="@style/Attiq.Theme.Light.NoActionBar.Profile">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
@@ -125,7 +125,7 @@
             android:name=".ui.activities.SearchActivity"
             android:label="@string/title_activity_search"
             android:launchMode="singleTop"
-            android:theme="@style/Attiq.Theme.NoActionBar.Translucent.Search">
+            android:theme="@style/Attiq.Theme.Dark.NoActionBar.Translucent.Search">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
@@ -143,14 +143,16 @@
             android:name=".ui.activities.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".ui.activities.MainActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Attiq.Theme.Light.Setting">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.activities.MainActivity"/>
         </activity>
         <activity
             android:name=".ui.activities.WebViewActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/Attiq.Theme.Dark">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
@@ -206,7 +208,6 @@
         <meta-data
             android:name="com.parse.push.notification_icon"
             android:resource="@drawable/ic_stat_soup_bowl"/>
-
 
         <meta-data
             android:name="com.parse.push.gcm_sender_id"

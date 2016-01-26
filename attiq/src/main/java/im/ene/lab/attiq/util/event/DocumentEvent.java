@@ -11,8 +11,14 @@ public class DocumentEvent extends Event {
 
   public final Document document;
 
+  @Deprecated
   public DocumentEvent(boolean success, @Nullable Error error, Document document) {
-    super(success, error);
+    this(DocumentEvent.class.getSimpleName(), success, error, document);
+  }
+
+  public DocumentEvent(@Nullable String tag, boolean success, @Nullable Error error, Document
+      document) {
+    super(tag, success, error);
     this.document = document;
   }
 }

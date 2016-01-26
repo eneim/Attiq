@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -33,7 +32,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import butterknife.Bind;
-import butterknife.BindColor;
 import butterknife.BindDimen;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -49,6 +47,9 @@ import im.ene.lab.attiq.ui.fragment.DummyFragment;
 import im.ene.lab.attiq.ui.fragment.UserItemsFragment;
 import im.ene.lab.attiq.ui.fragment.UserStockedItemsFragment;
 import im.ene.lab.attiq.ui.fragment.UserTagsFragment;
+import im.ene.lab.attiq.ui.widgets.NotBadImageButton;
+import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
+import im.ene.lab.attiq.ui.widgets.UserInfoRowTextView;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.WebUtil;
@@ -56,9 +57,6 @@ import im.ene.lab.attiq.util.event.DocumentEvent;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ProfileUpdatedEvent;
 import im.ene.lab.attiq.util.event.UserFetchedEvent;
-import im.ene.lab.attiq.ui.widgets.NotBadImageButton;
-import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
-import im.ene.lab.attiq.ui.widgets.UserInfoRowTextView;
 import im.ene.lab.support.widget.AlphaForegroundColorSpan;
 import im.ene.lab.support.widget.AppBarLayout;
 import im.ene.lab.support.widget.CollapsingToolbarLayout;
@@ -95,6 +93,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
   @Bind(R.id.profile_image) NotBadImageButton mProfileImage;
   @Bind(R.id.social_button_container) View mSocialButtonContainer;
   @Bind(R.id.profile_social_buttons) LinearLayout mSocialButtonView;
+  @Bind(R.id.text_action_follow_container) View mBtnFollowContainer;
   @Bind(R.id.text_action_follow) TextView mBtnFollow;
   @Bind(R.id.profile_name) TextView mProfileName;
   @Bind(R.id.profile_description) TextView mProfileDescription;
@@ -112,7 +111,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
   // Others
   // @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
   @BindDimen(R.dimen.item_padding_half) int mImageBorderWidth;
-  @BindColor(android.R.color.white) int mImageBorderColor;
+  int mImageBorderColor;
   @BindDimen(R.dimen.profile_image_size) int mProfileImageSize;
   @BindDimen(R.dimen.item_padding) int mProfileImageRadius;
   @Bind({
@@ -122,6 +121,9 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
       R.id.profile_social_github,
       R.id.profile_social_linkedin
   }) ImageButton[] mSocialButtons;
+
+  // private int mFollowTextPositive;
+  // private int mFollowTextNegative;
 
   private ProfileViewPagerAdapter mPagerAdapter;
   // Title support
@@ -157,19 +159,20 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
       if (msg.what == MESSAGE_ACTION_FOLLOW) {
         if (!mState.isFollowing) {
           mState.isFollowing = true;
-          EventBus.getDefault().post(new StateEvent(true, null, mState));
+          EventBus.getDefault().post(
+              new StateEvent<>(ProfileActivity.class.getSimpleName(), true, null, mState));
           ApiClient.followUser(mUserId).enqueue(mOnFollowStateCallback);
         } else {
           mState.isFollowing = false;
-          EventBus.getDefault().post(new StateEvent(true, null, mState));
+          EventBus.getDefault().post(
+              new StateEvent<>(ProfileActivity.class.getSimpleName(), true, null, mState));
           ApiClient.unFollowUser(mUserId).enqueue(mOnUnFollowStateCallback);
         }
 
         return true;
       } else if (msg.what == MESSAGE_DATA_UPDATE) {
-        EventBus.getDefault().post(new ProfileUpdatedEvent(
-            true, null, mProfile
-        ));
+        EventBus.getDefault().post(
+            new ProfileUpdatedEvent(ProfileActivity.class.getSimpleName(), true, null, mProfile));
       }
 
       return false;
@@ -209,6 +212,11 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
         .resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
     int titleColorId = typedValue.resourceId;
     mTitleColorSpan = new AlphaForegroundColorSpan(ContextCompat.getColor(this, titleColorId));
+
+    typedValue = new TypedValue();
+    getTheme().resolveAttribute(R.attr.colorAccent, typedValue, true);
+    int accentColorId = typedValue.resourceId;
+    mImageBorderColor = ContextCompat.getColor(this, accentColorId);
 
     mRealm = Attiq.realm();
     mRealm.addChangeListener(this);
@@ -251,7 +259,8 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     // find a local user, if there is one, update current profile
     User user = mRealm.where(User.class).equalTo("id", mUserId).findFirst();
     if (user != null) {
-      EventBus.getDefault().post(new UserFetchedEvent(true, null, user));
+      EventBus.getDefault().post(
+          new UserFetchedEvent(getClass().getSimpleName(), true, null, user));
     }
 
   }
@@ -271,11 +280,12 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     mOnFollowStateCallback = new Callback<Void>() {
       @Override public void onResponse(Response<Void> response) {
         mState.isFollowing = response != null && response.code() == 204;
-        EventBus.getDefault().post(new StateEvent(true, null, mState));
+        EventBus.getDefault().post(new StateEvent<>(ProfileActivity.class.getSimpleName(),
+            true, null, mState));
       }
 
       @Override public void onFailure(Throwable t) {
-        EventBus.getDefault().post(new StateEvent(false,
+        EventBus.getDefault().post(new StateEvent<>(ProfileActivity.class.getSimpleName(), false,
             new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
       }
     };
@@ -286,7 +296,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
       }
 
       @Override public void onFailure(Throwable t) {
-        EventBus.getDefault().post(new StateEvent(false,
+        EventBus.getDefault().post(new StateEvent<>(ProfileActivity.class.getSimpleName(), false,
             new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
       }
     };
@@ -300,16 +310,17 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
           realm.copyToRealmOrUpdate(user);
           realm.commitTransaction();
           realm.close();
-          EventBus.getDefault().post(new UserFetchedEvent(true, null, user));
+          EventBus.getDefault().post(new UserFetchedEvent(ProfileActivity.class.getSimpleName(),
+              true, null, user));
         } else {
-          EventBus.getDefault().post(new UserFetchedEvent(false,
-              new Event.Error(response.code(), response.message()), null));
+          EventBus.getDefault().post(new UserFetchedEvent(ProfileActivity.class.getSimpleName(),
+              false, new Event.Error(response.code(), response.message()), null));
         }
       }
 
       @Override public void onFailure(Throwable error) {
-        EventBus.getDefault().post(new UserFetchedEvent(false,
-            new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
+        EventBus.getDefault().post(new UserFetchedEvent(ProfileActivity.class.getSimpleName(),
+            false, new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
     };
 
@@ -318,7 +329,8 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     mDocumentCallback = new DocumentCallback(baseUrl) {
       @Override public void onDocument(Document response) {
         if (response != null) {
-          EventBus.getDefault().post(new DocumentEvent(true, null, response));
+          EventBus.getDefault().post(new DocumentEvent(
+              ProfileActivity.class.getSimpleName(), true, null, response));
         }
       }
     };
@@ -327,7 +339,8 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
 
     // update UI
     if (mProfile != null) {
-      EventBus.getDefault().post(new ProfileUpdatedEvent(true, null, mProfile));
+      EventBus.getDefault().post(new ProfileUpdatedEvent(ProfileActivity.class.getSimpleName(),
+          true, null, mProfile));
     }
 
     ApiClient.isFollowing(mUserId).enqueue(mOnFollowStateCallback);
@@ -344,10 +357,10 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
   }
 
   @SuppressWarnings("unused")
-  public void onEventMainThread(StateEvent event) {
+  public void onEventMainThread(StateEvent<State> event) {
     mBtnFollow.setEnabled(mRefUser != null && !UIUtil.isEmpty(mRefUser.getToken()));
     mBtnFollow.setClickable(mRefUser != null && !UIUtil.isEmpty(mRefUser.getToken()));
-    mBtnFollow.setVisibility(
+    mBtnFollowContainer.setVisibility(
         mRefUser != null && mUserId.equals(mRefUser.getId()) ? View.GONE : View.VISIBLE
     );
 
@@ -680,27 +693,23 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
 
         if (contribution != null) {
           mState.contribution = contribution;
-          EventBus.getDefault().post(new StateEvent(true, null, mState));
+          EventBus.getDefault().post(
+              new StateEvent<>(getClass().getSimpleName(), true, null, mState));
         }
       }
     }
   }
 
-  private static class State {
+  private static class State extends BaseState {
 
     private boolean isFollowing;
 
     private Integer contribution;
   }
 
-  private static class StateEvent extends Event {
-
-    private final State state;
-
-    public StateEvent(boolean success, @Nullable Error error, State state) {
-      super(success, error);
-      this.state = state;
-    }
+  @Override protected int lookupTheme(UIUtil.Themes themes) {
+    return themes == UIUtil.Themes.DARK ?
+        R.style.Attiq_Theme_Dark_NoActionBar_Profile :
+        R.style.Attiq_Theme_Light_NoActionBar_Profile;
   }
-
 }

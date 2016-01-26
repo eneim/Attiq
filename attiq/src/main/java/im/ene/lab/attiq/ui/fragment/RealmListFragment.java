@@ -25,12 +25,12 @@ import android.view.View;
 
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
+import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.ui.adapters.ListAdapter;
 import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
-import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
-import im.ene.lab.attiq.util.event.TypedEvent;
+import im.ene.lab.attiq.util.event.ItemsEvent;
 import io.realm.Realm;
 import io.realm.RealmAsyncTask;
 import io.realm.RealmChangeListener;
@@ -101,8 +101,8 @@ public abstract class RealmListFragment<E extends RealmObject>
     Log.d(getClass().getSimpleName(),
         "onResponse() called with: " + "response = [" + response + "]");
     if (response.code() != 200) {
-      EventBus.getDefault().post(new TypedEvent<>(false,
-          new Event.Error(response.code(), ApiClient.parseError(response).message), null, mPage));
+      EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
+          new Event.Error(response.code(), ApiClient.parseError(response).message), mPage));
     } else {
       final List<E> items = response.body();
       if (!UIUtil.isEmpty(items)) {
@@ -113,15 +113,17 @@ public abstract class RealmListFragment<E extends RealmObject>
         }, new Realm.Transaction.Callback() {
           @Override public void onSuccess() {
             super.onSuccess();
-            EventBus.getDefault().post(new TypedEvent<>(true, null, items.get(0), mPage));
+            EventBus.getDefault().post(new ItemsEvent(eventTag(), true, null, mPage));
           }
 
           @Override public void onError(Exception e) {
             super.onError(e);
-            EventBus.getDefault().post(new TypedEvent<>(false,
-                new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), null, mPage));
+            EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
+                new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), mPage));
           }
         });
+      } else {
+        EventBus.getDefault().post(new ItemsEvent(eventTag(), true, null, mPage));
       }
     }
   }

@@ -62,17 +62,17 @@ import butterknife.BindInt;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.ui.adapters.ArticleListAdapter;
-import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.two.User;
-import im.ene.lab.attiq.util.AnimUtils;
-import im.ene.lab.attiq.util.ImeUtils;
-import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.ui.adapters.ArticleListAdapter;
+import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.widgets.BaselineGridTextView;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 import im.ene.lab.attiq.ui.widgets.EndlessScrollListener;
+import im.ene.lab.attiq.util.AnimUtils;
+import im.ene.lab.attiq.util.ImeUtils;
+import im.ene.lab.attiq.util.UIUtil;
 import io.codetail.animation.ViewAnimationUtils;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -479,5 +479,11 @@ public class SearchActivity extends BaseActivity {
     mQuery = query;
     mPage = 1;
     mAdapter.loadItems(false, mPage, 99, mQuery, mSearchResultCallback);
+  }
+
+  @Override protected int lookupTheme(UIUtil.Themes themes) {
+    return themes == UIUtil.Themes.DARK ?
+        R.style.Attiq_Theme_Dark_NoActionBar :
+        R.style.Attiq_Theme_Light_NoActionBar;
   }
 }
