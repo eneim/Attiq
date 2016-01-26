@@ -22,12 +22,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -63,10 +62,8 @@ import im.ene.lab.attiq.data.model.two.AccessToken;
 import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.data.model.zero.FeedItem;
 import im.ene.lab.attiq.services.ParseUserService;
-import im.ene.lab.attiq.ui.fragment.FeedListFragment;
-import im.ene.lab.attiq.ui.fragment.HistoryFragment;
-import im.ene.lab.attiq.ui.fragment.PublicStreamFragment;
-import im.ene.lab.attiq.ui.fragment.UserStockedItemsFragment;
+import im.ene.lab.attiq.ui.fragment.AuthorizedUserHomeFragment;
+import im.ene.lab.attiq.ui.fragment.PublicUserHomeFragment;
 import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
@@ -78,8 +75,9 @@ import io.realm.RealmAsyncTask;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends BaseActivity
-    implements NavigationView.OnNavigationItemSelectedListener {
+public class HomeActivity extends BaseActivity
+    implements NavigationView.OnNavigationItemSelectedListener,
+    PublicUserHomeFragment.Callback, AuthorizedUserHomeFragment.Callback {
 
   public static final String EXTRA_AUTH_CALLBACK = "extra_auth_callback";
 
@@ -105,13 +103,10 @@ public class MainActivity extends BaseActivity
   private Toolbar mToolBar;
   private MenuItem mAuthMenuItem;
   private MenuItem mMyPageMenuItem;
-  private View mMainContainer;
-  private ViewPager mViewPager;
   private View mHeaderView;
   private DrawerLayout mDrawerLayout;
   private SmoothActionBarDrawerToggle mDrawerToggle;
   private TabLayout mMainTabs;
-  private Fragment mFragment;
   private NavigationView mNavigationView;
 
   // Utils
@@ -142,10 +137,7 @@ public class MainActivity extends BaseActivity
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
-    mMainContainer = findViewById(R.id.container);
-    mViewPager = (ViewPager) findViewById(R.id.view_pager);
-    mViewPager.setOffscreenPageLimit(3);
+    setContentView(R.layout.activity_home);
 
     mIconCornerRadius = UIUtil.getDimen(this, R.dimen.header_icon_size_half);
     mIconBorderWidth = UIUtil.getDimen(this, R.dimen.dimen_unit);
@@ -170,10 +162,10 @@ public class MainActivity extends BaseActivity
           }
         } else if (id == R.id.nav_profile) {
           if (mMyProfile != null) {
-            startActivity(ProfileActivity.createIntent(MainActivity.this, mMyProfile.getId()));
+            startActivity(ProfileActivity.createIntent(HomeActivity.this, mMyProfile.getId()));
           }
         } else if (id == R.id.nav_setting) {
-          startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+          startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
         }
       }
     };
@@ -209,17 +201,17 @@ public class MainActivity extends BaseActivity
       ButterKnife.bind(this, mHeaderView);
     }
 
+    updateMasterUserInfo(mMyProfile);
+
     if (mMyProfile != null) {
-      updateMasterUser(mMyProfile);
       mState.isAuthorized = true;
     } else {
       mState.isAuthorized = false;
     }
 
-    EventBus.getDefault().post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
-
-    trySetupToolBarTabs(savedInstanceState);
-    getMasterUser(PrefUtil.getCurrentToken());
+    if (getSupportFragmentManager().findFragmentById(R.id.container) == null) {
+      updateMasterUserData(mMyProfile);
+    }
   }
 
   private void login() {
@@ -267,13 +259,25 @@ public class MainActivity extends BaseActivity
               }
             });
             PrefUtil.setCurrentToken(null);
-            EventBus.getDefault().post(new ProfileEvent(MainActivity.class.getSimpleName(),
+            EventBus.getDefault().post(new ProfileEvent(HomeActivity.class.getSimpleName(),
                 true, null, null));
           }
         }).create().show();
   }
 
-  private void updateMasterUser(Profile user) {
+  private void updateMasterUserData(Profile user) {
+    Fragment fragment;
+    if (user != null && PrefUtil.getCurrentToken().equals(user.getToken())) {
+      fragment = AuthorizedUserHomeFragment.newInstance(user.getId());
+    } else {
+      fragment = PublicUserHomeFragment.newInstance();
+    }
+
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.container, fragment).commit();
+  }
+
+  private void updateMasterUserInfo(@Nullable Profile user) {
     if (user == null) {
       if (mHeaderName != null) {
         mHeaderName.setText(R.string.text_welcome);
@@ -307,18 +311,6 @@ public class MainActivity extends BaseActivity
     }
   }
 
-  @Override protected void onResume() {
-    super.onResume();
-  }
-
-  private void trySetupToolBarTabs(Bundle savedState) {
-    if (savedState != null) {
-      return;
-    }
-
-    trySetupToolBarTabs();
-  }
-
   private void getMasterUser(final String token) {
     ApiClient.me().enqueue(new Callback<Profile>() {
       @Override public void onResponse(final Response<Profile> response) {
@@ -334,95 +326,30 @@ public class MainActivity extends BaseActivity
             @Override public void onSuccess() {
               super.onSuccess();
               EventBus.getDefault().post(
-                  new ProfileEvent(MainActivity.class.getSimpleName(),
+                  new ProfileEvent(HomeActivity.class.getSimpleName(),
                       true, null, mMyProfile));
             }
 
             @Override public void onError(Exception e) {
               super.onError(e);
               EventBus.getDefault().post(
-                  new ProfileEvent(MainActivity.class.getSimpleName(), false,
+                  new ProfileEvent(HomeActivity.class.getSimpleName(), false,
                       new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), null));
             }
           });
         } else {
           EventBus.getDefault().post(
-              new ProfileEvent(MainActivity.class.getSimpleName(), false,
+              new ProfileEvent(HomeActivity.class.getSimpleName(), false,
                   new Event.Error(response.code(), response.message()), null));
         }
       }
 
       @Override public void onFailure(Throwable error) {
         EventBus.getDefault().post(
-            new ProfileEvent(MainActivity.class.getSimpleName(), false,
+            new ProfileEvent(HomeActivity.class.getSimpleName(), false,
                 new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
     });
-  }
-
-  private void trySetupToolBarTabs() {
-    if (mMainTabs != null) {
-      mToolBar.removeView(mMainTabs);
-    }
-
-    if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
-      // We need an user, so inflate auth menu
-      mAuthMenu.setImageResource(R.drawable.ic_arrow_drop_up);
-      mNavigationView.getMenu().setGroupVisible(R.id.group_auth, true);
-      mNavigationView.getMenu().setGroupVisible(R.id.group_navigation, false);
-      mNavigationView.getMenu().setGroupVisible(R.id.group_post, false);
-
-      if (getSupportActionBar() != null) {
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-      }
-
-      // There is no current active User, show Public Timeline Fragment
-      mViewPager.setVisibility(View.GONE);
-      mMainContainer.setVisibility(View.VISIBLE);
-      // attach content
-      mFragment = getSupportFragmentManager().findFragmentById(R.id.container);
-      if (mFragment == null) {
-        mFragment = PublicStreamFragment.newInstance();
-        getSupportFragmentManager().beginTransaction()
-            .replace(R.id.container, mFragment).commit();
-      }
-    } else {
-      // Change menu visibility
-      mAuthMenu.setImageResource(R.drawable.ic_arrow_drop_down);
-      mNavigationView.getMenu().setGroupVisible(R.id.group_auth, false);
-      mNavigationView.getMenu().setGroupVisible(R.id.group_navigation, true);
-      mNavigationView.getMenu().setGroupVisible(R.id.group_post, true);
-
-      // Check home button at startup
-      mNavigationView.setCheckedItem(R.id.nav_home);
-
-      // On first logging in, this Fragment has been initialized. We need to release it.
-      if (mFragment != null) {
-        getSupportFragmentManager().beginTransaction().remove(mFragment).commit();
-      }
-      mMainContainer.setVisibility(View.GONE);
-      mViewPager.setVisibility(View.VISIBLE);
-
-      if (getSupportActionBar() != null) {
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-      }
-
-      MainPagerAdapter pagerAdapter = new MainPagerAdapter(
-          mMyProfile != null ? mMyProfile.getId() : null,
-          getSupportFragmentManager()
-      );
-      mViewPager.setAdapter(pagerAdapter);
-
-      mMainTabs = (TabLayout) LayoutInflater.from(mToolBar.getContext())
-          .inflate(R.layout.toolbar_tab_layout, mToolBar, false);
-      mMainTabs.setupWithViewPager(mViewPager);
-
-      ActionBar.LayoutParams params = new ActionBar.LayoutParams(
-          ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
-      params.gravity = GravityCompat.START;
-
-      mToolBar.addView(mMainTabs, params);
-    }
   }
 
   @Override protected void onDestroy() {
@@ -495,8 +422,8 @@ public class MainActivity extends BaseActivity
   @SuppressWarnings("unused")
   public void onEventMainThread(final ProfileEvent event) {
     if (event.success) {
-      trySetupToolBarTabs();
-      updateMasterUser(event.profile);
+      updateMasterUserInfo(event.profile);
+      updateMasterUserData(event.profile);
 
       if (event.profile != null && PrefUtil.getCurrentToken().equals(event.profile.getToken())) {
         // Update User to Parse
@@ -507,7 +434,7 @@ public class MainActivity extends BaseActivity
 
         if (PrefUtil.isFirstStart()) {
           PrefUtil.setFirstStart(false);
-          Toast.makeText(MainActivity.this, "おはようございます", Toast.LENGTH_SHORT).show();
+          Toast.makeText(HomeActivity.this, "おはようございます", Toast.LENGTH_SHORT).show();
           mDrawerLayout.openDrawer(GravityCompat.START);
         }
 
@@ -537,50 +464,50 @@ public class MainActivity extends BaseActivity
     }
   }
 
-  private static class MainPagerAdapter extends FragmentStatePagerAdapter {
+  @Override public void onUserHomeCreated(ViewPager viewPager) {
+    if (mMainTabs != null) {
+      mToolBar.removeView(mMainTabs);
+    }
+    // Change menu visibility
+    mAuthMenu.setImageResource(R.drawable.ic_arrow_drop_down);
+    mNavigationView.getMenu().setGroupVisible(R.id.group_auth, false);
+    mNavigationView.getMenu().setGroupVisible(R.id.group_navigation, true);
+    mNavigationView.getMenu().setGroupVisible(R.id.group_post, true);
 
-    private static final int TITLES[] = {
-        R.string.tab_home_public,
-        R.string.tab_home_feed,
-        R.string.tab_title_stocks
-        // , R.string.tab_title_history
-    };
-    private final String mUserId;
+    // Check home button at startup
+    mNavigationView.setCheckedItem(R.id.nav_home);
 
-    public MainPagerAdapter(String userId, FragmentManager fm) {
-      super(fm);
-      mUserId = userId;
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    @Override public Fragment getItem(int position) {
-      if (position == 0) {
-        return PublicStreamFragment.newInstance();
-      } else if (position == 1) {
-        return FeedListFragment.newInstance();
-      } else if (position == 2) {
-        return UserStockedItemsFragment.newInstance(mUserId);
-      } else if (position == 3) {
-        return HistoryFragment.newInstance();
-      }
+    mMainTabs = (TabLayout) LayoutInflater.from(mToolBar.getContext())
+        .inflate(R.layout.toolbar_tab_layout, mToolBar, false);
+    mMainTabs.setupWithViewPager(viewPager);
 
-      return PublicStreamFragment.newInstance();
+    ActionBar.LayoutParams params = new ActionBar.LayoutParams(
+        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    params.gravity = GravityCompat.START;
+
+    mToolBar.addView(mMainTabs, params);
+  }
+
+  @Override public void onTimelineCreated(View root) {
+    if (mMainTabs != null) {
+      mToolBar.removeView(mMainTabs);
     }
+    // We need an user, so inflate auth menu
+    mAuthMenu.setImageResource(R.drawable.ic_arrow_drop_up);
+    mNavigationView.getMenu().setGroupVisible(R.id.group_auth, true);
+    mNavigationView.getMenu().setGroupVisible(R.id.group_navigation, false);
+    mNavigationView.getMenu().setGroupVisible(R.id.group_post, false);
 
-    @Override public int getCount() {
-      if (mUserId != null) {
-        return TITLES.length;
-      } else {
-        return TITLES.length - 1;
-      }
-    }
-
-    @Override public CharSequence getPageTitle(int position) {
-      // Directly use Application Context here. There is no style or theme here so we don't care
-      return Attiq.creator().getString(TITLES[position]);
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setDisplayShowTitleEnabled(true);
     }
   }
 
-  private static class State extends BaseActivity.BaseState {
+  private static class State extends BaseState {
     public State() {
       super();
     }
@@ -591,4 +518,5 @@ public class MainActivity extends BaseActivity
         R.style.Attiq_Theme_Dark_NoActionBar :
         R.style.Attiq_Theme_Light_NoActionBar;
   }
+
 }

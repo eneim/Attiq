@@ -36,7 +36,7 @@
         android:theme="@style/Attiq.Theme.Light.NoActionBar"
         tools:replace="android:allowBackup">
         <activity
-            android:name=".ui.activities.MainActivity"
+            android:name=".ui.activities.HomeActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -142,12 +142,12 @@
         <activity
             android:name=".ui.activities.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".ui.activities.MainActivity"
+            android:parentActivityName=".ui.activities.HomeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Attiq.Theme.Light.Setting">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.activities.MainActivity"/>
+                android:value=".ui.activities.HomeActivity"/>
         </activity>
         <activity
             android:name=".ui.activities.WebViewActivity"
