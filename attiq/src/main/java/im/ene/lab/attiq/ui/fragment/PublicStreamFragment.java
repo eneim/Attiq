@@ -138,10 +138,14 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
         @Override public void onClick(View v) {
           int position = viewHolder.getAdapterPosition();
           if (mMopubAdapter != null) {
-            position = mMopubAdapter.getOriginalPosition(position);
-            if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-              mOnItemClickListener.onItemClick(PublicItemsWithAdsAdapter.this,
-                  viewHolder, v, position, getItemId(position));
+            try {
+              position = mMopubAdapter.getOriginalPosition(position);
+              if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
+                mOnItemClickListener.onItemClick(PublicItemsWithAdsAdapter.this,
+                    viewHolder, v, position, getItemId(position));
+              }
+            } catch (Exception er) {
+              er.printStackTrace();
             }
           }
         }

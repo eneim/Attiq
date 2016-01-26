@@ -45,7 +45,7 @@ import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.data.model.two.User;
 import im.ene.lab.attiq.ui.fragment.DummyFragment;
 import im.ene.lab.attiq.ui.fragment.UserItemsFragment;
-import im.ene.lab.attiq.ui.fragment.UserStockedItemsFragment;
+import im.ene.lab.attiq.ui.fragment.UserStockedArticlesFragment;
 import im.ene.lab.attiq.ui.fragment.UserTagsFragment;
 import im.ene.lab.attiq.ui.widgets.NotBadImageButton;
 import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
@@ -639,7 +639,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
       if (position == 0) {
         return UserItemsFragment.newInstance(mUserId);
       } else if (position == 1) {
-        return UserStockedItemsFragment.newInstance(mUserId);
+        return UserStockedArticlesFragment.newInstance(mUserId);
       }
 
       // fallback

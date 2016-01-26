@@ -116,7 +116,7 @@ public class AuthorizedUserHomeFragment extends BaseFragment {
       } else if (position == 1) {
         return FeedListFragment.newInstance();
       } else if (position == 2) {
-        return UserStockedItemsFragment.newInstance(mUserId);
+        return UserStockedArticlesFragment.newInstance(mUserId);
       } else if (position == 3) {
         return HistoryFragment.newInstance();
       }

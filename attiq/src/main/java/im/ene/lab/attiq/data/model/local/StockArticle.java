@@ -25,8 +25,19 @@ import io.realm.annotations.PrimaryKey;
  */
 public class StockArticle extends RealmObject {
 
+  public static final String FIELD_ARTICLE_ID = "articleId";
+
+  public static final String FIELD_CREATED_AT = "createdAt";
+
+  public static final String FIELD_USER_ID = "userId";
+
   @PrimaryKey
   private String articleId;
+
+  // owner
+  private String userId;
+
+  private Long createdAt;
 
   private Article article;
 
@@ -44,5 +55,21 @@ public class StockArticle extends RealmObject {
 
   public void setArticle(Article article) {
     this.article = article;
+  }
+
+  public Long getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Long createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getUserId() {
+    return userId;
+  }
+
+  public void setUserId(String userId) {
+    this.userId = userId;
   }
 }

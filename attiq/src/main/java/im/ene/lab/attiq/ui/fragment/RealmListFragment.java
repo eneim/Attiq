@@ -20,7 +20,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.View;
 
 import de.greenrobot.event.EventBus;
@@ -98,8 +97,6 @@ public abstract class RealmListFragment<E extends RealmObject>
   }
 
   @Override public void onResponse(Response<List<E>> response) {
-    Log.d(getClass().getSimpleName(),
-        "onResponse() called with: " + "response = [" + response + "]");
     if (response.code() != 200) {
       EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
           new Event.Error(response.code(), ApiClient.parseError(response).message), mPage));

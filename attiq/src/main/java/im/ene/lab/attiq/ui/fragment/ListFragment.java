@@ -178,11 +178,6 @@ public abstract class ListFragment<E>
     }
   }
 
-  @Override public void onResume() {
-    super.onResume();
-    onEventMainThread(new ItemsEvent(eventTag(), true, null, mPage));
-  }
-
   // Just do nothing here
   @SuppressWarnings("unused")
   public void onEventMainThread(ItemsEvent event) {

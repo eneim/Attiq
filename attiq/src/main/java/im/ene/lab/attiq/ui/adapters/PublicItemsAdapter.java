@@ -207,8 +207,8 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
     }
 
     @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {
+      super.setOnViewHolderClickListener(listener);
       mItemUserImage.setOnClickListener(listener);
-      itemView.setOnClickListener(listener);
     }
 
     @Override public void bind(Post item) {
