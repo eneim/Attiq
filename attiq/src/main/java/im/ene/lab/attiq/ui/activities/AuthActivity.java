@@ -43,10 +43,10 @@ public class AuthActivity extends AppCompatActivity {
       // catch the application callback url here and return to LoginActivity
       // attiq://lab.ene.im/qiita/oauth?code=CODE&state=STATE
       if (url.startsWith(getString(R.string.api_callback))) {
-        Intent result = new Intent(AuthActivity.this, MainActivity.class);
+        Intent result = new Intent(AuthActivity.this, HomeActivity.class);
         // setup return result
         Bundle bundle = new Bundle();
-        bundle.putString(MainActivity.EXTRA_AUTH_CALLBACK, url);
+        bundle.putString(HomeActivity.EXTRA_AUTH_CALLBACK, url);
         result.putExtras(bundle);
         setResult(RESULT_OK, result);
         finish();
