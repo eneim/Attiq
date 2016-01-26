@@ -51,7 +51,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -207,23 +206,14 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    // To get Toolbar's height, there are several methods. But all of them depends on Toolbar's
-    // theme or the host activity spec. In AppCompat, it's not guarantee that it contains a
-    // custom Toolbar or default ActionBar/Toolbar, so we'd better get the real Toolbar's dimen.
-    mToolbar.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override public void onGlobalLayout() {
-            mToolbar.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            // Dynamically update top margin, depending on device's spec
-            SlidingUpPanelLayout.LayoutParams lp =
-                ((SlidingUpPanelLayout.LayoutParams) mCommentComposerContainer.getLayoutParams());
-            if (lp != null) {
-              lp.topMargin =
-                  UIUtil.getStatusBarHeight(ItemDetailActivity.this) + mToolbar.getHeight();
-              mCommentComposerContainer.setLayoutParams(lp);
-            }
-          }
-        });
+    mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+    SlidingUpPanelLayout.LayoutParams lp =
+        ((SlidingUpPanelLayout.LayoutParams) mCommentComposerContainer.getLayoutParams());
+    if (lp != null) {
+      lp.topMargin +=
+          UIUtil.getStatusBarHeight(ItemDetailActivity.this) + mToolbar.getMinimumHeight();
+      mCommentComposerContainer.setLayoutParams(lp);
+    }
 
     mSlidingPanel.setScrollableViewHelper(new NestedScrollableViewHelper());
     mSlidingPanel.setPanelSlideListener(new PanelSlideListenerAdapter() {
@@ -241,7 +231,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     });
 
     mCommentComposer.addOnPageChangeListener(mCommentComposerPageChange);
-    mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
     mComposerTabs.setupWithViewPager(mCommentComposer);
 
     // empty title at start

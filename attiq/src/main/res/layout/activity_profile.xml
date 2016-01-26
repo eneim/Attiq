@@ -16,7 +16,6 @@
         android:id="@+id/profile_image"
         android:layout_width="@dimen/design_fab_size_big"
         android:layout_height="@dimen/design_fab_size_big"
-        android:layout_marginLeft="?attr/actionBarSize"
         android:layout_marginStart="?attr/actionBarSize"
         android:src="@mipmap/ic_launcher"
         app:elevation="12dp"

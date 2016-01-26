@@ -82,6 +82,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
   private static final int TWITTER_BUTTON_INDEX = 2;
   private static final int GITHUB_BUTTON_INDEX = 3;
   private static final int LINKEDIN_BUTTON_INDEX = 4;
+
   private static final int HANDLER_DELAY = 200; // To prevent stress events
 
   @Bind(R.id.view_pager) ViewPager mViewPager;
@@ -258,7 +259,6 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
       EventBus.getDefault().post(
           new ProfileFetchedEvent(getClass().getSimpleName(), true, null, user));
     }
-
   }
 
   @Override protected void onDestroy() {
