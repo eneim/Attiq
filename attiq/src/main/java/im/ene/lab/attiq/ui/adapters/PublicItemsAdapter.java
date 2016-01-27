@@ -122,14 +122,14 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
 
     data.enqueue(new Callback<List<Post>>() {
       @Override public void onResponse(Response<List<Post>> response) {
-        cleanup(!isLoadingMore);
+        // cleanup(!isLoadingMore);
         if (callback != null) {
           callback.onResponse(response);
         }
       }
 
       @Override public void onFailure(Throwable throwable) {
-        cleanup(!isLoadingMore);
+        // cleanup(!isLoadingMore);
         if (callback != null) {
           callback.onFailure(throwable);
         }
