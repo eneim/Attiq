@@ -46,13 +46,14 @@ import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.zero.FeedItem;
-import im.ene.lab.attiq.util.IOUtil;
+import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import im.ene.lab.attiq.ui.widgets.TextViewTarget;
+import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
-import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import io.realm.RealmResults;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.util.List;
 
@@ -121,7 +122,7 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
 
   @Override
   public void loadItems(boolean isLoadingMore, int page, int pageLimit,
-                        @Nullable String query, Callback<List<FeedItem>> callback) {
+                        @Nullable String query, final Callback<List<FeedItem>> callback) {
     final Long createdAt;
     if (getItemCount() == 0 || !isLoadingMore) {
       createdAt = null;
@@ -129,7 +130,22 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
       createdAt = getItem(getItemCount() - 1).getCreatedAtInUnixtime();
     }
 
-    ApiClient.feed(createdAt).enqueue(callback);
+    isLoading = true;
+    ApiClient.feed(createdAt).enqueue(new Callback<List<FeedItem>>() {
+      @Override public void onResponse(Response<List<FeedItem>> response) {
+        isLoading = false;
+        if (callback != null) {
+          callback.onResponse(response);
+        }
+      }
+
+      @Override public void onFailure(Throwable t) {
+        isLoading = false;
+        if (callback != null) {
+          callback.onFailure(t);
+        }
+      }
+    });
   }
 
   public static class FeedViewHolder extends ViewHolder<FeedItem> {

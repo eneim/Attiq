@@ -7,4 +7,5 @@ import io.realm.RealmObject;
  */
 public abstract class RealmListAdapter<T extends RealmObject> extends ListAdapter<T> {
 
+  // Force objects of this Adapter be a RealmObject
 }

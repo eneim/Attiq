@@ -35,6 +35,7 @@ import java.security.NoSuchAlgorithmException;
  * Created by eneim on 1/23/16.
  */
 public class ParseUserService extends IntentService {
+
   /**
    * Creates an IntentService.  Invoked by your subclass's constructor.
    */

@@ -11,6 +11,9 @@ import java.util.List;
  */
 public abstract class ListAdapter<T> extends BaseListAdapter<T> {
 
+  // indicate that this Adapter is calling API or not
+  protected boolean isLoading = false;
+
   public abstract void loadItems(boolean isLoadingMore, int page, int pageLimit,
                                  @Nullable String query, Callback<List<T>> callback);
 
@@ -23,4 +26,7 @@ public abstract class ListAdapter<T> extends BaseListAdapter<T> {
   public void clear() {
   }
 
+  public boolean isLoading() {
+    return isLoading;
+  }
 }

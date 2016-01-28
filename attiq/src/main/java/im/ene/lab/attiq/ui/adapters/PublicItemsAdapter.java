@@ -37,7 +37,6 @@ import im.ene.lab.attiq.ui.widgets.TextViewTarget;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
-import io.realm.Realm;
 import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -120,31 +119,22 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
       data = ApiClient.publicStream(id);
     }
 
+    isLoading = true;
     data.enqueue(new Callback<List<Post>>() {
       @Override public void onResponse(Response<List<Post>> response) {
-        // cleanup(!isLoadingMore);
+        isLoading = false;
         if (callback != null) {
           callback.onResponse(response);
         }
       }
 
       @Override public void onFailure(Throwable throwable) {
-        // cleanup(!isLoadingMore);
+        isLoading = false;
         if (callback != null) {
           callback.onFailure(throwable);
         }
       }
     });
-  }
-
-  private void cleanup(boolean shouldCleanup) {
-    if (shouldCleanup) {
-      Realm realm = Attiq.realm();
-      realm.beginTransaction();
-      realm.clear(Post.class);
-      realm.commitTransaction();
-      realm.close();
-    }
   }
 
   public static abstract class OnPublicItemClickListener implements OnItemClickListener {

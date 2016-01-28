@@ -160,6 +160,17 @@ public abstract class ListFragment<E>
     mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
   }
 
+  @Override public void onResume() {
+    super.onResume();
+    if (mLoadingView != null) {
+      if (!mAdapter.isLoading()) {
+        mLoadingView.setVisibility(View.GONE);
+      } else {
+        mLoadingView.setVisibility(View.VISIBLE);
+      }
+    }
+  }
+
   @Override public void onDestroyView() {
     mRecyclerView.removeOnScrollListener(mEndlessScrollListener);
     mEndlessScrollListener = null;
@@ -194,7 +205,7 @@ public abstract class ListFragment<E>
       mRecyclerView.setErrorViewShown(event.error != null);
     }
 
-    if (mLoadingView != null) {
+    if (mLoadingView != null && !mAdapter.isLoading()) {
       mLoadingView.setVisibility(View.GONE);
     }
   }

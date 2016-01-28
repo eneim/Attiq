@@ -115,8 +115,10 @@ public class UserStockArticlesAdapter extends RealmListAdapter<StockArticle> {
   public void loadItems(final boolean isLoadingMore, int page, int pageLimit,
                         @Nullable String query, final Callback<List<StockArticle>> callback) {
     // do nothing
+    isLoading = true;
     ApiClient.userStockedItems(mUserId, page, pageLimit).enqueue(new Callback<List<Article>>() {
       @Override public void onResponse(Response<List<Article>> response) {
+        isLoading = false;
         // cleanup(!isLoadingMore);
         if (callback != null) {
           final List<Article> items = response.body();
@@ -136,6 +138,7 @@ public class UserStockArticlesAdapter extends RealmListAdapter<StockArticle> {
       }
 
       @Override public void onFailure(Throwable throwable) {
+        isLoading = false;
         // cleanup(!isLoadingMore);
         if (callback != null) {
           callback.onFailure(throwable);

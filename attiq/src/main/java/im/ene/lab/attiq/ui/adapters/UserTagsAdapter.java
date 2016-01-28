@@ -17,6 +17,7 @@ import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.one.PublicTag;
 import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,9 +54,25 @@ public class UserTagsAdapter extends ListAdapter<PublicTag> {
 
   @Override
   public void loadItems(boolean isLoadingMore, int page, int pageLimit, @Nullable String query,
-                        Callback<List<PublicTag>> callback) {
+                        final Callback<List<PublicTag>> callback) {
     cleanup(!isLoadingMore);
-    ApiClient.userFollowingTagsV1(mUserId, page, pageLimit).enqueue(callback);
+    isLoading = true;
+    ApiClient.userFollowingTagsV1(mUserId, page, pageLimit).enqueue(
+        new Callback<List<PublicTag>>() {
+          @Override public void onResponse(Response<List<PublicTag>> response) {
+            isLoading = false;
+            if (callback != null) {
+              callback.onResponse(response);
+            }
+          }
+
+          @Override public void onFailure(Throwable t) {
+            isLoading = false;
+            if (callback != null) {
+              callback.onFailure(t);
+            }
+          }
+        });
   }
 
   @Override public void addItem(PublicTag item) {
