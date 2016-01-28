@@ -58,6 +58,7 @@ import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.SuccessCallback;
 import im.ene.lab.attiq.data.api.ApiClient;
+import im.ene.lab.attiq.data.model.local.StockArticle;
 import im.ene.lab.attiq.data.model.two.AccessToken;
 import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.data.model.zero.FeedItem;
@@ -239,6 +240,7 @@ public class HomeActivity extends BaseActivity
             mRealm.beginTransaction();
             mRealm.clear(Profile.class);
             mRealm.clear(FeedItem.class);
+            mRealm.clear(StockArticle.class);
             mRealm.commitTransaction();
 
             mMyProfile = null;

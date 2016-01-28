@@ -172,7 +172,6 @@ public final class AnalyticsUtil {
 
       @Override
       public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-
         // Most of the preferences will use these defaults.
         String category = "Preference";
 

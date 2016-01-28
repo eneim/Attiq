@@ -129,6 +129,7 @@ public class HistoryAdapter extends RealmListAdapter<ReadArticle> {
     public abstract void onUserClick(User user);
 
     public abstract void onItemContentClick(Article item);
+
   }
 
   public static class ViewHolder extends BaseListAdapter.ViewHolder<ReadArticle> {
@@ -163,6 +164,11 @@ public class HistoryAdapter extends RealmListAdapter<ReadArticle> {
       mItemInfo.setVisibility(View.GONE);
       mItemUserInfo.setClickable(true);
       mItemUserInfo.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {
+      super.setOnViewHolderClickListener(listener);
+      mItemUserImage.setOnClickListener(listener);
     }
 
     @Override public void bind(final ReadArticle historyItem) {

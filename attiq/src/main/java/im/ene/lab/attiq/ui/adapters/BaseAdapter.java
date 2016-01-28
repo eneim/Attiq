@@ -30,6 +30,7 @@ public abstract class BaseAdapter<VH extends BaseAdapter.ViewHolder>
 
     public ViewHolder(@NonNull View itemView) {
       super(itemView);
+      // This project use ButterKnife~
       ButterKnife.bind(this, itemView);
     }
 

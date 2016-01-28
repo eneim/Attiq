@@ -24,6 +24,7 @@ import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.util.List;
 
@@ -41,8 +42,23 @@ public class TagItemsAdapter extends ArticleListAdapter {
 
   @Override
   public void loadItems(boolean isLoadingMore, int page, int pageLimit, @Nullable String query,
-                        Callback<List<Article>> callback) {
-    ApiClient.tagItems(mTagId, page, pageLimit).enqueue(callback);
+                        final Callback<List<Article>> callback) {
+    isLoading = true;
+    ApiClient.tagItems(mTagId, page, pageLimit).enqueue(new Callback<List<Article>>() {
+      @Override public void onResponse(Response<List<Article>> response) {
+        isLoading = false;
+        if (callback != null) {
+          callback.onResponse(response);
+        }
+      }
+
+      @Override public void onFailure(Throwable t) {
+        isLoading = false;
+        if (callback != null) {
+          callback.onFailure(t);
+        }
+      }
+    });
   }
 
   @Override

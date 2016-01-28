@@ -40,16 +40,14 @@ public abstract class BaseListAdapter<T> extends BaseAdapter<BaseListAdapter.Vie
   }
 
   /**
-   * For now we don't support this method.
-   *
    * @param holder
    * @param position
    * @param payloads
+   * @hide For now we don't support this method.
    */
-  /*hide*/
   @Override
   public void onBindViewHolder(ViewHolder<T> holder, int position, List<Object> payloads) {
-    super.onBindViewHolder(holder, position, null);
+    this.onBindViewHolder(holder, position);
   }
 
   /**
@@ -67,7 +65,7 @@ public abstract class BaseListAdapter<T> extends BaseAdapter<BaseListAdapter.Vie
     }
 
     // This method will always be called by Adapter
-    void bindInternal(T item) {
+    final void bindInternal(T item) {
       mItem = item;
       bind(item);
     }

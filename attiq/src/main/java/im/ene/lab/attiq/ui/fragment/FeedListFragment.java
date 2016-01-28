@@ -229,10 +229,14 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
         @Override public void onClick(View v) {
           int position = viewHolder.getAdapterPosition();
           if (mMopubAdapter != null) {
-            position = mMopubAdapter.getOriginalPosition(position);
-            if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-              mOnItemClickListener.onItemClick(FeedListWithAdsAdapter.this,
-                  viewHolder, v, position, getItemId(position));
+            try {
+              position = mMopubAdapter.getOriginalPosition(position);
+              if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
+                mOnItemClickListener.onItemClick(FeedListWithAdsAdapter.this,
+                    viewHolder, v, position, getItemId(position));
+              }
+            } catch (Exception er) {
+              er.printStackTrace();
             }
           }
         }

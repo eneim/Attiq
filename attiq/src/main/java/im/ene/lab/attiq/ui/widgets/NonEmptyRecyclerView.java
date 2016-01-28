@@ -130,7 +130,8 @@ public class NonEmptyRecyclerView extends RecyclerView {
   }
 
   private boolean shouldShowErrorView() {
-    return getAdapter().getItemCount() == 0 && mErrorView != null && isError;
+    return (getAdapter() == null || getAdapter().getItemCount() == 0)
+        && mErrorView != null && isError;
   }
 
   private void showErrorView() {

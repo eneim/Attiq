@@ -35,7 +35,7 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.ui.adapters.ListAdapter;
 import im.ene.lab.attiq.ui.widgets.EndlessScrollListener;
-import im.ene.lab.attiq.ui.widgets.MultiSwipeRefreshLayout;
+import im.ene.lab.attiq.ui.widgets.FixedSwipeToRefreshLayout;
 import im.ene.lab.attiq.ui.widgets.NonEmptyRecyclerView;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
@@ -80,7 +80,7 @@ public abstract class ListFragment<E>
    * UI components
    */
   @Bind(R.id.recycler_view) NonEmptyRecyclerView mRecyclerView;
-  @Bind(R.id.swipe_refresh_layout) MultiSwipeRefreshLayout mSwipeRefreshLayout;
+  @Bind(R.id.swipe_refresh_layout) FixedSwipeToRefreshLayout mSwipeRefreshLayout;
   @Bind(R.id.loading_container) View mLoadingView;
   @Bind(R.id.view_empty_container) View mEmptyViewContainer;
   @Bind(R.id.view_error_container) View mErrorViewContainer;
@@ -145,8 +145,6 @@ public abstract class ListFragment<E>
     mRecyclerView.setLayoutManager(mLayoutManager);
     mRecyclerView.addOnScrollListener(mEndlessScrollListener);
 
-    mSwipeRefreshLayout.setSwipeableChildren(
-        mEmptyViewContainer.getId(), mErrorViewContainer.getId(), mRecyclerView.getId());
     mSwipeRefreshLayout.setOnRefreshListener(this);
 
     mAdapter = createAdapter();
@@ -158,6 +156,20 @@ public abstract class ListFragment<E>
     mSwipeRefreshLayout.setRefreshing(true);
     mHandler.removeMessages(MESSAGE_LOAD_RELOAD);
     mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
+  }
+
+  @Override public void onResume() {
+    super.onResume();
+    // UI Fix after theme changing
+    if (mLoadingView != null && mSwipeRefreshLayout != null) {
+      if (!mAdapter.isLoading()) {
+        mLoadingView.setVisibility(View.GONE);
+        mSwipeRefreshLayout.setRefreshing(false);
+      } else {
+        mLoadingView.setVisibility(View.VISIBLE);
+        mSwipeRefreshLayout.setRefreshing(true);
+      }
+    }
   }
 
   @Override public void onDestroyView() {
@@ -181,9 +193,6 @@ public abstract class ListFragment<E>
   // Just do nothing here
   @SuppressWarnings("unused")
   public void onEventMainThread(ItemsEvent event) {
-    Log.i(TAG, eventTag() + "#onEventMainThread() called with: " +
-        "event = [" + event + "]");
-
     // A child class MUST use its simple name as tag for ResponseEvent
     if (!eventTag().equals(event.tag)) {
       return;
@@ -197,7 +206,7 @@ public abstract class ListFragment<E>
       mRecyclerView.setErrorViewShown(event.error != null);
     }
 
-    if (mLoadingView != null) {
+    if (mLoadingView != null && !mAdapter.isLoading()) {
       mLoadingView.setVisibility(View.GONE);
     }
   }

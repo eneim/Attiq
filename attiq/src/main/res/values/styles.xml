@@ -8,6 +8,12 @@
 
     <style name="Attiq.Widget" parent="android:Widget"/>
 
+    <style name="Attiq.Theme.Launch" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+        <item name="android:windowEnterTransition">@android:transition/fade</item>
+        <item name="android:windowReturnTransition">@android:transition/fade</item>
+    </style>
+
     <!-- Base application theme. -->
     <style name="Attiq.Theme.Dark" parent="Theme.AppCompat">
         <!-- Customize your theme here. -->
@@ -16,6 +22,7 @@
         <item name="android:background">@android:color/transparent</item>
         <item name="textReadStatusColor">@color/text_link_color_dark</item>
         <item name="alertDialogTheme">@style/Attiq.Theme.Dialog</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="toolbarNavigationButtonStyle">
             @style/Attiq.Widget.Toolbar.Button.Navigation
         </item>
@@ -29,6 +36,7 @@
         <item name="android:background">@android:color/transparent</item>
         <item name="textReadStatusColor">@color/text_link_color_light</item>
         <item name="alertDialogTheme">@style/Attiq.Theme.Dialog</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="toolbarNavigationButtonStyle">
             @style/Attiq.Widget.Toolbar.Button.Navigation
         </item>
@@ -48,15 +56,11 @@
     </style>
 
     <style name="Attiq.Theme.Dark.Setting">
-        <item name="android:windowAnimationStyle">
-            @style/PreferenceChangedWindowAnimationTransition
-        </item>
+
     </style>
 
     <style name="Attiq.Theme.Light.Setting">
-        <item name="android:windowAnimationStyle">
-            @style/PreferenceChangedWindowAnimationTransition
-        </item>
+
     </style>
 
     <style name="Attiq.Theme.Dark.NoActionBar">
@@ -118,14 +122,4 @@
         <item name="android:textColor">?attr/textReadStatusColor</item>
     </style>
 
-    <!-- This will set the fade in animation on all your activities by default -->
-    <style name="PreferenceChangedWindowAnimationTransition">
-        <!--<item name="android:windowEnterAnimation">@android:anim/fade_in</item>-->
-        <!--<item name="android:windowExitAnimation">@android:anim/fade_out</item>-->
-    </style>
-
-    <style name="WindowAnimationTransition">
-        <item name="android:windowEnterAnimation">@anim/activity_in</item>
-        <item name="android:windowExitAnimation">@anim/activity_out</item>
-    </style>
 </resources>

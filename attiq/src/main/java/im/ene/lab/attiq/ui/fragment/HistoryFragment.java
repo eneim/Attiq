@@ -25,6 +25,7 @@ import im.ene.lab.attiq.data.model.local.ReadArticle;
 import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.two.User;
 import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
+import im.ene.lab.attiq.ui.activities.ProfileActivity;
 import im.ene.lab.attiq.ui.adapters.HistoryAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
@@ -47,16 +48,14 @@ public class HistoryFragment extends RealmListFragment<ReadArticle> {
     return new HistoryAdapter(articles);
   }
 
-  private OnItemClickListener mItemClickListener;
-
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
         DividerItemDecoration.VERTICAL_LIST));
 
-    mItemClickListener = new HistoryAdapter.OnArticleClickListener() {
+    OnItemClickListener onArticleClickListener = new HistoryAdapter.OnArticleClickListener() {
       @Override public void onUserClick(User user) {
-
+        startActivity(ProfileActivity.createIntent(getContext(), user.getId()));
       }
 
       @Override public void onItemContentClick(Article item) {
@@ -64,6 +63,6 @@ public class HistoryFragment extends RealmListFragment<ReadArticle> {
       }
     };
 
-    mAdapter.setOnItemClickListener(mItemClickListener);
+    mAdapter.setOnItemClickListener(onArticleClickListener);
   }
 }

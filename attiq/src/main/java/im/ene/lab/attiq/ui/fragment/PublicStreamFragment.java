@@ -70,6 +70,9 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+        DividerItemDecoration.VERTICAL_LIST));
+
     mMopubAdapter = new MoPubRecyclerAdapter(getActivity(), mAdapter);
     ViewBinder viewBinder = new ViewBinder.Builder(NativeAdsView.LAYOUT_RES)
         .titleId(NativeAdsView.AD_VIEW_TITLE)
@@ -82,8 +85,6 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
 
     // replace by mMopubAdapter
     mRecyclerView.setAdapter(mMopubAdapter);
-    mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-        DividerItemDecoration.VERTICAL_LIST));
 
     mItemClickListener = new PublicItemsAdapter.OnPublicItemClickListener() {
       @Override public void onUserClick(PublicUser user) {
@@ -138,10 +139,14 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
         @Override public void onClick(View v) {
           int position = viewHolder.getAdapterPosition();
           if (mMopubAdapter != null) {
-            position = mMopubAdapter.getOriginalPosition(position);
-            if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-              mOnItemClickListener.onItemClick(PublicItemsWithAdsAdapter.this,
-                  viewHolder, v, position, getItemId(position));
+            try {
+              position = mMopubAdapter.getOriginalPosition(position);
+              if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
+                mOnItemClickListener.onItemClick(PublicItemsWithAdsAdapter.this,
+                    viewHolder, v, position, getItemId(position));
+              }
+            } catch (Exception er) {
+              er.printStackTrace();
             }
           }
         }
