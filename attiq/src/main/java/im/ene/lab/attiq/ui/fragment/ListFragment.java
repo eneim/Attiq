@@ -35,7 +35,6 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.ui.adapters.ListAdapter;
 import im.ene.lab.attiq.ui.widgets.EndlessScrollListener;
-import im.ene.lab.attiq.ui.widgets.MultiSwipeRefreshLayout;
 import im.ene.lab.attiq.ui.widgets.NonEmptyRecyclerView;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
@@ -80,7 +79,7 @@ public abstract class ListFragment<E>
    * UI components
    */
   @Bind(R.id.recycler_view) NonEmptyRecyclerView mRecyclerView;
-  @Bind(R.id.swipe_refresh_layout) MultiSwipeRefreshLayout mSwipeRefreshLayout;
+  @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
   @Bind(R.id.loading_container) View mLoadingView;
   @Bind(R.id.view_empty_container) View mEmptyViewContainer;
   @Bind(R.id.view_error_container) View mErrorViewContainer;
@@ -145,8 +144,6 @@ public abstract class ListFragment<E>
     mRecyclerView.setLayoutManager(mLayoutManager);
     mRecyclerView.addOnScrollListener(mEndlessScrollListener);
 
-    mSwipeRefreshLayout.setSwipeableChildren(
-        mEmptyViewContainer.getId(), mErrorViewContainer.getId(), mRecyclerView.getId());
     mSwipeRefreshLayout.setOnRefreshListener(this);
 
     mAdapter = createAdapter();
