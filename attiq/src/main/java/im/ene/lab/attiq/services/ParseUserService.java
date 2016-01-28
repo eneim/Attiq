@@ -19,15 +19,12 @@ package im.ene.lab.attiq.services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.parse.ParseAnonymousUtils;
 import com.parse.ParseException;
 import com.parse.ParseUser;
-
 import im.ene.lab.attiq.BuildConfig;
 import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.util.IOUtil;
-
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
@@ -111,7 +108,7 @@ public class ParseUserService extends IntentService {
 
     private static final String USER_NAME = "auth_params_username";
     private static final String PASSWORD = "auth_params_password";
-    private static final String QIITA_USER_NAME = "auth_params_qitta_username";
+    private static final String QIITA_USER_NAME = "auth_params_qiita_username";
     private static final String ATTIQ_TOKEN = "auth_params_attiq_token";
 
     private final Bundle arguments;
