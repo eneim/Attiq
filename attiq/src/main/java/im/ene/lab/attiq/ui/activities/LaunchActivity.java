@@ -24,6 +24,8 @@ import im.ene.lab.attiq.R;
 
 /**
  * Created by eneim on 1/28/16.
+ * <p/>
+ * A Launch Activity to show App's logo at launch, then move to {@link HomeActivity}. Just for UX.
  */
 public class LaunchActivity extends AppCompatActivity {
 
