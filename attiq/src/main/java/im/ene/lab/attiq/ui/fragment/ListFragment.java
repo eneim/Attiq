@@ -35,6 +35,7 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.ui.adapters.ListAdapter;
 import im.ene.lab.attiq.ui.widgets.EndlessScrollListener;
+import im.ene.lab.attiq.ui.widgets.FixedSwipeToRefreshLayout;
 import im.ene.lab.attiq.ui.widgets.NonEmptyRecyclerView;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
@@ -79,7 +80,7 @@ public abstract class ListFragment<E>
    * UI components
    */
   @Bind(R.id.recycler_view) NonEmptyRecyclerView mRecyclerView;
-  @Bind(R.id.swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+  @Bind(R.id.swipe_refresh_layout) FixedSwipeToRefreshLayout mSwipeRefreshLayout;
   @Bind(R.id.loading_container) View mLoadingView;
   @Bind(R.id.view_empty_container) View mEmptyViewContainer;
   @Bind(R.id.view_error_container) View mErrorViewContainer;
@@ -159,11 +160,14 @@ public abstract class ListFragment<E>
 
   @Override public void onResume() {
     super.onResume();
-    if (mLoadingView != null) {
+    // UI Fix after theme changing
+    if (mLoadingView != null && mSwipeRefreshLayout != null) {
       if (!mAdapter.isLoading()) {
         mLoadingView.setVisibility(View.GONE);
+        mSwipeRefreshLayout.setRefreshing(false);
       } else {
         mLoadingView.setVisibility(View.VISIBLE);
+        mSwipeRefreshLayout.setRefreshing(true);
       }
     }
   }

@@ -3,26 +3,21 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <im.ene.lab.attiq.ui.widgets.FixedSwipeToRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
+        <im.ene.lab.attiq.ui.widgets.NonEmptyRecyclerView
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="@dimen/recycler_view_padding"
+            android:scrollbarFadeDuration="250"
+            android:scrollbars="vertical"/>
 
-            <im.ene.lab.attiq.ui.widgets.NonEmptyRecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:padding="@dimen/recycler_view_padding"
-                android:scrollbarFadeDuration="250"
-                android:scrollbars="vertical"/>
-        </FrameLayout>
-
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </im.ene.lab.attiq.ui.widgets.FixedSwipeToRefreshLayout>
 
     <TextView
         android:id="@+id/view_error_container"

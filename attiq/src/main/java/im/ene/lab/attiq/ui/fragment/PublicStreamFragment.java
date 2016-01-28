@@ -70,6 +70,9 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+        DividerItemDecoration.VERTICAL_LIST));
+
     mMopubAdapter = new MoPubRecyclerAdapter(getActivity(), mAdapter);
     ViewBinder viewBinder = new ViewBinder.Builder(NativeAdsView.LAYOUT_RES)
         .titleId(NativeAdsView.AD_VIEW_TITLE)
@@ -82,8 +85,6 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
 
     // replace by mMopubAdapter
     mRecyclerView.setAdapter(mMopubAdapter);
-    mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-        DividerItemDecoration.VERTICAL_LIST));
 
     mItemClickListener = new PublicItemsAdapter.OnPublicItemClickListener() {
       @Override public void onUserClick(PublicUser user) {
