@@ -16,111 +16,111 @@
   -->
 
 <io.codetail.widget.RevealFrameLayout
-    android:id="@+id/container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+  <View
+      android:id="@+id/scrim"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="?attr/searchPanelScrim"/>
+
+  <FrameLayout
+      android:id="@+id/search_toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      android:elevation="@dimen/z_app_bar"
+      android:outlineProvider="bounds"
+      android:theme="@style/Attiq.Theme.SearchView">
+
     <View
-        android:id="@+id/scrim"
+        android:id="@+id/search_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/scrim_attiq"/>
+        android:alpha="0"
+        android:background="@color/white"/>
 
-    <FrameLayout
-        android:id="@+id/search_toolbar"
+    <android.support.v7.widget.SearchView
+        android:id="@+id/search_view"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:elevation="@dimen/z_app_bar"
-        android:outlineProvider="bounds"
-        android:theme="@style/Attiq.Theme.SearchView">
+        android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/padding_normal"
+        android:layout_marginRight="@dimen/padding_normal"
+        android:alpha="0"
+        app:iconifiedByDefault="false"
+        app:queryBackground="@android:color/transparent"
+        app:searchHintIcon="@null"
+        app:searchIcon="@drawable/icon_placeholder"
+        app:submitBackground="@android:color/transparent"/>
 
-        <View
-            android:id="@+id/search_background"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0"
-            android:background="@color/white"/>
+    <!-- wrapping layout needed for the touch ripple -->
+    <FrameLayout
+        android:id="@+id/searchback_container"
+        android:layout_width="?attr/actionBarSize"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:paddingEnd="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingStart="8dp">
 
-        <android.support.v7.widget.SearchView
-            android:id="@+id/search_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="@dimen/padding_normal"
-            android:layout_marginRight="@dimen/padding_normal"
-            android:alpha="0"
-            app:iconifiedByDefault="false"
-            app:queryBackground="@android:color/transparent"
-            app:searchHintIcon="@null"
-            app:searchIcon="@drawable/icon_placeholder"
-            app:submitBackground="@android:color/transparent"/>
-
-        <!-- wrapping layout needed for the touch ripple -->
-        <FrameLayout
-            android:id="@+id/searchback_container"
-            android:layout_width="?attr/actionBarSize"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:paddingEnd="8dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingStart="8dp">
-
-            <ImageButton
-                android:id="@+id/searchback"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:gravity="start|center_vertical"
-                android:src="@drawable/ic_search_24dp_black"/>
-
-        </FrameLayout>
+      <ImageButton
+          android:id="@+id/searchback"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:layout_gravity="center"
+          android:background="?attr/selectableItemBackgroundBorderless"
+          android:gravity="start|center_vertical"
+          android:src="@drawable/ic_search_24dp_black"/>
 
     </FrameLayout>
 
-    <FrameLayout
-        android:id="@+id/results_container"
+  </FrameLayout>
+
+  <FrameLayout
+      android:id="@+id/results_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="?attr/actionBarSize"
+      android:background="#ffffff"
+      android:elevation="@dimen/z_app_bar_low">
+
+    <ProgressBar
+        android:id="@android:id/empty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:background="#ffffff"
-        android:elevation="@dimen/z_app_bar_low">
+        android:indeterminate="true"
+        android:indeterminateTint="@color/primary_super_dark"
+        android:indeterminateTintMode="src_in"
+        android:paddingBottom="@dimen/spacing_huge"
+        android:paddingTop="@dimen/spacing_huge"
+        android:visibility="gone"/>
 
-        <ProgressBar
-            android:id="@android:id/empty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            android:indeterminateTint="@color/primary_super_dark"
-            android:indeterminateTintMode="src_in"
-            android:paddingBottom="@dimen/spacing_huge"
-            android:paddingTop="@dimen/spacing_huge"
-            android:visibility="gone"/>
+    <ViewStub
+        android:id="@+id/stub_no_search_results"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout="@layout/no_search_results"/>
 
-        <ViewStub
-            android:id="@+id/stub_no_search_results"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout="@layout/no_search_results"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/search_results"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"
+        android:visibility="gone"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/search_results"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:scrollbarStyle="outsideOverlay"
-            android:scrollbars="vertical"
-            android:visibility="gone"/>
+    <View
+        android:id="@+id/results_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/searchPanelScrim"
+        android:visibility="gone"/>
 
-        <View
-            android:id="@+id/results_scrim"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/scrim"
-            android:visibility="gone"/>
-
-    </FrameLayout>
+  </FrameLayout>
 
 </io.codetail.widget.RevealFrameLayout>

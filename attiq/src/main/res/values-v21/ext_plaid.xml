@@ -1,42 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Attiq.TextAppearance.DialogContent" parent="TextAppearance.AppCompat.Subhead">
-        <item name="android:textColor">@color/text_secondary_dark</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:letterSpacing">0.01</item>
-    </style>
+  <style name="Attiq.TextAppearance.DialogContent" parent="TextAppearance.AppCompat.Subhead">
+    <item name="android:textColor">@color/text_secondary_dark</item>
+    <item name="android:fontFamily">sans-serif-medium</item>
+    <item name="android:letterSpacing">0.01</item>
+  </style>
 
-    <style name="Attiq.Theme.Dark.NoActionBar.Translucent">
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorBackground">@color/background_light</item>
-        <item name="android:colorAccent">@color/colorAccent</item>
-        <item name="android:navigationBarColor">@color/primary_super_dark</item>
-        <item name="android:statusBarColor">@color/background_super_dark</item>
-        <item name="android:textColorHint">@color/hint_disabled_dark</item>
-        <item name="android:windowAllowEnterTransitionOverlap">true</item>
-        <item name="android:windowAllowReturnTransitionOverlap">true</item>
-        <item name="android:windowSharedElementsUseOverlay">false</item>
-        <!-- using a semi-transparent window background for the drag-back gesture -->
-        <item name="android:windowBackground">@color/scrim</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-    </style>
+  <style name="Attiq.Theme.Light.NoActionBar.Translucent">
+    <!--<item name="android:colorPrimary">@color/primary</item>-->
+    <!--<item name="android:colorBackground">@color/background_light</item>-->
+    <!--<item name="android:colorAccent">@color/colorAccent</item>-->
+    <!--<item name="android:navigationBarColor">@color/primary_super_dark</item>-->
+    <!--<item name="android:statusBarColor">@color/background_super_dark</item>-->
+    <!--<item name="android:textColorHint">@color/hint_disabled_dark</item>-->
+    <item name="android:windowAllowEnterTransitionOverlap">true</item>
+    <item name="android:windowAllowReturnTransitionOverlap">true</item>
+    <item name="android:windowSharedElementsUseOverlay">false</item>
+    <!-- using a semi-transparent window background for the drag-back gesture -->
+    <item name="android:windowBackground">@color/scrim</item>
+    <item name="android:colorBackgroundCacheHint">@null</item>
+    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:windowIsFloating">false</item>
+    <item name="android:windowIsTranslucent">true</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+  </style>
 
-    <style name="SearchWindowAnimations">
-        <item name="android:windowEnterAnimation">@null</item>
-        <item name="android:windowExitAnimation">@anim/fade_out_rapidly</item>
-    </style>
+  <style name="Attiq.Theme.Dark.NoActionBar.Translucent">
+    <!--<item name="android:colorPrimary">@color/primary</item>-->
+    <!--<item name="android:colorBackground">@color/background_dark</item>-->
+    <!--<item name="android:colorAccent">@color/colorAccent</item>-->
+    <!--<item name="android:navigationBarColor">@color/primary_super_dark</item>-->
+    <!--<item name="android:statusBarColor">@color/background_super_dark</item>-->
+    <!--<item name="android:textColorHint">@color/hint_disabled_dark</item>-->
+    <item name="android:windowAllowEnterTransitionOverlap">true</item>
+    <item name="android:windowAllowReturnTransitionOverlap">true</item>
+    <item name="android:windowSharedElementsUseOverlay">false</item>
+    <!-- using a semi-transparent window background for the drag-back gesture -->
+    <!--<item name="android:windowBackground">@color/scrim</item>-->
+    <item name="android:colorBackgroundCacheHint">@null</item>
+    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:windowIsFloating">false</item>
+    <item name="android:windowIsTranslucent">true</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+  </style>
 
-    <style name="Attiq.Theme.Dark.NoActionBar.Translucent.Search">
-        <item name="android:windowAnimationStyle">@style/SearchWindowAnimations</item>
-        <item name="android:statusBarColor">@color/background_super_dark</item>
-        <item name="android:navigationBarColor">@color/background_super_dark</item>
-        <item name="android:windowEnterTransition">@transition/search_enter</item>
-    </style>
+  <style name="SearchWindowAnimations">
+    <item name="android:windowEnterAnimation">@null</item>
+    <item name="android:windowExitAnimation">@anim/fade_out_rapidly</item>
+  </style>
+
+  <style name="Attiq.Theme.Dark.NoActionBar.Translucent.Search">
+    <item name="searchPanelScrim">@color/scrim_light</item>
+    <item name="android:windowAnimationStyle">@style/SearchWindowAnimations</item>
+    <!--<item name="android:statusBarColor">@color/background_super_dark</item>-->
+    <!--<item name="android:navigationBarColor">@color/background_super_dark</item>-->
+    <item name="android:windowEnterTransition">@transition/search_enter</item>
+  </style>
+
+  <style name="Attiq.Theme.Light.NoActionBar.Translucent.Search">
+    <item name="searchPanelScrim">@color/scrim_light</item>
+    <item name="android:windowAnimationStyle">@style/SearchWindowAnimations</item>
+    <!--<item name="android:statusBarColor">@color/background_super_dark</item>-->
+    <!--<item name="android:navigationBarColor">@color/background_super_dark</item>-->
+    <item name="android:windowEnterTransition">@transition/search_enter</item>
+  </style>
 
 </resources>
