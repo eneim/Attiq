@@ -34,14 +34,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
-import com.wefika.flowlayout.FlowLayout;
-
 import butterknife.Bind;
 import butterknife.BindColor;
 import butterknife.BindDimen;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
+import com.wefika.flowlayout.FlowLayout;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
@@ -52,10 +50,10 @@ import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import io.realm.RealmResults;
+import java.util.List;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import java.util.List;
 
 /**
  * Created by eneim on 12/25/15.
@@ -72,8 +70,7 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
     setHasStableIds(true);
   }
 
-  @Override
-  public ViewHolder<FeedItem> onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override public ViewHolder<FeedItem> onCreateViewHolder(ViewGroup parent, int viewType) {
     final ViewHolder<FeedItem> viewHolder;
     if (viewType == VIEW_TYPE_ITEM) {
       View view = LayoutInflater.from(parent.getContext())
@@ -104,8 +101,8 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
 
   @Override public int getItemViewType(int position) {
     FeedItem item = getItem(position);
-    if (FeedItem.TRACKABLE_TYPE_FOLLOW_TAG.equals(item.getTrackableType()) ||
-        FeedItem.TRACKABLE_TYPE_FOLLOW_USER.equals(item.getTrackableType())) {
+    if (FeedItem.TRACKABLE_TYPE_FOLLOW_TAG.equals(item.getTrackableType())
+        || FeedItem.TRACKABLE_TYPE_FOLLOW_USER.equals(item.getTrackableType())) {
       return VIEW_TYPE_FOLLOW;
     }
 
@@ -121,8 +118,8 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
   }
 
   @Override
-  public void loadItems(boolean isLoadingMore, int page, int pageLimit,
-                        @Nullable String query, final Callback<List<FeedItem>> callback) {
+  public void loadItems(boolean isLoadingMore, int page, int pageLimit, @Nullable String query,
+      final Callback<List<FeedItem>> callback) {
     final Long createdAt;
     if (getItemCount() == 0 || !isLoadingMore) {
       createdAt = null;
@@ -132,17 +129,18 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
 
     isLoading = true;
     ApiClient.feed(createdAt).enqueue(new Callback<List<FeedItem>>() {
-      @Override public void onResponse(Response<List<FeedItem>> response) {
+      @Override
+      public void onResponse(Call<List<FeedItem>> call, Response<List<FeedItem>> response) {
         isLoading = false;
         if (callback != null) {
-          callback.onResponse(response);
+          callback.onResponse(call, response);
         }
       }
 
-      @Override public void onFailure(Throwable t) {
+      @Override public void onFailure(Call<List<FeedItem>> call, Throwable t) {
         isLoading = false;
         if (callback != null) {
-          callback.onFailure(t);
+          callback.onFailure(call, t);
         }
       }
     });
@@ -181,7 +179,7 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
     }
 
     void setupItemClick(FeedViewHolder vh, View view, FeedItem item,
-                        OnFeedItemClickListener listener) {
+        OnFeedItemClickListener listener) {
       if (listener == null) {
         return;
       }
@@ -199,10 +197,11 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
     }
 
     @Override public void bind(FeedItem item) {
-      String itemInfo = Integer.valueOf(1).equals(item.getMentionedObjectCommentsCount()) ?
-          mContext.getString(R.string.item_info_one, item.getMentionedObjectStocksCount()) :
-          mContext.getString(R.string.item_info_many, item.getMentionedObjectStocksCount(),
-              item.getMentionedObjectCommentsCount());
+      String itemInfo =
+          Integer.valueOf(1).equals(item.getMentionedObjectCommentsCount()) ? mContext.getString(
+              R.string.item_info_one, item.getMentionedObjectStocksCount())
+              : mContext.getString(R.string.item_info_many, item.getMentionedObjectStocksCount(),
+                  item.getMentionedObjectCommentsCount());
       mItemInfo.setText(itemInfo);
 
       mItemTitle.setText(item.getMentionedObjectName());
@@ -213,12 +212,12 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
         requestCreator = Attiq.picasso().load(R.drawable.blank_profile_icon_medium);
       }
 
-      requestCreator
-          .placeholder(R.drawable.blank_profile_icon_medium)
+      requestCreator.placeholder(R.drawable.blank_profile_icon_medium)
           .error(R.drawable.blank_profile_icon_medium)
-          .fit().centerInside()
-          .transform(new RoundedTransformation(
-              mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
+          .fit()
+          .centerInside()
+          .transform(
+              new RoundedTransformation(mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
           .into(mItemUserImage);
 
       mItemIdentity.setVisibility(View.VISIBLE);
@@ -230,67 +229,69 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
         tagName.setClickable(true);
         tagName.setMovementMethod(LinkMovementMethod.getInstance());
 
-        tagName.setText(Html.fromHtml(itemView.getContext().getString(R.string.local_tag_url,
-            item.getFollowableName() + "", item.getFollowableName() + "")));
+        tagName.setText(Html.fromHtml(itemView.getContext()
+            .getString(R.string.local_tag_url, item.getFollowableName() + "",
+                item.getFollowableName() + "")));
 
-        Attiq.picasso().load(item.getFollowableImageUrl())
+        Attiq.picasso()
+            .load(item.getFollowableImageUrl())
             .placeholder(R.drawable.ic_lens_16dp)
             .error(R.drawable.ic_lens_16dp)
             .resize(0, mTagIconSize)
-            .transform(new RoundedTransformation(
-                mIconBorderWidth, mIconBorderColor, mTagIconSizeHalf))
+            .transform(
+                new RoundedTransformation(mIconBorderWidth, mIconBorderColor, mTagIconSizeHalf))
             .into(new TextViewTarget(tagName) {
-              @Override
-              public void onBitmapLoaded(TextView textView, Bitmap bitmap,
-                                         Picasso.LoadedFrom from) {
+              @Override public void onBitmapLoaded(TextView textView, Bitmap bitmap,
+                  Picasso.LoadedFrom from) {
                 Log.d(TAG, "onBitmapLoaded() called with: " + "textView = [" + textView + "], " +
                     "bitmap = [" + bitmap.getWidth() + " - " + bitmap.getHeight() +
                     "], from = [" + from + "]");
                 RoundedBitmapDrawable drawable =
                     RoundedBitmapDrawableFactory.create(itemView.getResources(), bitmap);
-                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView,
-                    drawable, null, null, null);
+                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView, drawable,
+                    null, null, null);
               }
             });
         UIUtil.stripUnderlines(tagName);
         mItemIdentity.addView(tagName);
 
-        final TextView infoText = (TextView) mInflater.inflate(R.layout.single_line_text_tiny,
-            mItemIdentity, false);
+        final TextView infoText =
+            (TextView) mInflater.inflate(R.layout.single_line_text_tiny, mItemIdentity, false);
         infoText.setText(R.string.tag_new_post);
 
         mItemIdentity.addView(infoText);
       } else if (FeedItem.TRACKABLE_TYPE_STOCK.equals(item.getTrackableType())) {
-        TextView infoText = (TextView) mInflater.inflate(R.layout.single_line_text_tiny,
-            mItemIdentity, false);
+        TextView infoText =
+            (TextView) mInflater.inflate(R.layout.single_line_text_tiny, mItemIdentity, false);
         infoText.setClickable(true);
         infoText.setMovementMethod(LinkMovementMethod.getInstance());
-        infoText.setText(Html.fromHtml(mContext.getString(R.string.user_stocked,
-            item.getFollowableName(), item.getFollowableName())));
+        infoText.setText(Html.fromHtml(
+            mContext.getString(R.string.user_stocked, item.getFollowableName(),
+                item.getFollowableName())));
 
         infoText.setId(R.id.feed_view_id_info);
         mItemIdentity.addView(infoText);
       } else if (FeedItem.TRACKABLE_TYPE_COMMENT.equals(item.getTrackableType())) {
-        TextView infoText = (TextView) mInflater.inflate(R.layout.single_line_text_tiny,
-            mItemIdentity, false);
+        TextView infoText =
+            (TextView) mInflater.inflate(R.layout.single_line_text_tiny, mItemIdentity, false);
         infoText.setClickable(true);
         infoText.setMovementMethod(LinkMovementMethod.getInstance());
-        infoText.setText(Html.fromHtml(mContext.getString(R.string.user_commented,
-            item.getFollowableName(), item.getFollowableName())));
+        infoText.setText(Html.fromHtml(
+            mContext.getString(R.string.user_commented, item.getFollowableName(),
+                item.getFollowableName())));
 
         infoText.setId(R.id.feed_view_id_info);
         mItemIdentity.addView(infoText);
       } else if (FeedItem.TRACKABLE_TYPE_PUBLIC.equals(item.getTrackableType())) {
-        TextView infoText = (TextView) mInflater.inflate(R.layout.single_line_text_tiny,
-            mItemIdentity, false);
+        TextView infoText =
+            (TextView) mInflater.inflate(R.layout.single_line_text_tiny, mItemIdentity, false);
         infoText.setClickable(true);
         infoText.setMovementMethod(LinkMovementMethod.getInstance());
 
         String userName = item.getFollowableName();
-        infoText.setText(Html.fromHtml(mContext.getString(R.string.item_user_info,
-            userName, userName,
-            TimeUtil.beautify(item.getCreatedAtInUnixtime())
-        )));
+        infoText.setText(Html.fromHtml(
+            mContext.getString(R.string.item_user_info, userName, userName,
+                TimeUtil.beautify(item.getCreatedAtInUnixtime()))));
 
         infoText.setId(R.id.feed_view_id_info);
         mItemIdentity.addView(infoText);
@@ -321,10 +322,9 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
     }
 
     @Override public void bind(FeedItem item) {
-      mItemInfo.setText(
-          Html.fromHtml(itemView.getContext().getString(R.string.user_follow,
-              item.getFollowableName(), item.getFollowableName()))
-      );
+      mItemInfo.setText(Html.fromHtml(itemView.getContext()
+              .getString(R.string.user_follow, item.getFollowableName(),
+                  item.getFollowableName())));
 
       LinearLayoutCompat container = (LinearLayoutCompat) itemView;
       TextView itemName;
@@ -337,21 +337,22 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
         itemName.setClickable(true);
         itemName.setMovementMethod(LinkMovementMethod.getInstance());
 
-        itemName.setText(Html.fromHtml(itemView.getContext().getString(R.string.local_tag_url,
-            item.getMentionedObjectName(), item.getMentionedObjectName())));
+        itemName.setText(Html.fromHtml(itemView.getContext()
+            .getString(R.string.local_tag_url, item.getMentionedObjectName(),
+                item.getMentionedObjectName())));
 
-        Attiq.picasso().load(item.getMentionedObjectImageUrl())
+        Attiq.picasso()
+            .load(item.getMentionedObjectImageUrl())
             .resize(0, mTagIconSize)
-            .transform(new RoundedTransformation(
-                mIconBorderWidth, mIconBorderColor, mTagIconSizeHalf))
+            .transform(
+                new RoundedTransformation(mIconBorderWidth, mIconBorderColor, mTagIconSizeHalf))
             .into(new TextViewTarget(itemName) {
-              @Override
-              public void onBitmapLoaded(TextView textView, Bitmap bitmap,
-                                         Picasso.LoadedFrom from) {
+              @Override public void onBitmapLoaded(TextView textView, Bitmap bitmap,
+                  Picasso.LoadedFrom from) {
                 RoundedBitmapDrawable drawable =
                     RoundedBitmapDrawableFactory.create(itemView.getResources(), bitmap);
-                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView,
-                    drawable, null, null, null);
+                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView, drawable,
+                    null, null, null);
               }
             });
         UIUtil.stripUnderlines(itemName);
@@ -360,22 +361,22 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
         itemName.setClickable(true);
         itemName.setMovementMethod(LinkMovementMethod.getInstance());
 
-        itemName.setText(
-            Html.fromHtml(itemView.getContext().getString(R.string.user_name,
-                item.getMentionedObjectName(), item.getMentionedObjectName())));
+        itemName.setText(Html.fromHtml(itemView.getContext()
+                .getString(R.string.user_name, item.getMentionedObjectName(),
+                    item.getMentionedObjectName())));
 
-        Attiq.picasso().load(item.getMentionedObjectImageUrl())
+        Attiq.picasso()
+            .load(item.getMentionedObjectImageUrl())
             .resize(mUserIconSize, 0)
-            .transform(new RoundedTransformation(
-                mIconBorderWidth, mIconBorderColor, mUserIconSizeHalf))
+            .transform(
+                new RoundedTransformation(mIconBorderWidth, mIconBorderColor, mUserIconSizeHalf))
             .into(new TextViewTarget(itemName) {
-              @Override
-              public void onBitmapLoaded(TextView textView, Bitmap bitmap,
-                                         Picasso.LoadedFrom from) {
+              @Override public void onBitmapLoaded(TextView textView, Bitmap bitmap,
+                  Picasso.LoadedFrom from) {
                 RoundedBitmapDrawable drawable =
                     RoundedBitmapDrawableFactory.create(itemView.getResources(), bitmap);
-                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView,
-                    drawable, null, null, null);
+                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView, drawable,
+                    null, null, null);
               }
             });
       }
@@ -385,16 +386,15 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
     }
   }
 
-  public static abstract class OnFeedItemClickListener
-      implements OnItemClickListener {
+  public static abstract class OnFeedItemClickListener implements OnItemClickListener {
 
     public abstract void onMentionedUserClick(FeedItem host);
 
     public abstract void onItemContentClick(FeedItem item);
 
     @Override
-    public void onItemClick(BaseAdapter adapter, BaseAdapter.ViewHolder viewHolder,
-                            View view, int adapterPosition, long itemId) {
+    public void onItemClick(BaseAdapter adapter, BaseAdapter.ViewHolder viewHolder, View view,
+        int adapterPosition, long itemId) {
       final FeedItem item;
       if (adapter instanceof BaseListAdapter) {
         item = (FeedItem) ((BaseListAdapter) adapter).getItem(adapterPosition);
@@ -407,8 +407,7 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
       }
 
       if (viewHolder instanceof FeedViewHolder) {
-        ((FeedViewHolder) viewHolder)
-            .setupItemClick((FeedViewHolder) viewHolder, view, item, this);
+        ((FeedViewHolder) viewHolder).setupItemClick((FeedViewHolder) viewHolder, view, item, this);
       }
     }
   }

@@ -23,6 +23,7 @@ import im.ene.lab.attiq.data.model.two.ItemTag;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -45,19 +46,19 @@ public class UserArticlesAdapter extends ArticleListAdapter {
                         @Nullable String query, final Callback<List<Article>> callback) {
     isLoading = true;
     ApiClient.userItems(mUserId, page, pageLimit).enqueue(new Callback<List<Article>>() {
-      @Override public void onResponse(Response<List<Article>> response) {
+      @Override public void onResponse(Call<List<Article>> call, Response<List<Article>> response) {
         isLoading = false;
         cleanup(!isLoadingMore);
         if (callback != null) {
-          callback.onResponse(response);
+          callback.onResponse(call, response);
         }
       }
 
-      @Override public void onFailure(Throwable throwable) {
+      @Override public void onFailure(Call<List<Article>> call, Throwable throwable) {
         isLoading = false;
         cleanup(!isLoadingMore);
         if (callback != null) {
-          callback.onFailure(throwable);
+          callback.onFailure(call, throwable);
         }
       }
     });

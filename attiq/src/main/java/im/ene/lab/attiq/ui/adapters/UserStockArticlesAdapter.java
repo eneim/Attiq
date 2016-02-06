@@ -47,6 +47,7 @@ import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -117,7 +118,7 @@ public class UserStockArticlesAdapter extends RealmListAdapter<StockArticle> {
     // do nothing
     isLoading = true;
     ApiClient.userStockedItems(mUserId, page, pageLimit).enqueue(new Callback<List<Article>>() {
-      @Override public void onResponse(Response<List<Article>> response) {
+      @Override public void onResponse(Call<List<Article>> call, Response<List<Article>> response) {
         isLoading = false;
         // cleanup(!isLoadingMore);
         if (callback != null) {
@@ -133,15 +134,15 @@ public class UserStockArticlesAdapter extends RealmListAdapter<StockArticle> {
               articles.add(article);
             }
           }
-          callback.onResponse(Response.success(articles));
+          callback.onResponse(null, Response.success(articles));
         }
       }
 
-      @Override public void onFailure(Throwable throwable) {
+      @Override public void onFailure(Call<List<Article>> call, Throwable throwable) {
         isLoading = false;
         // cleanup(!isLoadingMore);
         if (callback != null) {
-          callback.onFailure(throwable);
+          callback.onFailure(null, throwable);
         }
       }
     });

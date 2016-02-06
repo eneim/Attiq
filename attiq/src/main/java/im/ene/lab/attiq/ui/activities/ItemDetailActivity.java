@@ -94,6 +94,7 @@ import im.ene.lab.attiq.util.event.ItemDetailEvent;
 import im.ene.lab.support.widget.AlphaForegroundColorSpan;
 import im.ene.lab.support.widget.AppBarLayout;
 import im.ene.lab.support.widget.CollapsingToolbarLayout;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -451,7 +452,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
   }
 
-  @Override public void onResponse(Response<Article> response) {
+  @Override public void onResponse(Call<Article> call, Response<Article> response) {
     Article article = response.body();
     if (article != null) {
       ReadArticle history = mRealm.where(ReadArticle.class)
@@ -554,7 +555,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   private void buildArticleComments(@NonNull final Article article) {
     ApiClient.itemComments(article.getId()).enqueue(new Callback<ArrayList<Comment>>() {
-      @Override public void onResponse(Response<ArrayList<Comment>> response) {
+      @Override public void onResponse(Call<ArrayList<Comment>> call, Response<ArrayList<Comment>> response) {
         mComments = response.body();
         if (mComments != null) {
           EventBus.getDefault().post(new ItemCommentsEvent(true, null, mComments));
@@ -565,7 +566,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         }
       }
 
-      @Override public void onFailure(Throwable error) {
+      @Override public void onFailure(Call<ArrayList<Comment>> call, Throwable error) {
         EventBus.getDefault().post(new ItemCommentsEvent(false,
             new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
@@ -725,14 +726,14 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   }
 
-  @Override public void onFailure(Throwable error) {
+  @Override public void onFailure(Call<Article> call, Throwable error) {
     EventBus.getDefault().post(new ItemDetailEvent(getClass().getSimpleName(), false,
         new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
   }
 
   /* API Callbacks */
   private Callback<Void> mItemUnStockedResponse = new SuccessCallback<Void>() {
-    @Override public void onResponse(Response<Void> response) {
+    @Override public void onResponse(Call<Void> call, Response<Void> response) {
       if (response.code() == 204) {
         ((State) mState).isStocked = false;
         int newStockCount = (Integer.parseInt(((State) mState).stockCount) - 1);
@@ -747,7 +748,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   };
   private Callback<Void> mStockStatusResponse = new SuccessCallback<Void>() {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    @Override public void onResponse(Response<Void> response) {
+    @Override public void onResponse(Call<Void> call, Response<Void> response) {
       if (response.code() == 204) {
         ((State) mState).isStocked = true;
       } else {
@@ -758,7 +759,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   };
   private Callback<Void> mItemStockedResponse = new SuccessCallback<Void>() {
-    @Override public void onResponse(Response<Void> response) {
+    @Override public void onResponse(Call<Void> call, Response<Void> response) {
       if (response.code() == 204) {
         ((State) mState).isStocked = true;
         ((State) mState).stockCount = "" + (1 + Integer.parseInt(((State) mState).stockCount));
@@ -768,7 +769,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   };
   private Callback<Comment> mCommentCallback = new SuccessCallback<Comment>() {
-    @Override public void onResponse(Response<Comment> response) {
+    @Override public void onResponse(Call<Comment> call, Response<Comment> response) {
       Comment newComment = response.body();
       if (newComment != null) {
         mComments.add(0, newComment);

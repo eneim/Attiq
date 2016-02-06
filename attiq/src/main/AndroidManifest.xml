@@ -232,10 +232,6 @@
         android:configChanges="keyboardHidden|orientation|screenSize"
         android:name="com.mopub.mobileads.MraidVideoPlayerActivity"/>
 
-    <service
-        android:exported="false"
-        android:name=".services.ParseUserService"/>
-
   </application>
 
 </manifest>

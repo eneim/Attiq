@@ -34,7 +34,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,11 +44,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.parse.LogOutCallback;
-import com.parse.ParseException;
-import com.parse.ParseUser;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -62,7 +56,6 @@ import im.ene.lab.attiq.data.model.local.StockArticle;
 import im.ene.lab.attiq.data.model.two.AccessToken;
 import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.data.model.zero.FeedItem;
-import im.ene.lab.attiq.services.ParseUserService;
 import im.ene.lab.attiq.ui.fragment.AuthorizedUserHomeFragment;
 import im.ene.lab.attiq.ui.fragment.PublicUserHomeFragment;
 import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
@@ -73,6 +66,7 @@ import im.ene.lab.attiq.util.event.ProfileEvent;
 import im.ene.lab.support.widget.SmoothActionBarDrawerToggle;
 import io.realm.Realm;
 import io.realm.RealmAsyncTask;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -113,7 +107,7 @@ public class HomeActivity extends BaseActivity
   // Utils
   private RealmAsyncTask mTransactionTask;
   private Callback<AccessToken> mOnTokenCallback = new SuccessCallback<AccessToken>() {
-    @Override public void onResponse(Response<AccessToken> response) {
+    @Override public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
       AccessToken accessToken = response.body();
       if (accessToken != null) {
         PrefUtil.setCurrentToken(accessToken.getToken());
@@ -250,16 +244,6 @@ public class HomeActivity extends BaseActivity
               CookieManager.getInstance().removeAllCookie();
             }
 
-            // Logout from Parse
-            ParseUser.logOutInBackground(new LogOutCallback() {
-              @Override public void done(ParseException e) {
-                Log.d("Main#logout()", "done() called with: " + "e = [" + e + "]");
-                // Re-anonymous this app
-                if (ParseUser.getCurrentUser() == null) {
-                  ParseUser.enableAutomaticUser();
-                }
-              }
-            });
             PrefUtil.setCurrentToken(null);
             EventBus.getDefault().post(new ProfileEvent(HomeActivity.class.getSimpleName(),
                 true, null, null));
@@ -315,7 +299,7 @@ public class HomeActivity extends BaseActivity
 
   private void getMasterUser(final String token) {
     ApiClient.me().enqueue(new Callback<Profile>() {
-      @Override public void onResponse(final Response<Profile> response) {
+      @Override public void onResponse(Call<Profile> call, final Response<Profile> response) {
         mMyProfile = response.body();
         if (mMyProfile != null) {
           mMyProfile.setToken(token);
@@ -346,7 +330,7 @@ public class HomeActivity extends BaseActivity
         }
       }
 
-      @Override public void onFailure(Throwable error) {
+      @Override public void onFailure(Call<Profile> call, Throwable error) {
         EventBus.getDefault().post(
             new ProfileEvent(HomeActivity.class.getSimpleName(), false,
                 new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
@@ -428,12 +412,6 @@ public class HomeActivity extends BaseActivity
       updateMasterUserData(event.profile);
 
       if (event.profile != null && PrefUtil.getCurrentToken().equals(event.profile.getToken())) {
-        // Update User to Parse
-        ParseUserService.Argument authArgument = new ParseUserService.Argument(event.profile);
-        Intent authService = new Intent(this, ParseUserService.class);
-        authService.putExtras(authArgument.getArguments());
-        startService(authService);
-
         if (PrefUtil.isFirstStart()) {
           PrefUtil.setFirstStart(false);
           Toast.makeText(HomeActivity.this, "おはようございます", Toast.LENGTH_SHORT).show();

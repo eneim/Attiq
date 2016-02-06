@@ -17,6 +17,7 @@ import im.ene.lab.attiq.data.model.two.User;
 import im.ene.lab.attiq.util.AnalyticsUtil;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 import okhttp3.Headers;
+import retrofit2.Call;
 import retrofit2.Response;
 
 import java.util.List;
@@ -95,11 +96,11 @@ public class TagItemsFragment extends ListFragment<Article> {
     return new TagItemsAdapter(mTagId);
   }
 
-  @Override public void onResponse(Response<List<Article>> response) {
+  @Override public void onResponse(Call<List<Article>> call, Response<List<Article>> response) {
     if (mCallback != null) {
       mCallback.onResponseHeaders(response.headers());
     }
-    super.onResponse(response);
+    super.onResponse(call, response);
   }
 
   public interface Callback {

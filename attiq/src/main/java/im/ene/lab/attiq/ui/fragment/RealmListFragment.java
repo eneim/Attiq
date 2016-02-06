@@ -34,6 +34,7 @@ import io.realm.Realm;
 import io.realm.RealmAsyncTask;
 import io.realm.RealmChangeListener;
 import io.realm.RealmObject;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -96,7 +97,7 @@ public abstract class RealmListFragment<E extends RealmObject>
     }
   }
 
-  @Override public void onResponse(Response<List<E>> response) {
+  @Override public void onResponse(Call<List<E>> call, Response<List<E>> response) {
     if (response.code() != 200) {
       EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
           new Event.Error(response.code(), ApiClient.parseError(response).message), mPage));

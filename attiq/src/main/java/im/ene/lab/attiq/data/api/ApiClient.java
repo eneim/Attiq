@@ -3,12 +3,9 @@ package im.ene.lab.attiq.data.api;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.model.one.PublicTag;
-import im.ene.lab.attiq.data.request.AccessTokenRequest;
-import im.ene.lab.attiq.data.request.PostCommentRequest;
 import im.ene.lab.attiq.data.model.two.AccessToken;
 import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.two.Comment;
@@ -17,21 +14,22 @@ import im.ene.lab.attiq.data.model.two.Tag;
 import im.ene.lab.attiq.data.model.two.User;
 import im.ene.lab.attiq.data.model.zero.FeedItem;
 import im.ene.lab.attiq.data.model.zero.Post;
+import im.ene.lab.attiq.data.request.AccessTokenRequest;
+import im.ene.lab.attiq.data.request.PostCommentRequest;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.PrefUtil;
-import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Converter;
-import retrofit2.GsonConverterFactory;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Converter;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by eneim on 12/13/15.
@@ -50,12 +48,9 @@ public final class ApiClient {
   public static final int DEFAULT_PAGE_LIMIT = 99; // save API calls...
 
   static {
-    sHttpClient = Attiq.httpClient().newBuilder()
-        .addInterceptor(PrefUtil.ok3Auth())
-        .build();
+    sHttpClient = Attiq.httpClient().newBuilder().addInterceptor(PrefUtil.ok3Auth()).build();
 
-    sRetrofit = new Retrofit.Builder()
-        .baseUrl(Api.BASE_URL)
+    sRetrofit = new Retrofit.Builder().baseUrl(Api.BASE_URL)
         .client(sHttpClient)
         .addConverterFactory(GsonConverterFactory.create(IOUtil.gson()))
         .build();
@@ -76,8 +71,9 @@ public final class ApiClient {
   }
 
   public static String authCallback() {
-    return Attiq.creator().getString(R.string.api_token_auth,
-        Attiq.creator().getString(R.string.client_id), UUID.randomUUID().toString());
+    return Attiq.creator()
+        .getString(R.string.api_token_auth, Attiq.creator().getString(R.string.client_id),
+            UUID.randomUUID().toString());
   }
 
   public static Call<List<Post>> publicStream(@Nullable Long bottomId) {
@@ -132,14 +128,8 @@ public final class ApiClient {
 
   public static Call<AccessToken> accessToken(String code) {
     Resources resources = Attiq.creator().getResources();
-    return sTwo.accessToken(
-        new AccessTokenRequest(
-            false,
-            resources.getString(R.string.client_id),
-            resources.getString(R.string.client_secret),
-            code
-        )
-    );
+    return sTwo.accessToken(new AccessTokenRequest(false, resources.getString(R.string.client_id),
+            resources.getString(R.string.client_secret), code));
   }
 
   public static Call<Profile> me() {

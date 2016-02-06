@@ -100,7 +100,7 @@ public class HistoryAdapter extends RealmListAdapter<ReadArticle> {
     // do nothing
     if (callback != null) {
       List<ReadArticle> emptyList = Collections.emptyList();
-      callback.onResponse(Response.success(emptyList));
+      callback.onResponse(null, Response.success(emptyList));
     }
   }
 

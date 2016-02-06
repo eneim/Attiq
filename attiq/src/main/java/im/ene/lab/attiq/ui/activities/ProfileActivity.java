@@ -79,6 +79,7 @@ import im.ene.lab.support.widget.CollapsingToolbarLayout;
 import im.ene.lab.support.widget.MathUtils;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -290,31 +291,31 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     super.onResume();
     // setup
     mOnFollowStateCallback = new Callback<Void>() {
-      @Override public void onResponse(Response<Void> response) {
+      @Override public void onResponse(Call<Void> call, Response<Void> response) {
         mState.isFollowing = response != null && response.code() == 204;
         EventBus.getDefault().post(new StateEvent<>(ProfileActivity.class.getSimpleName(),
             true, null, mState));
       }
 
-      @Override public void onFailure(Throwable t) {
+      @Override public void onFailure(Call<Void> call, Throwable t) {
         EventBus.getDefault().post(new StateEvent<>(ProfileActivity.class.getSimpleName(), false,
             new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
       }
     };
 
     mOnUnFollowStateCallback = new Callback<Void>() {
-      @Override public void onResponse(Response<Void> response) {
+      @Override public void onResponse(Call<Void> call, Response<Void> response) {
         mState.isFollowing = response != null && !(response.code() == 204);
       }
 
-      @Override public void onFailure(Throwable t) {
+      @Override public void onFailure(Call<Void> call, Throwable t) {
         EventBus.getDefault().post(new StateEvent<>(ProfileActivity.class.getSimpleName(), false,
             new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
       }
     };
 
     mOnUserCallback = new Callback<User>() {
-      @Override public void onResponse(Response<User> response) {
+      @Override public void onResponse(Call<User> call, Response<User> response) {
         User user = response.body();
         if (user != null) {
           Realm realm = Attiq.realm();
@@ -330,7 +331,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
         }
       }
 
-      @Override public void onFailure(Throwable error) {
+      @Override public void onFailure(Call<User> call, Throwable error) {
         EventBus.getDefault().post(new ProfileFetchedEvent(ProfileActivity.class.getSimpleName(),
             false, new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
