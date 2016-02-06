@@ -162,12 +162,11 @@ public abstract class ListFragment<E>
     super.onResume();
     // UI Fix after theme changing
     if (mLoadingView != null && mSwipeRefreshLayout != null) {
+      mSwipeRefreshLayout.setRefreshing(false);
       if (!mAdapter.isLoading()) {
         mLoadingView.setVisibility(View.GONE);
-        mSwipeRefreshLayout.setRefreshing(false);
       } else {
         mLoadingView.setVisibility(View.VISIBLE);
-        mSwipeRefreshLayout.setRefreshing(true);
       }
     }
   }
