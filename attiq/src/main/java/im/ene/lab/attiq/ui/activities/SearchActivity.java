@@ -454,8 +454,9 @@ public class SearchActivity extends BaseActivity {
   }
 
   @Override protected int lookupTheme(UIUtil.Themes themes) {
-    return themes == UIUtil.Themes.DARK ?
-        R.style.Attiq_Theme_Dark_NoActionBar_Translucent_Search :
+    return themes == UIUtil.Themes.DARK ? R.style.Attiq_Theme_Dark_NoActionBar_Translucent_Search :
+        //R.style.Attiq_Theme_Dark_NoActionBar :
         R.style.Attiq_Theme_Light_NoActionBar_Translucent_Search;
+    //R.style.Attiq_Theme_Light_NoActionBar;
   }
 }

@@ -42,8 +42,9 @@
     <item name="android:actionBarStyle">@style/Attiq.Widget.Toolbar</item>
   </style>
 
-  <style name="Attiq.Theme.Light.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
-    <item name="textReadStatusColor">@color/text_link_color_light</item>
+  <style name="Attiq.Theme.Light.NoActionBar">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
   </style>
 
   <!-- -->

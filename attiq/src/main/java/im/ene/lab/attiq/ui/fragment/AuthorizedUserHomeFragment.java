@@ -17,11 +17,9 @@
 package im.ene.lab.attiq.ui.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -29,7 +27,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 
@@ -83,14 +80,6 @@ public class AuthorizedUserHomeFragment extends BaseFragment {
     if (mCallback != null) {
       mCallback.onUserHomeCreated(mViewPager);
     }
-
-    DialogFragment test = new DialogFragment();
-    test.setTargetFragment(this, 1000);
-    test.show(getChildFragmentManager(), "TEST_FRAGMENT");
-  }
-
-  @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
   }
 
   public interface Callback {
