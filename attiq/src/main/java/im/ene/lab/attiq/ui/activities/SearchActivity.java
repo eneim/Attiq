@@ -74,6 +74,7 @@ import im.ene.lab.attiq.util.ImeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import io.codetail.animation.ViewAnimationUtils;
 import java.util.List;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -160,7 +161,7 @@ public class SearchActivity extends BaseActivity {
         .setInterpolator(LINEAR_OUT_SLOW_INT);
 
     mSearchResultCallback = new Callback<List<Article>>() {
-      @Override public void onResponse(Response<List<Article>> response) {
+      @Override public void onResponse(Call<List<Article>> call, Response<List<Article>> response) {
         List<Article> data = response.body();
         if (!UIUtil.isEmpty(data)) {
           if (mRecyclerView.getVisibility() != View.VISIBLE) {
@@ -176,7 +177,7 @@ public class SearchActivity extends BaseActivity {
         }
       }
 
-      @Override public void onFailure(Throwable t) {
+      @Override public void onFailure(Call<List<Article>> call, Throwable t) {
       }
     };
 

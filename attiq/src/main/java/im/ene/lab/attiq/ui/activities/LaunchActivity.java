@@ -20,8 +20,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import im.ene.lab.attiq.R;
-
 /**
  * Created by eneim on 1/28/16.
  * <p/>
@@ -31,7 +29,6 @@ public class LaunchActivity extends AppCompatActivity {
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_launch);
     Intent intent = new Intent(this, HomeActivity.class);
     startActivity(intent);
     finish();

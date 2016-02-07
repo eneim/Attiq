@@ -1,5 +1,6 @@
 package im.ene.lab.attiq.data;
 
+import retrofit2.Call;
 import retrofit2.Callback;
 
 /**
@@ -9,7 +10,7 @@ import retrofit2.Callback;
  */
 public abstract class SuccessCallback<T> implements Callback<T> {
 
-  @Override public void onFailure(Throwable t) {
+  @Override public void onFailure(Call<T> call, Throwable t) {
 
   }
 }

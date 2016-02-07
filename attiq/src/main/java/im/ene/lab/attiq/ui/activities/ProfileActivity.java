@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package im.ene.lab.attiq.ui.activities;
 
 import android.content.Context;
@@ -63,6 +79,7 @@ import im.ene.lab.support.widget.CollapsingToolbarLayout;
 import im.ene.lab.support.widget.MathUtils;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -274,31 +291,31 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     super.onResume();
     // setup
     mOnFollowStateCallback = new Callback<Void>() {
-      @Override public void onResponse(Response<Void> response) {
+      @Override public void onResponse(Call<Void> call, Response<Void> response) {
         mState.isFollowing = response != null && response.code() == 204;
         EventBus.getDefault().post(new StateEvent<>(ProfileActivity.class.getSimpleName(),
             true, null, mState));
       }
 
-      @Override public void onFailure(Throwable t) {
+      @Override public void onFailure(Call<Void> call, Throwable t) {
         EventBus.getDefault().post(new StateEvent<>(ProfileActivity.class.getSimpleName(), false,
             new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
       }
     };
 
     mOnUnFollowStateCallback = new Callback<Void>() {
-      @Override public void onResponse(Response<Void> response) {
+      @Override public void onResponse(Call<Void> call, Response<Void> response) {
         mState.isFollowing = response != null && !(response.code() == 204);
       }
 
-      @Override public void onFailure(Throwable t) {
+      @Override public void onFailure(Call<Void> call, Throwable t) {
         EventBus.getDefault().post(new StateEvent<>(ProfileActivity.class.getSimpleName(), false,
             new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
       }
     };
 
     mOnUserCallback = new Callback<User>() {
-      @Override public void onResponse(Response<User> response) {
+      @Override public void onResponse(Call<User> call, Response<User> response) {
         User user = response.body();
         if (user != null) {
           Realm realm = Attiq.realm();
@@ -314,7 +331,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
         }
       }
 
-      @Override public void onFailure(Throwable error) {
+      @Override public void onFailure(Call<User> call, Throwable error) {
         EventBus.getDefault().post(new ProfileFetchedEvent(ProfileActivity.class.getSimpleName(),
             false, new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }

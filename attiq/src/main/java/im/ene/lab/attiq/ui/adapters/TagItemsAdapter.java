@@ -12,21 +12,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.squareup.picasso.RequestCreator;
-
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.two.ItemTag;
+import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
-import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
+import java.util.List;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import java.util.List;
 
 /**
  * Created by eneim on 1/10/16.
@@ -45,17 +43,17 @@ public class TagItemsAdapter extends ArticleListAdapter {
                         final Callback<List<Article>> callback) {
     isLoading = true;
     ApiClient.tagItems(mTagId, page, pageLimit).enqueue(new Callback<List<Article>>() {
-      @Override public void onResponse(Response<List<Article>> response) {
+      @Override public void onResponse(Call<List<Article>> call, Response<List<Article>> response) {
         isLoading = false;
         if (callback != null) {
-          callback.onResponse(response);
+          callback.onResponse(call, response);
         }
       }
 
-      @Override public void onFailure(Throwable t) {
+      @Override public void onFailure(Call<List<Article>> call, Throwable t) {
         isLoading = false;
         if (callback != null) {
-          callback.onFailure(t);
+          callback.onFailure(call, t);
         }
       }
     });

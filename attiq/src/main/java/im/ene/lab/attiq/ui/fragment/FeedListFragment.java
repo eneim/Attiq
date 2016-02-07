@@ -51,6 +51,7 @@ import im.ene.lab.attiq.util.event.ItemsEvent;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -85,7 +86,7 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
   private MoPubRecyclerAdapter mMopubAdapter;
 
   private Callback<Article> mOnArticleLoaded = new Callback<Article>() {
-    @Override public void onResponse(Response<Article> response) {
+    @Override public void onResponse(Call<Article> call, Response<Article> response) {
       Article article = response.body();
       if (article != null) {
         EventBus.getDefault().post(
@@ -96,7 +97,7 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
       }
     }
 
-    @Override public void onFailure(Throwable t) {
+    @Override public void onFailure(Call<Article> call, Throwable t) {
       EventBus.getDefault().post(new ItemDetailEvent(getClass().getSimpleName(), false,
           new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
     }
@@ -169,13 +170,13 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     return new FeedListWithAdsAdapter(items);
   }
 
-  @Override public void onFailure(Throwable t) {
-    super.onFailure(t);
+  @Override public void onFailure(Call<List<FeedItem>> call, Throwable t) {
+    super.onFailure(call, t);
     EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
         new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), 1));
   }
 
-  @Override public void onResponse(Response<List<FeedItem>> response) {
+  @Override public void onResponse(Call<List<FeedItem>> call, Response<List<FeedItem>> response) {
     if (response.code() != 200) {
       EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
           new Event.Error(response.code(), ApiClient.parseError(response).message), 1));

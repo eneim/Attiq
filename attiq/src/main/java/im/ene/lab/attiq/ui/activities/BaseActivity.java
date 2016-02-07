@@ -153,13 +153,6 @@ public abstract class BaseActivity extends AppCompatActivity
     return super.onOptionsItemSelected(item);
   }
 
-  @Override public void onBackPressed() {
-    super.onBackPressed();
-//    overridePendingTransition(
-//        R.anim.activity_in, R.anim.activity_out
-//    );
-  }
-
   private static final String TAG = "BaseActivity";
 
   @Override public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {

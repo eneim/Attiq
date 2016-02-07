@@ -6,17 +6,15 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.view.View;
-
 import im.ene.lab.attiq.Attiq;
+import java.io.IOException;
+import java.io.InputStream;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by eneim on 12/18/15.
@@ -64,11 +62,11 @@ public class WebUtil {
       final URLDrawable urlDrawable = new URLDrawable();
       HTTP_CLIENT.newCall(new Request.Builder().url(HttpUrl.parse(source)).get().build())
           .enqueue(new Callback() {
-            @Override public void onFailure(Request request, IOException e) {
+            @Override public void onFailure(Call call, IOException e) {
 
             }
 
-            @Override public void onResponse(Response response) throws IOException {
+            @Override public void onResponse(Call call, Response response) throws IOException {
               InputStream is = response.body().byteStream();
               Drawable drawable = Drawable.createFromStream(is, "src");
               drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());

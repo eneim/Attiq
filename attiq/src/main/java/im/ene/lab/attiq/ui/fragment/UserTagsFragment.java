@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.R;
@@ -25,11 +24,11 @@ import im.ene.lab.attiq.util.AnalyticsUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemsEvent;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 import java.util.ArrayList;
 import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by eneim on 1/10/16.
@@ -136,7 +135,7 @@ public class UserTagsFragment extends BaseFragment
     mAdapter.loadItems(isLoadingMore, mPage, DEFAULT_THRESHOLD, null, this);
   }
 
-  @Override public void onResponse(Response<List<PublicTag>> response) {
+  @Override public void onResponse(Call<List<PublicTag>> call, Response<List<PublicTag>> response) {
     Log.d(TAG, "onResponse() called with: " + "response = [" + response + "]");
     if (response.code() != 200) {
       mState.hasFollowingTags = false;
@@ -157,7 +156,7 @@ public class UserTagsFragment extends BaseFragment
     }
   }
 
-  @Override public void onFailure(Throwable t) {
+  @Override public void onFailure(Call<List<PublicTag>> call, Throwable t) {
     Log.d(TAG, "onFailure() called with: " + "t = [" + t + "]");
     EventBus.getDefault().post(new ItemsEvent(UserTagsFragment.class.getSimpleName(), false,
         new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), mPage));

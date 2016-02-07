@@ -40,6 +40,7 @@ import im.ene.lab.attiq.ui.widgets.NonEmptyRecyclerView;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemsEvent;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
@@ -162,12 +163,11 @@ public abstract class ListFragment<E>
     super.onResume();
     // UI Fix after theme changing
     if (mLoadingView != null && mSwipeRefreshLayout != null) {
+      mSwipeRefreshLayout.setRefreshing(false);
       if (!mAdapter.isLoading()) {
         mLoadingView.setVisibility(View.GONE);
-        mSwipeRefreshLayout.setRefreshing(false);
       } else {
         mLoadingView.setVisibility(View.VISIBLE);
-        mSwipeRefreshLayout.setRefreshing(true);
       }
     }
   }
@@ -211,7 +211,7 @@ public abstract class ListFragment<E>
     }
   }
 
-  @Override public void onResponse(Response<List<E>> response) {
+  @Override public void onResponse(Call<List<E>> call, Response<List<E>> response) {
     if (response.code() != 200) {
       EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
           new Event.Error(response.code(), getString(R.string.response_error)), mPage));
@@ -224,7 +224,7 @@ public abstract class ListFragment<E>
     }
   }
 
-  @Override public void onFailure(Throwable t) {
+  @Override public void onFailure(Call<List<E>> call, Throwable t) {
     Log.d(getClass().getSimpleName(), "onFailure() called with: " + "t = [" + t + "]");
     EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
         new Event.Error(Event.Error.ERROR_UNKNOWN,

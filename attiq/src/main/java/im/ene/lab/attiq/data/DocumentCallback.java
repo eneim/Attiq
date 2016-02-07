@@ -16,15 +16,13 @@
 
 package im.ene.lab.attiq.data;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
-
 import java.io.IOException;
 import java.io.InputStream;
+import okhttp3.Call;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 /**
  * Created by eneim on 1/14/16.
@@ -37,11 +35,11 @@ public abstract class DocumentCallback implements okhttp3.Callback {
     this.baseUrl = baseUrl;
   }
 
-  @Override public void onFailure(Request request, IOException e) {
+  @Override public void onFailure(Call call, IOException e) {
     onDocument(null);
   }
 
-  @Override public void onResponse(Response response) throws IOException {
+  @Override public void onResponse(Call call, Response response) throws IOException {
     ResponseBody body = response.body();
     InputStream stream = body == null ? null : body.byteStream();
     if (stream != null) {
