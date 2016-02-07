@@ -6,20 +6,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.activities.ProfileActivity">
+    tools:context=".ui.activities.ProfileActivity"
+    >
 
-    <include layout="@layout/app_bar_profile"/>
+  <include layout="@layout/app_bar_profile"/>
 
-    <include layout="@layout/content_profile"/>
+  <include layout="@layout/content_profile"/>
 
-    <im.ene.lab.attiq.ui.widgets.NotBadImageButton
-        android:id="@+id/profile_image"
-        android:layout_width="@dimen/design_fab_size_big"
-        android:layout_height="@dimen/design_fab_size_big"
-        android:layout_marginStart="?attr/actionBarSize"
-        android:src="@mipmap/ic_launcher"
-        app:elevation="12dp"
-        app:layout_anchor="@+id/profile_name"
-        app:layout_anchorGravity="bottom|start"/>
+  <im.ene.lab.attiq.ui.widgets.NotBadImageButton
+      android:id="@+id/profile_image"
+      android:layout_width="@dimen/design_fab_size_big"
+      android:layout_height="@dimen/design_fab_size_big"
+      android:layout_marginStart="?attr/actionBarSize"
+      android:src="@mipmap/ic_launcher"
+      app:elevation="12dp"
+      app:layout_anchor="@+id/profile_name"
+      app:layout_anchorGravity="bottom|start"
+      />
 
 </android.support.design.widget.CoordinatorLayout>

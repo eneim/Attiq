@@ -16,6 +16,6 @@
   -->
 
 <resources>
-    <!-- Light theme, light actionbar -->
-    <color name="text_link_color_light">#01A2FF</color>
+  <!-- Light theme, light actionbar -->
+  <color name="text_link_color_light">#01A2FF</color>
 </resources>

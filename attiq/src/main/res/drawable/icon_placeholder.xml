@@ -16,11 +16,11 @@
   -->
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-       android:shape="rectangle">
+    android:shape="rectangle">
 
-    <solid android:color="@android:color/transparent"/>
+  <solid android:color="@android:color/transparent"/>
 
-    <size
-        android:width="?attr/actionBarSize"
-        android:height="?attr/actionBarSize"/>
+  <size
+      android:height="?attr/actionBarSize"
+      android:width="?attr/actionBarSize"/>
 </shape>

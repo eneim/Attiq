@@ -1,7 +1,7 @@
 <resources>>
 
-    <style name="Attiq.Widget.Profile.Toolbar.Subtitle"
-           parent="Attiq.Widget.Toolbar.Subtitle">
-        <item name="android:paddingEnd">@dimen/profile_image_size_margin</item>
-    </style>
+  <style name="Attiq.Widget.Profile.Toolbar.Subtitle"
+      parent="Attiq.Widget.Toolbar.Subtitle">
+    <item name="android:paddingEnd">@dimen/profile_image_size_margin</item>
+  </style>
 </resources>

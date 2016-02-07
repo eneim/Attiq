@@ -1,22 +1,22 @@
 <resources>
-    <string name="activity_login">Login</string>
-    <string name="activity_profile">Profile</string>
+  <string name="activity_login">Login</string>
+  <string name="activity_profile">Profile</string>
 
-    <string name="action_login">Login</string>
-    <string name="action_logout">Logout</string>
+  <string name="action_login">Login</string>
+  <string name="action_logout">Logout</string>
 
-    <string name="tab_home_feed">Feed (Beta)</string>
-    <string name="tab_home_public">All Posts</string>
+  <string name="tab_home_feed">Feed (Beta)</string>
+  <string name="tab_home_public">All Posts</string>
 
-    <string name="item_posted_info">%1$s posted %2$s ago</string>
+  <string name="item_posted_info">%1$s posted %2$s ago</string>
     <string name="item_user_info">
         &lt;a href="attiq://qiita.com/users/%1$s">%2$s&lt;/a> posted %3$s
     </string>
 
-    <string name="item_info_one">%1$d stocked, 1 comment</string>
-    <string name="item_info_many">%1$d stocked, %2$d comments</string>
+  <string name="item_info_one">%1$d stocked, 1 comment</string>
+  <string name="item_info_many">%1$d stocked, %2$d comments</string>
 
-    <string name="share_content">%1$s</string>
+  <string name="share_content">%1$s</string>
 
     <string name="user_stocked">
         &lt;a href="attiq://qiita.com/users/%1$s">%2$s&lt;/a> stocked</string>
@@ -27,149 +27,149 @@
     <string name="user_name">
         &lt;a href="attiq://qiita.com/users/%1$s">%2$s&lt;/a>
     </string>
-    <string name="tag_new_post">has new post</string>
+  <string name="tag_new_post">has new post</string>
 
-    <string name="local_tag_url">&lt;a href="attiq://qiita.com/tags/%1$s">%2$s&lt;/a></string>
+  <string name="local_tag_url">&lt;a href="attiq://qiita.com/tags/%1$s">%2$s&lt;/a></string>
 
-    <string name="data_tags_url">attiq://qiita.com/tags/%1$s</string>
-    <string name="data_items_url">attiq://qiita.com/items/%1$s</string>
-    <string name="data_users_url">attiq://qiita.com/users/%1$s</string>
-    <!-- somehow doesn't work well, need help! -->
+  <string name="data_tags_url">attiq://qiita.com/tags/%1$s</string>
+  <string name="data_items_url">attiq://qiita.com/items/%1$s</string>
+  <string name="data_users_url">attiq://qiita.com/users/%1$s</string>
+  <!-- somehow doesn't work well, need help! -->
 
-    <!--<plurals name="plural_item_info">-->
-    <!--<item quantity="one">%1$d stocked, 1 comment</item>-->
-    <!--<item quantity="other">%1$d stocked, %2$d comments</item>-->
-    <!--</plurals>-->
+  <!--<plurals name="plural_item_info">-->
+  <!--<item quantity="one">%1$d stocked, 1 comment</item>-->
+  <!--<item quantity="other">%1$d stocked, %2$d comments</item>-->
+  <!--</plurals>-->
 
-    <string name="auth_add_account">Add Account</string>
-    <string name="title_activity_item_detail">Article</string>
-    <string name="title_activity_tag_detail">Tag</string>
-    <string name="title_activity_tag">Tag: %1$s</string>
-    <plurals name="title_activity_tag_quantity">
-        <item quantity="one">%1$d post</item>
-        <item quantity="other">%1$d posts</item>
-    </plurals>
-    <plurals name="user_contribution_quantity">
-        <item quantity="one">%1$d Contribution</item>
-        <item quantity="other">%1$d Contributions</item>
-    </plurals>
+  <string name="auth_add_account">Add Account</string>
+  <string name="title_activity_item_detail">Article</string>
+  <string name="title_activity_tag_detail">Tag</string>
+  <string name="title_activity_tag">Tag: %1$s</string>
+  <plurals name="title_activity_tag_quantity">
+    <item quantity="one">%1$d post</item>
+    <item quantity="other">%1$d posts</item>
+  </plurals>
+  <plurals name="user_contribution_quantity">
+    <item quantity="one">%1$d Contribution</item>
+    <item quantity="other">%1$d Contributions</item>
+  </plurals>
 
-    <string name="action_settings">Settings</string>
-    <string name="action_search">Search</string>
-    <string name="action_filter">Filter</string>
-    <string name="action_item_menu">Menu</string>
-    <string name="title_activity_profile">Profile</string>
-    <string name="item_detail_subtitle">posted by %1$s</string>
-    <string name="article_comment">%1$d %2$s</string>
+  <string name="action_settings">Settings</string>
+  <string name="action_search">Search</string>
+  <string name="action_filter">Filter</string>
+  <string name="action_item_menu">Menu</string>
+  <string name="title_activity_profile">Profile</string>
+  <string name="item_detail_subtitle">posted by %1$s</string>
+  <string name="article_comment">%1$d %2$s</string>
 
-    <string name="comment_singular">comment</string>
-    <string name="comment_plural">comments</string>
-    <string name="menu_item_home">Home</string>
-    <string name="menu_item_feedback">Feedback</string>
-    <string name="menu_item_profile">Profile</string>
-    <string name="menu_item_my_page">My page</string>
-    <string name="action_follow">Follow</string>
-    <string name="state_following">Following</string>
-    <string name="state_not_following">Follow</string>
-    <string name="tab_title_items">Posts</string>
-    <string name="tab_title_stocks">Stocks</string>
-    <string name="tab_title_tags">Following Tags</string>
-    <string name="user_connection_follower">Follower</string>
-    <string name="user_connection_followers">Followers</string>
+  <string name="comment_singular">comment</string>
+  <string name="comment_plural">comments</string>
+  <string name="menu_item_home">Home</string>
+  <string name="menu_item_feedback">Feedback</string>
+  <string name="menu_item_profile">Profile</string>
+  <string name="menu_item_my_page">My page</string>
+  <string name="action_follow">Follow</string>
+  <string name="state_following">Following</string>
+  <string name="state_not_following">Follow</string>
+  <string name="tab_title_items">Posts</string>
+  <string name="tab_title_stocks">Stocks</string>
+  <string name="tab_title_tags">Following Tags</string>
+  <string name="user_connection_follower">Follower</string>
+  <string name="user_connection_followers">Followers</string>
 
-    <string name="user_connection_following">Following</string>
-    <string name="user_connection_item">Post</string>
-    <string name="user_connection_items">Posts</string>
-    <string name="item_detail_no_menu">No menu available!</string>
-    <string name="title_activity_test">TestActivity</string>
-    <string name="text_welcome">Welcome to Attiq</string>
-    <string name="text_attiq_intro">Another Qiita client</string>
-    <string name="menu_item_application">Application</string>
-    <string name="action_about">About</string>
-    <string name="title_activity_search">SearchActivity</string>
-    <string name="title_activity_settings">Settings</string>
+  <string name="user_connection_following">Following</string>
+  <string name="user_connection_item">Post</string>
+  <string name="user_connection_items">Posts</string>
+  <string name="item_detail_no_menu">No menu available!</string>
+  <string name="title_activity_test">TestActivity</string>
+  <string name="text_welcome">Welcome to Attiq</string>
+  <string name="text_attiq_intro">Another Qiita client</string>
+  <string name="menu_item_application">Application</string>
+  <string name="action_about">About</string>
+  <string name="title_activity_search">SearchActivity</string>
+  <string name="title_activity_settings">Settings</string>
 
-    <string name="setting_theme">Theme</string>
-    <string name="setting_theme_dark">Dark (Beta)</string>
-    <string name="setting_theme_light">Light</string>
+  <string name="setting_theme">Theme</string>
+  <string name="setting_theme_dark">Dark (Beta)</string>
+  <string name="setting_theme_light">Light</string>
 
-    <!-- Strings related to Settings -->
+  <!-- Strings related to Settings -->
 
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
+  <!-- Example General settings -->
+  <string name="pref_header_general">General</string>
 
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+  <string name="pref_title_social_recommendations">Enable social recommendations</string>
     <string name="pref_description_social_recommendations">Recommendations for people to contact
         based on your message history
     </string>
 
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
+  <string name="pref_title_display_name">Display name</string>
+  <string name="pref_default_display_name">John Smith</string>
 
-    <string name="pref_title_app_themes">@string/setting_theme</string>
+  <string name="pref_title_app_themes">@string/setting_theme</string>
 
-    <string-array name="pref_app_themes">
-        <item>@string/setting_theme_dark</item>
-        <item>@string/setting_theme_light</item>
-    </string-array>
-    <string-array name="pref_app_themes_values">
-        <item>DARK</item>
-        <item>LIGHT</item>
-    </string-array>
+  <string-array name="pref_app_themes">
+    <item>@string/setting_theme_dark</item>
+    <item>@string/setting_theme_light</item>
+  </string-array>
+  <string-array name="pref_app_themes_values">
+    <item>DARK</item>
+    <item>LIGHT</item>
+  </string-array>
 
-    <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
+  <!-- Example settings for Data & Sync -->
+  <string name="pref_header_data_sync">Data &amp; sync</string>
 
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
-    </string-array>
+  <string name="pref_title_sync_frequency">Sync frequency</string>
+  <string-array name="pref_sync_frequency_titles">
+    <item>15 minutes</item>
+    <item>30 minutes</item>
+    <item>1 hour</item>
+    <item>3 hours</item>
+    <item>6 hours</item>
+    <item>Never</item>
+  </string-array>
+  <string-array name="pref_sync_frequency_values">
+    <item>15</item>
+    <item>30</item>
+    <item>60</item>
+    <item>180</item>
+    <item>360</item>
+    <item>-1</item>
+  </string-array>
 
-    <string name="pref_title_system_sync_settings">System sync settings</string>
+  <string name="pref_title_system_sync_settings">System sync settings</string>
 
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
+  <!-- Example settings for Notifications -->
+  <string name="pref_header_notifications">Notifications</string>
 
-    <string name="pref_title_new_message_notifications">New message notifications</string>
+  <string name="pref_title_new_message_notifications">New message notifications</string>
 
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
+  <string name="pref_title_ringtone">Ringtone</string>
+  <string name="pref_ringtone_silent">Silent</string>
 
-    <string name="pref_title_vibrate">Vibrate</string>
-    <string name="prefs_eula">Terms of Services</string>
-    <string name="pref_others">Others</string>
-    <string name="prefs_privacy">Privacy Policy</string>
-    <string name="pref_general">General</string>
-    <string name="title_licenses">Open Source Licenses</string>
-    <string name="title_licenses_others">Other Resources</string>
-    <string name="title_resources">Other Resources</string>
-    <string name="logout_confirm">Do you want to logout from Attiq?</string>
-    <string name="comment_tab_composer">Editor</string>
-    <string name="comment_tab_previewer">Preview</string>
-    <string name="editor_comment">Comment</string>
-    <string name="article_comment_hint"># Compose in Markdown</string>
-    <string name="notify_comment_saved">Your comment has been saved</string>
+  <string name="pref_title_vibrate">Vibrate</string>
+  <string name="prefs_eula">Terms of Services</string>
+  <string name="pref_others">Others</string>
+  <string name="prefs_privacy">Privacy Policy</string>
+  <string name="pref_general">General</string>
+  <string name="title_licenses">Open Source Licenses</string>
+  <string name="title_licenses_others">Other Resources</string>
+  <string name="title_resources">Other Resources</string>
+  <string name="logout_confirm">Do you want to logout from Attiq?</string>
+  <string name="comment_tab_composer">Editor</string>
+  <string name="comment_tab_previewer">Preview</string>
+  <string name="editor_comment">Comment</string>
+  <string name="article_comment_hint"># Compose in Markdown</string>
+  <string name="notify_comment_saved">Your comment has been saved</string>
     <string name="icon_error_description" translatable="false">
         https://www.iconfinder.com/icons/183558/cloud_rain_icon#size=512
     </string>
-    <string name="response_error">There\'s problem here v__v</string>
-    <string name="response_empty">There\'s nothing here〜</string>
+  <string name="response_error">There\'s problem here v__v</string>
+  <string name="response_empty">There\'s nothing here〜</string>
     <string name="icon_empty_description" translatable="false">
         https://www.iconfinder.com/icons/183438/cloud_sun_icon#size=512
     </string>
-    <string name="article_read_status">last viewed: %1$s</string>
-    <string name="tab_title_history">History</string>
+  <string name="article_read_status">last viewed: %1$s</string>
+  <string name="tab_title_history">History</string>
 </resources>

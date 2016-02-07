@@ -16,46 +16,51 @@
   -->
 
 <android.support.v4.widget.DrawerLayout
-    android:id="@+id/drawer_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:openDrawer="start">
+    tools:openDrawer="start"
+    >
 
-    <include
-        layout="@layout/app_bar_home"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+  <include
+      layout="@layout/app_bar_home"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      />
 
-    <im.ene.lab.support.widget.ScrimInsetsRelativeLayout
-        style="@style/Widget.Design.NavigationView"
+  <im.ene.lab.support.widget.ScrimInsetsRelativeLayout
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_gravity="start"
+      android:fitsSystemWindows="true"
+      style="@style/Widget.Design.NavigationView"
+      >
+
+    <View
+        android:id="@+id/nav_bottom_bar"
+        android:layout_width="@dimen/design_navigation_elevation"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:background="#e5e5e5"
+        android:visibility="gone"
+        />
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_actions"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true">
+        android:layout_above="@id/nav_bottom_bar"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
+        app:headerLayout="@layout/nav_header_main"
+        app:itemTextAppearance="@style/TextAppearance.AppCompat.Small"
+        app:menu="@menu/activity_main_drawer"
+        />
 
-        <View
-            android:id="@+id/nav_bottom_bar"
-            android:layout_width="@dimen/design_navigation_elevation"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_alignParentBottom="true"
-            android:background="#e5e5e5"
-            android:visibility="gone"/>
-
-        <android.support.design.widget.NavigationView
-            android:id="@+id/nav_actions"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_above="@id/nav_bottom_bar"
-            android:layout_alignParentTop="true"
-            android:background="@android:color/transparent"
-            app:headerLayout="@layout/nav_header_main"
-            app:itemTextAppearance="@style/TextAppearance.AppCompat.Small"
-            app:menu="@menu/activity_main_drawer"/>
-
-    </im.ene.lab.support.widget.ScrimInsetsRelativeLayout>
+  </im.ene.lab.support.widget.ScrimInsetsRelativeLayout>
 
 </android.support.v4.widget.DrawerLayout>

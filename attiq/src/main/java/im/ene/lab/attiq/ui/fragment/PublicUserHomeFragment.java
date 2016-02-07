@@ -120,7 +120,8 @@ public class PublicUserHomeFragment extends RealmListFragment<Post> {
         //.keywords("your target words here")
         .build();
     // Request ads when the user returns to this activity
-    mMopubAdapter.loadAds(getString(R.string.attiq_mopub_add_id), parameters);
+    // TODO comment out to publish and apply for Mopub Native Ads
+    // mMopubAdapter.loadAds(getString(R.string.attiq_mopub_add_id), parameters);
 
     if (mCallback != null) {
       mCallback.onTimelineCreated(view);

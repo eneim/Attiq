@@ -1,77 +1,77 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="nav_header_vertical_spacing">16dp</dimen>
-    <dimen name="nav_header_height">160dp</dimen>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
+  <!-- Default screen margins, per the Android Design guidelines. -->
+  <dimen name="nav_header_vertical_spacing">16dp</dimen>
+  <dimen name="nav_header_height">160dp</dimen>
+  <!-- Default screen margins, per the Android Design guidelines. -->
+  <dimen name="activity_horizontal_margin">16dp</dimen>
+  <dimen name="activity_vertical_margin">16dp</dimen>
+  <dimen name="fab_margin">16dp</dimen>
 
-    <!-- Social Buttons -->
-    <dimen name="social_buttons_padding_start">48dp</dimen>
-    <dimen name="social_button_size_full">32dp</dimen>
-    <dimen name="social_button_size">24dp</dimen>
-    <dimen name="social_button_margin">2dp</dimen>
+  <!-- Social Buttons -->
+  <dimen name="social_buttons_padding_start">48dp</dimen>
+  <dimen name="social_button_size_full">32dp</dimen>
+  <dimen name="social_button_size">24dp</dimen>
+  <dimen name="social_button_margin">2dp</dimen>
 
-    <dimen name="tab_layout_start_inset">56dp</dimen>
-    <dimen name="tab_layout_height">48dp</dimen>
-    <dimen name="tab_max_width">120dp</dimen>
+  <dimen name="tab_layout_start_inset">56dp</dimen>
+  <dimen name="tab_layout_height">48dp</dimen>
+  <dimen name="tab_max_width">120dp</dimen>
 
-    <!-- Material Design key-lines -->
-    <dimen name="design_fab_content_size">72dp</dimen>
-    <dimen name="design_fab_size_big">80dp</dimen>
+  <!-- Material Design key-lines -->
+  <dimen name="design_fab_content_size">72dp</dimen>
+  <dimen name="design_fab_size_big">80dp</dimen>
 
-    <dimen name="profile_image_size_margin">88dp</dimen>
-    <dimen name="profile_image_size">80dp</dimen>
-    <dimen name="profile_image_size_half">40dp</dimen>
-    <dimen name="profile_image_margin">24dp</dimen>
+  <dimen name="profile_image_size_margin">88dp</dimen>
+  <dimen name="profile_image_size">80dp</dimen>
+  <dimen name="profile_image_size_half">40dp</dimen>
+  <dimen name="profile_image_margin">24dp</dimen>
 
-    <dimen name="header_icon_size">56dp</dimen>
-    <dimen name="header_icon_size_half">28dp</dimen>
-    <dimen name="header_icon_padding">0dp</dimen>
-    <dimen name="header_icon_radius">28dp</dimen>
-    <dimen name="status_bar_height">24dp</dimen>
+  <dimen name="header_icon_size">56dp</dimen>
+  <dimen name="header_icon_size_half">28dp</dimen>
+  <dimen name="header_icon_padding">0dp</dimen>
+  <dimen name="header_icon_radius">28dp</dimen>
+  <dimen name="status_bar_height">24dp</dimen>
 
-    <dimen name="item_icon_size">48dp</dimen>
-    <dimen name="item_icon_size_half">24dp</dimen>
-    <dimen name="item_icon_padding">4dp</dimen>
-    <dimen name="item_icon_padding_half">2dp</dimen>
+  <dimen name="item_icon_size">48dp</dimen>
+  <dimen name="item_icon_size_half">24dp</dimen>
+  <dimen name="item_icon_padding">4dp</dimen>
+  <dimen name="item_icon_padding_half">2dp</dimen>
 
-    <dimen name="item_icon_size_small">36dp</dimen>
-    <dimen name="item_icon_size_small_half">18dp</dimen>
+  <dimen name="item_icon_size_small">36dp</dimen>
+  <dimen name="item_icon_size_small_half">18dp</dimen>
 
-    <dimen name="feed_item_identity_size">28dp</dimen>
+  <dimen name="feed_item_identity_size">28dp</dimen>
 
-    <dimen name="empty_view_size">64dp</dimen>
+  <dimen name="empty_view_size">64dp</dimen>
 
-    <!-- Attiq specific dimens -->
-    <dimen name="recycler_view_padding">0dp</dimen>
-    <dimen name="item_padding">8dp</dimen>
-    <dimen name="item_padding_half">4dp</dimen>
-    <dimen name="dimen_unit">1dp</dimen>
-    <dimen name="image_border_small">2dp</dimen>
-    <dimen name="app_bar_height">180dp</dimen>
-    <dimen name="app_bar_max_elevation">4dp</dimen>
-    <dimen name="app_bar_min_elevation">0dp</dimen>
+  <!-- Attiq specific dimens -->
+  <dimen name="recycler_view_padding">0dp</dimen>
+  <dimen name="item_padding">8dp</dimen>
+  <dimen name="item_padding_half">4dp</dimen>
+  <dimen name="dimen_unit">1dp</dimen>
+  <dimen name="image_border_small">2dp</dimen>
+  <dimen name="app_bar_height">180dp</dimen>
+  <dimen name="app_bar_max_elevation">4dp</dimen>
+  <dimen name="app_bar_min_elevation">0dp</dimen>
 
-    <dimen name="profile_image_elevation">12dp</dimen>
+  <dimen name="profile_image_elevation">12dp</dimen>
 
-    <dimen name="text_margin">16dp</dimen>
-    <dimen name="comment_container_expand">224dp</dimen>
-    <dimen name="comment_container_collapse">56dp</dimen>
+  <dimen name="text_margin">16dp</dimen>
+  <dimen name="comment_container_expand">224dp</dimen>
+  <dimen name="comment_container_collapse">56dp</dimen>
 
-    <dimen name="html_header_height">48dp</dimen>
+  <dimen name="html_header_height">48dp</dimen>
 
-    <dimen name="menu_container_width">280dp</dimen>
-    <dimen name="header_text_padding">8dp</dimen>
-    <dimen name="header_depth_width">16dp</dimen>
-    <dimen name="header_depth_gap">0dp</dimen>
-    <dimen name="menu_container_top_free_space">96dp</dimen>
+  <dimen name="menu_container_width">280dp</dimen>
+  <dimen name="header_text_padding">8dp</dimen>
+  <dimen name="header_depth_width">16dp</dimen>
+  <dimen name="header_depth_gap">0dp</dimen>
+  <dimen name="menu_container_top_free_space">96dp</dimen>
 
-    <dimen name="detail_bar_height">144dp</dimen>
-    <dimen name="detail_title_margin_top">56dp</dimen>
-    <dimen name="app_bar_min_offset">144dp</dimen>
+  <dimen name="detail_bar_height">144dp</dimen>
+  <dimen name="detail_title_margin_top">56dp</dimen>
+  <dimen name="app_bar_min_offset">144dp</dimen>
 
-    <dimen name="tag_icon_size">16dp</dimen>
-    <dimen name="tag_icon_size_half">8dp</dimen>
+  <dimen name="tag_icon_size">16dp</dimen>
+  <dimen name="tag_icon_size_half">8dp</dimen>
 </resources>

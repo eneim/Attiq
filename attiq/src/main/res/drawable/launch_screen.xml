@@ -17,15 +17,15 @@
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:width="2560dp"
-        android:height="2560dp"
-        android:drawable="@color/very_dark_grayish_pink"/>
+  <item
+      android:drawable="@color/very_dark_grayish_pink"
+      android:height="2560dp"
+      android:width="2560dp"/>
 
-    <item
-        android:width="128dp"
-        android:height="128dp"
-        android:drawable="@drawable/attiq_icon"
-        android:gravity="center"/>
+  <item
+      android:drawable="@drawable/attiq_icon"
+      android:gravity="center"
+      android:height="128dp"
+      android:width="128dp"/>
 
 </layer-list>

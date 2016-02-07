@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:width="24dp"
-        android:height="24dp">
-        <shape android:shape="oval">
-            <solid android:color="@android:color/transparent"/>
-            <stroke
-                android:width="@dimen/dimen_unit"
-                android:color="#963e3639"/>
-        </shape>
-    </item>
+  <item
+      android:height="24dp"
+      android:width="24dp">
+    <shape android:shape="oval">
+      <solid android:color="@android:color/transparent"/>
+      <stroke
+          android:color="#963e3639"
+          android:width="@dimen/dimen_unit"/>
+    </shape>
+  </item>
 
-    <item
-        android:width="16dp"
-        android:height="16dp"
-        android:bottom="4dp"
-        android:drawable="@drawable/attiq_icon_24dp"
-        android:left="4dp"
-        android:right="4dp"
-        android:top="4dp"/>
+  <item
+      android:bottom="4dp"
+      android:drawable="@drawable/attiq_icon_24dp"
+      android:height="16dp"
+      android:left="4dp"
+      android:right="4dp"
+      android:top="4dp"
+      android:width="16dp"/>
 
 </layer-list>

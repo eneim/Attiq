@@ -16,6 +16,6 @@
   -->
 
 <resources>
-    <!-- Dark theme, dark actionbar -->
-    <color name="text_link_color_dark">#FFF3FDED</color>
+  <!-- Dark theme, dark actionbar -->
+  <color name="text_link_color_dark">#FFF3FDED</color>
 </resources>

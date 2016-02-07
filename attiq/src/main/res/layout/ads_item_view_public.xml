@@ -23,53 +23,77 @@
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
     android:orientation="horizontal"
-    android:padding="@dimen/item_padding">
+    android:padding="@dimen/item_padding"
+    >
+
+  <RelativeLayout
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_gravity="top|start"
+      >
 
     <ImageButton
         android:id="@+id/ads_icon"
         android:layout_width="@dimen/item_icon_size"
         android:layout_height="@dimen/item_icon_size"
-        android:layout_gravity="top|start"
+        android:layout_alignParentTop="true"
         android:layout_margin="@dimen/item_padding"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:scaleType="centerInside"
-        android:src="@android:drawable/sym_def_app_icon"/>
+        android:src="@android:drawable/sym_def_app_icon"
+        />
 
-    <LinearLayout
-        android:id="@+id/ads_content"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/ads_privacy_information_icon_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:layout_margin="@dimen/item_padding"
-        android:layout_weight="1"
-        android:divider="@drawable/post_item_divider_vertical_8dp"
-        android:orientation="vertical"
-        android:showDividers="middle">
+        android:padding="@dimen/item_padding"
+        android:scaleType="centerInside"
+        />
+  </RelativeLayout>
 
-        <TextView
-            android:id="@+id/ads_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:includeFontPadding="false"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textStyle="italic"/>
+  <LinearLayout
+      android:id="@+id/ads_content"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_margin="@dimen/item_padding"
+      android:layout_weight="1"
+      android:divider="@drawable/post_item_divider_vertical_8dp"
+      android:orientation="vertical"
+      android:showDividers="middle"
+      >
 
-        <TextView
-            android:id="@+id/ads_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:includeFontPadding="false"
-            android:maxLines="2"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+    <TextView
+        android:id="@+id/ads_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:singleLine="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textStyle="italic"
+        />
 
-        <ImageView
-            android:id="@+id/ads_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:scaleType="centerCrop"/>
+    <TextView
+        android:id="@+id/ads_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:includeFontPadding="false"
+        android:maxLines="2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        />
 
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/ads_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:scaleType="centerCrop"
+        />
+
+  </LinearLayout>
 
 </android.support.design.internal.ForegroundLinearLayout>

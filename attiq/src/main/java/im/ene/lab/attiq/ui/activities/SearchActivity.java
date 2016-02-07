@@ -436,8 +436,7 @@ public class SearchActivity extends BaseActivity {
     });
     mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
       @Override public void onFocusChange(View v, boolean hasFocus) {
-        Log.d(TAG, "onFocusChange() called with: " + "v = [" + v + "], hasFocus = [" + hasFocus +
-            "]");
+
       }
     });
   }

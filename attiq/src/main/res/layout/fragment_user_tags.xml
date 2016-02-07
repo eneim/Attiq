@@ -2,11 +2,13 @@
 <android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
-    <com.wefika.flowlayout.FlowLayout
-        android:id="@+id/user_tags_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+  <com.wefika.flowlayout.FlowLayout
+      android:id="@+id/user_tags_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      />
 
 </android.support.v4.widget.NestedScrollView>

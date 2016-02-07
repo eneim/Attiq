@@ -16,28 +16,28 @@
   -->
 
 <resources>
-    <color name="white">#FFFFFFFF</color>
-    <color name="black">#FF000000</color>
+  <color name="white">#FFFFFFFF</color>
+  <color name="black">#FF000000</color>
 
-    <color name="black_p87">#DE000000</color>
-    <color name="black_p54">#8A000000</color>
-    <color name="black_p38">#61000000</color>
-    <color name="black_p12">#1F000000</color>
+  <color name="black_p87">#DE000000</color>
+  <color name="black_p54">#8A000000</color>
+  <color name="black_p38">#61000000</color>
+  <color name="black_p12">#1F000000</color>
 
-    <color name="white_p100">#FFFFFFFF</color>
-    <color name="white_p70">#B2FFFFFF</color>
-    <color name="white_p30">#4CFFFFFF</color>
-    <color name="white_p12">#1FFFFFFF</color>
+  <color name="white_p100">#FFFFFFFF</color>
+  <color name="white_p70">#B2FFFFFF</color>
+  <color name="white_p30">#4CFFFFFF</color>
+  <color name="white_p12">#1FFFFFFF</color>
 
-    <color name="blue_gray_100">#CFD8DC</color>
-    <color name="blue_gray_500">#607D8B</color>
-    <color name="blue_gray_700">#455A64</color>
+  <color name="blue_gray_100">#CFD8DC</color>
+  <color name="blue_gray_500">#607D8B</color>
+  <color name="blue_gray_700">#455A64</color>
 
-    <!-- disabled button -->
-    <color name="red_accent_100">#FF8A80</color>
-    <!-- normal button -->
-    <color name="red_accent_200">#FF5252</color>
-    <!-- active/pressed button -->
-    <color name="red_accent_400">#FF1744</color>
+  <!-- disabled button -->
+  <color name="red_accent_100">#FF8A80</color>
+  <!-- normal button -->
+  <color name="red_accent_200">#FF5252</color>
+  <!-- active/pressed button -->
+  <color name="red_accent_400">#FF1744</color>
 
 </resources>

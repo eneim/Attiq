@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView
-    android:id="@android:id/text1"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:clickable="true"
@@ -15,4 +15,5 @@
     android:paddingRight="@dimen/item_padding"
     android:paddingStart="@dimen/item_padding_half"
     android:paddingTop="@dimen/item_padding_half"
-    android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+    />

@@ -1,67 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group
-        android:id="@+id/group_auth"
-        android:visible="true">
-        <item
-            android:id="@+id/nav_login"
-            android:title="@string/action_login"/>
-
-    </group>
-
-    <group
-        android:id="@+id/group_navigation"
-        android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_home"
-            android:title="@string/menu_item_home"/>
-    </group>
-
+  <group
+      android:id="@+id/group_auth"
+      android:visible="true">
     <item
-        android:title="Post"
-        android:visible="false">
-        <menu>
-            <group
-                android:id="@+id/group_post"
-                android:checkableBehavior="single"
-                android:visible="true">
-                <item
-                    android:id="@+id/nav_draft"
-                    android:icon="@drawable/ic_draft"
-                    android:title="Draft"/>
-            </group>
-        </menu>
-    </item>
+        android:id="@+id/nav_login"
+        android:title="@string/action_login"/>
 
+  </group>
+
+  <group
+      android:id="@+id/group_navigation"
+      android:checkableBehavior="single">
     <item
-        android:title="@string/menu_item_profile">
-        <menu>
-            <item
-                android:id="@+id/nav_profile"
-                android:icon="@drawable/ic_portrait_24dp"
-                android:title="@string/menu_item_my_page"/>
-        </menu>
-    </item>
+        android:id="@+id/nav_home"
+        android:title="@string/menu_item_home"/>
+  </group>
 
-    <item
-        android:title="@string/menu_item_application">
-        <menu>
-            <item
-                android:id="@+id/nav_setting"
-                android:icon="@drawable/ic_settings_24dp"
-                android:title="@string/action_settings"/>
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_about"
-                android:title="@string/action_about"/>
-        </menu>
-    </item>
-
-    <group
-        android:id="@+id/group_help">
+  <item
+      android:title="Post"
+      android:visible="false">
+    <menu>
+      <group
+          android:id="@+id/group_post"
+          android:checkableBehavior="single"
+          android:visible="true">
         <item
-            android:id="@+id/nav_feedback"
-            android:title="@string/menu_item_feedback"/>
-    </group>
+            android:id="@+id/nav_draft"
+            android:icon="@drawable/ic_draft"
+            android:title="Draft"/>
+      </group>
+    </menu>
+  </item>
+
+  <item
+      android:title="@string/menu_item_profile">
+    <menu>
+      <item
+          android:id="@+id/nav_profile"
+          android:icon="@drawable/ic_portrait_24dp"
+          android:title="@string/menu_item_my_page"/>
+    </menu>
+  </item>
+
+  <item
+      android:title="@string/menu_item_application">
+    <menu>
+      <item
+          android:id="@+id/nav_setting"
+          android:icon="@drawable/ic_settings_24dp"
+          android:title="@string/action_settings"/>
+      <item
+          android:id="@+id/nav_send"
+          android:icon="@drawable/ic_about"
+          android:title="@string/action_about"/>
+    </menu>
+  </item>
+
+  <group
+      android:id="@+id/group_help">
+    <item
+        android:id="@+id/nav_feedback"
+        android:title="@string/menu_item_feedback"/>
+  </group>
 </menu>

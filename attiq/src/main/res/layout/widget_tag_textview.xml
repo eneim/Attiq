@@ -21,4 +21,5 @@
     android:paddingTop="@dimen/item_padding_half"
     android:textAppearance="@style/TextAppearance.AppCompat.Small"
     android:textSize="10dp"
-    tools:text="Android"/>
+    tools:text="Android"
+    />

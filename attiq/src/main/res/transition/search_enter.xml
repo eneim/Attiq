@@ -20,8 +20,8 @@
     android:duration="@android:integer/config_mediumAnimTime"
     android:interpolator="@android:interpolator/fast_out_slow_in">
 
-    <targets>
-        <target android:targetId="@android:id/navigationBarBackground"/>
-    </targets>
+  <targets>
+    <target android:targetId="@android:id/navigationBarBackground"/>
+  </targets>
 
 </fade>

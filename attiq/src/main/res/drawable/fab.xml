@@ -18,17 +18,17 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:state_pressed="false">
-        <shape
-            android:shape="oval">
-            <solid android:color="?attr/colorAccent"/>
-        </shape>
-    </item>
+  <item android:state_pressed="false">
+    <shape
+        android:shape="oval">
+      <solid android:color="?attr/colorAccent"/>
+    </shape>
+  </item>
 
-    <item android:state_pressed="true">
-        <shape
-            android:shape="oval">
-            <solid android:color="?attr/colorControlHighlight"/>
-        </shape>
-    </item>
+  <item android:state_pressed="true">
+    <shape
+        android:shape="oval">
+      <solid android:color="?attr/colorControlHighlight"/>
+    </shape>
+  </item>
 </selector>

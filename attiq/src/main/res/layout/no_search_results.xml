@@ -16,14 +16,15 @@
   -->
 
 <im.ene.lab.attiq.ui.widgets.BaselineGridTextView
-    android:id="@+id/no_search_results"
-    style="@style/Attiq.Widget.EmptyText"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/no_search_results"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:drawablePadding="@dimen/spacing_micro"
     android:drawableTop="@drawable/ic_search_24dp_black"
     android:padding="@dimen/spacing_huge"
     android:textAlignment="center"
-    app:topPaddingHint="@dimen/spacing_huge"/>
+    app:topPaddingHint="@dimen/spacing_huge"
+    style="@style/Attiq.Widget.EmptyText"
+    />
