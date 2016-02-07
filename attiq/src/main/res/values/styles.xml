@@ -27,6 +27,7 @@
       @style/Attiq.Widget.Toolbar.Button.Navigation
     </item>
     <item name="android:actionBarStyle">@style/Attiq.Widget.Toolbar</item>
+    <item name="searchPanelScrim">@color/scrim_dark</item>
   </style>
 
   <style name="Attiq.Theme.Light" parent="Theme.AppCompat.Light">
@@ -40,6 +41,7 @@
       @style/Attiq.Widget.Toolbar.Button.Navigation
     </item>
     <item name="android:actionBarStyle">@style/Attiq.Widget.Toolbar</item>
+    <item name="searchPanelScrim">@color/scrim_light</item>
   </style>
 
   <style name="Attiq.Theme.Light.NoActionBar">

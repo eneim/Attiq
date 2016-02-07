@@ -20,13 +20,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
   <View
       android:id="@+id/scrim"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="?attr/searchPanelScrim"/>
+      android:background="?attr/searchPanelScrim"
+      />
 
   <FrameLayout
       android:id="@+id/search_toolbar"
@@ -34,14 +36,15 @@
       android:layout_height="?attr/actionBarSize"
       android:elevation="@dimen/z_app_bar"
       android:outlineProvider="bounds"
-      android:theme="@style/Attiq.Theme.SearchView">
+      >
 
     <View
         android:id="@+id/search_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0"
-        android:background="@color/white"/>
+        android:background="?attr/colorPrimary"
+        />
 
     <android.support.v7.widget.SearchView
         android:id="@+id/search_view"
@@ -54,7 +57,8 @@
         app:queryBackground="@android:color/transparent"
         app:searchHintIcon="@null"
         app:searchIcon="@drawable/icon_placeholder"
-        app:submitBackground="@android:color/transparent"/>
+        app:submitBackground="@android:color/transparent"
+        />
 
     <!-- wrapping layout needed for the touch ripple -->
     <FrameLayout
@@ -65,7 +69,8 @@
         android:paddingEnd="8dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:paddingStart="8dp">
+        android:paddingStart="8dp"
+        >
 
       <ImageButton
           android:id="@+id/searchback"
@@ -74,7 +79,8 @@
           android:layout_gravity="center"
           android:background="?attr/selectableItemBackgroundBorderless"
           android:gravity="start|center_vertical"
-          android:src="@drawable/ic_search_24dp_black"/>
+          android:src="@drawable/ic_search_24dp_black"
+          />
 
     </FrameLayout>
 
@@ -85,25 +91,27 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginTop="?attr/actionBarSize"
-      android:background="#ffffff"
-      android:elevation="@dimen/z_app_bar_low">
+      android:background="?attr/colorPrimary"
+      android:elevation="@dimen/z_app_bar_low"
+      >
 
     <ProgressBar
         android:id="@android:id/empty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:indeterminate="true"
-        android:indeterminateTint="@color/primary_super_dark"
         android:indeterminateTintMode="src_in"
         android:paddingBottom="@dimen/spacing_huge"
         android:paddingTop="@dimen/spacing_huge"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        />
 
     <ViewStub
         android:id="@+id/stub_no_search_results"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout="@layout/no_search_results"/>
+        android:layout="@layout/no_search_results"
+        />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/search_results"
@@ -112,14 +120,16 @@
         android:clipToPadding="false"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        />
 
     <View
         android:id="@+id/results_scrim"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/searchPanelScrim"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        />
 
   </FrameLayout>
 

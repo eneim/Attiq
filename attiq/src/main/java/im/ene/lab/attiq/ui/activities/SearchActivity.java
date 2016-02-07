@@ -99,7 +99,8 @@ public class SearchActivity extends BaseActivity {
   @Bind(R.id.search_toolbar) ViewGroup mSearchToolbar;
   @Bind(R.id.results_container) ViewGroup mResultsContainer;
   @Bind(R.id.scrim) View mScrim;
-  @Bind(R.id.results_scrim) View mResultsScrim;
+  // FIXME consider to uncomment this
+  // @Bind(R.id.results_scrim) View mResultsScrim;
   @BindInt(R.integer.num_columns) int mColumns;
   @BindDimen(R.dimen.z_app_bar) float mAppBarElevation;
   private BaselineGridTextView mNoResults;
@@ -312,7 +313,7 @@ public class SearchActivity extends BaseActivity {
     TransitionManager.beginDelayedTransition(mMainContainer, mAutoTransition);
     mRecyclerView.setVisibility(View.GONE);
     mProgress.setVisibility(View.GONE);
-    mResultsScrim.setVisibility(View.GONE);
+    // mResultsScrim.setVisibility(View.GONE);
     setNoResultsVisibility(View.GONE);
   }
 
@@ -454,9 +455,7 @@ public class SearchActivity extends BaseActivity {
   }
 
   @Override protected int lookupTheme(UIUtil.Themes themes) {
-    return themes == UIUtil.Themes.DARK ? R.style.Attiq_Theme_Dark_NoActionBar_Translucent_Search :
-        //R.style.Attiq_Theme_Dark_NoActionBar :
-        R.style.Attiq_Theme_Light_NoActionBar_Translucent_Search;
-    //R.style.Attiq_Theme_Light_NoActionBar;
+    return themes == UIUtil.Themes.DARK ? R.style.Attiq_Theme_Dark_NoActionBar_Translucent_Search
+        : R.style.Attiq_Theme_Light_NoActionBar_Translucent_Search;
   }
 }

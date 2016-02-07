@@ -33,8 +33,13 @@
 
   <!-- Styles -->
 
-  <style name="Attiq.Theme.SearchView" parent="ThemeOverlay.AppCompat.Light">
-    <item name="colorPrimary">#FFFFFFFF</item>
+  <style name="Attiq.Theme.Light.SearchView" parent="ThemeOverlay.AppCompat.Light">
+    <item name="colorPrimary">?attr/colorPrimary</item>
+    <item name="colorControlActivated">?attr/colorAccent</item>
+  </style>
+
+  <style name="Attiq.Theme.Dark.SearchView" parent="ThemeOverlay.AppCompat">
+    <item name="colorPrimary">?attr/colorPrimary</item>
     <item name="colorControlActivated">?attr/colorAccent</item>
   </style>
 
