@@ -14,10 +14,6 @@
   <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
   <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
 
-  <!--
-    IMPORTANT: Change "com.parse.starter.permission.C2D_MESSAGE" in the lines below
-    to match your app's package name + ".permission.C2D_MESSAGE".
-  -->
   <permission
       android:name="${applicationId}.permission.C2D_MESSAGE"
       android:protectionLevel="signature"/>
@@ -179,46 +175,6 @@
         android:name="com.google.android.gms.version"
         android:value="@integer/google_play_services_version"/>
 
-    <service android:name="com.parse.PushService"/>
-
-    <receiver
-        android:exported="false"
-        android:name="com.parse.ParsePushBroadcastReceiver">
-      <intent-filter>
-        <action android:name="com.parse.push.intent.RECEIVE"/>
-        <action android:name="com.parse.push.intent.DELETE"/>
-        <action android:name="com.parse.push.intent.OPEN"/>
-      </intent-filter>
-    </receiver>
-    <receiver
-        android:name="com.parse.GcmBroadcastReceiver"
-        android:permission="com.google.android.c2dm.permission.SEND">
-      <intent-filter>
-        <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-        <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
-
-        <!--
-          IMPORTANT: Change "com.parse.starter" to match your app's package name.
-        -->
-        <category android:name="${applicationId}"/>
-      </intent-filter>
-    </receiver>
-
-    <meta-data
-        android:name="com.parse.APPLICATION_ID"
-        android:value="@string/attiq_parse_app_id"/>
-
-    <meta-data
-        android:name="com.parse.CLIENT_KEY"
-        android:value="@string/attiq_parse_client_key"/>
-
-    <meta-data
-        android:name="com.parse.push.notification_icon"
-        android:resource="@drawable/ic_stat_soup_bowl"/>
-
-    <meta-data
-        android:name="com.parse.push.gcm_sender_id"
-        android:value="@string/attiq_gcm_sender_id"/>;
     <activity
         android:configChanges="keyboardHidden|orientation|screenSize"
         android:name="com.mopub.mobileads.MoPubActivity"/>

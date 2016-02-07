@@ -49,8 +49,6 @@ android {
         versionName VERSION_NAME
         manifestPlaceholders = [fabric_api_key: "${attiq_fabric_api_key}"]
         multiDexEnabled false
-        resValue "string", "attiq_parse_app_id", "${attiq_parse_app_id}"
-        resValue "string", "attiq_parse_client_key", "${attiq_parse_client_key}"
         resValue "string", "attiq_gcm_sender_id", "${attiq_gcm_sender_id}"
     }
 
@@ -141,9 +139,7 @@ dependencies {
 
     compile "com.google.android.gms:play-services-gcm:${service_version}"
     compile "com.google.android.gms:play-services-analytics:${service_version}"
-    // compile 'com.google.android.gms:play-services-ads:8.3.0'
-
-    // compile 'com.parse:parse-android:1.12.0'
+    // compile "com.google.android.gms:play-services-ads:${service_version}"
 
     compile "com.android.support:support-v4:${support_libraries_version}"
     compile "com.android.support:appcompat-v7:${support_libraries_version}"
@@ -171,7 +167,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.5'
     compile 'org.jsoup:jsoup:1.8.3'
 
-    compile 'io.github.gitbucket:markedj:1.0.5'
+    compile 'io.github.gitbucket:markedj:1.0.6'
     compile 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
     compile "de.greenrobot:eventbus:2.4.0"
     compile 'com.jakewharton.threetenabp:threetenabp:1.0.3'
