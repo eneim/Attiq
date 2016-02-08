@@ -3,6 +3,8 @@ package im.ene.lab.attiq;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import com.batch.android.Batch;
+import com.batch.android.Config;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.jakewharton.picasso.OkHttp3Downloader;
@@ -54,6 +56,9 @@ public class Attiq extends Application {
 
     // Fabric, Answer, Crashlytics, ...
     Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
+
+    Batch.Push.setGCMSenderId(getString(R.string.gcm_defaultSenderId));
+    Batch.setConfig(new Config(getString(R.string.batch_com_api_key)));
 
     // Date, Time, ...
     TimeUtil.init(this);

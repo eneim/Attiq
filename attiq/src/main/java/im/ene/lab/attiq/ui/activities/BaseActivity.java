@@ -27,7 +27,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-
+import com.batch.android.Batch;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
@@ -67,11 +67,13 @@ public abstract class BaseActivity extends AppCompatActivity
 
   @Override protected void onResume() {
     super.onResume();
+    Batch.onStart(this);
     // Active EventBus only when User could see the UI
     EventBus.getDefault().register(this);
   }
 
   @Override protected void onPause() {
+    Batch.onStop(this);
     EventBus.getDefault().unregister(this);
     super.onPause();
   }

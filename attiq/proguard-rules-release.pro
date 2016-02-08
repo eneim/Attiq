@@ -283,3 +283,15 @@
 # Filter out warnings that refer to legacy Code.
 -dontwarn org.apache.http.**
 -dontwarn com.mopub.volley.toolbox.**
+
+-keep class com.batch.** {
+    *;
+}
+
+-keep class com.google.android.gms.** {
+    *;
+}
+
+-dontwarn com.batch.android.mediation.**
+
+-dontwarn com.batch.android.BatchPushService
