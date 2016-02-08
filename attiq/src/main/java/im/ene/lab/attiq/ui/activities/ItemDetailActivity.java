@@ -51,24 +51,18 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import butterknife.Bind;
 import butterknife.BindDimen;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.DocumentCallback;
@@ -94,14 +88,17 @@ import im.ene.lab.attiq.util.event.ItemDetailEvent;
 import im.ene.lab.support.widget.AlphaForegroundColorSpan;
 import im.ene.lab.support.widget.AppBarLayout;
 import im.ene.lab.support.widget.CollapsingToolbarLayout;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ItemDetailActivity extends BaseActivity implements Callback<Article> {
 
@@ -161,17 +158,17 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
           }
         }
       };
-  private ViewPager.OnPageChangeListener mCommentComposerPageChange = new ViewPager
-      .SimpleOnPageChangeListener() {
-    @Override public void onPageSelected(int position) {
-      super.onPageSelected(position);
-      View currentView;
-      if (mCommentComposer != null && mSlidingPanel != null &&
-          (currentView = mCommentComposer.getCurrentView()) != null) {
-        mSlidingPanel.setScrollableView(currentView);
-      }
-    }
-  };
+  private ViewPager.OnPageChangeListener mCommentComposerPageChange =
+      new ViewPager.SimpleOnPageChangeListener() {
+        @Override public void onPageSelected(int position) {
+          super.onPageSelected(position);
+          View currentView;
+          if (mCommentComposer != null && mSlidingPanel != null &&
+              (currentView = mCommentComposer.getCurrentView()) != null) {
+            mSlidingPanel.setScrollableView(currentView);
+          }
+        }
+      };
   private String mItemUuid;
   private okhttp3.Callback mDocumentCallback;
 
@@ -197,8 +194,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     return intent;
   }
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_item_detail);
     ButterKnife.bind(this);
@@ -249,15 +245,13 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mArticleDescription.setClickable(true);
     mArticleDescription.setMovementMethod(LinkMovementMethod.getInstance());
     // dynamically update padding
-    mArticleName.setPadding(
-        mArticleName.getPaddingLeft(),
+    mArticleName.setPadding(mArticleName.getPaddingLeft(),
         mArticleName.getPaddingTop() + UIUtil.getStatusBarHeight(this),
-        mArticleName.getPaddingRight(),
-        mArticleName.getPaddingBottom()
-    );
+        mArticleName.getPaddingRight(), mArticleName.getPaddingBottom());
 
     TypedValue typedValue = new TypedValue();
-    mToolbar.getContext().getTheme()
+    mToolbar.getContext()
+        .getTheme()
         .resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
     int titleColorId = typedValue.resourceId;
     mTitleColorSpan = new AlphaForegroundColorSpan(ContextCompat.getColor(this, titleColorId));
@@ -282,18 +276,17 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
     Article article = mRealm.where(Article.class).equalTo("id", mItemUuid).findFirst();
     if (article != null) {
-      EventBus.getDefault().post(
-          new ItemDetailEvent(getClass().getSimpleName(), true, null, article));
+      EventBus.getDefault()
+          .post(new ItemDetailEvent(getClass().getSimpleName(), true, null, article));
     }
 
     ApiClient.isStocked(mItemUuid).enqueue(mStockStatusResponse);
   }
 
   private void trySetupMenuDrawerLayout() {
-    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-        this, mMenuLayout, null,
-        R.string.navigation_drawer_open,
-        R.string.navigation_drawer_close);
+    ActionBarDrawerToggle toggle =
+        new ActionBarDrawerToggle(this, mMenuLayout, null, R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close);
     mMenuLayout.setDrawerListener(toggle);
     // !IMPORTANT Don't call this.
     // It will change Toolbar's navi icon position, which is not what I want to do
@@ -303,7 +296,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private void trySetupContentView() {
     mContentView.setVerticalScrollBarEnabled(false);
     mContentView.setHorizontalScrollBarEnabled(false);
-    // mContentView.getSettings().setJavaScriptEnabled(true);
+    mContentView.getSettings().setJavaScriptEnabled(true);
 
     mContentView.setWebChromeClient(new WebChromeClient() {
       @Override public void onProgressChanged(WebView view, int newProgress) {
@@ -332,24 +325,39 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
       @Override public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
+        view.evaluateJavascript("javascript:document.getElementById('math').innerHTML='" +
+            doubleEscapeTeX(mArticle.getRenderedBody()) + "';", new ValueCallback<String>() {
+          @Override public void onReceiveValue(String value) {
+            Log.d(TAG, "onReceiveValue() called with: " + "value = [" + value + "]");
+          }
+        });
+        view.evaluateJavascript("javascript:MathJax.Hub.Queue(['Typeset',MathJax.Hub]);",
+            new ValueCallback<String>() {
+              @Override public void onReceiveValue(String value) {
+                Log.d(TAG, "onReceiveValue() called with: " + "value = [" + value + "]");
+              }
+            });
+
         mIsFirstTimeLoaded = true;
         if (mLoadingView != null) {
-          ViewCompat.animate(mLoadingView).alpha(0.f).setDuration(300)
+          ViewCompat.animate(mLoadingView)
+              .alpha(0.f)
+              .setDuration(300)
               .setListener(new ViewPropertyAnimatorListenerAdapter() {
                 @Override public void onAnimationEnd(View view) {
                   if (mLoadingView != null) {
                     mLoadingView.setVisibility(View.GONE);
                   }
                 }
-              }).start();
+              })
+              .start();
         }
       }
     });
 
     mContentView.setFindListener(new WebView.FindListener() {
-      @Override
-      public void onFindResultReceived(int activeMatchOrdinal, int numberOfMatches, boolean
-          isDoneCounting) {
+      @Override public void onFindResultReceived(int activeMatchOrdinal, int numberOfMatches,
+          boolean isDoneCounting) {
         if (mMenuLayout != null) {
           mMenuLayout.closeDrawer(GravityCompat.END);
         }
@@ -378,8 +386,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       mDocumentCallback = new DocumentCallback(baseUrl) {
         @Override public void onDocument(Document response) {
           if (response != null) {
-            EventBus.getDefault().post(new DocumentEvent(ItemDetailActivity.class.getSimpleName(),
-                true, null, response));
+            EventBus.getDefault()
+                .post(new DocumentEvent(ItemDetailActivity.class.getSimpleName(), true, null,
+                    response));
           }
         }
       };
@@ -403,8 +412,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mState = new State();
   }
 
-  @SuppressWarnings("unused")
-  @OnClick(R.id.button_action_share) void shareArticle() {
+  @SuppressWarnings("unused") @OnClick(R.id.button_action_share) void shareArticle() {
     if (mArticle == null) {
       return;
     }
@@ -419,8 +427,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     startActivity(share);
   }
 
-  @SuppressWarnings("unused")
-  @OnClick(R.id.item_comments) void commentArticle() {
+  @SuppressWarnings("unused") @OnClick(R.id.item_comments) void commentArticle() {
     mAppBarLayout.setExpanded(false, true);
     mHandler.postDelayed(new Runnable() {
       @Override public void run() {
@@ -429,8 +436,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }, 250);
   }
 
-  @SuppressWarnings("unused")
-  @OnClick(R.id.btn_close) void cancelComment() {
+  @SuppressWarnings("unused") @OnClick(R.id.btn_close) void cancelComment() {
     ImeUtil.hideIme(mCommentComposer);
     mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
     mHandler.postDelayed(new Runnable() {
@@ -440,8 +446,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }, 250);
   }
 
-  @SuppressWarnings("unused")
-  @OnClick(R.id.btn_submit) void summitComment() {
+  @SuppressWarnings("unused") @OnClick(R.id.btn_submit) void summitComment() {
     ImeUtil.hideIme(mCommentComposer);
     String comment = mCommentComposer.getComment();
     mCommentComposer.clearComment();
@@ -456,7 +461,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     Article article = response.body();
     if (article != null) {
       ReadArticle history = mRealm.where(ReadArticle.class)
-          .equalTo(ReadArticle.FIELD_ARTICLE_ID, mItemUuid).findFirst();
+          .equalTo(ReadArticle.FIELD_ARTICLE_ID, mItemUuid)
+          .findFirst();
       mRealm.beginTransaction();
       // mRealm.copyToRealmOrUpdate(article);
       if (history == null) {
@@ -469,16 +475,16 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       // mRealm.beginTransaction();
       // mRealm.copyToRealmOrUpdate(article);
       mRealm.commitTransaction();
-      EventBus.getDefault().post(
-          new ItemDetailEvent(getClass().getSimpleName(), true, null, article));
+      EventBus.getDefault()
+          .post(new ItemDetailEvent(getClass().getSimpleName(), true, null, article));
     } else {
-      EventBus.getDefault().post(new ItemDetailEvent(getClass().getSimpleName(), false,
-          new Event.Error(response.code(), response.message()), null));
+      EventBus.getDefault()
+          .post(new ItemDetailEvent(getClass().getSimpleName(), false,
+              new Event.Error(response.code(), response.message()), null));
     }
   }
 
-  @SuppressWarnings("unused")
-  @OnClick(R.id.item_stocks) void stockArticle() {
+  @SuppressWarnings("unused") @OnClick(R.id.item_stocks) void stockArticle() {
     mHandler.removeMessages(MESSAGE_STOCK);
     mHandler.removeMessages(MESSAGE_UN_STOCK);
     if (!((State) mState).isStocked) {
@@ -488,8 +494,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   }
 
-  @SuppressWarnings("unused")
-  public void onEventMainThread(ItemDetailEvent event) {
+  @SuppressWarnings("unused") public void onEventMainThread(ItemDetailEvent event) {
     Article article = event.article;
     String userName = null;
     if (article != null) {
@@ -517,10 +522,27 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
         Document doc = Jsoup.parse(html);
         Element elem = doc.getElementById("content");
-        elem.append(article.getRenderedBody());
+        elem.append("<script type='text/x-mathjax-config'>"
+            + "  MathJax.Hub.Config({"
+            + "    showMathMenu: false,"
+            + "             jax: ['input/TeX','output/HTML-CSS', 'output/CommonHTML'],"
+            + "      extensions: ['tex2jax.js','MathMenu.js','MathZoom.js', 'CHTML-preview.js'],"
+            + "         tex2jax: { inlineMath: [ ['$','$'] ], processEscapes: true },"
+            + "             TeX: {"
+            + "               extensions:['AMSmath.js','AMSsymbols.js',"
+            + "                           'noUndefined.js']"
+            + "             }"
+            + "  });"
+            + "</script>"
+            + "<script type='text/javascript' src='file:///android_asset/MathJax/MathJax.js'>"
+            + "</script>"
+            + "<span id='math'>"
+            +
+            article.getRenderedBody()
+            + "</span>");
 
         String result = doc.outerHtml();
-        mContentView.loadDataWithBaseURL(article.getUrl(), result, null, null, null);
+        mContentView.loadDataWithBaseURL(article.getUrl(), result, "text/html", "utf-8", null);
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -528,13 +550,23 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
     final CharSequence subTitle;
     if (article != null && !UIUtil.isEmpty(userName)) {
-      subTitle = Html.fromHtml(getString(R.string.item_user_info,
-          userName, userName, TimeUtil.beautify(article.getCreatedAt())));
+      subTitle = Html.fromHtml(getString(R.string.item_user_info, userName, userName,
+          TimeUtil.beautify(article.getCreatedAt())));
     } else {
       subTitle = getString(R.string.item_detail_subtitle, userName);
     }
 
     mArticleDescription.setText(subTitle);
+  }
+
+  private String doubleEscapeTeX(String s) {
+    String t = "";
+    for (int i = 0; i < s.length(); i++) {
+      if (s.charAt(i) == '\'') t += '\\';
+      if (s.charAt(i) != '\n') t += s.charAt(i);
+      if (s.charAt(i) == '\\') t += "\\";
+    }
+    return t;
   }
 
   private void updateTitle() {
@@ -555,20 +587,24 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   private void buildArticleComments(@NonNull final Article article) {
     ApiClient.itemComments(article.getId()).enqueue(new Callback<ArrayList<Comment>>() {
-      @Override public void onResponse(Call<ArrayList<Comment>> call, Response<ArrayList<Comment>> response) {
+      @Override
+      public void onResponse(Call<ArrayList<Comment>> call, Response<ArrayList<Comment>> response) {
         mComments = response.body();
         if (mComments != null) {
           EventBus.getDefault().post(new ItemCommentsEvent(true, null, mComments));
         } else {
           mComments = new ArrayList<>();
-          EventBus.getDefault().post(new ItemCommentsEvent(false,
-              new Event.Error(response.code(), response.message()), null));
+          EventBus.getDefault()
+              .post(
+                  new ItemCommentsEvent(false, new Event.Error(response.code(), response.message()),
+                      null));
         }
       }
 
       @Override public void onFailure(Call<ArrayList<Comment>> call, Throwable error) {
-        EventBus.getDefault().post(new ItemCommentsEvent(false,
-            new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
+        EventBus.getDefault()
+            .post(new ItemCommentsEvent(false,
+                new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
     });
   }
@@ -600,9 +636,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
         int currentLevel = WebUtil.getHeaderLevel(item.tagName());
         if (currentLevel - topLevel > 0) {
-          menuContent.setCompoundDrawablesWithIntrinsicBounds(new ThreadedCommentDrawable(
-              mCommentThreadColor, mHeaderDepthWidth, mHeaderDepthGap, currentLevel - topLevel
-          ), null, null, null);
+          menuContent.setCompoundDrawablesWithIntrinsicBounds(
+              new ThreadedCommentDrawable(mCommentThreadColor, mHeaderDepthWidth, mHeaderDepthGap,
+                  currentLevel - topLevel), null, null, null);
         }
 
         menuItemView.setOnClickListener(new View.OnClickListener() {
@@ -627,8 +663,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       mArticleHeaderMenu.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
         @Override public boolean onMenuItemClick(MenuItem item) {
           if (!isFinishing() && mContentContainer != null) {
-            Snackbar.make(mContentContainer, R.string.item_detail_no_menu,
-                Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mContentContainer, R.string.item_detail_no_menu, Snackbar.LENGTH_LONG)
+                .show();
           }
           return true;
         }
@@ -636,8 +672,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   }
 
-  @SuppressWarnings("unused")
-  public void onEventMainThread(DocumentEvent event) {
+  @SuppressWarnings("unused") public void onEventMainThread(DocumentEvent event) {
     if (event.document != null) {
       ((State) mState).stockCount =
           event.document.getElementsByClass("js-stocksCount").first().text();
@@ -645,15 +680,14 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   }
 
-  @SuppressWarnings("unused")
-  public void onEventMainThread(ItemCommentsEvent event) {
+  @SuppressWarnings("unused") public void onEventMainThread(ItemCommentsEvent event) {
     if (event.success && !UIUtil.isEmpty(event.comments)) {
       List<Comment> comments = event.comments;
 
       mCommentCount.setText(comments.size() + "");
 
-      String info = comments.size() == 1 ?
-          getString(R.string.comment_singular) : getString(R.string.comment_plural);
+      String info = comments.size() == 1 ? getString(R.string.comment_singular)
+          : getString(R.string.comment_plural);
       mCommentInfo.setText(getString(R.string.article_comment, comments.size(), info));
 
       final String html;
@@ -665,12 +699,12 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
         for (Comment comment : comments) {
           String commentHtml = IOUtil.readAssets("html/comment.html");
-          commentHtml = commentHtml
-              .replace("{user_icon_url}", comment.getUser().getProfileImageUrl())
-              .replace("{user_name}", comment.getUser().getId())
-              .replace("{comment_time}", TimeUtil.commentTime(comment.getUpdatedAt()))
-              .replace("{article_uuid}", mItemUuid)
-              .replace("{comment_id}", comment.getId());
+          commentHtml =
+              commentHtml.replace("{user_icon_url}", comment.getUser().getProfileImageUrl())
+                  .replace("{user_name}", comment.getUser().getId())
+                  .replace("{comment_time}", TimeUtil.commentTime(comment.getUpdatedAt()))
+                  .replace("{article_uuid}", mItemUuid)
+                  .replace("{comment_id}", comment.getId());
 
           Document commentDoc = Jsoup.parse(commentHtml);
           Element eComment = commentDoc.getElementsByClass("comment-box").first();
@@ -679,8 +713,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         }
 
         String result = fullBody.outerHtml();
-        mCommentsView.loadDataWithBaseURL(
-            "http://qiita.com/", result, null, null, null);
+        mCommentsView.loadDataWithBaseURL("http://qiita.com/", result, null, null, null);
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -691,28 +724,24 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   }
 
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.menu_item_detail, menu);
     mArticleHeaderMenu = menu.findItem(R.id.action_item_menu);
     return true;
   }
 
-  @SuppressWarnings("unused")
-  public void onEventMainThread(StateEvent<State> event) {
+  @SuppressWarnings("unused") public void onEventMainThread(StateEvent<State> event) {
     if (event.state != null) {
       mStockCount.setText(event.state.stockCount);
       if (event.state.isStocked) {
         TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(mStockCount,
-            ContextCompat.getDrawable(mStockCount.getContext(), R.drawable.ic_action_stocked),
-            null, null, null
-        );
+            ContextCompat.getDrawable(mStockCount.getContext(), R.drawable.ic_action_stocked), null,
+            null, null);
       } else {
         TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(mStockCount,
-            ContextCompat.getDrawable(mStockCount.getContext(), R.drawable.ic_action_stock),
-            null, null, null
-        );
+            ContextCompat.getDrawable(mStockCount.getContext(), R.drawable.ic_action_stock), null,
+            null, null);
       }
     }
   }
@@ -727,8 +756,9 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   }
 
   @Override public void onFailure(Call<Article> call, Throwable error) {
-    EventBus.getDefault().post(new ItemDetailEvent(getClass().getSimpleName(), false,
-        new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
+    EventBus.getDefault()
+        .post(new ItemDetailEvent(getClass().getSimpleName(), false,
+            new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
   }
 
   /* API Callbacks */
@@ -747,8 +777,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
   };
   private Callback<Void> mStockStatusResponse = new SuccessCallback<Void>() {
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    @Override public void onResponse(Call<Void> call, Response<Void> response) {
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1) @Override
+    public void onResponse(Call<Void> call, Response<Void> response) {
       if (response.code() == 204) {
         ((State) mState).isStocked = true;
       } else {
@@ -783,8 +813,8 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   };
 
   @Override protected int lookupTheme(UIUtil.Themes themes) {
-    return themes == UIUtil.Themes.DARK ?
-        R.style.Attiq_Theme_Dark_NoActionBar : R.style.Attiq_Theme_Light_NoActionBar;
+    return themes == UIUtil.Themes.DARK ? R.style.Attiq_Theme_Dark_NoActionBar
+        : R.style.Attiq_Theme_Light_NoActionBar;
   }
 
   private static class State extends BaseState {
@@ -793,5 +823,4 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
     private String stockCount;
   }
-
 }
