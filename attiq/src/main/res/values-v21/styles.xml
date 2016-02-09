@@ -41,4 +41,21 @@
     <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     <item name="android:statusBarColor">@android:color/transparent</item>
   </style>
+
+  <style name="Attiq.Theme.Dark.NoActionBar.Profile">
+    <item name="toolbarNavigationButtonStyle">
+      @style/Attiq.Widget.Toolbar.Button.Navigation
+    </item>
+    <item name="android:windowActionBarOverlay">true</item>
+    <item name="android:statusBarColor">?attr/colorPrimaryDark</item>
+  </style>
+
+  <style name="Attiq.Theme.Light.NoActionBar.Profile">
+    <item name="toolbarNavigationButtonStyle">
+      @style/Attiq.Widget.Toolbar.Button.Navigation
+    </item>
+    <item name="android:windowActionBarOverlay">true</item>
+    <item name="android:statusBarColor">?attr/colorPrimaryDark</item>
+  </style>
+
 </resources>
