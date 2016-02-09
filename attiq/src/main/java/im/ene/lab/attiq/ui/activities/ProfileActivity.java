@@ -410,7 +410,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
         .error(R.drawable.blank_profile_icon_large)
         .resize(mProfileImageSize, 0)
         .transform(new RoundedTransformation(
-            mImageBorderWidth, mImageBorderColor, mProfileImageRadius))
+            0, mImageBorderColor, mProfileImageRadius))
         .into(mProfileImage);
 
     mSpannableTitle = new SpannableString(mUserId);

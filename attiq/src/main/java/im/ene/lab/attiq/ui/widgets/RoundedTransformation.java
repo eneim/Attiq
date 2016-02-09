@@ -8,7 +8,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-
 import com.squareup.picasso.Transformation;
 
 /**
@@ -30,17 +29,16 @@ public class RoundedTransformation implements Transformation {
     this.mCornerRadius = cornerRadius;
   }
 
-  @Override
-  public Bitmap transform(Bitmap source) {
-    int width = source.getWidth() - mBorderSize;
-    int height = source.getHeight() - mBorderSize;
+  @Override public Bitmap transform(Bitmap source) {
+    int width = source.getWidth();
+    int height = source.getHeight();
 
-    if (width < 1) {
-      width = 1;
+    if (width < 0) {
+      width = 0;
     }
 
-    if (height < 1) {
-      height = 1;
+    if (height < 0) {
+      height = 0;
     }
 
     Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -53,8 +51,7 @@ public class RoundedTransformation implements Transformation {
     if (this.mCornerRadius == 0) {
       canvas.drawRect(rect, paint);
     } else {
-      canvas.drawRoundRect(new RectF(rect),
-          this.mCornerRadius, this.mCornerRadius, paint);
+      canvas.drawRoundRect(new RectF(rect), this.mCornerRadius, this.mCornerRadius, paint);
     }
 
     paint.setXfermode(new PorterDuffXfermode((PorterDuff.Mode.SRC_IN)));
@@ -79,25 +76,27 @@ public class RoundedTransformation implements Transformation {
       paint.setStyle(Paint.Style.STROKE);
       paint.setStrokeWidth(mBorderSize);
 
-      canvas.drawRoundRect(new RectF(rect), this.mCornerRadius, this.mCornerRadius, paint);
+      canvas.drawRoundRect(new RectF(rect), this.mCornerRadius + this.mBorderSize,
+          this.mCornerRadius + this.mBorderSize, paint);
 
       paint.setColor(Color.WHITE);
       paint.setStyle(Paint.Style.FILL);
 
-      canvas.drawRoundRect(new RectF(mBorderSize, mBorderSize,
-              width - mBorderSize, height - mBorderSize),
+      canvas.drawRoundRect(
+          new RectF(mBorderSize, mBorderSize, width - mBorderSize, height - mBorderSize),
           this.mCornerRadius + mBorderSize, this.mCornerRadius + mBorderSize, paint);
 
       canvas.drawBitmap(image, this.mBorderSize, this.mBorderSize, null);
     }
 
-    if (source != output) source.recycle();
+    if (source != output) {
+      source.recycle();
+    }
 
     return output;
   }
 
-  @Override
-  public String key() {
+  @Override public String key() {
     return toString();
   }
 

@@ -57,8 +57,7 @@
           android:paddingStart="@dimen/profile_image_size_margin"
           android:paddingTop="@dimen/item_padding"
           android:singleLine="true"
-          android:textColor="?attr/colorAccent"
-          style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+          android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
           />
 
       <LinearLayout

@@ -6,6 +6,7 @@
     android:id="@+id/view_pager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     app:layout_behavior="im.ene.lab.support.widget.AppBarLayout$ScrollingViewBehavior"
     tools:showIn="@layout/activity_profile"
     />
