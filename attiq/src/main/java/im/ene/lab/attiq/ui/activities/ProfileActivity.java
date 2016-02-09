@@ -40,17 +40,11 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.squareup.picasso.RequestCreator;
-
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import butterknife.Bind;
 import butterknife.BindDimen;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.squareup.picasso.RequestCreator;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
@@ -79,12 +73,14 @@ import im.ene.lab.support.widget.CollapsingToolbarLayout;
 import im.ene.lab.support.widget.MathUtils;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import java.util.Iterator;
+import java.util.List;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import java.util.Iterator;
-import java.util.List;
 
 public class ProfileActivity extends BaseActivity implements RealmChangeListener {
 
@@ -133,11 +129,8 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
   @BindDimen(R.dimen.profile_image_size) int mProfileImageSize;
   @BindDimen(R.dimen.item_padding) int mProfileImageRadius;
   @Bind({
-      R.id.profile_social_website,
-      R.id.profile_social_facebook,
-      R.id.profile_social_twitter,
-      R.id.profile_social_github,
-      R.id.profile_social_linkedin
+      R.id.profile_social_website, R.id.profile_social_facebook, R.id.profile_social_twitter,
+      R.id.profile_social_github, R.id.profile_social_linkedin
   }) ImageButton[] mSocialButtons;
 
   // private int mFollowTextPositive;
@@ -158,7 +151,9 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
             float offsetFraction = Math.abs(verticalOffset) / maxOffset;
             offsetFraction = MathUtils.constrain(offsetFraction, 0.f, 1.f);
             mOverlayContainer.setAlpha(1.f - offsetFraction);
-            mProfileImage.setAlpha(1.f - offsetFraction);
+            mProfileImage.setAlpha(1.f - Math.min(offsetFraction * 2.5f, 1.f));
+            mProfileImage.setScaleX(1.f - offsetFraction);
+            mProfileImage.setScaleY(1.f - offsetFraction);
           }
         }
       };
@@ -177,20 +172,21 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
       if (msg.what == MESSAGE_ACTION_FOLLOW) {
         if (!mState.isFollowing) {
           mState.isFollowing = true;
-          EventBus.getDefault().post(
-              new StateEvent<>(ProfileActivity.class.getSimpleName(), true, null, mState));
+          EventBus.getDefault()
+              .post(new StateEvent<>(ProfileActivity.class.getSimpleName(), true, null, mState));
           ApiClient.followUser(mUserId).enqueue(mOnFollowStateCallback);
         } else {
           mState.isFollowing = false;
-          EventBus.getDefault().post(
-              new StateEvent<>(ProfileActivity.class.getSimpleName(), true, null, mState));
+          EventBus.getDefault()
+              .post(new StateEvent<>(ProfileActivity.class.getSimpleName(), true, null, mState));
           ApiClient.unFollowUser(mUserId).enqueue(mOnUnFollowStateCallback);
         }
 
         return true;
       } else if (msg.what == MESSAGE_DATA_UPDATE) {
-        EventBus.getDefault().post(
-            new ProfileUpdatedEvent(ProfileActivity.class.getSimpleName(), true, null, mProfile));
+        EventBus.getDefault()
+            .post(new ProfileUpdatedEvent(ProfileActivity.class.getSimpleName(), true, null,
+                mProfile));
       }
 
       return false;
@@ -205,8 +201,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     return intent;
   }
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_profile);
     ButterKnife.bind(this);
@@ -222,7 +217,8 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
 
     mAppBarLayout.addOnOffsetChangedListener(mOffsetChangedListener);
     TypedValue typedValue = new TypedValue();
-    mToolbar.getContext().getTheme()
+    mToolbar.getContext()
+        .getTheme()
         .resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
     int titleColorId = typedValue.resourceId;
     mTitleColorSpan = new AlphaForegroundColorSpan(ContextCompat.getColor(this, titleColorId));
@@ -262,7 +258,8 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     if (getSupportFragmentManager().findFragmentById(R.id.profile_info_tags) == null) {
       mTagFragment = UserTagsFragment.newInstance(mUserId);
       getSupportFragmentManager().beginTransaction()
-          .replace(R.id.profile_info_tags, mTagFragment).commit();
+          .replace(R.id.profile_info_tags, mTagFragment)
+          .commit();
     }
 
     mPagerAdapter = new ProfileViewPagerAdapter(getSupportFragmentManager(), mUserId);
@@ -273,8 +270,8 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     // find a local user, if there is one, update current profile
     User user = mRealm.where(User.class).equalTo("id", mUserId).findFirst();
     if (user != null) {
-      EventBus.getDefault().post(
-          new ProfileFetchedEvent(getClass().getSimpleName(), true, null, user));
+      EventBus.getDefault()
+          .post(new ProfileFetchedEvent(getClass().getSimpleName(), true, null, user));
     }
   }
 
@@ -293,13 +290,14 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     mOnFollowStateCallback = new Callback<Void>() {
       @Override public void onResponse(Call<Void> call, Response<Void> response) {
         mState.isFollowing = response != null && response.code() == 204;
-        EventBus.getDefault().post(new StateEvent<>(ProfileActivity.class.getSimpleName(),
-            true, null, mState));
+        EventBus.getDefault()
+            .post(new StateEvent<>(ProfileActivity.class.getSimpleName(), true, null, mState));
       }
 
       @Override public void onFailure(Call<Void> call, Throwable t) {
-        EventBus.getDefault().post(new StateEvent<>(ProfileActivity.class.getSimpleName(), false,
-            new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
+        EventBus.getDefault()
+            .post(new StateEvent<>(ProfileActivity.class.getSimpleName(), false,
+                new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
       }
     };
 
@@ -309,8 +307,9 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
       }
 
       @Override public void onFailure(Call<Void> call, Throwable t) {
-        EventBus.getDefault().post(new StateEvent<>(ProfileActivity.class.getSimpleName(), false,
-            new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
+        EventBus.getDefault()
+            .post(new StateEvent<>(ProfileActivity.class.getSimpleName(), false,
+                new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
       }
     };
 
@@ -323,17 +322,20 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
           realm.copyToRealmOrUpdate(user);
           realm.commitTransaction();
           realm.close();
-          EventBus.getDefault().post(new ProfileFetchedEvent(ProfileActivity.class.getSimpleName(),
-              true, null, user));
+          EventBus.getDefault()
+              .post(
+                  new ProfileFetchedEvent(ProfileActivity.class.getSimpleName(), true, null, user));
         } else {
-          EventBus.getDefault().post(new ProfileFetchedEvent(ProfileActivity.class.getSimpleName(),
-              false, new Event.Error(response.code(), response.message()), null));
+          EventBus.getDefault()
+              .post(new ProfileFetchedEvent(ProfileActivity.class.getSimpleName(), false,
+                  new Event.Error(response.code(), response.message()), null));
         }
       }
 
       @Override public void onFailure(Call<User> call, Throwable error) {
-        EventBus.getDefault().post(new ProfileFetchedEvent(ProfileActivity.class.getSimpleName(),
-            false, new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
+        EventBus.getDefault()
+            .post(new ProfileFetchedEvent(ProfileActivity.class.getSimpleName(), false,
+                new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
     };
 
@@ -342,8 +344,8 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     mDocumentCallback = new DocumentCallback(baseUrl) {
       @Override public void onDocument(Document response) {
         if (response != null) {
-          EventBus.getDefault().post(new DocumentEvent(
-              ProfileActivity.class.getSimpleName(), true, null, response));
+          EventBus.getDefault()
+              .post(new DocumentEvent(ProfileActivity.class.getSimpleName(), true, null, response));
         }
       }
     };
@@ -352,8 +354,9 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
 
     // update UI
     if (mProfile != null) {
-      EventBus.getDefault().post(new ProfileUpdatedEvent(ProfileActivity.class.getSimpleName(),
-          true, null, mProfile));
+      EventBus.getDefault()
+          .post(
+              new ProfileUpdatedEvent(ProfileActivity.class.getSimpleName(), true, null, mProfile));
     }
 
     ApiClient.isFollowing(mUserId).enqueue(mOnFollowStateCallback);
@@ -369,23 +372,19 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     super.onPause();
   }
 
-  @SuppressWarnings("unused")
-  public void onEventMainThread(StateEvent<State> event) {
+  @SuppressWarnings("unused") public void onEventMainThread(StateEvent<State> event) {
     mBtnFollow.setEnabled(mRefUser != null && !UIUtil.isEmpty(mRefUser.getToken()));
     mBtnFollow.setClickable(mRefUser != null && !UIUtil.isEmpty(mRefUser.getToken()));
     mBtnFollowContainer.setVisibility(
-        mRefUser != null && mUserId.equals(mRefUser.getId()) ? View.GONE : View.VISIBLE
-    );
+        mRefUser != null && mUserId.equals(mRefUser.getId()) ? View.GONE : View.VISIBLE);
 
     if (event.state != null) {
       mBtnFollow.setText(
-          event.state.isFollowing ? R.string.state_following : R.string.state_not_following
-      );
+          event.state.isFollowing ? R.string.state_following : R.string.state_not_following);
 
       mBtnFollow.setBackgroundResource(
-          event.state.isFollowing ?
-              R.drawable.rounded_background_active : R.drawable.rounded_background_normal
-      );
+          event.state.isFollowing ? R.drawable.rounded_background_active
+              : R.drawable.rounded_background_normal);
 
       mRealm.beginTransaction();
       mProfile.setContributionCount(event.state.contribution);
@@ -393,8 +392,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     }
   }
 
-  @SuppressWarnings("unused")
-  public void onEventMainThread(ProfileUpdatedEvent event) {
+  @SuppressWarnings("unused") public void onEventMainThread(ProfileUpdatedEvent event) {
     mProfileName.setText(mProfile.getUserName());
     mProfileDescription.setText(mProfile.getBrief());
 
@@ -405,12 +403,10 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
       profileImageRequest = Attiq.picasso().load(R.drawable.blank_profile_icon_large);
     }
 
-    profileImageRequest
-        .placeholder(R.drawable.blank_profile_icon_large)
+    profileImageRequest.placeholder(R.drawable.blank_profile_icon_large)
         .error(R.drawable.blank_profile_icon_large)
         .resize(mProfileImageSize, 0)
-        .transform(new RoundedTransformation(
-            0, mImageBorderColor, mProfileImageRadius))
+        .transform(new RoundedTransformation(0, mImageBorderColor, mProfileImageRadius))
         .into(mProfileImage);
 
     mSpannableTitle = new SpannableString(mUserId);
@@ -424,8 +420,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     updateSocialButtons();
   }
 
-  @SuppressWarnings("unused")
-  public void onEventMainThread(ProfileFetchedEvent event) {
+  @SuppressWarnings("unused") public void onEventMainThread(ProfileFetchedEvent event) {
     Log.d(TAG, "onEventMainThread() called with: " + "event = [" + event + "]");
     if (event.user != null) {
       mRealm.beginTransaction();
@@ -490,10 +485,8 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
         mDescription.addView(contribution, 0);
       }
 
-      contribution.setText(getResources().getQuantityString(
-          R.plurals.user_contribution_quantity,
-          mProfile.getContributionCount(), mProfile.getContributionCount()
-      ));
+      contribution.setText(getResources().getQuantityString(R.plurals.user_contribution_quantity,
+          mProfile.getContributionCount(), mProfile.getContributionCount()));
     }
 
     if (!UIUtil.isEmpty(mProfile.getDescription())) {
@@ -542,8 +535,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
   }
 
   private void updateTitle() {
-    float titleAlpha =
-        mToolBarLayout.shouldTriggerScrimOffset(mToolbarLayoutOffset) ? 1.f : 0.f;
+    float titleAlpha = mToolBarLayout.shouldTriggerScrimOffset(mToolbarLayoutOffset) ? 1.f : 0.f;
     mTitleColorSpan.setAlpha(titleAlpha);
     // title
     mSpannableTitle.setSpan(mTitleColorSpan, 0, mSpannableTitle.length(),
@@ -597,43 +589,37 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     mSocialButtonContainer.setVisibility(hasSocialButton ? View.VISIBLE : View.GONE);
   }
 
-  @SuppressWarnings("unused")
-  @OnClick(R.id.profile_social_website) void openWebsite() {
+  @SuppressWarnings("unused") @OnClick(R.id.profile_social_website) void openWebsite() {
     if (mProfile != null) {
       UIUtil.openWebsite(this, mProfile.getWebsite());
     }
   }
 
-  @SuppressWarnings("unused")
-  @OnClick(R.id.profile_social_facebook) void openFacebook() {
+  @SuppressWarnings("unused") @OnClick(R.id.profile_social_facebook) void openFacebook() {
     if (mProfile != null) {
       UIUtil.openFacebookUser(this, mProfile.getFacebookName());
     }
   }
 
-  @SuppressWarnings("unused")
-  @OnClick(R.id.profile_social_twitter) void openTwitter() {
+  @SuppressWarnings("unused") @OnClick(R.id.profile_social_twitter) void openTwitter() {
     if (mProfile != null) {
       UIUtil.openTwitterUser(this, mProfile.getTwitterName());
     }
   }
 
-  @SuppressWarnings("unused")
-  @OnClick(R.id.profile_social_github) void openGithub() {
+  @SuppressWarnings("unused") @OnClick(R.id.profile_social_github) void openGithub() {
     if (mProfile != null) {
       UIUtil.openGithubUser(this, mProfile.getGithubName());
     }
   }
 
-  @SuppressWarnings("unused")
-  @OnClick(R.id.profile_social_linkedin) void openLinkedin() {
+  @SuppressWarnings("unused") @OnClick(R.id.profile_social_linkedin) void openLinkedin() {
     if (mProfile != null) {
       UIUtil.openLinkedinUser(this, mProfile.getLinkedinName());
     }
   }
 
-  @SuppressWarnings("unused")
-  @OnClick(R.id.text_action_follow) void followUnFollow() {
+  @SuppressWarnings("unused") @OnClick(R.id.text_action_follow) void followUnFollow() {
     mHandler.removeMessages(MESSAGE_ACTION_FOLLOW);
     mHandler.sendEmptyMessageDelayed(MESSAGE_ACTION_FOLLOW, HANDLER_DELAY);
   }
@@ -681,8 +667,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     }
   }
 
-  @SuppressWarnings("unused")
-  public void onEventMainThread(DocumentEvent event) {
+  @SuppressWarnings("unused") public void onEventMainThread(DocumentEvent event) {
     if (event.document != null) {
       Elements stats = event.document.getElementsByClass("userActivityChart_stats");
       Element statBlock;
@@ -693,9 +678,8 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
           String unit = element.getElementsByClass("userActivityChart_statUnit").text();
           if ("Contribution".equals(unit.trim())) {
             try {
-              contribution = Integer.valueOf(
-                  element.getElementsByClass("userActivityChart_statCount").text()
-              );
+              contribution =
+                  Integer.valueOf(element.getElementsByClass("userActivityChart_statCount").text());
             } catch (NumberFormatException er) {
               er.printStackTrace();
             }
@@ -706,8 +690,8 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
 
         if (contribution != null) {
           mState.contribution = contribution;
-          EventBus.getDefault().post(
-              new StateEvent<>(getClass().getSimpleName(), true, null, mState));
+          EventBus.getDefault()
+              .post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
         }
       }
     }
@@ -721,8 +705,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
   }
 
   @Override protected int lookupTheme(UIUtil.Themes themes) {
-    return themes == UIUtil.Themes.DARK ?
-        R.style.Attiq_Theme_Dark_NoActionBar_Profile :
-        R.style.Attiq_Theme_Light_NoActionBar_Profile;
+    return themes == UIUtil.Themes.DARK ? R.style.Attiq_Theme_Dark_NoActionBar_Profile
+        : R.style.Attiq_Theme_Light_NoActionBar_Profile;
   }
 }
