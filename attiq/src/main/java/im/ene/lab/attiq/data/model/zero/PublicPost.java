@@ -13,7 +13,7 @@ import io.realm.annotations.PrimaryKey;
 
 import java.util.List;
 
-public class Post extends RealmObject {
+public class PublicPost extends RealmObject {
 
   @SerializedName("body")
   @Expose

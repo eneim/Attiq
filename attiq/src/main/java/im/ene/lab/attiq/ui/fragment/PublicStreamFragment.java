@@ -14,7 +14,7 @@ import com.mopub.nativeads.RequestParameters;
 import com.mopub.nativeads.ViewBinder;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.model.one.PublicUser;
-import im.ene.lab.attiq.data.model.zero.Post;
+import im.ene.lab.attiq.data.model.zero.PublicPost;
 import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.activities.ProfileActivity;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
@@ -29,7 +29,7 @@ import java.util.EnumSet;
 /**
  * Created by eneim on 12/14/15.
  */
-public class PublicStreamFragment extends RealmListFragment<Post> {
+public class PublicStreamFragment extends RealmListFragment<PublicPost> {
 
   private static final String SCREEN_NAME = "attiq:home:public_items";
 
@@ -53,9 +53,9 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
     }
   }
 
-  @NonNull @Override protected RealmListAdapter<Post> createRealmAdapter() {
-    RealmResults<Post> items =
-        mRealm.where(Post.class).findAllSorted("createdAtAsSeconds", Sort.DESCENDING);
+  @NonNull @Override protected RealmListAdapter<PublicPost> createRealmAdapter() {
+    RealmResults<PublicPost> items =
+        mRealm.where(PublicPost.class).findAllSorted("createdAtAsSeconds", Sort.DESCENDING);
     return new PublicItemsWithAdsAdapter(items);
   }
 
@@ -91,7 +91,7 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
         startActivity(ProfileActivity.createIntent(getContext(), user.getUrlName()));
       }
 
-      @Override public void onItemContentClick(Post item) {
+      @Override public void onItemContentClick(PublicPost item) {
         startActivity(ItemDetailActivity.createIntent(getContext(), item.getUuid()));
       }
     };
@@ -136,7 +136,7 @@ public class PublicStreamFragment extends RealmListFragment<Post> {
 
   private class PublicItemsWithAdsAdapter extends PublicItemsAdapter {
 
-    public PublicItemsWithAdsAdapter(RealmResults<Post> items) {
+    public PublicItemsWithAdsAdapter(RealmResults<PublicPost> items) {
       super(items);
     }
 

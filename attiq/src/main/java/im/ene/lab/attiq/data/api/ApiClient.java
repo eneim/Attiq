@@ -13,7 +13,7 @@ import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.data.model.two.Tag;
 import im.ene.lab.attiq.data.model.two.User;
 import im.ene.lab.attiq.data.model.zero.FeedItem;
-import im.ene.lab.attiq.data.model.zero.Post;
+import im.ene.lab.attiq.data.model.zero.PublicPost;
 import im.ene.lab.attiq.data.request.AccessTokenRequest;
 import im.ene.lab.attiq.data.request.PostCommentRequest;
 import im.ene.lab.attiq.util.IOUtil;
@@ -76,7 +76,7 @@ public final class ApiClient {
             UUID.randomUUID().toString());
   }
 
-  public static Call<List<Post>> publicStream(@Nullable Long bottomId) {
+  public static Call<List<PublicPost>> publicStream(@Nullable Long bottomId) {
     return sZero.stream(bottomId, "id");
   }
 
@@ -84,7 +84,7 @@ public final class ApiClient {
     return sZero.feed(maxCreatedAt);
   }
 
-  public static Call<List<Post>> openStream(int page, int limit) {
+  public static Call<List<PublicPost>> openStream(int page, int limit) {
     return sOne.stream(page, limit);
   }
 
@@ -144,11 +144,11 @@ public final class ApiClient {
     return sTwo.user(userName);
   }
 
-  public static Call<List<Post>> userItems(String userId, int page) {
+  public static Call<List<PublicPost>> userItems(String userId, int page) {
     return sOne.userItems(userId, page, DEFAULT_PAGE_LIMIT);
   }
 
-  public static Call<List<Post>> userStockedItemsV1(String userId, int page) {
+  public static Call<List<PublicPost>> userStockedItemsV1(String userId, int page) {
     return sOne.userStockedItems(userId, page, DEFAULT_PAGE_LIMIT);
   }
 

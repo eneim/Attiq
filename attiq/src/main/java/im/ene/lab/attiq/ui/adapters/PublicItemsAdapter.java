@@ -29,7 +29,7 @@ import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.local.ReadArticle;
 import im.ene.lab.attiq.data.model.one.PublicTag;
 import im.ene.lab.attiq.data.model.one.PublicUser;
-import im.ene.lab.attiq.data.model.zero.Post;
+import im.ene.lab.attiq.data.model.zero.PublicPost;
 import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import im.ene.lab.attiq.ui.widgets.TextViewTarget;
 import im.ene.lab.attiq.util.PrefUtil;
@@ -44,11 +44,11 @@ import retrofit2.Response;
 /**
  * Created by eneim on 12/14/15.
  */
-public class PublicItemsAdapter extends RealmListAdapter<Post> {
+public class PublicItemsAdapter extends RealmListAdapter<PublicPost> {
 
-  private final RealmResults<Post> mItems;
+  private final RealmResults<PublicPost> mItems;
 
-  public PublicItemsAdapter(RealmResults<Post> items) {
+  public PublicItemsAdapter(RealmResults<PublicPost> items) {
     super();
     mItems = items;
     setHasStableIds(true);
@@ -84,11 +84,11 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
     return mItems.size();
   }
 
-  @Override public Post getItem(int position) {
+  @Override public PublicPost getItem(int position) {
     return mItems.get(position);
   }
 
-  private Post getBottomItem() {
+  private PublicPost getBottomItem() {
     if (getItemCount() > 0) {
       return getItem(getItemCount() - 1);
     } else {
@@ -100,11 +100,11 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
 
   @Override
   public void loadItems(final boolean isLoadingMore, int page, int pageLimit,
-                        @Nullable String query, final Callback<List<Post>> callback) {
+                        @Nullable String query, final Callback<List<PublicPost>> callback) {
     Log.d(TAG, "loadItems() called with: " + "isLoadingMore = [" + isLoadingMore + "], page = ["
         + page + "], pageLimit = [" + pageLimit + "]");
 
-    final Call<List<Post>> data;
+    final Call<List<PublicPost>> data;
     if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
       data = ApiClient.openStream(page, pageLimit);
     } else {
@@ -117,15 +117,15 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
     }
 
     isLoading = true;
-    data.enqueue(new Callback<List<Post>>() {
-      @Override public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+    data.enqueue(new Callback<List<PublicPost>>() {
+      @Override public void onResponse(Call<List<PublicPost>> call, Response<List<PublicPost>> response) {
         isLoading = false;
         if (callback != null) {
           callback.onResponse(call, response);
         }
       }
 
-      @Override public void onFailure(Call<List<Post>> call, Throwable throwable) {
+      @Override public void onFailure(Call<List<PublicPost>> call, Throwable throwable) {
         isLoading = false;
         if (callback != null) {
           callback.onFailure(call, throwable);
@@ -138,15 +138,15 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
 
     public abstract void onUserClick(PublicUser user);
 
-    public abstract void onItemContentClick(Post item);
+    public abstract void onItemContentClick(PublicPost item);
 
     @Override
     public void onItemClick(BaseAdapter adapter,
                             BaseAdapter.ViewHolder viewHolder,
                             View view, int adapterPos, long itemId) {
-      final Post item;
+      final PublicPost item;
       if (adapter instanceof BaseListAdapter) {
-        item = (Post) ((BaseListAdapter) adapter).getItem(adapterPos);
+        item = (PublicPost) ((BaseListAdapter) adapter).getItem(adapterPos);
       } else {
         item = null;
       }
@@ -161,7 +161,7 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
     }
   }
 
-  public static class ViewHolder extends BaseListAdapter.ViewHolder<Post> {
+  public static class ViewHolder extends BaseListAdapter.ViewHolder<PublicPost> {
 
     static final int LAYOUT_RES = R.layout.post_item_view;
 
@@ -204,7 +204,7 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
       mItemUserImage.setOnClickListener(listener);
     }
 
-    @Override public void bind(Post item) {
+    @Override public void bind(PublicPost item) {
       ReadArticle ref = Attiq.realm().where(ReadArticle.class)
           .equalTo(ReadArticle.FIELD_ARTICLE_ID, item.getUuid()).findFirst();
       // Update background if this item has already been read

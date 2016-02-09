@@ -10,7 +10,7 @@ import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.data.model.two.Tag;
 import im.ene.lab.attiq.data.model.two.User;
 import im.ene.lab.attiq.data.model.zero.FeedItem;
-import im.ene.lab.attiq.data.model.zero.Post;
+import im.ene.lab.attiq.data.model.zero.PublicPost;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -36,7 +36,7 @@ final class Api {
    */
   interface Zero {
 
-    @GET("/api/public") Call<List<Post>> stream(
+    @GET("/api/public") Call<List<PublicPost>> stream(
         @Query("before") Long id,
         @Query("type") String type
     );
@@ -49,7 +49,7 @@ final class Api {
         "Accept: application/json",
         "Content-Type: application/json"
     })
-    @GET("/{user_name}/stock") Call<List<Post>> stockedItem(
+    @GET("/{user_name}/stock") Call<List<PublicPost>> stockedItem(
         @Path("user_name") String userId,
         @Query("before") Integer before
     );
@@ -59,18 +59,18 @@ final class Api {
   interface One {
 
     // No token only
-    @GET("/api/v1/items") Call<List<Post>> stream(
+    @GET("/api/v1/items") Call<List<PublicPost>> stream(
         @Query("page") int page,
         @Query("per_page") int limit
     );
 
-    @GET("/api/v1/users/{url_name}/items") Call<List<Post>> userItems(
+    @GET("/api/v1/users/{url_name}/items") Call<List<PublicPost>> userItems(
         @Path("url_name") String userId,
         @Query("page") int page,
         @Query("per_page") int limit
     );
 
-    @GET("/api/v1/users/{url_name}/stocks") Call<List<Post>> userStockedItems(
+    @GET("/api/v1/users/{url_name}/stocks") Call<List<PublicPost>> userStockedItems(
         @Path("url_name") String userId,
         @Query("page") int page,
         @Query("per_page") int limit
