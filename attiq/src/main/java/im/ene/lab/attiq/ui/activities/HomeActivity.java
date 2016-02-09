@@ -71,8 +71,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeActivity extends BaseActivity
-    implements NavigationView.OnNavigationItemSelectedListener,
-    PublicUserHomeFragment.Callback, AuthorizedUserHomeFragment.Callback {
+    implements NavigationView.OnNavigationItemSelectedListener, PublicUserHomeFragment.Callback,
+    AuthorizedUserHomeFragment.Callback {
 
   public static final String EXTRA_AUTH_CALLBACK = "extra_auth_callback";
 
@@ -116,8 +116,7 @@ public class HomeActivity extends BaseActivity
     }
   };
 
-  @SuppressWarnings("unused")
-  @OnClick(R.id.header_auth_menu) void toggleAuthMenu() {
+  @SuppressWarnings("unused") @OnClick(R.id.header_auth_menu) void toggleAuthMenu() {
     if (mAuthMenuItem != null) {
       if (mAuthMenuItem.isVisible()) {
         mAuthMenu.setImageResource(R.drawable.ic_arrow_drop_down);
@@ -129,8 +128,7 @@ public class HomeActivity extends BaseActivity
     }
   }
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_home);
 
@@ -142,10 +140,8 @@ public class HomeActivity extends BaseActivity
     setSupportActionBar(mToolBar);
 
     mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-    mDrawerToggle = new SmoothActionBarDrawerToggle(
-        this, mDrawerLayout, mToolBar,
-        R.string.navigation_drawer_open,
-        R.string.navigation_drawer_close) {
+    mDrawerToggle = new SmoothActionBarDrawerToggle(this, mDrawerLayout, mToolBar,
+        R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
       @Override protected void onDrawerClosedByMenu(View drawerView, @NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -183,12 +179,9 @@ public class HomeActivity extends BaseActivity
       // update padding top by status bar height.
       // we expect 24dp, but in some on devices, it was 25dp.
       if (mHeaderView != null) {
-        mHeaderView.setPadding(
-            mHeaderView.getPaddingLeft(),
+        mHeaderView.setPadding(mHeaderView.getPaddingLeft(),
             mHeaderView.getPaddingTop() + UIUtil.getStatusBarHeight(this),
-            mHeaderView.getPaddingRight(),
-            mHeaderView.getPaddingBottom()
-        );
+            mHeaderView.getPaddingRight(), mHeaderView.getPaddingBottom());
       }
     }
 
@@ -216,8 +209,7 @@ public class HomeActivity extends BaseActivity
 
   private void logout() {
     // Show a dialog
-    new AlertDialog.Builder(this)
-        .setMessage(R.string.logout_confirm)
+    new AlertDialog.Builder(this).setMessage(R.string.logout_confirm)
         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
           @Override public void onClick(DialogInterface dialog, int which) {
             if (dialog != null) {
@@ -245,10 +237,13 @@ public class HomeActivity extends BaseActivity
             }
 
             PrefUtil.setCurrentToken(null);
-            EventBus.getDefault().post(new ProfileEvent(HomeActivity.class.getSimpleName(),
-                true, null, null));
+            PrefUtil.setFirstStart(true);
+            EventBus.getDefault()
+                .post(new ProfileEvent(HomeActivity.class.getSimpleName(), true, null, null));
           }
-        }).create().show();
+        })
+        .create()
+        .show();
   }
 
   private void updateMasterUserData(Profile user) {
@@ -259,8 +254,7 @@ public class HomeActivity extends BaseActivity
       fragment = PublicUserHomeFragment.newInstance();
     }
 
-    getSupportFragmentManager().beginTransaction()
-        .replace(R.id.container, fragment).commit();
+    getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
   }
 
   private void updateMasterUserInfo(@Nullable Profile user) {
@@ -289,9 +283,10 @@ public class HomeActivity extends BaseActivity
         Attiq.picasso()
             .load(user.getProfileImageUrl())
             .placeholder(R.drawable.blank_profile_icon_large)
-            .fit().centerInside()
-            .transform(new RoundedTransformation(
-                mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
+            .fit()
+            .centerInside()
+            .transform(
+                new RoundedTransformation(mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
             .into(mHeaderIcon);
       }
     }
@@ -311,29 +306,30 @@ public class HomeActivity extends BaseActivity
           }, new Realm.Transaction.Callback() {
             @Override public void onSuccess() {
               super.onSuccess();
-              EventBus.getDefault().post(
-                  new ProfileEvent(HomeActivity.class.getSimpleName(),
-                      true, null, mMyProfile));
+              EventBus.getDefault()
+                  .post(
+                      new ProfileEvent(HomeActivity.class.getSimpleName(), true, null, mMyProfile));
             }
 
             @Override public void onError(Exception e) {
               super.onError(e);
-              EventBus.getDefault().post(
-                  new ProfileEvent(HomeActivity.class.getSimpleName(), false,
-                      new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), null));
+              EventBus.getDefault()
+                  .post(new ProfileEvent(HomeActivity.class.getSimpleName(), false,
+                          new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()),
+                          null));
             }
           });
         } else {
-          EventBus.getDefault().post(
-              new ProfileEvent(HomeActivity.class.getSimpleName(), false,
-                  new Event.Error(response.code(), response.message()), null));
+          EventBus.getDefault()
+              .post(new ProfileEvent(HomeActivity.class.getSimpleName(), false,
+                      new Event.Error(response.code(), response.message()), null));
         }
       }
 
       @Override public void onFailure(Call<Profile> call, Throwable error) {
-        EventBus.getDefault().post(
-            new ProfileEvent(HomeActivity.class.getSimpleName(), false,
-                new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
+        EventBus.getDefault()
+            .post(new ProfileEvent(HomeActivity.class.getSimpleName(), false,
+                    new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
     });
   }
@@ -358,17 +354,17 @@ public class HomeActivity extends BaseActivity
       View searchMenuView = mToolBar.findViewById(R.id.action_search);
       int[] loc = new int[2];
       searchMenuView.getLocationOnScreen(loc);
-      startActivityForResult(SearchActivity.createStartIntent(this, loc[0], loc[0] +
-              (searchMenuView.getWidth() / 2)), REQUEST_CODE_SEARCH,
-          ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
+      startActivityForResult(
+          SearchActivity.createStartIntent(this, loc[0], loc[0] + (searchMenuView.getWidth() / 2)),
+          REQUEST_CODE_SEARCH, ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
       return true;
     }
 
     return super.onOptionsItemSelected(item);
   }
 
-  @SuppressWarnings("StatementWithEmptyBody")
-  @Override public boolean onNavigationItemSelected(MenuItem item) {
+  @SuppressWarnings("StatementWithEmptyBody") @Override
+  public boolean onNavigationItemSelected(MenuItem item) {
     mDrawerToggle.closeDrawerUsingMenu(mDrawerLayout, GravityCompat.START, item);
     return true;
   }
@@ -396,8 +392,7 @@ public class HomeActivity extends BaseActivity
     }
   }
 
-  @Override
-  public void onBackPressed() {
+  @Override public void onBackPressed() {
     if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
       mDrawerLayout.closeDrawer(GravityCompat.START);
     } else {
@@ -405,8 +400,7 @@ public class HomeActivity extends BaseActivity
     }
   }
 
-  @SuppressWarnings("unused")
-  public void onEventMainThread(final ProfileEvent event) {
+  @SuppressWarnings("unused") public void onEventMainThread(final ProfileEvent event) {
     if (event.success) {
       updateMasterUserInfo(event.profile);
       updateMasterUserData(event.profile);
@@ -433,8 +427,7 @@ public class HomeActivity extends BaseActivity
     return true;
   }
 
-  @SuppressWarnings("unused")
-  public void onEventMainThread(StateEvent event) {
+  @SuppressWarnings("unused") public void onEventMainThread(StateEvent event) {
     if (event.state.isAuthorized) {
       mAuthMenuItem.setTitle(R.string.action_logout);
       mMyPageMenuItem.setEnabled(true);
@@ -453,6 +446,8 @@ public class HomeActivity extends BaseActivity
     mNavigationView.getMenu().setGroupVisible(R.id.group_auth, false);
     mNavigationView.getMenu().setGroupVisible(R.id.group_navigation, true);
     mNavigationView.getMenu().setGroupVisible(R.id.group_post, true);
+    mAuthMenuItem.setTitle(R.string.action_logout);
+    mMyPageMenuItem.setEnabled(true);
 
     // Check home button at startup
     mNavigationView.setCheckedItem(R.id.nav_home);
@@ -465,8 +460,8 @@ public class HomeActivity extends BaseActivity
         .inflate(R.layout.toolbar_tab_layout, mToolBar, false);
     mMainTabs.setupWithViewPager(viewPager);
 
-    ActionBar.LayoutParams params = new ActionBar.LayoutParams(
-        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    ActionBar.LayoutParams params = new ActionBar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+        ViewGroup.LayoutParams.MATCH_PARENT);
     params.gravity = GravityCompat.START;
 
     mToolBar.addView(mMainTabs, params);
@@ -481,6 +476,8 @@ public class HomeActivity extends BaseActivity
     mNavigationView.getMenu().setGroupVisible(R.id.group_auth, true);
     mNavigationView.getMenu().setGroupVisible(R.id.group_navigation, false);
     mNavigationView.getMenu().setGroupVisible(R.id.group_post, false);
+    mAuthMenuItem.setTitle(R.string.action_login);
+    mMyPageMenuItem.setEnabled(false);
 
     if (getSupportActionBar() != null) {
       getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -494,9 +491,7 @@ public class HomeActivity extends BaseActivity
   }
 
   @Override protected int lookupTheme(UIUtil.Themes themes) {
-    return themes == UIUtil.Themes.DARK ?
-        R.style.Attiq_Theme_Dark_NoActionBar :
-        R.style.Attiq_Theme_Light_NoActionBar;
+    return themes == UIUtil.Themes.DARK ? R.style.Attiq_Theme_Dark_NoActionBar
+        : R.style.Attiq_Theme_Light_NoActionBar;
   }
-
 }

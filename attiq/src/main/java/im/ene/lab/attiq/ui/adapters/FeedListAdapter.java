@@ -28,6 +28,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
-import butterknife.BindColor;
 import butterknife.BindDimen;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
@@ -166,7 +166,7 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
     @BindDimen(R.dimen.tag_icon_size_half) int mTagIconSizeHalf;
     @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
     @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
-    @BindColor(R.color.colorAccent) int mIconBorderColor;
+    int mIconBorderColor;
 
     public FeedViewHolder(View view) {
       super(view);
@@ -176,6 +176,11 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
       mItemUserInfo.setMovementMethod(LinkMovementMethod.getInstance());
       mItemTags.setVisibility(View.GONE);
       mItemUserInfo.setVisibility(View.GONE);
+
+      TypedValue typedValue = new TypedValue();
+      itemView.getContext().getTheme()
+          .resolveAttribute(android.R.attr.colorAccent, typedValue, true);
+      mIconBorderColor = typedValue.resourceId;
     }
 
     void setupItemClick(FeedViewHolder vh, View view, FeedItem item,
@@ -310,7 +315,7 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
     @BindDimen(R.dimen.item_icon_size_small) int mUserIconSize;
     @BindDimen(R.dimen.item_icon_size_small_half) int mUserIconSizeHalf;
     @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
-    @BindColor(R.color.colorAccent) int mIconBorderColor;
+    int mIconBorderColor;
     @BindDimen(R.dimen.tag_icon_size) int mTagIconSize;
     @BindDimen(R.dimen.tag_icon_size_half) int mTagIconSizeHalf;
 
@@ -319,6 +324,11 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
       mInflater = LayoutInflater.from(itemView.getContext());
       mItemInfo.setClickable(true);
       mItemInfo.setMovementMethod(LinkMovementMethod.getInstance());
+
+      TypedValue typedValue = new TypedValue();
+      itemView.getContext().getTheme()
+          .resolveAttribute(android.R.attr.colorAccent, typedValue, true);
+      mIconBorderColor = typedValue.resourceId;
     }
 
     @Override public void bind(FeedItem item) {

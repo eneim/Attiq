@@ -6,27 +6,24 @@ import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import butterknife.Bind;
+import butterknife.BindDimen;
 import com.squareup.picasso.RequestCreator;
 import com.wefika.flowlayout.FlowLayout;
-
-import butterknife.Bind;
-import butterknife.BindColor;
-import butterknife.BindDimen;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.two.ItemTag;
 import im.ene.lab.attiq.data.model.two.User;
+import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
-import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -158,7 +155,8 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
     // Others
     @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
     @BindDimen(R.dimen.image_border_small) int mIconBorderWidth;
-    @BindColor(R.color.colorAccent) int mIconBorderColor;
+
+    int mIconBorderColor;
 
     public ViewHolder(View view) {
       super(view);
@@ -167,6 +165,11 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
       mItemInfo.setVisibility(View.GONE);
       mItemUserInfo.setClickable(true);
       mItemUserInfo.setMovementMethod(LinkMovementMethod.getInstance());
+
+      TypedValue typedValue = new TypedValue();
+      mContext.getTheme()
+          .resolveAttribute(android.R.attr.colorAccent, typedValue, true);
+      mIconBorderColor = typedValue.resourceId;
     }
 
     @Override public void bind(final Article item) {

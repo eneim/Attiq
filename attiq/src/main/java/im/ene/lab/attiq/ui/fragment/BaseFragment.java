@@ -5,7 +5,6 @@ import android.support.annotation.CallSuper;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
-
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.util.event.Event;
@@ -31,8 +30,7 @@ public class BaseFragment extends Fragment {
     EventBus.getDefault().post(mVisibility);
   }
 
-  @CallSuper
-  @Override public void onViewCreated(View view, Bundle savedInstanceState) {
+  @CallSuper @Override public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     ButterKnife.bind(this, view);
   }
@@ -53,24 +51,24 @@ public class BaseFragment extends Fragment {
     EventBus.getDefault().unregister(this);
   }
 
-  @CallSuper
-  @Override public void onDestroyView() {
+  @CallSuper @Override public void onDestroyView() {
     ButterKnife.unbind(this);
     super.onDestroyView();
   }
 
   protected void onVisibilityChange(boolean isVisibleToUser) {
-    Log.e(TAG, getClass().getSimpleName() + "#onVisibilityChange() called with: "
-        + "isVisibleToUser = [" + isVisibleToUser + "]");
+    Log.e(TAG, getClass().getSimpleName()
+        + "#onVisibilityChange() called with: "
+        + "isVisibleToUser = ["
+        + isVisibleToUser
+        + "]");
   }
 
-  @SuppressWarnings("unused")
-  public void onEventMainThread(Visibility visibility) {
+  @SuppressWarnings("unused") public void onEventMainThread(Visibility visibility) {
     Log.d(TAG, "onEventMainThread() called with: " + "visibility = [" + visibility + "]");
   }
 
-  @SuppressWarnings("unused")
-  public void onEvent(Event event) {
+  @SuppressWarnings("unused") public void onEvent(Event event) {
   }
 
   protected String eventTag() {
@@ -90,5 +88,12 @@ public class BaseFragment extends Fragment {
     }
 
     private boolean isVisibleToUser;
+
+    @Override public String toString() {
+      return "Visibility{" +
+          "tag='" + tag + '\'' +
+          ", isVisibleToUser=" + isVisibleToUser +
+          '}';
+    }
   }
 }

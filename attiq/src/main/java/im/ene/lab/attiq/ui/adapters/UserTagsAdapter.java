@@ -2,26 +2,24 @@ package im.ene.lab.attiq.ui.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import butterknife.Bind;
-import butterknife.BindColor;
 import butterknife.BindDimen;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.one.PublicTag;
 import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
+import java.util.ArrayList;
+import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by eneim on 1/10/16.
@@ -134,13 +132,17 @@ public class UserTagsAdapter extends ListAdapter<PublicTag> {
 
     // Others
     @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
-    @BindColor(R.color.colorAccent) int mIconBorderColor;
+    int mIconBorderColor;
 
     @BindDimen(R.dimen.tag_icon_size) int mTagIconSize;
     @BindDimen(R.dimen.tag_icon_size_half) int mTagIconSizeHalf;
 
     public ViewHolder(@NonNull View itemView) {
       super(itemView);
+      TypedValue typedValue = new TypedValue();
+      itemView.getContext().getTheme()
+          .resolveAttribute(android.R.attr.colorAccent, typedValue, true);
+      mIconBorderColor = typedValue.resourceId;
     }
 
     @Override public void bind(PublicTag item) {

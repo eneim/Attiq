@@ -23,18 +23,16 @@ import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import butterknife.Bind;
+import butterknife.BindDimen;
 import com.squareup.picasso.RequestCreator;
 import com.wefika.flowlayout.FlowLayout;
-
-import butterknife.Bind;
-import butterknife.BindColor;
-import butterknife.BindDimen;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
@@ -47,13 +45,12 @@ import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by eneim on 1/10/16.
@@ -197,7 +194,7 @@ public class UserStockArticlesAdapter extends RealmListAdapter<StockArticle> {
     // Others
     @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
     @BindDimen(R.dimen.image_border_small) int mIconBorderWidth;
-    @BindColor(R.color.colorAccent) int mIconBorderColor;
+    int mIconBorderColor;
 
     public ViewHolder(View view) {
       super(view);
@@ -206,6 +203,11 @@ public class UserStockArticlesAdapter extends RealmListAdapter<StockArticle> {
       mItemInfo.setVisibility(View.GONE);
       mItemUserInfo.setClickable(true);
       mItemUserInfo.setMovementMethod(LinkMovementMethod.getInstance());
+
+      TypedValue typedValue = new TypedValue();
+      mContext.getTheme()
+          .resolveAttribute(android.R.attr.colorAccent, typedValue, true);
+      mIconBorderColor = typedValue.resourceId;
     }
 
     @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {

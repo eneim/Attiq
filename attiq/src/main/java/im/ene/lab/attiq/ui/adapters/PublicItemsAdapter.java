@@ -12,19 +12,17 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import butterknife.Bind;
+import butterknife.BindDimen;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.wefika.flowlayout.FlowLayout;
-
-import butterknife.Bind;
-import butterknife.BindColor;
-import butterknife.BindDimen;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
@@ -38,11 +36,10 @@ import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import io.realm.RealmResults;
+import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import java.util.List;
 
 /**
  * Created by eneim on 12/14/15.
@@ -181,7 +178,8 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
     // Others
     @BindDimen(R.dimen.item_icon_size_half) int mIconCornerRadius;
     @BindDimen(R.dimen.dimen_unit) int mIconBorderWidth;
-    @BindColor(R.color.colorAccent) int mIconBorderColor;
+
+    int mIconBorderColor;
 
     @BindDimen(R.dimen.tag_icon_size) int mTagIconSize;
     @BindDimen(R.dimen.tag_icon_size_half) int mTagIconSizeHalf;
@@ -194,6 +192,11 @@ public class PublicItemsAdapter extends RealmListAdapter<Post> {
       mInflater = LayoutInflater.from(mContext);
       mItemUserInfo.setClickable(true);
       mItemUserInfo.setMovementMethod(LinkMovementMethod.getInstance());
+
+      TypedValue typedValue = new TypedValue();
+      mContext.getTheme()
+          .resolveAttribute(android.R.attr.colorAccent, typedValue, true);
+      mIconBorderColor = typedValue.resourceId;
     }
 
     @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {
