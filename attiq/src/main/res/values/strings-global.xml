@@ -32,4 +32,5 @@
     <item quantity="one">@string/user_connection_item</item>
     <item quantity="other">@string/user_connection_items</item>
   </plurals>
+
 </resources>

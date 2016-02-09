@@ -14,6 +14,13 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_app_themes"/>
+
+    <CheckBoxPreference
+        android:key="attiq_preference_mathjax"
+        android:summaryOff="@string/setting_mathjax_off"
+        android:summaryOn="@string/setting_mathjax_on"
+        android:title="@string/setting_mathjax"
+        />
   </PreferenceCategory>
 
   <PreferenceCategory

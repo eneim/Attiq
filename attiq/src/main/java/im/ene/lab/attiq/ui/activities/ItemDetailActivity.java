@@ -51,6 +51,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -78,6 +79,7 @@ import im.ene.lab.attiq.ui.widgets.PanelSlideListenerAdapter;
 import im.ene.lab.attiq.ui.widgets.drawable.ThreadedCommentDrawable;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.ImeUtil;
+import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.WebUtil;
@@ -293,6 +295,17 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     // toggle.syncState();
   }
 
+  @SuppressWarnings("unused") @JavascriptInterface public void resize(final float height) {
+    Log.d(TAG, "resize() called with: " + "height = [" + height + "]");
+    this.runOnUiThread(new Runnable() {
+      @Override public void run() {
+        //mContentView.setLayoutParams(
+        //    new LinearLayout.LayoutParams(getResources().getDisplayMetrics().widthPixels,
+        //        (int) (height * getResources().getDisplayMetrics().density)));
+      }
+    });
+  }
+
   private void trySetupContentView() {
     mContentView.setVerticalScrollBarEnabled(false);
     mContentView.setHorizontalScrollBarEnabled(false);
@@ -305,6 +318,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       }
     });
 
+    mContentView.addJavascriptInterface(this, "Attiq");
     mContentView.setWebViewClient(new WebViewClient() {
       @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
         if (url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
@@ -323,20 +337,19 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
         }
       }
 
-      @Override public void onPageFinished(WebView view, String url) {
+      @Override public void onPageFinished(final WebView view, String url) {
         super.onPageFinished(view, url);
-        view.evaluateJavascript("javascript:document.getElementById('math').innerHTML='" +
-            doubleEscapeTeX(mArticle.getRenderedBody()) + "';", new ValueCallback<String>() {
-          @Override public void onReceiveValue(String value) {
-            Log.d(TAG, "onReceiveValue() called with: " + "value = [" + value + "]");
-          }
-        });
-        view.evaluateJavascript("javascript:MathJax.Hub.Queue(['Typeset',MathJax.Hub]);",
-            new ValueCallback<String>() {
-              @Override public void onReceiveValue(String value) {
-                Log.d(TAG, "onReceiveValue() called with: " + "value = [" + value + "]");
-              }
-            });
+        if (PrefUtil.isMathJaxEnabled()) {
+          view.evaluateJavascript("javascript:document.getElementById('content').innerHTML='" +
+              doubleEscapeTeX(mArticle.getRenderedBody()) + "';", null);
+          view.evaluateJavascript("javascript:MathJax.Hub.Queue(['Typeset',MathJax.Hub]);",
+              new ValueCallback<String>() {
+                @Override public void onReceiveValue(String value) {
+                  view.loadUrl("javascript:(function () "
+                      + "{document.getElementsByTagName('body')[0].style.marginBottom = '0'})()");
+                }
+              });
+        }
 
         mIsFirstTimeLoaded = true;
         if (mLoadingView != null) {
@@ -518,29 +531,15 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
       final String html;
       try {
-        html = IOUtil.readAssets("html/article.html");
+        if (PrefUtil.isMathJaxEnabled()) {
+          html = IOUtil.readAssets("html/article_mathjax.html");
+        } else {
+          html = IOUtil.readAssets("html/article.html");
+        }
 
         Document doc = Jsoup.parse(html);
         Element elem = doc.getElementById("content");
-        elem.append("<script type='text/x-mathjax-config'>"
-            + "  MathJax.Hub.Config({"
-            + "    showMathMenu: false,"
-            + "             jax: ['input/TeX','output/HTML-CSS', 'output/CommonHTML'],"
-            + "      extensions: ['tex2jax.js','MathMenu.js','MathZoom.js', 'CHTML-preview.js'],"
-            + "         tex2jax: { inlineMath: [ ['$','$'] ], processEscapes: true },"
-            + "             TeX: {"
-            + "               extensions:['AMSmath.js','AMSsymbols.js',"
-            + "                           'noUndefined.js']"
-            + "             }"
-            + "  });"
-            + "</script>"
-            + "<script type='text/javascript' src='file:///android_asset/MathJax/MathJax.js'>"
-            + "</script>"
-            + "<span id='math'>"
-            +
-            article.getRenderedBody()
-            + "</span>");
-
+        elem.append(article.getRenderedBody());
         String result = doc.outerHtml();
         mContentView.loadDataWithBaseURL(article.getUrl(), result, "text/html", "utf-8", null);
       } catch (IOException e) {

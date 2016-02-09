@@ -2,14 +2,12 @@ package im.ene.lab.attiq.util;
 
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.data.api.Header;
+import java.io.IOException;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-
-import java.io.IOException;
 
 /**
  * Created by eneim on 12/13/15.
@@ -21,6 +19,8 @@ public final class PrefUtil {
   public static final String PREF_FIRST_START_FLAG = "attiq_preference_flag_first_start";
 
   public static final String PREF_APP_THEME = "attiq_preference_app_theme";
+
+  public static final String PREF_TRIGGER_MATHJAX = "attiq_preference_mathjax";
 
   public static final Ok3AuthInterceptor sOk3Auth = new Ok3AuthInterceptor();
 
@@ -36,8 +36,7 @@ public final class PrefUtil {
     }
   }
 
-  @NonNull
-  public static String getCurrentToken() {
+  @NonNull public static String getCurrentToken() {
     return Attiq.pref().getString(PREF_CURRENT_TOKEN, "");
   }
 
@@ -74,6 +73,14 @@ public final class PrefUtil {
         Attiq.pref().getString(PREF_APP_THEME, UIUtil.Themes.LIGHT.getName()));
   }
 
+  public static void setMathJaxEnable(boolean isChecked) {
+    Attiq.pref().edit().putBoolean(PREF_TRIGGER_MATHJAX, isChecked).apply();
+  }
+
+  public static boolean isMathJaxEnabled() {
+    return Attiq.pref().getBoolean(PREF_TRIGGER_MATHJAX, false);
+  }
+
   /**
    * Helper method to register a settings_prefs listener. This method does not automatically handle
    * {@code unregisterOnSharedPreferenceChangeListener() un-registering} the listener at the end
@@ -96,5 +103,4 @@ public final class PrefUtil {
       SharedPreferences.OnSharedPreferenceChangeListener listener) {
     Attiq.pref().unregisterOnSharedPreferenceChangeListener(listener);
   }
-
 }

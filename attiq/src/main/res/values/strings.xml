@@ -172,4 +172,7 @@
     </string>
   <string name="article_read_status">last viewed: %1$s</string>
   <string name="tab_title_history">History</string>
+  <string name="setting_mathjax">Render Math forms by MathJax (BETA)</string>
+  <string name="setting_mathjax_off">MathJax is Off</string>
+  <string name="setting_mathjax_on">MathJax is On</string>
 </resources>

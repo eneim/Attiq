@@ -22,6 +22,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -33,7 +34,6 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
-
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.PrefUtil;
@@ -54,8 +54,7 @@ import im.ene.lab.support.widget.MarkdownView;
  */
 public class SettingsActivity extends BaseActivity {
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setupActionBar();
     if (getFragmentManager().findFragmentById(android.R.id.content) == null) {
@@ -95,8 +94,7 @@ public class SettingsActivity extends BaseActivity {
   private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener =
       new Preference.OnPreferenceChangeListener() {
 
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
+        @Override public boolean onPreferenceChange(Preference preference, Object value) {
           Log.d(TAG, "onPreferenceChange() called with: " + "preference = [" + preference + "], " +
               "value = [" + value + "]");
 
@@ -109,21 +107,16 @@ public class SettingsActivity extends BaseActivity {
             int index = listPreference.findIndexOfValue(stringValue);
 
             // Set the summary to reflect the new value.
-            preference.setSummary(
-                index >= 0
-                    ? listPreference.getEntries()[index]
-                    : null);
-
+            preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
           } else if (preference instanceof RingtonePreference) {
             // For ringtone preferences, look up the correct display value
             // using RingtoneManager.
             if (TextUtils.isEmpty(stringValue)) {
               // Empty values correspond to 'silent' (no ringtone).
               preference.setSummary(R.string.pref_ringtone_silent);
-
             } else {
-              Ringtone ringtone = RingtoneManager.getRingtone(
-                  preference.getContext(), Uri.parse(stringValue));
+              Ringtone ringtone =
+                  RingtoneManager.getRingtone(preference.getContext(), Uri.parse(stringValue));
 
               if (ringtone == null) {
                 // Clear the summary if there was a lookup error.
@@ -135,7 +128,6 @@ public class SettingsActivity extends BaseActivity {
                 preference.setSummary(name);
               }
             }
-
           } else {
             // For all other preferences, set the summary to the value's
             // simple string representation.
@@ -150,10 +142,10 @@ public class SettingsActivity extends BaseActivity {
         @Override public boolean onPreferenceClick(Preference preference) {
           if ("pref_open_source".equals(preference.getKey())) {
             final MarkdownView view = new MarkdownView(preference.getContext());
-            new AlertDialog.Builder(preference.getContext())
-                .setTitle(R.string.title_licenses)
+            new AlertDialog.Builder(preference.getContext()).setTitle(R.string.title_licenses)
                 .setView(view)
-                .create().show();
+                .create()
+                .show();
 
             TaskUtil.load(IOUtil.LICENSES, new TaskUtil.Callback<String>() {
               @Override protected void onFinished(String markdown) {
@@ -166,10 +158,10 @@ public class SettingsActivity extends BaseActivity {
             return true;
           } else if ("pref_other_resources".equals(preference.getKey())) {
             final MarkdownView view = new MarkdownView(preference.getContext());
-            new AlertDialog.Builder(preference.getContext())
-                .setTitle(R.string.title_resources)
+            new AlertDialog.Builder(preference.getContext()).setTitle(R.string.title_resources)
                 .setView(view)
-                .create().show();
+                .create()
+                .show();
 
             TaskUtil.load(IOUtil.RESOURCES, new TaskUtil.Callback<String>() {
               @Override protected void onFinished(String markdown) {
@@ -189,8 +181,28 @@ public class SettingsActivity extends BaseActivity {
    * This fragment shows general preferences only. It is used when the
    * activity is showing a two-pane settings UI.
    */
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  public static class GeneralPreferenceFragment extends PreferenceFragment {
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB) public static class GeneralPreferenceFragment
+      extends PreferenceFragment {
+
+    private Preference.OnPreferenceChangeListener mOnMathJaxTriggered =
+        new Preference.OnPreferenceChangeListener() {
+          @Override public boolean onPreferenceChange(Preference preference, Object newValue) {
+            if (preference instanceof CheckBoxPreference) {
+              String stringValue = newValue.toString();
+              if (PrefUtil.PREF_TRIGGER_MATHJAX.equals(preference.getKey())) {
+                Log.d(TAG, "onPreferenceChange() called with: "
+                    + "preference = ["
+                    + preference
+                    + "], newValue = ["
+                    + newValue
+                    + "]");
+                PrefUtil.setMathJaxEnable(Boolean.valueOf(stringValue));
+              }
+            }
+
+            return true;
+          }
+        };
 
     private Preference.OnPreferenceChangeListener mOnThemeSettingClick =
         new Preference.OnPreferenceChangeListener() {
@@ -205,10 +217,7 @@ public class SettingsActivity extends BaseActivity {
               int index = listPreference.findIndexOfValue(stringValue);
 
               // Set the summary to reflect the new value.
-              preference.setSummary(
-                  index >= 0
-                      ? listPreference.getEntries()[index]
-                      : null);
+              preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
 
               PrefUtil.setTheme(UIUtil.Themes.lookupByName(stringValue));
             }
@@ -217,21 +226,23 @@ public class SettingsActivity extends BaseActivity {
           }
         };
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+    @Override public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       addPreferencesFromResource(R.xml.pref_general);
 
       findPreference(PrefUtil.PREF_APP_THEME).setOnPreferenceChangeListener(mOnThemeSettingClick);
-      mOnThemeSettingClick.onPreferenceChange(
-          findPreference(PrefUtil.PREF_APP_THEME), PrefUtil.getTheme()
-      );
+      mOnThemeSettingClick.onPreferenceChange(findPreference(PrefUtil.PREF_APP_THEME),
+          PrefUtil.getTheme());
+
+      findPreference(PrefUtil.PREF_TRIGGER_MATHJAX).setOnPreferenceChangeListener(
+          mOnMathJaxTriggered);
+      mOnMathJaxTriggered.onPreferenceChange(findPreference(PrefUtil.PREF_TRIGGER_MATHJAX),
+          PrefUtil.isMathJaxEnabled());
 
       // bindPreferenceSummaryToValue(findPreference(PrefUtil.PREF_APP_THEME));
       bindPreferenceClickListener(findPreference("pref_open_source"));
       bindPreferenceClickListener(findPreference("pref_other_resources"));
     }
-
   }
 
   private static void bindPreferenceClickListener(Preference preference) {
@@ -239,7 +250,7 @@ public class SettingsActivity extends BaseActivity {
   }
 
   @Override protected int lookupTheme(UIUtil.Themes themes) {
-    return themes == UIUtil.Themes.DARK ?
-        R.style.Attiq_Theme_Dark_Setting : R.style.Attiq_Theme_Light_Setting;
+    return themes == UIUtil.Themes.DARK ? R.style.Attiq_Theme_Dark_Setting
+        : R.style.Attiq_Theme_Light_Setting;
   }
 }
