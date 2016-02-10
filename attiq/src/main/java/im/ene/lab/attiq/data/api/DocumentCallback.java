@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.attiq.data;
+package im.ene.lab.attiq.data.api;
 
 import java.io.IOException;
 import java.io.InputStream;

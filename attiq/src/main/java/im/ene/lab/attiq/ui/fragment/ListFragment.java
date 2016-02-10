@@ -28,7 +28,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.R;
@@ -40,17 +39,15 @@ import im.ene.lab.attiq.ui.widgets.NonEmptyRecyclerView;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemsEvent;
+import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import java.util.List;
-
 /**
  * Created by eneim on 1/6/16.
  */
-public abstract class ListFragment<E>
-    extends BaseFragment
+public abstract class ListFragment<E> extends BaseFragment
     implements SwipeRefreshLayout.OnRefreshListener, Handler.Callback, Callback<List<E>> {
 
   /**
@@ -99,11 +96,26 @@ public abstract class ListFragment<E>
       mAdapter.notifyDataSetChanged();
       return true;
     } else if (msg.what == MESSAGE_LOAD_RELOAD) {
-      loadReload();
+      loadReload(false);
       return true;
     }
 
     return false;
+  }
+
+  protected void loadReload(boolean coldData) {
+    if (coldData) {
+      mPage = DEFAULT_FIRST_PAGE;
+
+      // Show loading view only when we don't have any item and we want to renew the list
+      if (mAdapter.getItemCount() == 0) {
+        mLoadingView.setVisibility(View.VISIBLE);
+      }
+
+      mAdapter.loadItems(false, mPage, DEFAULT_THRESHOLD, null, this);
+    } else {
+      loadReload();
+    }
   }
 
   protected void loadReload() {
@@ -127,9 +139,8 @@ public abstract class ListFragment<E>
     mAdapter.loadItems(isLoadingMore, mPage, DEFAULT_THRESHOLD, null, this);
   }
 
-  @Nullable @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                           Bundle savedInstanceState) {
+  @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
     return inflater.inflate(R.layout.fragment_general_recycler_view, container, false);
   }
 
@@ -154,9 +165,7 @@ public abstract class ListFragment<E>
     mRecyclerView.setErrorView(mErrorViewContainer);
     mRecyclerView.setEmptyView(mEmptyViewContainer);
 
-    mSwipeRefreshLayout.setRefreshing(true);
-    mHandler.removeMessages(MESSAGE_LOAD_RELOAD);
-    mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
+    loadReload(true);
   }
 
   @Override public void onResume() {
@@ -179,8 +188,7 @@ public abstract class ListFragment<E>
     super.onDestroyView();
   }
 
-  @NonNull
-  protected abstract ListAdapter<E> createAdapter();
+  @NonNull protected abstract ListAdapter<E> createAdapter();
 
   @Override public void onRefresh() {
     if (mSwipeRefreshLayout != null) {
@@ -191,8 +199,7 @@ public abstract class ListFragment<E>
   }
 
   // Just do nothing here
-  @SuppressWarnings("unused")
-  public void onEventMainThread(ItemsEvent event) {
+  @SuppressWarnings("unused") public void onEventMainThread(ItemsEvent event) {
     // A child class MUST use its simple name as tag for ResponseEvent
     if (!eventTag().equals(event.tag)) {
       return;
@@ -213,8 +220,9 @@ public abstract class ListFragment<E>
 
   @Override public void onResponse(Call<List<E>> call, Response<List<E>> response) {
     if (response.code() != 200) {
-      EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
-          new Event.Error(response.code(), getString(R.string.response_error)), mPage));
+      EventBus.getDefault()
+          .post(new ItemsEvent(eventTag(), false,
+              new Event.Error(response.code(), getString(R.string.response_error)), mPage));
     } else {
       List<E> items = response.body();
       if (!UIUtil.isEmpty(items)) {
@@ -226,9 +234,8 @@ public abstract class ListFragment<E>
 
   @Override public void onFailure(Call<List<E>> call, Throwable t) {
     Log.d(getClass().getSimpleName(), "onFailure() called with: " + "t = [" + t + "]");
-    EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
-        new Event.Error(Event.Error.ERROR_UNKNOWN,
-            getString(R.string.response_error)), mPage));
+    EventBus.getDefault()
+        .post(new ItemsEvent(eventTag(), false,
+            new Event.Error(Event.Error.ERROR_UNKNOWN, getString(R.string.response_error)), mPage));
   }
-
 }

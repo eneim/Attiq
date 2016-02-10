@@ -21,7 +21,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
-
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.data.api.ApiClient;
@@ -34,17 +33,15 @@ import io.realm.Realm;
 import io.realm.RealmAsyncTask;
 import io.realm.RealmChangeListener;
 import io.realm.RealmObject;
+import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import java.util.List;
-
 /**
  * Created by eneim on 12/13/15.
  */
-public abstract class RealmListFragment<E extends RealmObject>
-    extends ListFragment<E>
+public abstract class RealmListFragment<E extends RealmObject> extends ListFragment<E>
     implements SwipeRefreshLayout.OnRefreshListener, Handler.Callback, Callback<List<E>> {
 
   private static final String TAG = "RealmListFragment";
@@ -64,8 +61,7 @@ public abstract class RealmListFragment<E extends RealmObject>
     }
   };
 
-  @Override
-  protected void loadReload() {
+  @Override protected void loadReload() {
     boolean isRefreshing = mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing();
     boolean isLoadingMore = !isRefreshing;
     if (isLoadingMore) {
@@ -86,8 +82,7 @@ public abstract class RealmListFragment<E extends RealmObject>
     return createRealmAdapter();
   }
 
-  @NonNull
-  protected abstract RealmListAdapter<E> createRealmAdapter();
+  @NonNull protected abstract RealmListAdapter<E> createRealmAdapter();
 
   @Override public void onRefresh() {
     if (mSwipeRefreshLayout != null) {
@@ -99,8 +94,9 @@ public abstract class RealmListFragment<E extends RealmObject>
 
   @Override public void onResponse(Call<List<E>> call, Response<List<E>> response) {
     if (response.code() != 200) {
-      EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
-          new Event.Error(response.code(), ApiClient.parseError(response).message), mPage));
+      EventBus.getDefault()
+          .post(new ItemsEvent(eventTag(), false,
+              new Event.Error(response.code(), ApiClient.parseError(response).message), mPage));
     } else {
       final List<E> items = response.body();
       if (!UIUtil.isEmpty(items)) {
@@ -110,14 +106,13 @@ public abstract class RealmListFragment<E extends RealmObject>
           }
         }, new Realm.Transaction.Callback() {
           @Override public void onSuccess() {
-            super.onSuccess();
             EventBus.getDefault().post(new ItemsEvent(eventTag(), true, null, mPage));
           }
 
           @Override public void onError(Exception e) {
-            super.onError(e);
-            EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
-                new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), mPage));
+            EventBus.getDefault()
+                .post(new ItemsEvent(eventTag(), false,
+                    new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), mPage));
           }
         });
       } else {
@@ -147,5 +142,4 @@ public abstract class RealmListFragment<E extends RealmObject>
       mTransactionTask.cancel();
     }
   }
-
 }

@@ -50,8 +50,8 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.data.SuccessCallback;
 import im.ene.lab.attiq.data.api.ApiClient;
+import im.ene.lab.attiq.data.api.SuccessCallback;
 import im.ene.lab.attiq.data.model.local.StockArticle;
 import im.ene.lab.attiq.data.model.two.AccessToken;
 import im.ene.lab.attiq.data.model.two.Profile;
@@ -61,11 +61,8 @@ import im.ene.lab.attiq.ui.fragment.PublicUserHomeFragment;
 import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
-import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ProfileEvent;
 import im.ene.lab.support.widget.SmoothActionBarDrawerToggle;
-import io.realm.Realm;
-import io.realm.RealmAsyncTask;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -104,8 +101,6 @@ public class HomeActivity extends BaseActivity
   private TabLayout mMainTabs;
   private NavigationView mNavigationView;
 
-  // Utils
-  private RealmAsyncTask mTransactionTask;
   private Callback<AccessToken> mOnTokenCallback = new SuccessCallback<AccessToken>() {
     @Override public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
       AccessToken accessToken = response.body();
@@ -190,12 +185,6 @@ public class HomeActivity extends BaseActivity
     }
 
     updateMasterUserInfo(mMyProfile);
-
-    if (mMyProfile != null) {
-      mState.isAuthorized = true;
-    } else {
-      mState.isAuthorized = false;
-    }
 
     if (getSupportFragmentManager().findFragmentById(R.id.container) == null) {
       updateMasterUserData(mMyProfile);
@@ -292,53 +281,7 @@ public class HomeActivity extends BaseActivity
     }
   }
 
-  private void getMasterUser(final String token) {
-    ApiClient.me().enqueue(new Callback<Profile>() {
-      @Override public void onResponse(Call<Profile> call, final Response<Profile> response) {
-        mMyProfile = response.body();
-        if (mMyProfile != null) {
-          mMyProfile.setToken(token);
-          // save to Realm
-          mTransactionTask = Attiq.realm().executeTransaction(new Realm.Transaction() {
-            @Override public void execute(Realm realm) {
-              realm.copyToRealmOrUpdate(mMyProfile);
-            }
-          }, new Realm.Transaction.Callback() {
-            @Override public void onSuccess() {
-              super.onSuccess();
-              EventBus.getDefault()
-                  .post(
-                      new ProfileEvent(HomeActivity.class.getSimpleName(), true, null, mMyProfile));
-            }
-
-            @Override public void onError(Exception e) {
-              super.onError(e);
-              EventBus.getDefault()
-                  .post(new ProfileEvent(HomeActivity.class.getSimpleName(), false,
-                          new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()),
-                          null));
-            }
-          });
-        } else {
-          EventBus.getDefault()
-              .post(new ProfileEvent(HomeActivity.class.getSimpleName(), false,
-                      new Event.Error(response.code(), response.message()), null));
-        }
-      }
-
-      @Override public void onFailure(Call<Profile> call, Throwable error) {
-        EventBus.getDefault()
-            .post(new ProfileEvent(HomeActivity.class.getSimpleName(), false,
-                    new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
-      }
-    });
-  }
-
   @Override protected void onDestroy() {
-    if (mTransactionTask != null && !mTransactionTask.isCancelled()) {
-      mTransactionTask.cancel();
-    }
-
     mOnTokenCallback = null;
     ButterKnife.unbind(this);
     super.onDestroy();

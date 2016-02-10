@@ -48,7 +48,7 @@ import com.squareup.picasso.RequestCreator;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.data.DocumentCallback;
+import im.ene.lab.attiq.data.api.DocumentCallback;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.local.RProfile;
 import im.ene.lab.attiq.data.model.two.Profile;

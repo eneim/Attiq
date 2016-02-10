@@ -31,11 +31,17 @@ import com.batch.android.Batch;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
+import im.ene.lab.attiq.util.event.ProfileEvent;
 import io.realm.Realm;
+import io.realm.RealmAsyncTask;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by eneim on 12/13/15.
@@ -53,8 +59,12 @@ public abstract class BaseActivity extends AppCompatActivity
     PrefUtil.registerOnSharedPreferenceChangeListener(this);
     initState();
     mRealm = Attiq.realm();
-    mMyProfile =
-        mRealm.where(Profile.class).equalTo("token", PrefUtil.getCurrentToken()).findFirst();
+
+    if (!UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
+      mMyProfile =
+          mRealm.where(Profile.class).equalTo("token", PrefUtil.getCurrentToken()).findFirst();
+    }
+
     mState.isAuthorized = mMyProfile != null;
   }
 
@@ -67,6 +77,53 @@ public abstract class BaseActivity extends AppCompatActivity
     Batch.onStart(this);
     // Active EventBus only when User could see the UI
     EventBus.getDefault().register(this);
+    if (mMyProfile == null && !UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
+      getMasterUser(PrefUtil.getCurrentToken());
+    }
+  }
+
+  // Utils
+  private RealmAsyncTask mTransactionTask;
+
+  protected void getMasterUser(final String token) {
+    ApiClient.me().enqueue(new Callback<Profile>() {
+      @Override public void onResponse(Call<Profile> call, final Response<Profile> response) {
+        mMyProfile = response.body();
+        if (mMyProfile != null) {
+          mMyProfile.setToken(token);
+          // save to Realm
+          mTransactionTask = Attiq.realm().executeTransaction(new Realm.Transaction() {
+            @Override public void execute(Realm realm) {
+              realm.copyToRealmOrUpdate(mMyProfile);
+            }
+          }, new Realm.Transaction.Callback() {
+            @Override public void onSuccess() {
+              super.onSuccess();
+              EventBus.getDefault()
+                  .post(
+                      new ProfileEvent(HomeActivity.class.getSimpleName(), true, null, mMyProfile));
+            }
+
+            @Override public void onError(Exception e) {
+              super.onError(e);
+              EventBus.getDefault()
+                  .post(new ProfileEvent(HomeActivity.class.getSimpleName(), false,
+                      new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), null));
+            }
+          });
+        } else {
+          EventBus.getDefault()
+              .post(new ProfileEvent(HomeActivity.class.getSimpleName(), false,
+                  new Event.Error(response.code(), response.message()), null));
+        }
+      }
+
+      @Override public void onFailure(Call<Profile> call, Throwable error) {
+        EventBus.getDefault()
+            .post(new ProfileEvent(HomeActivity.class.getSimpleName(), false,
+                new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
+      }
+    });
   }
 
   @Override protected void onPause() {
@@ -77,6 +134,11 @@ public abstract class BaseActivity extends AppCompatActivity
 
   @Override protected void onDestroy() {
     PrefUtil.unregisterOnSharedPreferenceChangeListener(this);
+
+    if (mTransactionTask != null && !mTransactionTask.isCancelled()) {
+      mTransactionTask.cancel();
+    }
+
     if (mRealm != null) {
       mRealm.close();
     }
