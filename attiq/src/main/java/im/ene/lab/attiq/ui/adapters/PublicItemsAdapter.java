@@ -26,7 +26,6 @@ import com.wefika.flowlayout.FlowLayout;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.data.model.local.ReadArticle;
 import im.ene.lab.attiq.data.model.one.PublicTag;
 import im.ene.lab.attiq.data.model.one.PublicUser;
 import im.ene.lab.attiq.data.model.zero.PublicPost;
@@ -197,6 +196,8 @@ public class PublicItemsAdapter extends RealmListAdapter<PublicPost> {
       mContext.getTheme()
           .resolveAttribute(android.R.attr.colorAccent, typedValue, true);
       mIconBorderColor = typedValue.resourceId;
+
+      mReadStatus.setVisibility(View.GONE);
     }
 
     @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {
@@ -205,19 +206,6 @@ public class PublicItemsAdapter extends RealmListAdapter<PublicPost> {
     }
 
     @Override public void bind(PublicPost item) {
-      ReadArticle ref = Attiq.realm().where(ReadArticle.class)
-          .equalTo(ReadArticle.FIELD_ARTICLE_ID, item.getUuid()).findFirst();
-      // Update background if this item has already been read
-      if (ref != null) {
-        // itemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.read_color_true));
-        mReadStatus.setText(mContext.getString(R.string.article_read_status,
-            TimeUtil.beautify(ref.getLastView())));
-        mReadStatus.setVisibility(View.VISIBLE);
-      } else {
-        // itemView.setBackgroundColor(ContextCompat.getColor(mContext, android.R.color.white));
-        mReadStatus.setVisibility(View.GONE);
-      }
-
       String itemInfo = item.getCommentCount() == 1 ?
           mContext.getString(R.string.item_info_one, item.getStockCount()) :
           mContext.getString(R.string.item_info_many, item.getStockCount(), item.getCommentCount());
