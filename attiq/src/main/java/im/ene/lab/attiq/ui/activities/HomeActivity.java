@@ -61,6 +61,7 @@ import im.ene.lab.attiq.ui.fragment.PublicUserHomeFragment;
 import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.util.event.AccessTokenEvent;
 import im.ene.lab.attiq.util.event.ProfileEvent;
 import im.ene.lab.support.widget.SmoothActionBarDrawerToggle;
 import retrofit2.Call;
@@ -70,6 +71,8 @@ import retrofit2.Response;
 public class HomeActivity extends BaseActivity
     implements NavigationView.OnNavigationItemSelectedListener, PublicUserHomeFragment.Callback,
     AuthorizedUserHomeFragment.Callback {
+
+  private static final String TAG = "HomeActivity";
 
   public static final String EXTRA_AUTH_CALLBACK = "extra_auth_callback";
 
@@ -105,8 +108,7 @@ public class HomeActivity extends BaseActivity
     @Override public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
       AccessToken accessToken = response.body();
       if (accessToken != null) {
-        PrefUtil.setCurrentToken(accessToken.getToken());
-        getMasterUser(accessToken.getToken());
+        EventBus.getDefault().post(new AccessTokenEvent(TAG, true, null, accessToken));
       }
     }
   };

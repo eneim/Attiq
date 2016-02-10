@@ -35,6 +35,7 @@ import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
+import im.ene.lab.attiq.util.event.AccessTokenEvent;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ProfileEvent;
 import io.realm.Realm;
@@ -70,6 +71,14 @@ public abstract class BaseActivity extends AppCompatActivity
 
   // placeholder for EventBus
   @SuppressWarnings("unused") public void onEvent(Event event) {
+  }
+
+  @SuppressWarnings("unused")
+  public void onEvent(AccessTokenEvent event) {
+    if (event.success && event.object != null) {
+      PrefUtil.setCurrentToken(event.object.getToken());
+      getMasterUser(event.object.getToken());
+    }
   }
 
   @Override protected void onResume() {
