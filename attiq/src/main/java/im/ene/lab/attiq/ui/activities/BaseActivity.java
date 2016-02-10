@@ -35,7 +35,6 @@ import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
-import im.ene.lab.attiq.util.event.EventUtil;
 import io.realm.Realm;
 
 /**
@@ -51,18 +50,16 @@ public abstract class BaseActivity extends AppCompatActivity
   @Override protected void onCreate(Bundle savedInstanceState) {
     setTheme(lookupTheme(PrefUtil.getTheme()));
     super.onCreate(savedInstanceState);
-    EventUtil.init(this);
     PrefUtil.registerOnSharedPreferenceChangeListener(this);
     initState();
     mRealm = Attiq.realm();
-    mMyProfile = mRealm.where(Profile.class)
-        .equalTo("token", PrefUtil.getCurrentToken()).findFirst();
+    mMyProfile =
+        mRealm.where(Profile.class).equalTo("token", PrefUtil.getCurrentToken()).findFirst();
     mState.isAuthorized = mMyProfile != null;
   }
 
   // placeholder for EventBus
-  @SuppressWarnings("unused")
-  public void onEvent(Event event) {
+  @SuppressWarnings("unused") public void onEvent(Event event) {
   }
 
   @Override protected void onResume() {
@@ -79,7 +76,6 @@ public abstract class BaseActivity extends AppCompatActivity
   }
 
   @Override protected void onDestroy() {
-    EventUtil.shutdown(this);
     PrefUtil.unregisterOnSharedPreferenceChangeListener(this);
     if (mRealm != null) {
       mRealm.close();
@@ -103,11 +99,11 @@ public abstract class BaseActivity extends AppCompatActivity
    * Note: Up navigation intents are represented by a back arrow in the top left of the Toolbar
    * in Material Design guidelines.
    *
-   * @param currentActivity         Activity in use when navigate Up action occurred.
+   * @param currentActivity Activity in use when navigate Up action occurred.
    * @param syntheticParentActivity Parent activity to use when one is not already configured.
    */
   public static void navigateUpOrBack(Activity currentActivity,
-                                      Class<? extends Activity> syntheticParentActivity) {
+      Class<? extends Activity> syntheticParentActivity) {
     // Retrieve parent activity from AndroidManifest.
     Intent intent = NavUtils.getParentActivityIntent(currentActivity);
 
@@ -146,9 +142,6 @@ public abstract class BaseActivity extends AppCompatActivity
   @Override public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == android.R.id.home) {
       navigateUpOrBack(this, null);
-//      overridePendingTransition(
-//          R.anim.activity_in, R.anim.activity_out
-//      );
       return true;
     }
 
@@ -160,14 +153,14 @@ public abstract class BaseActivity extends AppCompatActivity
   @Override public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
     Log.d(TAG, "onSharedPreferenceChanged: " + getClass());
     if (PrefUtil.PREF_APP_THEME.equals(key)) {
-      if (!getClass().getSimpleName().equals(SettingsActivity.class.getSimpleName())) {
-        recreate();
-      } else {
+      if (getClass().getSimpleName().equals(SettingsActivity.class.getSimpleName())) {
+        // special deal for Setting Activity
         startActivity(getIntent());
         finish();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+      } else {
+        recreate();
       }
-      // Intent intent = new Intent(this, getClass());
     }
   }
 
@@ -184,11 +177,6 @@ public abstract class BaseActivity extends AppCompatActivity
 
     protected final T state;
 
-    @Deprecated
-    public StateEvent(boolean success, @Nullable Error error, T state) {
-      this(null, success, error, state);
-    }
-
     public StateEvent(@Nullable String tag, boolean success, @Nullable Error error, T state) {
       super(tag, success, error);
       this.state = state;
@@ -196,7 +184,8 @@ public abstract class BaseActivity extends AppCompatActivity
   }
 
   protected int lookupTheme(UIUtil.Themes themes) {
-    return themes == UIUtil.Themes.DARK ?
-        R.style.Attiq_Theme_Dark_NoActionBar : R.style.Attiq_Theme_Light_NoActionBar;
+    return themes == UIUtil.Themes.DARK ? R.style.Attiq_Theme_Dark_NoActionBar
+        : R.style.Attiq_Theme_Light_NoActionBar;
   }
+
 }
