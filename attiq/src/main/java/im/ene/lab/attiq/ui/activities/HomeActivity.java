@@ -174,6 +174,13 @@ public class HomeActivity extends BaseActivity
           case R.id.nav_home:
             showHome();
             break;
+          case R.id.nav_about:
+            // jump to Github
+            String url = "https://github.com/eneim/Attiq";
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
+            break;
         }
       }
     };
