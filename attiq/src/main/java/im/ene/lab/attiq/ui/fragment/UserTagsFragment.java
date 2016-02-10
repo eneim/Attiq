@@ -20,7 +20,6 @@ import im.ene.lab.attiq.ui.activities.TagItemsActivity;
 import im.ene.lab.attiq.ui.adapters.ListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.UserTagsAdapter;
-import im.ene.lab.attiq.util.AnalyticsUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemsEvent;
@@ -78,13 +77,6 @@ public class UserTagsFragment extends BaseFragment
   }
 
   private ArrayList<PublicTag> mItems;
-
-  @Override protected void onVisibilityChange(boolean isVisibleToUser) {
-    super.onVisibilityChange(isVisibleToUser);
-    if (isVisibleToUser) {
-      AnalyticsUtil.sendScreenView(SCREEN_NAME);
-    }
-  }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);

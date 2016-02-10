@@ -21,7 +21,6 @@ import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.PublicItemsAdapter;
 import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
-import im.ene.lab.attiq.util.AnalyticsUtil;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import java.util.EnumSet;
@@ -44,13 +43,6 @@ public class PublicStreamFragment extends RealmListFragment<PublicPost> {
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     MoPub.setLocationAwareness(MoPub.LocationAwareness.NORMAL);
-  }
-
-  @Override protected void onVisibilityChange(boolean isVisibleToUser) {
-    super.onVisibilityChange(isVisibleToUser);
-    if (isVisibleToUser) {
-      AnalyticsUtil.sendScreenView(SCREEN_NAME);
-    }
   }
 
   @NonNull @Override protected RealmListAdapter<PublicPost> createRealmAdapter() {

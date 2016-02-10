@@ -4,15 +4,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
-
+import im.ene.lab.attiq.data.model.two.Article;
+import im.ene.lab.attiq.data.model.two.User;
 import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.adapters.ArticleListAdapter;
 import im.ene.lab.attiq.ui.adapters.ListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.UserArticlesAdapter;
-import im.ene.lab.attiq.data.model.two.Article;
-import im.ene.lab.attiq.data.model.two.User;
-import im.ene.lab.attiq.util.AnalyticsUtil;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 
 /**
@@ -36,13 +34,6 @@ public class UserItemsFragment extends ListFragment<Article> {
     args.putString(ARGS_USER_ID, userId);
     fragment.setArguments(args);
     return fragment;
-  }
-
-  @Override protected void onVisibilityChange(boolean isVisibleToUser) {
-    super.onVisibilityChange(isVisibleToUser);
-    if (isVisibleToUser) {
-      AnalyticsUtil.sendScreenView(SCREEN_NAME);
-    }
   }
 
   @NonNull @Override protected ListAdapter<Article> createAdapter() {
