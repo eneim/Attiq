@@ -27,6 +27,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -50,29 +51,31 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.data.SuccessCallback;
 import im.ene.lab.attiq.data.api.ApiClient;
+import im.ene.lab.attiq.data.api.SuccessCallback;
+import im.ene.lab.attiq.data.model.local.ReadArticle;
 import im.ene.lab.attiq.data.model.local.StockArticle;
 import im.ene.lab.attiq.data.model.two.AccessToken;
 import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.data.model.zero.FeedItem;
 import im.ene.lab.attiq.ui.fragment.AuthorizedUserHomeFragment;
+import im.ene.lab.attiq.ui.fragment.HistoryFragment;
 import im.ene.lab.attiq.ui.fragment.PublicUserHomeFragment;
 import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
-import im.ene.lab.attiq.util.event.Event;
+import im.ene.lab.attiq.util.event.AccessTokenEvent;
 import im.ene.lab.attiq.util.event.ProfileEvent;
 import im.ene.lab.support.widget.SmoothActionBarDrawerToggle;
-import io.realm.Realm;
-import io.realm.RealmAsyncTask;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeActivity extends BaseActivity
     implements NavigationView.OnNavigationItemSelectedListener, PublicUserHomeFragment.Callback,
-    AuthorizedUserHomeFragment.Callback {
+    AuthorizedUserHomeFragment.Callback, HistoryFragment.Callback {
+
+  private static final String TAG = "HomeActivity";
 
   public static final String EXTRA_AUTH_CALLBACK = "extra_auth_callback";
 
@@ -81,6 +84,13 @@ public class HomeActivity extends BaseActivity
    */
   private static final int REQUEST_CODE_LOGIN = 1;
   private static final int REQUEST_CODE_SEARCH = 1 << 1;
+
+  /**
+   * Fragment names
+   */
+  private final String FRAGMENT_HOME_PUBLIC = "fragment_home_public";
+  private final String FRAGMENT_HOME_AUTHORIZED = "fragment_home_authorized";
+  private final String FRAGMENT_HISTORY = "fragment_history";
 
   /**
    * Header child views
@@ -104,14 +114,11 @@ public class HomeActivity extends BaseActivity
   private TabLayout mMainTabs;
   private NavigationView mNavigationView;
 
-  // Utils
-  private RealmAsyncTask mTransactionTask;
   private Callback<AccessToken> mOnTokenCallback = new SuccessCallback<AccessToken>() {
     @Override public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
       AccessToken accessToken = response.body();
       if (accessToken != null) {
-        PrefUtil.setCurrentToken(accessToken.getToken());
-        getMasterUser(accessToken.getToken());
+        EventBus.getDefault().post(new AccessTokenEvent(TAG, true, null, accessToken));
       }
     }
   };
@@ -145,18 +152,28 @@ public class HomeActivity extends BaseActivity
       @Override protected void onDrawerClosedByMenu(View drawerView, @NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        if (id == R.id.nav_login) {
-          if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
-            login();
-          } else {
-            logout();
-          }
-        } else if (id == R.id.nav_profile) {
-          if (mMyProfile != null) {
-            startActivity(ProfileActivity.createIntent(HomeActivity.this, mMyProfile.getId()));
-          }
-        } else if (id == R.id.nav_setting) {
-          startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
+        switch (id) {
+          case R.id.nav_login:
+            if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
+              login();
+            } else {
+              logout();
+            }
+            break;
+          case R.id.nav_profile:
+            if (mMyProfile != null) {
+              startActivity(ProfileActivity.createIntent(HomeActivity.this, mMyProfile.getId()));
+            }
+            break;
+          case R.id.nav_setting:
+            startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
+            break;
+          case R.id.nav_history:
+            showHistory();
+            break;
+          case R.id.nav_home:
+            showHome();
+            break;
         }
       }
     };
@@ -191,13 +208,8 @@ public class HomeActivity extends BaseActivity
 
     updateMasterUserInfo(mMyProfile);
 
-    if (mMyProfile != null) {
-      mState.isAuthorized = true;
-    } else {
-      mState.isAuthorized = false;
-    }
-
     if (getSupportFragmentManager().findFragmentById(R.id.container) == null) {
+      mNavigationView.setCheckedItem(R.id.nav_home);
       updateMasterUserData(mMyProfile);
     }
   }
@@ -227,6 +239,7 @@ public class HomeActivity extends BaseActivity
             mRealm.clear(Profile.class);
             mRealm.clear(FeedItem.class);
             mRealm.clear(StockArticle.class);
+            mRealm.clear(ReadArticle.class);
             mRealm.commitTransaction();
 
             mMyProfile = null;
@@ -246,15 +259,69 @@ public class HomeActivity extends BaseActivity
         .show();
   }
 
-  private void updateMasterUserData(Profile user) {
-    Fragment fragment;
-    if (user != null && PrefUtil.getCurrentToken().equals(user.getToken())) {
-      fragment = AuthorizedUserHomeFragment.newInstance(user.getId());
+  private Fragment mHomeFragment;
+  private Fragment mHistoryFragment;
+  private String mCurrentFragmentName;
+
+  @NonNull private String setHomeFragmentName(Profile profile) {
+    if (profile != null) {
+      return FRAGMENT_HOME_AUTHORIZED;
     } else {
-      fragment = PublicUserHomeFragment.newInstance();
+      return FRAGMENT_HOME_PUBLIC;
+    }
+  }
+
+  private void updateMasterUserData(Profile user) {
+    final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    // 1. detach History fragment if there is
+    if ((mHistoryFragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_HISTORY))
+        != null) {
+      transaction.detach(mHistoryFragment);
     }
 
-    getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
+    // 2. attach or create home fragment
+    mCurrentFragmentName = setHomeFragmentName(user);
+    if ((mHomeFragment = getSupportFragmentManager()  //
+        .findFragmentByTag(mCurrentFragmentName)) != null) {
+      transaction.attach(mHomeFragment);
+    } else {
+      if (FRAGMENT_HOME_AUTHORIZED.equals(mCurrentFragmentName)) {
+        mHomeFragment = AuthorizedUserHomeFragment.newInstance(user.getId());
+      } else {
+        mHomeFragment = PublicUserHomeFragment.newInstance();
+      }
+
+      transaction.replace(R.id.container, mHomeFragment, mCurrentFragmentName);
+    }
+
+    // 3. commit transaction
+    transaction.commit();
+  }
+
+  private void showHistory() {
+    final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    // 1. detach current Home fragment if there is
+    mCurrentFragmentName = setHomeFragmentName(mMyProfile);
+    if ((mHomeFragment = getSupportFragmentManager()  //
+        .findFragmentByTag(mCurrentFragmentName)) != null) {
+      transaction.detach(mHomeFragment);
+    }
+
+    // 2. attach or create History fragment
+    if ((mHistoryFragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_HISTORY))
+        != null) {
+      transaction.attach(mHistoryFragment);
+    } else {
+      mHistoryFragment = HistoryFragment.newInstance();
+      transaction.replace(R.id.container, mHistoryFragment, FRAGMENT_HISTORY);
+    }
+
+    // 3. commit transaction
+    transaction.commit();
+  }
+
+  private void showHome() {
+    updateMasterUserData(mMyProfile);
   }
 
   private void updateMasterUserInfo(@Nullable Profile user) {
@@ -292,53 +359,7 @@ public class HomeActivity extends BaseActivity
     }
   }
 
-  private void getMasterUser(final String token) {
-    ApiClient.me().enqueue(new Callback<Profile>() {
-      @Override public void onResponse(Call<Profile> call, final Response<Profile> response) {
-        mMyProfile = response.body();
-        if (mMyProfile != null) {
-          mMyProfile.setToken(token);
-          // save to Realm
-          mTransactionTask = Attiq.realm().executeTransaction(new Realm.Transaction() {
-            @Override public void execute(Realm realm) {
-              realm.copyToRealmOrUpdate(mMyProfile);
-            }
-          }, new Realm.Transaction.Callback() {
-            @Override public void onSuccess() {
-              super.onSuccess();
-              EventBus.getDefault()
-                  .post(
-                      new ProfileEvent(HomeActivity.class.getSimpleName(), true, null, mMyProfile));
-            }
-
-            @Override public void onError(Exception e) {
-              super.onError(e);
-              EventBus.getDefault()
-                  .post(new ProfileEvent(HomeActivity.class.getSimpleName(), false,
-                          new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()),
-                          null));
-            }
-          });
-        } else {
-          EventBus.getDefault()
-              .post(new ProfileEvent(HomeActivity.class.getSimpleName(), false,
-                      new Event.Error(response.code(), response.message()), null));
-        }
-      }
-
-      @Override public void onFailure(Call<Profile> call, Throwable error) {
-        EventBus.getDefault()
-            .post(new ProfileEvent(HomeActivity.class.getSimpleName(), false,
-                    new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
-      }
-    });
-  }
-
   @Override protected void onDestroy() {
-    if (mTransactionTask != null && !mTransactionTask.isCancelled()) {
-      mTransactionTask.cancel();
-    }
-
     mOnTokenCallback = null;
     ButterKnife.unbind(this);
     super.onDestroy();
@@ -450,7 +471,6 @@ public class HomeActivity extends BaseActivity
     mMyPageMenuItem.setEnabled(true);
 
     // Check home button at startup
-    mNavigationView.setCheckedItem(R.id.nav_home);
 
     if (getSupportActionBar() != null) {
       getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -480,6 +500,18 @@ public class HomeActivity extends BaseActivity
     mMyPageMenuItem.setEnabled(false);
 
     if (getSupportActionBar() != null) {
+      getSupportActionBar().setTitle(R.string.app_name);
+      getSupportActionBar().setDisplayShowTitleEnabled(true);
+    }
+  }
+
+  @Override public void onHistoryShown(View root) {
+    if (mMainTabs != null) {
+      mToolBar.removeView(mMainTabs);
+    }
+
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setTitle(R.string.menu_item_history);
       getSupportActionBar().setDisplayShowTitleEnabled(true);
     }
   }

@@ -5,22 +5,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
-
+import im.ene.lab.attiq.data.model.two.Article;
+import im.ene.lab.attiq.data.model.two.User;
 import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.activities.ProfileActivity;
 import im.ene.lab.attiq.ui.adapters.ArticleListAdapter;
 import im.ene.lab.attiq.ui.adapters.ListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.TagItemsAdapter;
-import im.ene.lab.attiq.data.model.two.Article;
-import im.ene.lab.attiq.data.model.two.User;
-import im.ene.lab.attiq.util.AnalyticsUtil;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
+import java.util.List;
 import okhttp3.Headers;
 import retrofit2.Call;
 import retrofit2.Response;
-
-import java.util.List;
 
 /**
  * Created by eneim on 1/10/16.
@@ -41,13 +38,6 @@ public class TagItemsFragment extends ListFragment<Article> {
     args.putString(ARGS_TAG_ID, tagId);
     fragment.setArguments(args);
     return fragment;
-  }
-
-  @Override protected void onVisibilityChange(boolean isVisibleToUser) {
-    super.onVisibilityChange(isVisibleToUser);
-    if (isVisibleToUser) {
-      AnalyticsUtil.sendScreenView(SCREEN_NAME);
-    }
   }
 
   @Override public void onAttach(Context context) {

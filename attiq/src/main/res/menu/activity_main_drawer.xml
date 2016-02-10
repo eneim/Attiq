@@ -16,6 +16,10 @@
     <item
         android:id="@+id/nav_home"
         android:title="@string/menu_item_home"/>
+
+    <item
+        android:id="@+id/nav_history"
+        android:title="@string/menu_item_history"/>
   </group>
 
   <item

@@ -23,10 +23,8 @@ import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.util.AnalyticsUtil;
 
 /**
  * Created by eneim on 12/13/15.
@@ -72,10 +70,5 @@ public class AuthActivity extends AppCompatActivity {
     setContentView(webView);
     webView.setWebViewClient(mWebClient);
     webView.loadUrl(ApiClient.authCallback());
-  }
-
-  @Override protected void onResume() {
-    super.onResume();
-    AnalyticsUtil.sendScreenView(SCREEN_NAME);
   }
 }

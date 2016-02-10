@@ -1,4 +1,4 @@
-package im.ene.lab.attiq.data;
+package im.ene.lab.attiq.data.api;
 
 import retrofit2.Call;
 import retrofit2.Callback;

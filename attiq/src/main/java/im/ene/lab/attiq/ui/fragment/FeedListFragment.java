@@ -23,13 +23,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.mopub.common.MoPub;
 import com.mopub.nativeads.MoPubRecyclerAdapter;
 import com.mopub.nativeads.MoPubStaticNativeAdRenderer;
 import com.mopub.nativeads.RequestParameters;
 import com.mopub.nativeads.ViewBinder;
-
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
@@ -42,7 +40,6 @@ import im.ene.lab.attiq.ui.adapters.FeedListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
-import im.ene.lab.attiq.util.AnalyticsUtil;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
@@ -51,11 +48,10 @@ import im.ene.lab.attiq.util.event.ItemsEvent;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
+import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import java.util.List;
 
 /**
  * Created by eneim on 12/25/15.
@@ -66,13 +62,6 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
 
   public FeedListFragment() {
 
-  }
-
-  @Override protected void onVisibilityChange(boolean isVisibleToUser) {
-    super.onVisibilityChange(isVisibleToUser);
-    if (isVisibleToUser) {
-      AnalyticsUtil.sendScreenView(SCREEN_NAME);
-    }
   }
 
   public static FeedListFragment newInstance() {
