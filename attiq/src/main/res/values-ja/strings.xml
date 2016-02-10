@@ -88,4 +88,5 @@
   <string name="setting_mathjax">MathJaxで数式をレンダリング (BETA)</string>
   <string name="setting_mathjax_off">MathJaxが無効されている</string>
   <string name="setting_mathjax_on">MathJaxが有効されている</string>
+  <string name="menu_item_history">最近見た記事</string>
 </resources>

@@ -175,4 +175,5 @@
   <string name="setting_mathjax">Render Math forms by MathJax (BETA)</string>
   <string name="setting_mathjax_off">MathJax is Off</string>
   <string name="setting_mathjax_on">MathJax is On</string>
+  <string name="menu_item_history">History</string>
 </resources>

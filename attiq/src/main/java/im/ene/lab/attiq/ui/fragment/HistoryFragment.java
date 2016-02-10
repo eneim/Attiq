@@ -16,11 +16,11 @@
 
 package im.ene.lab.attiq.ui.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
-
 import im.ene.lab.attiq.data.model.local.ReadArticle;
 import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.two.User;
@@ -42,16 +42,25 @@ public class HistoryFragment extends RealmListFragment<ReadArticle> {
     return new HistoryFragment();
   }
 
+  private Callback mCallback;
+
+  @Override public void onAttach(Context context) {
+    super.onAttach(context);
+    if (context instanceof Callback) {
+      mCallback = (Callback) context;
+    }
+  }
+
   @NonNull @Override protected RealmListAdapter<ReadArticle> createRealmAdapter() {
-    RealmResults<ReadArticle> articles = mRealm.where(ReadArticle.class)
-        .findAllSorted(ReadArticle.FIELD_LAST_VIEW, Sort.DESCENDING);
+    RealmResults<ReadArticle> articles =
+        mRealm.where(ReadArticle.class).findAllSorted(ReadArticle.FIELD_LAST_VIEW, Sort.DESCENDING);
     return new HistoryAdapter(articles);
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-        DividerItemDecoration.VERTICAL_LIST));
+    mRecyclerView.addItemDecoration(
+        new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
 
     OnItemClickListener onArticleClickListener = new HistoryAdapter.OnArticleClickListener() {
       @Override public void onUserClick(User user) {
@@ -64,5 +73,19 @@ public class HistoryFragment extends RealmListFragment<ReadArticle> {
     };
 
     mAdapter.setOnItemClickListener(onArticleClickListener);
+
+    if (mCallback != null) {
+      mCallback.onHistoryShown(view);
+    }
+  }
+
+  @Override public void onDetach() {
+    mCallback = null;
+    super.onDetach();
+  }
+
+  public interface Callback {
+
+    void onHistoryShown(View root);
   }
 }

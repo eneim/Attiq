@@ -27,6 +27,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -52,11 +53,13 @@ import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.api.SuccessCallback;
+import im.ene.lab.attiq.data.model.local.ReadArticle;
 import im.ene.lab.attiq.data.model.local.StockArticle;
 import im.ene.lab.attiq.data.model.two.AccessToken;
 import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.data.model.zero.FeedItem;
 import im.ene.lab.attiq.ui.fragment.AuthorizedUserHomeFragment;
+import im.ene.lab.attiq.ui.fragment.HistoryFragment;
 import im.ene.lab.attiq.ui.fragment.PublicUserHomeFragment;
 import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import im.ene.lab.attiq.util.PrefUtil;
@@ -70,7 +73,7 @@ import retrofit2.Response;
 
 public class HomeActivity extends BaseActivity
     implements NavigationView.OnNavigationItemSelectedListener, PublicUserHomeFragment.Callback,
-    AuthorizedUserHomeFragment.Callback {
+    AuthorizedUserHomeFragment.Callback, HistoryFragment.Callback {
 
   private static final String TAG = "HomeActivity";
 
@@ -81,6 +84,13 @@ public class HomeActivity extends BaseActivity
    */
   private static final int REQUEST_CODE_LOGIN = 1;
   private static final int REQUEST_CODE_SEARCH = 1 << 1;
+
+  /**
+   * Fragment names
+   */
+  private final String FRAGMENT_HOME_PUBLIC = "fragment_home_public";
+  private final String FRAGMENT_HOME_AUTHORIZED = "fragment_home_authorized";
+  private final String FRAGMENT_HISTORY = "fragment_history";
 
   /**
    * Header child views
@@ -142,18 +152,28 @@ public class HomeActivity extends BaseActivity
       @Override protected void onDrawerClosedByMenu(View drawerView, @NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        if (id == R.id.nav_login) {
-          if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
-            login();
-          } else {
-            logout();
-          }
-        } else if (id == R.id.nav_profile) {
-          if (mMyProfile != null) {
-            startActivity(ProfileActivity.createIntent(HomeActivity.this, mMyProfile.getId()));
-          }
-        } else if (id == R.id.nav_setting) {
-          startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
+        switch (id) {
+          case R.id.nav_login:
+            if (UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
+              login();
+            } else {
+              logout();
+            }
+            break;
+          case R.id.nav_profile:
+            if (mMyProfile != null) {
+              startActivity(ProfileActivity.createIntent(HomeActivity.this, mMyProfile.getId()));
+            }
+            break;
+          case R.id.nav_setting:
+            startActivity(new Intent(HomeActivity.this, SettingsActivity.class));
+            break;
+          case R.id.nav_history:
+            showHistory();
+            break;
+          case R.id.nav_home:
+            showHome();
+            break;
         }
       }
     };
@@ -189,6 +209,7 @@ public class HomeActivity extends BaseActivity
     updateMasterUserInfo(mMyProfile);
 
     if (getSupportFragmentManager().findFragmentById(R.id.container) == null) {
+      mNavigationView.setCheckedItem(R.id.nav_home);
       updateMasterUserData(mMyProfile);
     }
   }
@@ -218,6 +239,7 @@ public class HomeActivity extends BaseActivity
             mRealm.clear(Profile.class);
             mRealm.clear(FeedItem.class);
             mRealm.clear(StockArticle.class);
+            mRealm.clear(ReadArticle.class);
             mRealm.commitTransaction();
 
             mMyProfile = null;
@@ -237,15 +259,69 @@ public class HomeActivity extends BaseActivity
         .show();
   }
 
-  private void updateMasterUserData(Profile user) {
-    Fragment fragment;
-    if (user != null && PrefUtil.getCurrentToken().equals(user.getToken())) {
-      fragment = AuthorizedUserHomeFragment.newInstance(user.getId());
+  private Fragment mHomeFragment;
+  private Fragment mHistoryFragment;
+  private String mCurrentFragmentName;
+
+  @NonNull private String setHomeFragmentName(Profile profile) {
+    if (profile != null) {
+      return FRAGMENT_HOME_AUTHORIZED;
     } else {
-      fragment = PublicUserHomeFragment.newInstance();
+      return FRAGMENT_HOME_PUBLIC;
+    }
+  }
+
+  private void updateMasterUserData(Profile user) {
+    final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    // 1. detach History fragment if there is
+    if ((mHistoryFragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_HISTORY))
+        != null) {
+      transaction.detach(mHistoryFragment);
     }
 
-    getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
+    // 2. attach or create home fragment
+    mCurrentFragmentName = setHomeFragmentName(user);
+    if ((mHomeFragment = getSupportFragmentManager()  //
+        .findFragmentByTag(mCurrentFragmentName)) != null) {
+      transaction.attach(mHomeFragment);
+    } else {
+      if (FRAGMENT_HOME_AUTHORIZED.equals(mCurrentFragmentName)) {
+        mHomeFragment = AuthorizedUserHomeFragment.newInstance(user.getId());
+      } else {
+        mHomeFragment = PublicUserHomeFragment.newInstance();
+      }
+
+      transaction.replace(R.id.container, mHomeFragment, mCurrentFragmentName);
+    }
+
+    // 3. commit transaction
+    transaction.commit();
+  }
+
+  private void showHistory() {
+    final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    // 1. detach current Home fragment if there is
+    mCurrentFragmentName = setHomeFragmentName(mMyProfile);
+    if ((mHomeFragment = getSupportFragmentManager()  //
+        .findFragmentByTag(mCurrentFragmentName)) != null) {
+      transaction.detach(mHomeFragment);
+    }
+
+    // 2. attach or create History fragment
+    if ((mHistoryFragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_HISTORY))
+        != null) {
+      transaction.attach(mHistoryFragment);
+    } else {
+      mHistoryFragment = HistoryFragment.newInstance();
+      transaction.replace(R.id.container, mHistoryFragment, FRAGMENT_HISTORY);
+    }
+
+    // 3. commit transaction
+    transaction.commit();
+  }
+
+  private void showHome() {
+    updateMasterUserData(mMyProfile);
   }
 
   private void updateMasterUserInfo(@Nullable Profile user) {
@@ -395,7 +471,6 @@ public class HomeActivity extends BaseActivity
     mMyPageMenuItem.setEnabled(true);
 
     // Check home button at startup
-    mNavigationView.setCheckedItem(R.id.nav_home);
 
     if (getSupportActionBar() != null) {
       getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -425,6 +500,18 @@ public class HomeActivity extends BaseActivity
     mMyPageMenuItem.setEnabled(false);
 
     if (getSupportActionBar() != null) {
+      getSupportActionBar().setTitle(R.string.app_name);
+      getSupportActionBar().setDisplayShowTitleEnabled(true);
+    }
+  }
+
+  @Override public void onHistoryShown(View root) {
+    if (mMainTabs != null) {
+      mToolBar.removeView(mMainTabs);
+    }
+
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setTitle(R.string.menu_item_history);
       getSupportActionBar().setDisplayShowTitleEnabled(true);
     }
   }
