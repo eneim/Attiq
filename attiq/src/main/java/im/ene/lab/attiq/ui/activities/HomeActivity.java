@@ -164,7 +164,9 @@ public class HomeActivity extends BaseActivity
             break;
           case R.id.nav_profile:
             if (mMyProfile != null) {
-              startActivity(ProfileActivity.createIntent(HomeActivity.this, mMyProfile.getId()));
+              if (PrefUtil.checkNetwork(HomeActivity.this)) {
+                startActivity(ProfileActivity.createIntent(HomeActivity.this, mMyProfile.getId()));
+              }
             }
             break;
           case R.id.nav_setting:
