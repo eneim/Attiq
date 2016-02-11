@@ -14,6 +14,7 @@ import im.ene.lab.attiq.ui.adapters.ListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.TagItemsAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
+import im.ene.lab.attiq.util.PrefUtil;
 import java.util.List;
 import okhttp3.Headers;
 import retrofit2.Call;
@@ -66,11 +67,15 @@ public class TagItemsFragment extends ListFragment<Article> {
 
     mOnItemClickListener = new ArticleListAdapter.OnArticleClickListener() {
       @Override public void onUserClick(User user) {
-        startActivity(ProfileActivity.createIntent(getContext(), user.getId()));
+        if (PrefUtil.checkNetwork(getContext())) {
+          startActivity(ProfileActivity.createIntent(getContext(), user.getId()));
+        }
       }
 
       @Override public void onItemContentClick(Article item) {
-        startActivity(ItemDetailActivity.createIntent(getContext(), item.getId()));
+        if (PrefUtil.checkNetwork(getContext())) {
+          startActivity(ItemDetailActivity.createIntent(getContext(), item.getId()));
+        }
       }
     };
 

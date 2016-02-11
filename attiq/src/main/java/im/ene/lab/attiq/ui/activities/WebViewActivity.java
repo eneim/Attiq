@@ -17,20 +17,34 @@
 package im.ene.lab.attiq.ui.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBar;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.util.PrefUtil;
+import im.ene.lab.attiq.util.UIUtil;
 
 /**
  * Created by eneim on 1/15/16.
  */
-public class WebViewActivity extends AppCompatActivity {
+public class WebViewActivity extends BaseActivity {
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      // Show the Up button in the action bar.
+      actionBar.setDisplayHomeAsUpEnabled(true);
+    }
     WebView mWebView = new WebView(this);
     setContentView(mWebView);
     mWebView.setWebChromeClient(new WebChromeClient());
-    mWebView.loadUrl(getIntent().getDataString().replace("attiq://helper.", "http://"));
+    if (PrefUtil.checkNetwork(this)) {
+      mWebView.loadUrl(getIntent().getDataString().replace("attiq://helper.", "http://"));
+    }
+  }
+
+  @Override protected int lookupTheme(UIUtil.Themes themes) {
+    return themes == UIUtil.Themes.DARK ? R.style.Attiq_Theme_Dark : R.style.Attiq_Theme_Light;
   }
 }

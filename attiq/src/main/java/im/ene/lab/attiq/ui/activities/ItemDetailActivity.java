@@ -65,8 +65,11 @@ import butterknife.Bind;
 import butterknife.BindDimen;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import de.greenrobot.event.EventBus;
+import im.ene.lab.attiq.BuildConfig;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.api.DocumentCallback;
@@ -241,9 +244,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     setTitle("");
 
     trySetupMenuDrawerLayout();
-
     trySetupContentView();
-
     trySetupCommentView();
 
     mAppBarLayout.addOnOffsetChangedListener(mOffsetChangedListener);
@@ -297,17 +298,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     // !IMPORTANT Don't call this.
     // It will change Toolbar's navi icon position, which is not what I want to do
     // toggle.syncState();
-  }
-
-  @SuppressWarnings("unused") @JavascriptInterface public void resize(final float height) {
-    Log.d(TAG, "resize() called with: " + "height = [" + height + "]");
-    this.runOnUiThread(new Runnable() {
-      @Override public void run() {
-        //mContentView.setLayoutParams(
-        //    new LinearLayout.LayoutParams(getResources().getDisplayMetrics().widthPixels,
-        //        (int) (height * getResources().getDisplayMetrics().density)));
-      }
-    });
   }
 
   private void trySetupContentView() {
@@ -379,8 +369,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
           mMenuLayout.closeDrawer(GravityCompat.END);
         }
         if (numberOfMatches > 0 && mMenuAnchor != null && mContentView != null) {
-          // mContentView.clearMatches();
-          // Suppose to jump to matched text
           // FIXME Doesn't work now, because WebView is staying inside ScrollView
           mContentView.loadUrl("javascript:scrollToElement(\"" + mMenuAnchor.text() + "\");");
         }
@@ -393,7 +381,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mCommentsView.setHorizontalScrollBarEnabled(false);
     mCommentsView.setWebViewClient(new WebViewClient() {
       @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        if (url != null && url.startsWith("attiq://qiita.com/comments")) {
+        if (url != null && url.startsWith(getString(R.string.uri_prefix_item_comments))) {
           Uri uri = Uri.parse(url);
           String commentId = uri.getQueryParameter("id");
           if ("patch".equals(uri.getLastPathSegment())) {
@@ -491,6 +479,30 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
       WebUtil.loadWeb(baseUrl).enqueue(mDocumentCallback);
     }
+  }
+
+  @Override protected void onStart() {
+    super.onStart();
+    Action viewAction = Action.newAction(Action.TYPE_VIEW,
+        getString(R.string.title_activity_item_detail),
+        // make sure this auto-generated web page URL is correct.
+        // Otherwise, set the URL to null.
+        Uri.parse("http://qiita.com"),
+        Uri.parse(getString(R.string.deep_link_article_detail, BuildConfig.APPLICATION_ID)));
+    AppIndex.AppIndexApi.start(mGoogleApiClient, viewAction);
+  }
+
+  @Override protected void onStop() {
+    // ATTENTION: This was auto-generated to implement the App Indexing API.
+    // See https://g.co/AppIndexing/AndroidStudio for more information.
+    Action viewAction = Action.newAction(Action.TYPE_VIEW,
+        getString(R.string.title_activity_item_detail),
+        // make sure this auto-generated web page URL is correct.
+        // Otherwise, set the URL to null.
+        Uri.parse("http://qiita.com"),
+        Uri.parse(getString(R.string.deep_link_article_detail, BuildConfig.APPLICATION_ID)));
+    AppIndex.AppIndexApi.end(mGoogleApiClient, viewAction);
+    super.onStop();
   }
 
   @Override protected void onDestroy() {
@@ -775,6 +787,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
 
   @SuppressWarnings("unused") public void onEventMainThread(ItemCommentsEvent event) {
     if (!UIUtil.isEmpty(event.comments)) {
+      mCommentsView.setVisibility(View.VISIBLE);
       List<Comment> comments = event.comments;
 
       mCommentCount.setText(comments.size() + "");
@@ -824,6 +837,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       mCommentCount.setText("0");
       mCommentInfo.setText(
           getString(R.string.article_comment, 0, getString(R.string.comment_plural)));
+      mCommentsView.setVisibility(View.GONE);
     }
   }
 
@@ -925,7 +939,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
           }
         }
       }, 150);
-
     }
 
     @Override public void onFailure(Call<Comment> call, Throwable t) {

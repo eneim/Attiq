@@ -184,6 +184,7 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
             userName, userName,
             TimeUtil.beautify(item.getCreatedAt())
         )));
+        UIUtil.stripUnderlines(mItemUserInfo, null, false);
         mItemUserInfo.setVisibility(View.VISIBLE);
       } else {
         mItemUserInfo.setVisibility(View.GONE);

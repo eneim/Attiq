@@ -20,6 +20,7 @@ import im.ene.lab.attiq.ui.activities.TagItemsActivity;
 import im.ene.lab.attiq.ui.adapters.ListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.UserTagsAdapter;
+import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemsEvent;
@@ -89,7 +90,9 @@ public class UserTagsFragment extends BaseFragment
 
     mOnItemClickListener = new UserTagsAdapter.OnTagClickListener() {
       @Override public void onTagClick(String tagName) {
-        startActivity(TagItemsActivity.createIntent(getContext(), tagName));
+        if (PrefUtil.checkNetwork(getContext())) {
+          startActivity(TagItemsActivity.createIntent(getContext(), tagName));
+        }
       }
     };
 

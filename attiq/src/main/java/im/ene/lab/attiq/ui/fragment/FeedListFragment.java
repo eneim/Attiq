@@ -41,6 +41,7 @@ import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 import im.ene.lab.attiq.util.IOUtil;
+import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemDetailEvent;
@@ -78,17 +79,19 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     @Override public void onResponse(Call<Article> call, Response<Article> response) {
       Article article = response.body();
       if (article != null) {
-        EventBus.getDefault().post(
-            new ItemDetailEvent(getClass().getSimpleName(), true, null, article));
+        EventBus.getDefault()
+            .post(new ItemDetailEvent(getClass().getSimpleName(), true, null, article));
       } else {
-        EventBus.getDefault().post(new ItemDetailEvent(getClass().getSimpleName(), false,
-            new Event.Error(response.code(), response.message()), null));
+        EventBus.getDefault()
+            .post(new ItemDetailEvent(getClass().getSimpleName(), false,
+                new Event.Error(response.code(), response.message()), null));
       }
     }
 
     @Override public void onFailure(Call<Article> call, Throwable t) {
-      EventBus.getDefault().post(new ItemDetailEvent(getClass().getSimpleName(), false,
-          new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
+      EventBus.getDefault()
+          .post(new ItemDetailEvent(getClass().getSimpleName(), false,
+              new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), null));
     }
   };
 
@@ -100,28 +103,33 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mMopubAdapter = new MoPubRecyclerAdapter(getActivity(), mAdapter);
-    ViewBinder viewBinder = new ViewBinder.Builder(NativeAdsView.LAYOUT_RES)
-        .titleId(NativeAdsView.AD_VIEW_TITLE)
-        .iconImageId(NativeAdsView.AD_VIEW_ICON)
-        .textId(NativeAdsView.AD_VIEW_TEXT)
-        .mainImageId(NativeAdsView.AD_VIEW_IMAGE)
-        .build();
+    ViewBinder viewBinder =
+        new ViewBinder.Builder(NativeAdsView.LAYOUT_RES).titleId(NativeAdsView.AD_VIEW_TITLE)
+            .iconImageId(NativeAdsView.AD_VIEW_ICON)
+            .textId(NativeAdsView.AD_VIEW_TEXT)
+            .mainImageId(NativeAdsView.AD_VIEW_IMAGE)
+            .build();
     MoPubStaticNativeAdRenderer adViewRenderer = new MoPubStaticNativeAdRenderer(viewBinder);
     mMopubAdapter.registerAdRenderer(adViewRenderer);
 
     // replace by mMopubAdapter
     mRecyclerView.setAdapter(mMopubAdapter);
-    mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-        DividerItemDecoration.VERTICAL_LIST));
+    mRecyclerView.addItemDecoration(
+        new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
 
     mOnItemClickListener = new FeedListAdapter.OnFeedItemClickListener() {
       @Override public void onMentionedUserClick(FeedItem host) {
-        Uri itemUri = Uri.parse(host.getMentionedObjectUrl());
-        ApiClient.itemDetail(itemUri.getLastPathSegment()).enqueue(mOnArticleLoaded);
+        if (PrefUtil.checkNetwork(getContext())) {
+          Uri itemUri = Uri.parse(host.getMentionedObjectUrl());
+          ApiClient.itemDetail(itemUri.getLastPathSegment()).enqueue(mOnArticleLoaded);
+        }
       }
 
       @Override public void onItemContentClick(FeedItem item) {
-        startActivity(ItemDetailActivity.createIntent(getContext(), item.getMentionedObjectUuid()));
+        if (PrefUtil.checkNetwork(getContext())) {
+          startActivity(
+              ItemDetailActivity.createIntent(getContext(), item.getMentionedObjectUuid()));
+        }
       }
     };
 
@@ -146,8 +154,7 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     super.onDestroyView();
   }
 
-  @SuppressWarnings("unused")
-  public void onEventMainThread(ItemDetailEvent event) {
+  @SuppressWarnings("unused") public void onEventMainThread(ItemDetailEvent event) {
     Article article = event.article;
     if (article != null && article.getUser() != null) {
       startActivity(ProfileActivity.createIntent(getContext(), article.getUser().getId()));
@@ -155,21 +162,23 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
   }
 
   @NonNull @Override protected RealmListAdapter<FeedItem> createRealmAdapter() {
-    RealmResults<FeedItem> items = mRealm.where(FeedItem.class)
-        .findAllSorted("createdAtInUnixtime", Sort.DESCENDING);
+    RealmResults<FeedItem> items =
+        mRealm.where(FeedItem.class).findAllSorted("createdAtInUnixtime", Sort.DESCENDING);
     return new FeedListWithAdsAdapter(items);
   }
 
   @Override public void onFailure(Call<List<FeedItem>> call, Throwable t) {
     super.onFailure(call, t);
-    EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
-        new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), 1));
+    EventBus.getDefault()
+        .post(new ItemsEvent(eventTag(), false,
+            new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), 1));
   }
 
   @Override public void onResponse(Call<List<FeedItem>> call, Response<List<FeedItem>> response) {
     if (response.code() != 200) {
-      EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
-          new Event.Error(response.code(), ApiClient.parseError(response).message), 1));
+      EventBus.getDefault()
+          .post(new ItemsEvent(eventTag(), false,
+              new Event.Error(response.code(), ApiClient.parseError(response).message), 1));
     } else {
       final List<FeedItem> items = response.body();
       if (!UIUtil.isEmpty(items)) {
@@ -182,13 +191,13 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
           }
         }, new Realm.Transaction.Callback() {
           @Override public void onSuccess() {
-            EventBus.getDefault().post(
-                new ItemsEvent(eventTag(), true, null, mPage));
+            EventBus.getDefault().post(new ItemsEvent(eventTag(), true, null, mPage));
           }
 
           @Override public void onError(Exception e) {
-            EventBus.getDefault().post(new ItemsEvent(eventTag(), false,
-                new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), mPage));
+            EventBus.getDefault()
+                .post(new ItemsEvent(eventTag(), false,
+                    new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), mPage));
           }
         });
       }
@@ -213,8 +222,7 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
       super(items);
     }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
       final ViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);
       viewHolder.setOnViewHolderClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
@@ -223,8 +231,8 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
             try {
               position = mMopubAdapter.getOriginalPosition(position);
               if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-                mOnItemClickListener.onItemClick(FeedListWithAdsAdapter.this,
-                    viewHolder, v, position, getItemId(position));
+                mOnItemClickListener.onItemClick(FeedListWithAdsAdapter.this, viewHolder, v,
+                    position, getItemId(position));
               }
             } catch (Exception er) {
               er.printStackTrace();

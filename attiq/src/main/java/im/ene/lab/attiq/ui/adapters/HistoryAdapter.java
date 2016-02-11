@@ -187,6 +187,7 @@ public class HistoryAdapter extends RealmListAdapter<ReadArticle> {
             userName, userName,
             TimeUtil.beautify(item.getCreatedAt())
         )));
+        UIUtil.stripUnderlines(mItemUserInfo, null, false);
         mItemUserInfo.setVisibility(View.VISIBLE);
       } else {
         mItemUserInfo.setVisibility(View.GONE);

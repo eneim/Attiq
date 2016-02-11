@@ -275,6 +275,7 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
                 item.getFollowableName())));
 
         infoText.setId(R.id.feed_view_id_info);
+        UIUtil.stripUnderlines(infoText, null, false);
         mItemIdentity.addView(infoText);
       } else if (FeedItem.TRACKABLE_TYPE_COMMENT.equals(item.getTrackableType())) {
         TextView infoText =
@@ -286,6 +287,7 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
                 item.getFollowableName())));
 
         infoText.setId(R.id.feed_view_id_info);
+        UIUtil.stripUnderlines(infoText, null, false);
         mItemIdentity.addView(infoText);
       } else if (FeedItem.TRACKABLE_TYPE_PUBLIC.equals(item.getTrackableType())) {
         TextView infoText =
@@ -299,6 +301,7 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
                 TimeUtil.beautify(item.getCreatedAtInUnixtime()))));
 
         infoText.setId(R.id.feed_view_id_info);
+        UIUtil.stripUnderlines(infoText, null, false);
         mItemIdentity.addView(infoText);
       } else {
         mItemIdentity.setVisibility(View.GONE);
@@ -335,6 +338,7 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
       mItemInfo.setText(Html.fromHtml(itemView.getContext()
               .getString(R.string.user_follow, item.getFollowableName(),
                   item.getFollowableName())));
+      UIUtil.stripUnderlines(mItemInfo, null, false);
 
       LinearLayoutCompat container = (LinearLayoutCompat) itemView;
       TextView itemName;
@@ -342,6 +346,7 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
         container.removeView(itemName);
       }
 
+      // User follows new tag
       if (FeedItem.TRACKABLE_TYPE_FOLLOW_TAG.equals(item.getTrackableType())) {
         itemName = (TextView) mInflater.inflate(R.layout.widget_tag_textview, container, false);
         itemName.setClickable(true);
@@ -372,8 +377,9 @@ public class FeedListAdapter extends RealmListAdapter<FeedItem> {
         itemName.setMovementMethod(LinkMovementMethod.getInstance());
 
         itemName.setText(Html.fromHtml(itemView.getContext()
-                .getString(R.string.user_name, item.getMentionedObjectName(),
-                    item.getMentionedObjectName())));
+            .getString(R.string.user_name, item.getMentionedObjectName(),
+                item.getMentionedObjectName())));
+        UIUtil.stripUnderlines(itemName, null, false);
 
         Attiq.picasso()
             .load(item.getMentionedObjectImageUrl())

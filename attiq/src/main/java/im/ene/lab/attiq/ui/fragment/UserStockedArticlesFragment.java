@@ -30,6 +30,7 @@ import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
 import im.ene.lab.attiq.ui.adapters.UserStockArticlesAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
+import im.ene.lab.attiq.util.PrefUtil;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -76,11 +77,15 @@ public class UserStockedArticlesFragment extends RealmListFragment<StockArticle>
     OnItemClickListener onArticleClickListener =
         new UserStockArticlesAdapter.OnArticleClickListener() {
           @Override public void onUserClick(User user) {
-            startActivity(ProfileActivity.createIntent(getContext(), user.getId()));
+            if (PrefUtil.checkNetwork(getContext())) {
+              startActivity(ProfileActivity.createIntent(getContext(), user.getId()));
+            }
           }
 
           @Override public void onItemContentClick(Article item) {
-            startActivity(ItemDetailActivity.createIntent(getContext(), item.getId()));
+            if (PrefUtil.checkNetwork(getContext())) {
+              startActivity(ItemDetailActivity.createIntent(getContext(), item.getId()));
+            }
           }
         };
 

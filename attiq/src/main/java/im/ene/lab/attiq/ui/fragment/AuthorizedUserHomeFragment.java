@@ -82,10 +82,6 @@ public class AuthorizedUserHomeFragment extends BaseFragment {
     }
   }
 
-  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
-    super.setUserVisibleHint(isVisibleToUser);
-  }
-
   public interface Callback {
 
     /**

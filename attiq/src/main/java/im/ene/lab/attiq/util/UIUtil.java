@@ -188,6 +188,10 @@ public class UIUtil {
     }
 
     @Override public void onClick(View widget) {
+      if (!PrefUtil.checkNetwork(widget.getContext())) {
+        return;
+      }
+
       URLSpan[] spans = ignoredUrl != null ? ignoredUrl.getSpans(0, ignoredUrl.length(),
           URLSpan.class) : null;
       boolean isClickable = true; // true at first

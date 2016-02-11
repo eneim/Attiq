@@ -12,6 +12,7 @@ import im.ene.lab.attiq.ui.adapters.ListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.UserArticlesAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
+import im.ene.lab.attiq.util.PrefUtil;
 
 /**
  * Created by eneim on 1/6/16.
@@ -56,11 +57,13 @@ public class UserItemsFragment extends ListFragment<Article> {
 
     mItemClickListener = new ArticleListAdapter.OnArticleClickListener() {
       @Override public void onUserClick(User user) {
-
+        // Do nothing
       }
 
       @Override public void onItemContentClick(Article item) {
-        startActivity(ItemDetailActivity.createIntent(getContext(), item.getId()));
+        if (PrefUtil.checkNetwork(getContext())) {
+          startActivity(ItemDetailActivity.createIntent(getContext(), item.getId()));
+        }
       }
     };
 

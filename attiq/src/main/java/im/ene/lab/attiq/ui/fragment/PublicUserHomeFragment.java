@@ -37,6 +37,7 @@ import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.PublicItemsAdapter;
 import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
+import im.ene.lab.attiq.util.PrefUtil;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -96,11 +97,15 @@ public class PublicUserHomeFragment extends RealmListFragment<PublicPost> {
 
     mItemClickListener = new PublicItemsAdapter.OnPublicItemClickListener() {
       @Override public void onUserClick(PublicUser user) {
-        startActivity(ProfileActivity.createIntent(getContext(), user.getUrlName()));
+        if (PrefUtil.checkNetwork(getContext())) {
+          startActivity(ProfileActivity.createIntent(getContext(), user.getUrlName()));
+        }
       }
 
       @Override public void onItemContentClick(PublicPost item) {
-        startActivity(ItemDetailActivity.createIntent(getContext(), item.getUuid()));
+        if (PrefUtil.checkNetwork(getContext())) {
+          startActivity(ItemDetailActivity.createIntent(getContext(), item.getUuid()));
+        }
       }
     };
 

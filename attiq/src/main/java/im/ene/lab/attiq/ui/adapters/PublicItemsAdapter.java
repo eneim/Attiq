@@ -217,6 +217,7 @@ public class PublicItemsAdapter extends RealmListAdapter<PublicPost> {
             userName, userName,
             TimeUtil.beautify(item.getCreatedAtAsSeconds())
         )));
+        UIUtil.stripUnderlines(mItemUserInfo, null, false);
         mItemUserInfo.setVisibility(View.VISIBLE);
       } else {
         mItemUserInfo.setVisibility(View.GONE);

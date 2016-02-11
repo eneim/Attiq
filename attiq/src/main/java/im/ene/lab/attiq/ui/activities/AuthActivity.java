@@ -18,18 +18,19 @@ package im.ene.lab.attiq.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
+import im.ene.lab.attiq.util.UIUtil;
 
 /**
  * Created by eneim on 12/13/15.
  */
-public class AuthActivity extends AppCompatActivity {
+public class AuthActivity extends BaseActivity {
 
   private static final String SCREEN_NAME = "attiq:activity:auth";
 
@@ -66,9 +67,18 @@ public class AuthActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      // Show the Up button in the action bar.
+      actionBar.setDisplayHomeAsUpEnabled(true);
+    }
     WebView webView = new WebView(this);
     setContentView(webView);
     webView.setWebViewClient(mWebClient);
     webView.loadUrl(ApiClient.authCallback());
+  }
+
+  @Override protected int lookupTheme(UIUtil.Themes themes) {
+    return themes == UIUtil.Themes.DARK ? R.style.Attiq_Theme_Dark : R.style.Attiq_Theme_Light;
   }
 }

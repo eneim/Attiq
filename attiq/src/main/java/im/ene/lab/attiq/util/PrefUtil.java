@@ -1,8 +1,14 @@
 package im.ene.lab.attiq.util;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import im.ene.lab.attiq.Attiq;
+import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.Header;
 import java.io.IOException;
 import okhttp3.Interceptor;
@@ -46,6 +52,33 @@ public final class PrefUtil {
 
   public static void setFirstStart(boolean isFirstStart) {
     Attiq.pref().edit().putBoolean(PREF_FIRST_START_FLAG, isFirstStart).apply();
+  }
+
+  public static boolean checkNetwork(Context context) {
+    if (!isNetworkOk()) {
+      new AlertDialog.Builder(context).setMessage(context.getString(R.string.message_no_network))
+          .setCancelable(false)
+          .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override public void onClick(DialogInterface dialog, int which) {
+              dialog.dismiss();
+            }
+          })
+          .create()
+          .show();
+      return false;
+    }
+
+    return true;
+  }
+
+  private static boolean isNetworkOk() {
+    final ConnectivityManager connectivityManager =
+        (ConnectivityManager) Attiq.creator().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+    boolean isNetworkConnected;
+    NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+    isNetworkConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    return isNetworkConnected;
   }
 
   /**

@@ -71,6 +71,7 @@ import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 import im.ene.lab.attiq.ui.widgets.EndlessScrollListener;
 import im.ene.lab.attiq.util.AnimUtil;
 import im.ene.lab.attiq.util.ImeUtil;
+import im.ene.lab.attiq.util.PrefUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import io.codetail.animation.ViewAnimationUtils;
 import java.util.List;
@@ -445,12 +446,14 @@ public class SearchActivity extends BaseActivity {
 
   private void searchFor(String query) {
     clearResults();
-    mProgress.setVisibility(View.VISIBLE);
-    ImeUtil.hideIme(mSearchView);
-    mSearchView.clearFocus();
-    mQuery = query;
-    mPage = 1;
-    mAdapter.loadItems(false, mPage, 99, mQuery, mSearchResultCallback);
+    if (PrefUtil.checkNetwork(this)) {
+      mProgress.setVisibility(View.VISIBLE);
+      ImeUtil.hideIme(mSearchView);
+      mSearchView.clearFocus();
+      mQuery = query;
+      mPage = 1;
+      mAdapter.loadItems(false, mPage, 99, mQuery, mSearchResultCallback);
+    }
   }
 
   @Override protected int lookupTheme(UIUtil.Themes themes) {

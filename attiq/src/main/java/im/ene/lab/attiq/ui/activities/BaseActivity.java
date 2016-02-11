@@ -27,6 +27,8 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
@@ -53,6 +55,12 @@ public abstract class BaseActivity extends AppCompatActivity
   protected Profile mMyProfile;
   protected BaseState mState;
 
+  /**
+   * ATTENTION: This was auto-generated to implement the App Indexing API.
+   * See https://g.co/AppIndexing/AndroidStudio for more information.
+   */
+  protected GoogleApiClient mGoogleApiClient;
+
   @Override protected void onCreate(Bundle savedInstanceState) {
     setTheme(lookupTheme(PrefUtil.getTheme()));
     super.onCreate(savedInstanceState);
@@ -66,6 +74,9 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     mState.isAuthorized = mMyProfile != null;
+    // ATTENTION: This was auto-generated to implement the App Indexing API.
+    // See https://g.co/AppIndexing/AndroidStudio for more information.
+    mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
   }
 
   // placeholder for EventBus
@@ -77,6 +88,18 @@ public abstract class BaseActivity extends AppCompatActivity
       PrefUtil.setCurrentToken(event.object.getToken());
       getMasterUser(event.object.getToken());
     }
+  }
+
+  @Override protected void onStart() {
+    super.onStart();
+    // ATTENTION: This was auto-generated to implement the App Indexing API.
+    // See https://g.co/AppIndexing/AndroidStudio for more information.
+    mGoogleApiClient.connect();
+  }
+
+  @Override protected void onStop() {
+    super.onStop();
+    mGoogleApiClient.disconnect();
   }
 
   @Override protected void onResume() {

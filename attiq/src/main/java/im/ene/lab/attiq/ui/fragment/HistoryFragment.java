@@ -30,6 +30,7 @@ import im.ene.lab.attiq.ui.adapters.HistoryAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
+import im.ene.lab.attiq.util.PrefUtil;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -57,22 +58,28 @@ public class HistoryFragment extends RealmListFragment<ReadArticle> {
     return new HistoryAdapter(articles);
   }
 
+  private OnItemClickListener mOnArticleClickListener;
+
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mRecyclerView.addItemDecoration(
         new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
 
-    OnItemClickListener onArticleClickListener = new HistoryAdapter.OnArticleClickListener() {
+    mOnArticleClickListener = new HistoryAdapter.OnArticleClickListener() {
       @Override public void onUserClick(User user) {
-        startActivity(ProfileActivity.createIntent(getContext(), user.getId()));
+        if (PrefUtil.checkNetwork(getContext())) {
+          startActivity(ProfileActivity.createIntent(getContext(), user.getId()));
+        }
       }
 
       @Override public void onItemContentClick(Article item) {
-        startActivity(ItemDetailActivity.createIntent(getContext(), item.getId()));
+        if (PrefUtil.checkNetwork(getContext())) {
+          startActivity(ItemDetailActivity.createIntent(getContext(), item.getId()));
+        }
       }
     };
 
-    mAdapter.setOnItemClickListener(onArticleClickListener);
+    mAdapter.setOnItemClickListener(mOnArticleClickListener);
 
     if (mCallback != null) {
       mCallback.onHistoryShown(view);
@@ -80,6 +87,7 @@ public class HistoryFragment extends RealmListFragment<ReadArticle> {
   }
 
   @Override public void onDetach() {
+    mOnArticleClickListener = null;
     mCallback = null;
     super.onDetach();
   }
