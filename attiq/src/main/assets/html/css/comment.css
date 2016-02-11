@@ -14,6 +14,10 @@ p {
   margin: 0;
 }
 
+.url_small {
+  font-size: 12px;
+}
+
 .message {
   font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;
   font-size: 13px;

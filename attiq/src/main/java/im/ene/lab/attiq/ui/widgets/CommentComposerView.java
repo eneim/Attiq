@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.widget.EditText;
-
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.util.ImeUtil;
@@ -42,12 +41,12 @@ public class CommentComposerView extends ViewPager {
 
   public CommentComposerView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    mComposerContainer = LayoutInflater.from(context)
-        .inflate(R.layout.comment_composer_edittext, this, false);
+    mComposerContainer =
+        LayoutInflater.from(context).inflate(R.layout.comment_composer_edittext, this, false);
     mComposer = (EditText) mComposerContainer.findViewById(R.id.composer);
 
-    mPreviewerContainer = LayoutInflater.from(context)
-        .inflate(R.layout.comment_composer_preview, this, false);
+    mPreviewerContainer =
+        LayoutInflater.from(context).inflate(R.layout.comment_composer_preview, this, false);
     mPreviewer = (MarkdownView) mPreviewerContainer.findViewById(R.id.previewer);
 
     mAdapter = new Adapter(mComposerContainer, mPreviewerContainer);
@@ -63,10 +62,8 @@ public class CommentComposerView extends ViewPager {
       @Override public boolean handleMessage(Message msg) {
         if (msg.what == MESSAGE_TEXT_CHANGED) {
           // Update preview
-          mPreviewer.loadMarkdown(
-              mComposer.getText().toString(),
-              "file:///android_asset/html/css/github.css"
-          );
+          mPreviewer.loadMarkdown(mComposer.getText().toString(),
+              "file:///android_asset/html/css/github.css");
         }
         return false;
       }
@@ -100,6 +97,13 @@ public class CommentComposerView extends ViewPager {
     }
   }
 
+  public void setCommentBody(String body) {
+    if (mComposer != null) {
+      mComposer.setText("");
+      mComposer.append(body);
+    }
+  }
+
   public View getCurrentView() {
     return findViewWithTag("comment_composer:adapter:view:" + getCurrentItem());
   }
@@ -119,8 +123,7 @@ public class CommentComposerView extends ViewPager {
   public static class Adapter extends PagerAdapter {
 
     private int[] TITLES = {
-        R.string.comment_tab_composer,
-        R.string.comment_tab_previewer
+        R.string.comment_tab_composer, R.string.comment_tab_previewer
     };
 
     private final View[] mViews;

@@ -129,7 +129,7 @@ public final class ApiClient {
   public static Call<AccessToken> accessToken(String code) {
     Resources resources = Attiq.creator().getResources();
     return sTwo.accessToken(new AccessTokenRequest(false, resources.getString(R.string.client_id),
-            resources.getString(R.string.client_secret), code));
+        resources.getString(R.string.client_secret), code));
   }
 
   public static Call<Profile> me() {
@@ -178,5 +178,13 @@ public final class ApiClient {
 
   public static Call<Comment> postComment(String itemId, String comment) {
     return sTwo.postComment(itemId, new PostCommentRequest(comment));
+  }
+
+  public static Call<Void> deleteComment(String commentId) {
+    return sTwo.deleteComment(commentId);
+  }
+
+  public static Call<Comment> patchComment(String commentId, String body) {
+    return sTwo.patchComment(commentId, new PostCommentRequest(body));
   }
 }

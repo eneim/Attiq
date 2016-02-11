@@ -48,8 +48,12 @@ import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
+import im.ene.lab.attiq.BuildConfig;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.api.SuccessCallback;
@@ -122,6 +126,11 @@ public class HomeActivity extends BaseActivity
       }
     }
   };
+  /**
+   * ATTENTION: This was auto-generated to implement the App Indexing API.
+   * See https://g.co/AppIndexing/AndroidStudio for more information.
+   */
+  private GoogleApiClient client;
 
   @SuppressWarnings("unused") @OnClick(R.id.header_auth_menu) void toggleAuthMenu() {
     if (mAuthMenuItem != null) {
@@ -176,10 +185,15 @@ public class HomeActivity extends BaseActivity
             break;
           case R.id.nav_about:
             // jump to Github
-            String url = "https://github.com/eneim/Attiq";
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(url));
-            startActivity(intent);
+            Intent about = new Intent(Intent.ACTION_VIEW);
+            about.setData(Uri.parse("https://github.com/eneim/Attiq-app"));
+            startActivity(about);
+            break;
+          case R.id.nav_feedback:
+            // https://gitter.im/eneim/Attiq-app
+            Intent feedback = new Intent(Intent.ACTION_VIEW);
+            feedback.setData(Uri.parse("https://gitter.im/eneim/Attiq-app"));
+            startActivity(feedback);
             break;
         }
       }
@@ -219,6 +233,9 @@ public class HomeActivity extends BaseActivity
       mNavigationView.setCheckedItem(R.id.nav_home);
       updateMasterUserData(mMyProfile);
     }
+    // ATTENTION: This was auto-generated to implement the App Indexing API.
+    // See https://g.co/AppIndexing/AndroidStudio for more information.
+    client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
   }
 
   private void login() {
@@ -521,6 +538,40 @@ public class HomeActivity extends BaseActivity
       getSupportActionBar().setTitle(R.string.menu_item_history);
       getSupportActionBar().setDisplayShowTitleEnabled(true);
     }
+  }
+
+  @Override public void onStart() {
+    super.onStart();
+
+    // ATTENTION: This was auto-generated to implement the App Indexing API.
+    // See https://g.co/AppIndexing/AndroidStudio for more information.
+    client.connect();
+    Action viewAction = Action.newAction(Action.TYPE_VIEW, // TODO: choose an action type.
+        "Home Page", // TODO: Define a title for the content shown.
+        // TODO: If you have web page content that matches this app activity's content,
+        // make sure this auto-generated web page URL is correct.
+        // Otherwise, set the URL to null.
+        Uri.parse("http://qiita.com"),
+        // TODO: Make sure this auto-generated app deep link URI is correct.
+        Uri.parse("android-app://" + BuildConfig.APPLICATION_ID + "/http/qiita.com"));
+    AppIndex.AppIndexApi.start(client, viewAction);
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+
+    // ATTENTION: This was auto-generated to implement the App Indexing API.
+    // See https://g.co/AppIndexing/AndroidStudio for more information.
+    Action viewAction = Action.newAction(Action.TYPE_VIEW, // TODO: choose an action type.
+        "Home Page", // TODO: Define a title for the content shown.
+        // TODO: If you have web page content that matches this app activity's content,
+        // make sure this auto-generated web page URL is correct.
+        // Otherwise, set the URL to null.
+        Uri.parse("http://qiita.com"),
+        // TODO: Make sure this auto-generated app deep link URI is correct.
+        Uri.parse("android-app://" + BuildConfig.APPLICATION_ID + "/http/qiita.com"));
+    AppIndex.AppIndexApi.end(client, viewAction);
+    client.disconnect();
   }
 
   private static class State extends BaseState {

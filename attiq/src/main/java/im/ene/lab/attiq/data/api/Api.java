@@ -16,6 +16,7 @@ import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -176,6 +177,16 @@ final class Api {
     // Success POST will return code 201
     @POST("/api/v2/items/{item_id}/comments") Call<Comment> postComment(
         @Path("item_id") String itemId,
+        @Body PostCommentRequest body
+    );
+
+    // Success code: 204
+    @DELETE("/api/v2/comments/{comment_id}") Call<Void> deleteComment(
+        @Path("comment_id") String commentId
+    );
+
+    @PATCH("/api/v2/comments/{comment_id}") Call<Comment> patchComment(
+        @Path("comment_id") String commentId,
         @Body PostCommentRequest body
     );
   }

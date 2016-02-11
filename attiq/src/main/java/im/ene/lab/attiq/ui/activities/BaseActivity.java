@@ -27,7 +27,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import com.batch.android.Batch;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
@@ -73,8 +72,7 @@ public abstract class BaseActivity extends AppCompatActivity
   @SuppressWarnings("unused") public void onEvent(Event event) {
   }
 
-  @SuppressWarnings("unused")
-  public void onEvent(AccessTokenEvent event) {
+  @SuppressWarnings("unused") public void onEvent(AccessTokenEvent event) {
     if (event.success && event.object != null) {
       PrefUtil.setCurrentToken(event.object.getToken());
       getMasterUser(event.object.getToken());
@@ -83,7 +81,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
   @Override protected void onResume() {
     super.onResume();
-    Batch.onStart(this);
+    // Batch.onStart(this);
     // Active EventBus only when User could see the UI
     EventBus.getDefault().register(this);
     if (mMyProfile == null && !UIUtil.isEmpty(PrefUtil.getCurrentToken())) {
@@ -136,7 +134,7 @@ public abstract class BaseActivity extends AppCompatActivity
   }
 
   @Override protected void onPause() {
-    Batch.onStop(this);
+    // Batch.onStop(this);
     EventBus.getDefault().unregister(this);
     super.onPause();
   }
@@ -258,5 +256,4 @@ public abstract class BaseActivity extends AppCompatActivity
     return themes == UIUtil.Themes.DARK ? R.style.Attiq_Theme_Dark_NoActionBar
         : R.style.Attiq_Theme_Light_NoActionBar;
   }
-
 }

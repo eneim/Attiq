@@ -18,6 +18,7 @@ package im.ene.lab.attiq.ui.activities;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -39,6 +40,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spannable;
@@ -66,9 +68,9 @@ import butterknife.OnClick;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.R;
+import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.api.DocumentCallback;
 import im.ene.lab.attiq.data.api.SuccessCallback;
-import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.local.ReadArticle;
 import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.two.Comment;
@@ -92,6 +94,8 @@ import im.ene.lab.support.widget.AppBarLayout;
 import im.ene.lab.support.widget.CollapsingToolbarLayout;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import org.jsoup.Jsoup;
@@ -387,6 +391,85 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   private void trySetupCommentView() {
     mCommentsView.setVerticalScrollBarEnabled(true);
     mCommentsView.setHorizontalScrollBarEnabled(false);
+    mCommentsView.setWebViewClient(new WebViewClient() {
+      @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
+        if (url != null && url.startsWith("attiq://qiita.com/comments")) {
+          Uri uri = Uri.parse(url);
+          String commentId = uri.getQueryParameter("id");
+          if ("patch".equals(uri.getLastPathSegment())) {
+            patchComment(commentId);
+          } else if ("delete".equals(uri.getLastPathSegment())) {
+            deleteComment(commentId);
+          }
+          return true;
+        }
+
+        return super.shouldOverrideUrlLoading(view, url);
+      }
+    });
+  }
+
+  private void patchComment(String id) {
+    mIsPatchingComment = true;
+    mPatchCommentId = id;
+    Comment comment = null;
+    Iterator<Comment> iterator = mComments.iterator();
+    while (iterator.hasNext()) {
+      comment = iterator.next();
+      if (id.equals(comment.getId())) {
+        iterator.remove();
+        break;
+      }
+    }
+
+    if (comment != null) {
+      final String currentBody = comment.getBody();
+      mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+      mHandler.postDelayed(new Runnable() {
+        @Override public void run() {
+          mCommentComposer.setCommentBody((currentBody + "").trim());
+        }
+      }, 150);
+    }
+  }
+
+  private void deleteComment(final String id) {
+    new AlertDialog.Builder(this).setMessage(getString(R.string.message_delete_comment))
+        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        })
+        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+          @Override public void onClick(DialogInterface dialog, final int which) {
+            ApiClient.deleteComment(id).enqueue(new Callback<Void>() {
+              @Override public void onResponse(Call<Void> call, Response<Void> response) {
+                // Success
+                if (response.code() == 204 && !UIUtil.isEmpty(mComments)) {
+                  Iterator<Comment> iterator = mComments.iterator();
+                  while (iterator.hasNext()) {
+                    Comment comment = iterator.next();
+                    if (id.equals(comment.getId())) {
+                      iterator.remove();
+                      break;
+                    }
+                  }
+                }
+
+                EventBus.getDefault().post(new ItemCommentsEvent(true, null, mComments));
+              }
+
+              @Override public void onFailure(Call<Void> call, Throwable t) {
+                EventBus.getDefault()
+                    .post(new ItemCommentsEvent(false,
+                        new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()),
+                        mComments));
+              }
+            });
+          }
+        })
+        .create()
+        .show();
   }
 
   @Override protected void onResume() {
@@ -441,6 +524,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   }
 
   @SuppressWarnings("unused") @OnClick(R.id.item_comments) void commentArticle() {
+    mIsPatchingComment = false;
     mAppBarLayout.setExpanded(false, true);
     mHandler.postDelayed(new Runnable() {
       @Override public void run() {
@@ -452,19 +536,22 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @SuppressWarnings("unused") @OnClick(R.id.btn_close) void cancelComment() {
     ImeUtil.hideIme(mCommentComposer);
     mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-    mHandler.postDelayed(new Runnable() {
-      @Override public void run() {
-        Snackbar.make(mContentView, R.string.notify_comment_saved, Snackbar.LENGTH_LONG).show();
-      }
-    }, 250);
+    mIsPatchingComment = false;
   }
+
+  private boolean mIsPatchingComment = false;
+  private String mPatchCommentId = null;
 
   @SuppressWarnings("unused") @OnClick(R.id.btn_submit) void summitComment() {
     ImeUtil.hideIme(mCommentComposer);
     String comment = mCommentComposer.getComment();
     mCommentComposer.clearComment();
     if (!UIUtil.isEmpty(comment)) {
-      ApiClient.postComment(mItemUuid, comment).enqueue(mCommentCallback);
+      if (!mIsPatchingComment) {
+        ApiClient.postComment(mItemUuid, comment).enqueue(mCommentCallback);
+      } else {
+        ApiClient.patchComment(mPatchCommentId, comment).enqueue(mCommentCallback);
+      }
     }
     ImeUtil.hideIme(mCommentComposer);
     mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
@@ -589,6 +676,13 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       @Override
       public void onResponse(Call<ArrayList<Comment>> call, Response<ArrayList<Comment>> response) {
         mComments = response.body();
+        Collections.sort(mComments, new Comparator<Comment>() {
+          @Override public int compare(Comment lhs, Comment rhs) {
+            return (int) (TimeUtil.itemTimeEpochV2(lhs.getCreatedAt()) - TimeUtil.itemTimeEpochV2(
+                rhs.getCreatedAt()));
+          }
+        });
+
         if (mComments != null) {
           EventBus.getDefault().post(new ItemCommentsEvent(true, null, mComments));
         } else {
@@ -680,13 +774,14 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   }
 
   @SuppressWarnings("unused") public void onEventMainThread(ItemCommentsEvent event) {
-    if (event.success && !UIUtil.isEmpty(event.comments)) {
+    if (!UIUtil.isEmpty(event.comments)) {
       List<Comment> comments = event.comments;
 
       mCommentCount.setText(comments.size() + "");
 
       String info = comments.size() == 1 ? getString(R.string.comment_singular)
           : getString(R.string.comment_plural);
+      // FIXME should use plural strings
       mCommentInfo.setText(getString(R.string.article_comment, comments.size(), info));
 
       final String html;
@@ -701,13 +796,22 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
           commentHtml =
               commentHtml.replace("{user_icon_url}", comment.getUser().getProfileImageUrl())
                   .replace("{user_name}", comment.getUser().getId())
-                  .replace("{comment_time}", TimeUtil.commentTime(comment.getUpdatedAt()))
+                  .replace("{comment_time}", TimeUtil.commentTime(comment.getCreatedAt()))
                   .replace("{article_uuid}", mItemUuid)
                   .replace("{comment_id}", comment.getId());
 
           Document commentDoc = Jsoup.parse(commentHtml);
           Element eComment = commentDoc.getElementsByClass("comment-box").first();
           eComment.getElementsByClass("message").first().append(comment.getRenderedBody());
+          // remove comment edit block if it is not from current user
+          if (mMyProfile == null || !mMyProfile.getId().equals(comment.getUser().getId())) {
+            String commentId =
+                "comment_{comment_id}_{user_name}".replace("{comment_id}", comment.getId())
+                    .replace("{user_name}", comment.getUser().getId());
+            Element commentEditor = commentDoc.getElementById(commentId);
+            commentEditor.remove();
+          }
+
           content.appendChild(eComment);
         }
 
@@ -797,17 +901,38 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       EventBus.getDefault().post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
     }
   };
-  private Callback<Comment> mCommentCallback = new SuccessCallback<Comment>() {
+  private Callback<Comment> mCommentCallback = new Callback<Comment>() {
     @Override public void onResponse(Call<Comment> call, Response<Comment> response) {
+      mIsPatchingComment = false;
       Comment newComment = response.body();
       if (newComment != null) {
-        mComments.add(0, newComment);
-      }
-      if (mCommentScrollView != null && mCommentInfo != null) {
-        mCommentScrollView.scrollTo(mCommentInfo.getTop(), 0);
+        mComments.add(newComment);
       }
 
+      Collections.sort(mComments, new Comparator<Comment>() {
+        @Override public int compare(Comment lhs, Comment rhs) {
+          return (int) (TimeUtil.itemTimeEpochV2(lhs.getCreatedAt()) - TimeUtil.itemTimeEpochV2(
+              rhs.getCreatedAt()));
+        }
+      });
+
       EventBus.getDefault().post(new ItemCommentsEvent(true, null, mComments));
+
+      mHandler.postDelayed(new Runnable() {
+        @Override public void run() {
+          if (mCommentScrollView != null && mCommentInfo != null) {
+            mCommentScrollView.scrollTo(mCommentInfo.getTop(), 0);
+          }
+        }
+      }, 150);
+
+    }
+
+    @Override public void onFailure(Call<Comment> call, Throwable t) {
+      mIsPatchingComment = false;
+      EventBus.getDefault()
+          .post(new ItemCommentsEvent(false,
+              new Event.Error(Event.Error.ERROR_UNKNOWN, t.getLocalizedMessage()), mComments));
     }
   };
 

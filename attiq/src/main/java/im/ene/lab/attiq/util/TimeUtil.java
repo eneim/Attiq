@@ -50,6 +50,10 @@ public class TimeUtil {
     return parsedTime.format(YYYY_M_DD_EEE_HH_mm);
   }
 
+  public static long itemTimeEpochV2(String time) {
+    return ZonedDateTime.parse(time, API_V2_TIME_FORMAT).toEpochSecond();
+  }
+
   public static Long epochV2(String time) {
     ZonedDateTime parsedTime = ZonedDateTime.parse(time, API_V2_TIME_FORMAT);
     return parsedTime.toEpochSecond();

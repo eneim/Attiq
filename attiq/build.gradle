@@ -191,6 +191,7 @@ dependencies {
   compile "com.google.android.gms:play-services-gcm:${service_version}"
   compile "com.google.android.gms:play-services-analytics:${service_version}"
   // compile "com.google.android.gms:play-services-ads:${service_version}"
+  compile "com.google.android.gms:play-services-appindexing:${service_version}"
 
   compile "com.android.support:support-v4:${support_libraries_version}"
   compile "com.android.support:appcompat-v7:${support_libraries_version}"
@@ -238,7 +239,7 @@ dependencies {
     transitive = true;
   }
 
-  compile 'com.batch.android:batch-sdk:1.5.2'
+  // compile 'com.batch.android:batch-sdk:1.5.2'
 }
 
 apply plugin: 'com.google.gms.google-services'

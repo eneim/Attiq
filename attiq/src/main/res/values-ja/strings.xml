@@ -89,4 +89,5 @@
   <string name="setting_mathjax_off">MathJaxが無効されている</string>
   <string name="setting_mathjax_on">MathJaxが有効されている</string>
   <string name="menu_item_history">最近見た記事</string>
+  <string name="message_delete_comment">コメントを削除します。よろしくでしょうか？</string>
 </resources>

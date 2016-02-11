@@ -33,4 +33,6 @@
     <item quantity="other">@string/user_connection_items</item>
   </plurals>
 
+  <string name="item_comment_delete">attiq://qiita.com/comments/%1$s/delete</string>
+  <string name="item_comment_patch">attiq://qiita.com/comments/%1$s/patch</string>
 </resources>
