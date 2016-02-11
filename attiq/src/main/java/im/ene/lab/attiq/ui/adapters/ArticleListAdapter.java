@@ -172,6 +172,11 @@ public abstract class ArticleListAdapter extends ListAdapter<Article> {
       mIconBorderColor = typedValue.resourceId;
     }
 
+    @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {
+      super.setOnViewHolderClickListener(listener);
+      mItemUserImage.setOnClickListener(listener);
+    }
+
     @Override public void bind(final Article item) {
       if (item.getUser() != null) {
         String userName = item.getUser().getId();

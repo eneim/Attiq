@@ -436,7 +436,7 @@ public class HomeActivity extends BaseActivity
       if (event.profile != null && PrefUtil.getCurrentToken().equals(event.profile.getToken())) {
         if (PrefUtil.isFirstStart()) {
           PrefUtil.setFirstStart(false);
-          Toast.makeText(HomeActivity.this, "おはようございます", Toast.LENGTH_SHORT).show();
+          Toast.makeText(HomeActivity.this, R.string.text_welcome, Toast.LENGTH_SHORT).show();
           mDrawerLayout.openDrawer(GravityCompat.START);
         }
 

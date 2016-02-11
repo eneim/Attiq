@@ -95,11 +95,6 @@ public class UserArticlesAdapter extends ArticleListAdapter {
       );
     }
 
-    @Override public void setOnViewHolderClickListener(View.OnClickListener listener) {
-      super.setOnViewHolderClickListener(listener);
-      mItemUserImage.setOnClickListener(listener);
-    }
-
     @Override public void bind(Article item) {
       if (item.getUser() != null) {
         String userName = item.getUser().getId();
