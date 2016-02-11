@@ -1,4 +1,4 @@
-Copyright $today.year eneim@Eneim Labs, nam@ene.im
+Copyright 2016 eneim@Eneim Labs, nam@ene.im
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
