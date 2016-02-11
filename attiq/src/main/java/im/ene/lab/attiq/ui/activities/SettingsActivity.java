@@ -142,7 +142,7 @@ public class SettingsActivity extends BaseActivity {
           }
         };
 
-    private Preference.OnPreferenceChangeListener mOnThemeSettingClick =
+    private Preference.OnPreferenceChangeListener mOnThemeSettingChange =
         new Preference.OnPreferenceChangeListener() {
 
           @Override public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -168,8 +168,8 @@ public class SettingsActivity extends BaseActivity {
       super.onCreate(savedInstanceState);
       addPreferencesFromResource(R.xml.pref_general);
 
-      findPreference(PrefUtil.PREF_APP_THEME).setOnPreferenceChangeListener(mOnThemeSettingClick);
-      mOnThemeSettingClick.onPreferenceChange(findPreference(PrefUtil.PREF_APP_THEME),
+      findPreference(PrefUtil.PREF_APP_THEME).setOnPreferenceChangeListener(mOnThemeSettingChange);
+      mOnThemeSettingChange.onPreferenceChange(findPreference(PrefUtil.PREF_APP_THEME),
           PrefUtil.getTheme());
 
       findPreference(PrefUtil.PREF_TRIGGER_MATHJAX).setOnPreferenceChangeListener(
