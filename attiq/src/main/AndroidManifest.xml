@@ -6,20 +6,10 @@
 
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+  <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>-->
 
   <uses-permission android:name="android.permission.WAKE_LOCK"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
-  <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-  <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
-
-  <uses-permission android:name="com.android.vending.BILLING"/>
-
-  <permission
-      android:name="${applicationId}.permission.C2D_MESSAGE"
-      android:protectionLevel="signature"/>
-  <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE"/>
 
   <supports-screens
       android:largestWidthLimitDp="600"
@@ -177,19 +167,6 @@
         android:name="com.google.android.gms.version"
         android:value="@integer/google_play_services_version"/>
 
-    <!--<activity-->
-    <!--android:configChanges="keyboardHidden|orientation|screenSize"-->
-    <!--android:name="com.mopub.mobileads.MoPubActivity"/>-->
-    <!--<activity-->
-    <!--android:configChanges="keyboardHidden|orientation|screenSize"-->
-    <!--android:name="com.mopub.mobileads.MraidActivity"/>-->
-    <!--<activity-->
-    <!--android:configChanges="keyboardHidden|orientation|screenSize"-->
-    <!--android:name="com.mopub.common.MoPubBrowser"/>-->
-    <!--<activity-->
-    <!--android:configChanges="keyboardHidden|orientation|screenSize"-->
-    <!--android:name="com.mopub.mobileads.MraidVideoPlayerActivity"/>-->
-
     <!-- Optionally, register AnalyticsReceiver and AnalyticsService to support background
           dispatching on non-Google Play devices -->
     <receiver
@@ -215,18 +192,6 @@
     </receiver>
 
     <service android:name="com.google.android.gms.analytics.CampaignTrackingService"/>
-
-    <!-- Batch.com -->
-    <service android:name="com.batch.android.BatchPushService"/>
-
-    <receiver
-        android:name="com.batch.android.BatchPushReceiver"
-        android:permission="com.google.android.c2dm.permission.SEND">
-      <intent-filter>
-        <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-        <category android:name="${applicationId}"/>
-      </intent-filter>
-    </receiver>
 
   </application>
 
