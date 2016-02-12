@@ -14,13 +14,13 @@
   <application
       android:allowBackup="false"
       android:icon="@mipmap/ic_launcher"
-      android:label="@string/app_name"
+      android:label="@string/app__name"
       android:name=".Attiq"
       android:supportsRtl="true"
       tools:replace="android:allowBackup">
 
     <activity
-        android:label="@string/app_name"
+        android:label="@string/app__name"
         android:launchMode="singleTop"
         android:name=".ui.activities.LaunchActivity"
         android:screenOrientation="portrait"
