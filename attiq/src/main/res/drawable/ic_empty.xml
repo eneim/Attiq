@@ -1,0 +1,33 @@
+<!--
+  ~ Copyright 2016 eneim@Eneim Labs, nam@ene.im
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="128dp"
+    android:viewportHeight="32.0"
+    android:viewportWidth="32.0"
+    android:width="128dp">
+  <path
+      android:fillColor="#C6C6C6"
+      android:pathData="M0,19C0,16.78 1.21,14.84 3,13.8C3.11,8.92 7.1,5 12,5C15.23,5 18.07,6.71 19.66,9.27C20.24,9.09 20.86,9 21.5,9C24.28,9 26.66,10.75 27.59,13.21C30.13,13.91 32,16.24 32,19C32,22.31 29.31,25 26,25L6,25C2.69,25 0,22.31 0,19ZM25.97,15C25.72,12.75 23.82,11 21.5,11C20.44,11 19.47,11.36 18.7,11.97C17.83,9.1 15.16,7 12,7C8.13,7 5,10.13 5,14C5,14.38 5.03,14.74 5.09,15.1C3.32,15.52 2,17.11 2,19C2,21.21 3.79,23 6,23L26,23C28.21,23 30,21.2 30,19C30,16.79 28.21,15 26,15ZM25.97,15"
+      android:strokeColor="#00000000"
+      android:strokeWidth="1"/>
+  <path
+      android:fillColor="#FAFF00"
+      android:pathData="M21,4C20.44,4 20,3.55 20,2.99L20,1.01C20,0.44 20.45,0 21,0C21.56,0 22,0.45 22,1.01L22,2.99C22,3.56 21.55,4 21,4ZM25.95,6.05C25.56,5.66 25.56,5.02 25.96,4.63L27.36,3.23C27.76,2.83 28.39,2.83 28.78,3.22C29.17,3.62 29.17,4.25 28.77,4.64L27.37,6.04C26.97,6.44 26.34,6.44 25.95,6.05ZM17.01,6.52C18.07,5.57 19.47,5 21,5C24.31,5 27,7.69 27,11C27,11.31 26.98,11.62 26.93,11.92C25.77,10.16 23.77,9 21.5,9C20.86,9 20.24,9.09 19.66,9.27C18.98,8.17 18.07,7.24 17.01,6.52ZM28,11C28,10.45 28.46,10 29.01,10L30.99,10C31.56,10 32,10.45 32,11C32,11.56 31.55,12 30.99,12L29.01,12C28.45,12 28,11.56 28,11ZM28,11"
+      android:strokeColor="#00000000"
+      android:strokeWidth="1"/>
+</vector>

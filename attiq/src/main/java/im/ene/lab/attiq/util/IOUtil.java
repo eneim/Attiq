@@ -8,7 +8,7 @@ import com.google.gson.GsonBuilder;
 import android.content.res.AssetManager;
 
 import im.ene.lab.attiq.Attiq;
-import im.ene.lab.attiq.data.zero.FeedItem;
+import im.ene.lab.attiq.data.model.zero.FeedItem;
 import io.realm.RealmObject;
 import okio.BufferedSource;
 import okio.Okio;
@@ -19,6 +19,8 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Created by eneim on 12/13/15.
@@ -26,6 +28,10 @@ import java.security.NoSuchAlgorithmException;
 public class IOUtil {
 
   private static final Gson GSON;
+
+  public static final String LICENSES = "licenses";
+
+  public static final String RESOURCES = "resources";
 
   static {
     GSON = new GsonBuilder()
@@ -54,29 +60,63 @@ public class IOUtil {
   }
 
   public static String readAssets(String fileName) throws IOException {
-    AssetManager assetManager = Attiq.creator().getResources().getAssets();
+    AssetManager assetManager = Attiq.creator().getAssets();
     InputStream stream = assetManager.open(fileName);
     BufferedSource buffer = Okio.buffer(Okio.source(stream));
     return buffer.readString(Charset.forName("utf-8"));
   }
 
+  public static String readAssetFolder(String folder) throws IOException {
+    final StringBuilder stringBuilder = new StringBuilder();
+    AssetManager assetManager = Attiq.creator().getAssets();
+    String[] files = assetManager.list(folder);
+    if (files != null && files.length > 0) {
+      Iterator<String> filesIterator = Arrays.asList(files).iterator();
+      String divider = "\n\n---\n\n";
+      while (filesIterator.hasNext()) {
+        stringBuilder.append(readAssets(folder + "/" + filesIterator.next()));
+        if (filesIterator.hasNext()) {
+          stringBuilder.append(divider);
+        }
+      }
+    }
+
+    return stringBuilder.toString();
+  }
+
+  // Since RealmObject doesn't support toString()
   public static String toString(FeedItem item) {
-    return "FeedItem{" +
-        "createdAtInUnixtime=" + item.getCreatedAtInUnixtime() +
-        ", createdAtInWords='" + item.getCreatedAtInWords() + '\'' +
-        ", followableImageUrl='" + item.getFollowableImageUrl() + '\'' +
-        ", followableName='" + item.getFollowableName() + '\'' +
-        ", followableType='" + item.getFollowableType() + '\'' +
-        ", followableUrl='" + item.getFollowableUrl() + '\'' +
-        ", mentionedObjectBody='" + item.getMentionedObjectBody() + '\'' +
-        ", mentionedObjectCommentsCount=" + item.getMentionedObjectCommentsCount() +
-        ", mentionedObjectImageUrl='" + item.getMentionedObjectImageUrl() + '\'' +
-        ", mentionedObjectName='" + item.getMentionedObjectName() + '\'' +
-        ", mentionedObjectStocksCount=" + item.getMentionedObjectStocksCount() +
-        ", mentionedObjectUrl='" + item.getMentionedObjectUrl() + '\'' +
-        // ", mentionedObjectUuid='" + item.getMentionedObjectUuid() + '\'' +
-        ", trackableType='" + item.getTrackableType() + '\'' +
+    return "item{" +
+        ", f_image='" + item.getFollowableImageUrl() + '\'' +
+        ", f_name='" + item.getFollowableName() + '\'' +
+        ", f_type='" + item.getFollowableType() + '\'' +
+        ", f_url='" + item.getFollowableUrl() + '\'' +
+        ", m_body='" + item.getMentionedObjectBody() + '\'' +
+        ", m_comments=" + item.getMentionedObjectCommentsCount() +
+        ", m_image='" + item.getMentionedObjectImageUrl() + '\'' +
+        ", m_name='" + item.getMentionedObjectName() + '\'' +
+        ", m_stock=" + item.getMentionedObjectStocksCount() +
+        ", m_url='" + item.getMentionedObjectUrl() + '\'' +
+        ", track='" + item.getTrackableType() + '\'' +
         '}';
+  }
+
+  private static final String TAG = "IOUtil";
+
+  public static int hashCode(FeedItem item) {
+    int result = item.getCreatedAtInUnixtime().hashCode();
+    result = 31 * result + item.getFollowableImageUrl().hashCode();
+    result = 31 * result + item.getFollowableName().hashCode();
+    result = 31 * result + item.getFollowableType().hashCode();
+    result = 31 * result + item.getFollowableUrl().hashCode();
+    result = 31 * result + (item.getMentionedObjectImageUrl() != null ?
+        item.getMentionedObjectImageUrl().hashCode() : 0);
+    result = 31 * result + item.getMentionedObjectName().hashCode();
+    result = 31 * result + item.getMentionedObjectUrl().hashCode();
+    result = 31 * result + (item.getMentionedObjectUuid() != null ?
+        item.getMentionedObjectUuid().hashCode() : 0);
+    result = 31 * result + item.getTrackableType().hashCode();
+    return result;
   }
 
   public static String sha1(String text) throws NoSuchAlgorithmException,

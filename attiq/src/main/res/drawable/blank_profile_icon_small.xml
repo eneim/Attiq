@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item>
-        <shape android:shape="oval">
-            <size
-                android:width="@dimen/item_icon_size_small"
-                android:height="@dimen/item_icon_size_small"/>
-            <corners android:radius="@dimen/item_icon_size_small_half"/>
+  <item>
+    <shape android:shape="oval">
+      <size
+          android:height="@dimen/item_icon_size_small"
+          android:width="@dimen/item_icon_size_small"/>
+      <corners android:radius="@dimen/item_icon_size_small_half"/>
 
-            <stroke
-                android:width="@dimen/dimen_unit"
-                android:color="#aaaaaa"/>
-        </shape>
-    </item>
+      <stroke
+          android:color="#aaaaaa"
+          android:width="@dimen/dimen_unit"/>
+    </shape>
+  </item>
 
-    <item
-        android:drawable="@drawable/ic_smile_ninja_48dp">
-    </item>
+  <item
+      android:drawable="@drawable/ic_smile_ninja_48dp">
+  </item>
 </layer-list>

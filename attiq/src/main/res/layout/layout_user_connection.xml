@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rectangle_background"
+    android:baselineAligned="false"
+    android:divider="@drawable/divider_horizontal_line"
+    android:orientation="horizontal"
+    android:showDividers="middle"
+    >
+
+  <android.support.design.internal.ForegroundLinearLayout
+      android:id="@+id/user_item_count_container"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      android:orientation="vertical"
+      android:padding="@dimen/item_icon_padding"
+      >
+
+    <TextView
+        android:id="@+id/user_item_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        tools:text="1234"
+        />
+
+    <TextView
+        android:id="@+id/user_item_count_quantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/user_connection_items"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        />
+
+  </android.support.design.internal.ForegroundLinearLayout>
+
+  <android.support.design.internal.ForegroundLinearLayout
+      android:id="@+id/user_follower_count_container"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      android:orientation="vertical"
+      android:padding="@dimen/item_icon_padding"
+      >
+
+    <TextView
+        android:id="@+id/user_follower_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        tools:text="1234"
+        />
+
+    <TextView
+        android:id="@+id/user_follower_count_quantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/user_connection_followers"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        />
+
+  </android.support.design.internal.ForegroundLinearLayout>
+
+  <android.support.design.internal.ForegroundLinearLayout
+      android:id="@+id/user_following_count_container"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:clickable="true"
+      android:focusable="true"
+      android:foreground="?attr/selectableItemBackgroundBorderless"
+      android:orientation="vertical"
+      android:padding="@dimen/item_icon_padding"
+      >
+
+    <TextView
+        android:id="@+id/user_following_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        tools:text="1234"
+        />
+
+    <TextView
+        android:id="@+id/user_following_count_quantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/user_connection_following"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        />
+
+  </android.support.design.internal.ForegroundLinearLayout>
+
+</LinearLayout>

@@ -1,20 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Attiq</string>
-    <string name="activity_login">ログイン</string>
-    <string name="activity_profile">プロフィル</string>
-    <string name="item_detail_subtitle">%1$s さんが投稿した</string>
-    <string name="item_info_many">ストック%1$d件、コメント%2$d件</string>
-    <string name="item_info_one">ストック%1$d件、コメント１件</string>
-    <string name="action_settings">設定</string>
-    <string name="action_filter">フィルター</string>
-    <string name="action_item_menu">メニュー</string>
-    <string name="item_posted_info">%1$s さんが%2$s投稿した</string>
-    <string name="item_user_info"><![CDATA[<a href="http://qiita.com/%1$s">%2$s</a>、%3$s]]></string>
-    <string name="item_user_info_edited">
-        <![CDATA[<a href="http://qiita.com/%1$s">%2$s</a>、%3$s（<a href="http://qiita.com/%4$s/items/%5$s/revisions">修正あり</a>）]]>
+  <string name="activity_login">ログイン</string>
+  <string name="action_login">ログイン</string>
+  <string name="action_logout">ログアウト</string>
+  <string name="activity_profile">プロフィル</string>
+  <string name="title_activity_tag">タグ: %1$s</string>
+  <string name="item_detail_subtitle">%1$s さんが投稿した</string>
+  <string name="item_info_many">ストック%1$d件、コメント%2$d件</string>
+  <string name="item_info_one">ストック%1$d件、コメント１件</string>
+  <string name="action_settings">設定</string>
+  <string name="action_search">検索</string>
+  <string name="action_filter">フィルター</string>
+  <string name="action_item_menu">メニュー</string>
+  <string name="item_posted_info">%1$s さんが%2$s投稿した</string>
+    <string name="item_user_info">
+        <![CDATA[<a href="attiq://qiita.com/users/%1$s">%2$s</a>、%3$s]]>
     </string>
-    <string name="title_activity_item_detail">アイテム詳細</string>
-    <string name="title_activity_profile">プロフィル</string>
-    <string name="auth_add_account">アカウント追加</string>
+
+  <string name="title_activity_item_detail">アイテム詳細</string>
+  <string name="title_activity_tag_detail">タグ詳細</string>
+  <string name="title_activity_profile">プロフィル</string>
+  <string name="auth_add_account">アカウント追加</string>
+  <string name="article_comment">%2$s（%1$d件）</string>
+
+  <string name="tab_home_feed">フィード（Beta）</string>
+  <string name="tab_home_public">全投稿</string>
+
+  <string name="comment_singular">コメント</string>
+  <string name="comment_plural">コメント</string>
+  <string name="menu_item_home">ホーム</string>
+  <string name="menu_item_feedback">フィードバック</string>
+  <string name="menu_item_profile">プロフィル</string>
+  <string name="menu_item_my_page">マイページ</string>
+  <string name="action_follow">フォローする</string>
+  <string name="state_following">フォロー中</string>
+  <string name="state_not_following">フォローする</string>
+  <string name="tab_title_items">投稿リスト</string>
+  <string name="tab_title_stocks">ストック</string>
+  <string name="tab_title_tags">フォロー中タグ</string>
+  <string name="user_connection_follower">フォロワー</string>
+  <string name="user_connection_followers">フォロワー</string>
+  <string name="user_connection_following">フォロー中</string>
+  <string name="user_connection_item">投稿</string>
+  <string name="user_connection_items">投稿</string>
+  <string name="item_detail_no_menu">メニューがありません！</string>
+  <string name="text_welcome">Attiqへようこそ</string>
+  <string name="text_attiq_intro">非公式Qiitaクライアント</string>
+  <string name="menu_item_application">アプリケーション</string>
+  <string name="action_about">アプリについて</string>
+  <string name="title_activity_settings">設定</string>
+
+  <string name="search_hint">Qiitaで検索</string>
+  <string name="no_search_results">「%1$s」の結果がありません</string>
+  <string name="prefs_eula">利用規約</string>
+  <string name="pref_others">その他</string>
+  <string name="prefs_privacy">プライバシーポリシー</string>
+  <string name="pref_general">全般</string>
+  <string name="title_licenses">オープンソースライセンス</string>
+  <string name="title_licenses_others">他のリソース</string>
+  <string name="title_resources">他のリソース</string>
+  <string name="logout_confirm">本当にAttiqからログアウトしますか？</string>
+  <string name="comment_tab_composer">コメント作成</string>
+  <string name="comment_tab_previewer">プレビュー</string>
+  <string name="editor_comment">コメント</string>
+  <string name="article_comment_hint"># Markdownでコメント作成</string>
+  <string name="notify_comment_saved">下書きが保存されました</string>
+
+  <plurals name="title_activity_tag_quantity">
+    <item quantity="one">%1$d投稿</item>
+    <item quantity="other">%1$d投稿</item>
+  </plurals>
+
+  <plurals name="user_contribution_quantity">
+    <item quantity="one">%1$d コントリビューション</item>
+    <item quantity="other">%1$d コントリビューション</item>
+  </plurals>
+
+  <string name="share_content">%1$s</string>
+  <string name="response_error">問題がありました〜</string>
+  <string name="response_empty">まだ何もないな〜</string>
+  <string name="article_read_status">"ラストビュー：%1$s"</string>
+  <string name="tab_title_history">閲覧履歴</string>
+
+  <string name="setting_theme">テーマ</string>
+  <string name="setting_theme_dark">ダーク（BETA）</string>
+  <string name="setting_theme_light">ライト</string>
+  <string name="setting_mathjax">MathJaxで数式をレンダリング (BETA)</string>
+  <string name="setting_mathjax_off">MathJaxが無効されている</string>
+  <string name="setting_mathjax_on">MathJaxが有効されている</string>
+  <string name="menu_item_history">最近見た記事</string>
+  <string name="message_delete_comment">コメントを削除します。よろしくでしょうか？</string>
+  <string name="message_no_network">接続を確認してお試しください。</string>
 </resources>

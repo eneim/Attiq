@@ -1,88 +1,233 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-    package="im.ene.lab.attiq"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="im.ene.lab.attiq">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
-    <supports-screens
-        android:largestWidthLimitDp="600"
-        android:requiresSmallestWidthDp="360"/>
+  <uses-permission android:name="android.permission.WAKE_LOCK"/>
+  <uses-permission android:name="android.permission.VIBRATE"/>
+  <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+  <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
 
-    <application
-        android:name=".Attiq"
-        android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher"
+  <uses-permission android:name="com.android.vending.BILLING"/>
+
+  <permission
+      android:name="${applicationId}.permission.C2D_MESSAGE"
+      android:protectionLevel="signature"/>
+  <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE"/>
+
+  <supports-screens
+      android:largestWidthLimitDp="600"
+      android:requiresSmallestWidthDp="360"/>
+
+  <application
+      android:allowBackup="false"
+      android:icon="@mipmap/ic_launcher"
+      android:label="@string/app_name"
+      android:name=".Attiq"
+      android:supportsRtl="true"
+      tools:replace="android:allowBackup">
+
+    <activity
         android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/Attiq.Theme"
-        tools:replace="android:allowBackup">
-        <activity
-            android:name=".activities.MainActivity"
-            android:label="@string/app_name"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/Attiq.Theme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+        android:launchMode="singleTop"
+        android:name=".ui.activities.LaunchActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/Attiq.Theme.Launch">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activities.WebViewActivity"
-            android:label="@string/activity_login"
-            android:launchMode="singleTop"
-            android:theme="@style/Attiq.Theme"/>
-        <activity
-            android:name=".activities.DeepLinkActivity"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:theme="@style/Attiq.Theme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
+    <activity
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:name=".ui.activities.HomeActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/Attiq.Theme.Light.NoActionBar">
+    </activity>
+    <activity
+        android:label="@string/activity_login"
+        android:launchMode="singleTop"
+        android:name=".ui.activities.AuthActivity"
+        android:theme="@style/Attiq.Theme.Light"/>
+    <activity
+        android:label="@string/app_name"
+        android:launchMode="singleTask"
+        android:name=".ui.activities.DeepLinkActivity"
+        android:theme="@style/Attiq.Theme.Light.NoActionBar">
+    </activity>
+    <activity
+        android:label="@string/title_activity_item_detail"
+        android:name=".ui.activities.ItemDetailActivity"
+        android:theme="@style/Attiq.Theme.Light.NoActionBar">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
 
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
 
-                <data
-                    android:host="qiita.com"
-                    android:pathPattern="/.*/items/.*"
-                    android:scheme="http"/>
+        <data
+            android:host="qiita.com"
+            android:pathPattern="/.*/items/.*"
+            android:scheme="http"/>
+        <data
+            android:host="qiita.com"
+            android:pathPattern="/.*/items/.*"
+            android:scheme="https"/>
+      </intent-filter>
+    </activity>
+    <activity
+        android:label="@string/title_activity_tag_detail"
+        android:launchMode="singleTop"
+        android:name=".ui.activities.TagItemsActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/Attiq.Theme.Light.NoActionBar">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
 
-                <data
-                    android:host="qiita.com"
-                    android:pathPattern="/.*/items/.*"
-                    android:scheme="https"/>
-            </intent-filter>
-        </activity>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="${fabric_api_key}"/>
+        <data
+            android:host="qiita.com"
+            android:pathPattern="/tags/.*"
+            android:scheme="http"/>
+        <data
+            android:host="qiita.com"
+            android:pathPattern="/tags/.*"
+            android:scheme="https"/>
+        <data
+            android:host="qiita.com"
+            android:pathPattern="/tags/.*"
+            android:scheme="attiq"/>
+      </intent-filter>
+    </activity>
+    <activity
+        android:label="@string/title_activity_profile"
+        android:name=".ui.activities.ProfileActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/Attiq.Theme.Light.NoActionBar.Profile">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
 
-        <activity
-            android:name=".activities.ItemDetailActivity"
-            android:label="@string/title_activity_item_detail"
-            android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Attiq.Theme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="im.ene.lab.attiq.activities.MainActivity"/>
-        </activity>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
 
-        <activity
-            android:name=".activities.ProfileActivity"
-            android:label="@string/title_activity_profile"
-            android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Attiq.Theme.Profile">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="im.ene.lab.attiq.activities.MainActivity"/>
-        </activity>
-    </application>
+        <data
+            android:host="qiita.com"
+            android:pathPattern="/users/.*"
+            android:scheme="attiq"/>
+      </intent-filter>
+    </activity>
+    <activity
+        android:label="@string/title_activity_search"
+        android:launchMode="singleTop"
+        android:name=".ui.activities.SearchActivity"
+        android:theme="@style/Attiq.Theme.Dark.NoActionBar.Translucent.Search">
+      <intent-filter>
+        <action android:name="android.intent.action.SEARCH"/>
+      </intent-filter>
+      <intent-filter>
+        <action android:name="com.google.android.gms.actions.SEARCH_ACTION"/>
+
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+
+      <meta-data
+          android:name="android.app.searchable"
+          android:resource="@xml/searchable"/>
+    </activity>
+    <activity
+        android:label="@string/title_activity_settings"
+        android:name=".ui.activities.SettingsActivity"
+        android:parentActivityName=".ui.activities.HomeActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/Attiq.Theme.Light.Setting">
+      <meta-data
+          android:name="android.support.PARENT_ACTIVITY"
+          android:value=".ui.activities.HomeActivity"/>
+    </activity>
+    <activity
+        android:label="@string/app_name"
+        android:name=".ui.activities.WebViewActivity"
+        android:theme="@style/Attiq.Theme.Dark">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+
+        <data
+            android:host="helper.qiita.com"
+            android:scheme="attiq"/>
+      </intent-filter>
+    </activity>
+
+    <meta-data
+        android:name="io.fabric.ApiKey"
+        android:value="${fabric_api_key}"/>
+    <meta-data
+        android:name="com.google.android.gms.version"
+        android:value="@integer/google_play_services_version"/>
+
+    <!--<activity-->
+    <!--android:configChanges="keyboardHidden|orientation|screenSize"-->
+    <!--android:name="com.mopub.mobileads.MoPubActivity"/>-->
+    <!--<activity-->
+    <!--android:configChanges="keyboardHidden|orientation|screenSize"-->
+    <!--android:name="com.mopub.mobileads.MraidActivity"/>-->
+    <!--<activity-->
+    <!--android:configChanges="keyboardHidden|orientation|screenSize"-->
+    <!--android:name="com.mopub.common.MoPubBrowser"/>-->
+    <!--<activity-->
+    <!--android:configChanges="keyboardHidden|orientation|screenSize"-->
+    <!--android:name="com.mopub.mobileads.MraidVideoPlayerActivity"/>-->
+
+    <!-- Optionally, register AnalyticsReceiver and AnalyticsService to support background
+          dispatching on non-Google Play devices -->
+    <receiver
+        android:enabled="true"
+        android:name="com.google.android.gms.analytics.AnalyticsReceiver">
+      <intent-filter>
+        <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH"/>
+      </intent-filter>
+    </receiver>
+    <service
+        android:enabled="true"
+        android:exported="false"
+        android:name="com.google.android.gms.analytics.AnalyticsService"/>
+
+    <!-- Optionally, register CampaignTrackingReceiver and CampaignTrackingService to enable
+         installation campaign reporting -->
+    <receiver
+        android:exported="true"
+        android:name="com.google.android.gms.analytics.CampaignTrackingReceiver">
+      <intent-filter>
+        <action android:name="com.android.vending.INSTALL_REFERRER"/>
+      </intent-filter>
+    </receiver>
+
+    <service android:name="com.google.android.gms.analytics.CampaignTrackingService"/>
+
+    <!-- Batch.com -->
+    <service android:name="com.batch.android.BatchPushService"/>
+
+    <receiver
+        android:name="com.batch.android.BatchPushReceiver"
+        android:permission="com.google.android.c2dm.permission.SEND">
+      <intent-filter>
+        <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+        <category android:name="${applicationId}"/>
+      </intent-filter>
+    </receiver>
+
+  </application>
 
 </manifest>

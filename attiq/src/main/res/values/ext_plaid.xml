@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- From plaid -->
+  <color name="scrim">#99323232</color>
+  <color name="scrim_light">#99fefefe</color>
+  <color name="scrim_dark">#99010101</color>
+  <dimen name="z_app_bar">4dp</dimen>
+  <dimen name="z_app_bar_low">2dp</dimen>
+
+  <color name="background_dark">#ff333333</color>
+  <dimen name="padding_normal">16dp</dimen>
+  <dimen name="spacing_huge">64dp</dimen>
+  <dimen name="spacing_micro">4dp</dimen>
+
+  <color name="text_primary_light">#ffffffff</color>
+  <color name="text_primary_dark">#de000000</color>
+  <!-- 87% -->
+  <color name="text_secondary_dark">#8a000000</color>
+  <color name="dark_icon">#99000000</color>
+  <!-- 60% black-->
+  <!-- 54% -->
+
+  <dimen name="fab_size">56dp</dimen>
+  <dimen name="z_fab">6dp</dimen>
+  <dimen name="touch_raise">6dp</dimen>
+  <color name="mid_grey">#40808080</color>
+  <color name="ripple_dark">@color/mid_grey</color>
+
+  <integer name="num_columns">1</integer>
+
+  <string name="search_hint">Search Qiita</string>
+  <string name="no_search_results">No results for\n“%1$s”</string>
+
+  <!-- Styles -->
+
+  <style name="Attiq.Theme.Light.SearchView" parent="ThemeOverlay.AppCompat.Light">
+    <item name="colorPrimary">?attr/colorPrimary</item>
+    <item name="colorControlActivated">?attr/colorAccent</item>
+  </style>
+
+  <style name="Attiq.Theme.Dark.SearchView" parent="ThemeOverlay.AppCompat">
+    <item name="colorPrimary">?attr/colorPrimary</item>
+    <item name="colorControlActivated">?attr/colorAccent</item>
+  </style>
+
+  <style name="Attiq.Widget.EmptyText">
+    <item name="android:textAppearance">@style/Attiq.TextAppearance.DialogContent</item>
+    <item name="lineHeightHint">24sp</item>
+    <item name="android:textColor">@color/text_primary_dark</item>
+  </style>
+
+  <style name="Attiq.TextAppearance.DialogContent" parent="TextAppearance.AppCompat.Subhead">
+    <item name="android:textColor">@color/text_secondary_dark</item>
+    <item name="android:fontFamily">sans-serif-medium</item>
+  </style>
+
+  <!-- app palette -->
+  <color name="primary">#69F0AE</color>
+  <color name="accent">@color/primary</color>
+  <!-- mono-color -->
+  <color name="primary_dark">#5acc95</color>
+  <color name="primary_super_dark">#11261c</color>
+  <!-- same hue & sat, 15% brightness -->
+
+  <!-- common colours -->
+  <color name="text_tertiary_dark">#61000000</color>
+  <!-- 38% -->
+  <color name="text_secondary_light">#b3ffffff</color>
+  <!-- 70% -->
+  <color name="text_disabled_light">#4dffffff</color>
+  <!-- 30% -->
+  <color name="ripple_light">#99ffffff</color>
+  <color name="background_light">#fafafa</color>
+  <color name="immersive_bars">#99000000</color>
+  <color name="status_bar_back">#ff676767</color>
+  <!-- this is blended with immersive_bars to produce the desired status bar color i.e. background_super_dark -->
+  <color name="background_super_dark">#ff292929</color>
+  <color name="light_grey">#fff5f5f5</color>
+  <color name="grey_200">#ffeeeeee</color>
+  <color name="grey_300">#ffe0e0e0</color>
+  <color name="content_placeholder">#ffe0e0e0</color>
+  <color name="light_icon">#ffffffff</color>
+  <color name="divider">#1f000000</color>
+  <!-- 12% black -->
+  <color name="page_indicator_dark">#80333333</color>
+  <color name="page_indicator_dark_selected">#ff333333</color>
+  <color name="selected_comment_background">#ffffffff</color>
+
+  <!-- text (most text uses material theme colours) -->
+  <color name="hint_disabled_dark">#43000000</color>
+  <!-- 26% black -->
+  <color name="text_on_accent">#8f000000</color>
+
+  <!-- designer news -->
+  <color name="designer_news">#03a9f4</color>
+  <!--light blue 500 -->-->
+  <color name="designer_news_dark">#039be5</color>
+  <!-- light blue 600 -->
+  <color name="designer_news_link_highlight">#b303a9f4</color>
+
+  <color name="designer_news_super_dark">#000133</color>
+  <color name="designer_news_quote_line">#ffeceef1</color>
+  <color name="designer_news_quote">#73000000</color>
+
+  <!-- dribbble -->
+  <color name="dribbble">#fff06292</color>
+  <!-- pink 300 -->
+  <color name="dribbble_dark">#ec407a</color>
+  <!-- pink 400 -->
+  <color name="dribbble_super_dark">#ff33292d</color>
+  <color name="dribbble_link_highlight">#b3f06292</color>
+  <color name="fab_heart_empty">@color/text_primary_light</color>
+  <color name="fab_heart_progress_bar">#deffffff</color>
+  <!-- 87% white-->
+  <color name="fab_heart_full">#ffffffff</color>
+  <color name="gif_badge_light_image">#40000000</color>
+  <color name="gif_badge_dark_image">#b3ffffff</color>
+  <array name="loading_placeholders">
+    <item>#ff191919</item>
+    <item>#ff212121</item>
+    <item>#ff232323</item>
+  </array>
+
+  <integer name="rapid_animation">120</integer>
+
+  <!-- product hunt-->
+  <color name="product_hunt">#ffff9800</color>
+
+  <!-- search -->
+  <color name="search_background_scrim">#33000000</color>
+
+  <style name="Attiq.Theme.Light.NoActionBar.Translucent">
+    <!--<item name="colorPrimary">@color/primary</item>-->
+    <!--<item name="colorAccent">@color/colorAccent</item>-->
+    <!--<item name="android:colorBackground">@color/background_dark</item>-->
+    <!--<item name="android:textColorHint">@color/hint_disabled_dark</item>-->
+    <!-- using a semi-transparent window background for the drag-back gesture -->
+    <item name="android:windowBackground">@color/scrim</item>
+    <item name="android:colorBackgroundCacheHint">@null</item>
+    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:windowIsFloating">false</item>
+    <item name="android:windowIsTranslucent">true</item>
+    <item name="android:windowNoTitle">true</item>
+  </style>
+
+  <style name="Attiq.Theme.Dark.NoActionBar.Translucent">
+    <!--<item name="colorPrimary">@color/primary</item>-->
+    <!--<item name="colorAccent">@color/colorAccent</item>-->
+    <!--<item name="android:colorBackground">@color/background_light</item>-->
+    <!--<item name="android:textColorHint">@color/hint_disabled_dark</item>-->
+    <!-- using a semi-transparent window background for the drag-back gesture -->
+    <item name="android:windowBackground">@color/scrim</item>
+    <item name="android:colorBackgroundCacheHint">@null</item>
+    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:windowIsFloating">false</item>
+    <item name="android:windowIsTranslucent">true</item>
+    <item name="android:windowNoTitle">true</item>
+  </style>
+
+  <style name="SearchWindowAnimations">
+    <item name="android:windowEnterAnimation">@null</item>
+    <item name="android:windowExitAnimation">@anim/fade_out_rapidly</item>
+  </style>
+
+  <style name="Attiq.Theme.Dark.NoActionBar.Translucent.Search">
+    <item name="android:windowAnimationStyle">@style/SearchWindowAnimations</item>
+  </style>
+
+  <style name="Attiq.Theme.Light.NoActionBar.Translucent.Search">
+    <item name="android:windowAnimationStyle">@style/SearchWindowAnimations</item>
+  </style>
+
+  <attr format="dimension" name="lineHeightHint"/>
+  <attr format="dimension" name="topPaddingHint"/>
+
+  <attr format="string" name="font"/>
+
+  <declare-styleable name="FontTextAppearance">
+    <attr name="android:textSize"/>
+    <attr name="android:textColor"/>
+    <attr name="android:fontFamily"/>
+    <attr name="font"/>
+  </declare-styleable>
+
+  <declare-styleable name="BaselineGridTextView">
+    <attr format="float" name="lineHeightMultiplierHint"/>
+    <attr name="lineHeightHint"/>
+    <attr name="topPaddingHint"/>
+  </declare-styleable>
+
+  <declare-styleable name="FontTextView">
+    <attr name="font"/>
+    <attr name="android:textAppearance"/>
+  </declare-styleable>
+</resources>

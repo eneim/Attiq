@@ -7,60 +7,80 @@
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
     android:orientation="horizontal"
-    android:padding="@dimen/item_padding">
+    android:padding="@dimen/item_padding"
+    >
 
-    <ImageButton
-        android:id="@+id/item_user_icon"
-        android:layout_width="@dimen/item_icon_size"
-        android:layout_height="@dimen/item_icon_size"
-        android:layout_gravity="top|start"
-        android:layout_margin="@dimen/item_padding"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:scaleType="centerInside"
-        android:src="@android:drawable/sym_def_app_icon"/>
+  <ImageButton
+      android:id="@+id/item_user_icon"
+      android:layout_width="@dimen/item_icon_size"
+      android:layout_height="@dimen/item_icon_size"
+      android:layout_gravity="top|start"
+      android:layout_margin="@dimen/item_padding"
+      android:background="?attr/selectableItemBackgroundBorderless"
+      android:scaleType="centerInside"
+      android:src="@android:drawable/sym_def_app_icon"
+      />
 
-    <LinearLayout
-        android:id="@+id/item_content"
-        android:layout_width="0dp"
+  <LinearLayout
+      android:id="@+id/item_content"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_margin="@dimen/item_padding"
+      android:layout_weight="1"
+      android:divider="@drawable/post_item_divider_vertical_8dp"
+      android:orientation="vertical"
+      android:showDividers="middle"
+      >
+
+    <TextView
+        android:id="@+id/item_posted_info"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/item_padding"
-        android:layout_weight="1"
-        android:divider="@drawable/post_item_divider_vertical_8dp"
-        android:orientation="vertical"
-        android:showDividers="middle">
+        android:includeFontPadding="false"
+        android:singleLine="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textStyle="italic"
+        />
 
-        <TextView
-            android:id="@+id/item_posted_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:includeFontPadding="false"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textStyle="italic"/>
+    <TextView
+        android:id="@+id/item_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:includeFontPadding="false"
+        android:maxLines="2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        />
 
-        <TextView
-            android:id="@+id/item_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:includeFontPadding="false"
-            android:maxLines="2"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+    <com.wefika.flowlayout.FlowLayout
+        android:id="@+id/item_tags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        />
 
-        <com.wefika.flowlayout.FlowLayout
-            android:id="@+id/item_tags"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start"/>
+    <TextView
+        android:id="@+id/item_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:singleLine="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        />
 
-        <TextView
-            android:id="@+id/item_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:includeFontPadding="false"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+    <TextView
+        android:id="@+id/item_read_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_read"
+        android:drawablePadding="@dimen/item_icon_padding"
+        android:drawableStart="@drawable/ic_read"
+        android:includeFontPadding="false"
+        android:singleLine="true"
+        android:textAppearance="@style/TextAppearance.Attiq.ReadStatus"
+        android:visibility="gone"
+        />
 
-    </LinearLayout>
+  </LinearLayout>
 
 </android.support.design.internal.ForegroundLinearLayout>

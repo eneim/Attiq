@@ -1,110 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#28475C</color>
-    <color name="colorPrimaryDark">#1A2F4B</color>
-    <color name="colorAccent">#C98B70</color>
+  <color name="colorPrimary">#607D8B</color>
+  <color name="colorPrimaryDark">#455A64</color>
+  <color name="colorAccent">@color/abc_background_cache_hint_selector_material_dark</color>
 
-    <!-- ref: http://www.colorhexa.com/3e3639 -->
-    <color name="very_dark_grayish_pink">#3e3639</color>
-    <color name="very_dark_grayish_pink_75">#753e3639</color>
-    <color name="dark_grayish_pink">#7d6d73</color>
+  <color name="colorPrimaryLight">#F8E796</color>
 
-    <color name="text_link_light">#01a2ff</color>
-    <color name="text_link">#007dc5</color>
-    <color name="life_text_link">#4793e3</color>
-    <color name="selected_text_blue">#604ebe</color>
+  <color name="searchColorPrimaryDark">#2E3A87</color>
+  <color name="searchColorPrimary">#1972A4</color>
+  <color name="searchColorAccent">#4C0B2F</color>
 
-    <color name="nav_button_inactive">#888888</color>
-    <color name="nav_button_inactive_60">#60888888</color>
-    <color name="nav_button_active">#EA5444</color>
+  <!-- ref: http://www.colorhexa.com/3e3639 -->
+  <color name="very_dark_grayish_pink">#3e3639</color>
+  <color name="very_dark_grayish_pink_75">#753e3639</color>
+  <color name="dark_grayish_pink">#7d6d73</color>
 
-    <color name="attache_green">#2abb9c</color>
-    <color name="attache_green_80">#802abb9c</color>
-    <color name="attache_green_40">#402abb9c</color>
-    <color name="attache_green_dark">#239f85</color>
-    <color name="attache_green_dark_40">#40239f85</color>
+  <color name="text_link_light">#01a2ff</color>
+  <color name="text_link">#007dc5</color>
+  <color name="life_text_link">#4793e3</color>
+  <color name="selected_text_blue">#604ebe</color>
 
-    <color name="attache_lime_green">#98d4bf</color>
-    <color name="attache_gray_2">#808285</color>
-    <color name="attache_gray_3">#aaaaaa</color>
+  <color name="nav_button_inactive">#888888</color>
+  <color name="nav_button_inactive_60">#60888888</color>
+  <color name="nav_button_active">#EA5444</color>
 
-    <color name="attache_green_active">#239f85</color>
+  <color name="attache_green">#2abb9c</color>
+  <color name="attache_green_80">#802abb9c</color>
+  <color name="attache_green_40">#402abb9c</color>
+  <color name="attache_green_dark">#239f85</color>
+  <color name="attache_green_dark_40">#40239f85</color>
 
-    <color name="attache_feed_separator">#939598</color>
-    <color name="light_grayish_blue">#f2f3f4</color>
-    <color name="attache_white_80">#80f2f2f3</color>
-    <color name="attache_white_60">#60f2f2f3</color>
-    <color name="attache_white_40">#40f2f2f3</color>
+  <color name="attache_lime_green">#98d4bf</color>
+  <color name="attache_gray_2">#808285</color>
+  <color name="attache_gray_3">#aaaaaa</color>
 
-    <color name="life_gray_light">#e5e5e5</color>
-    <color name="attache_gray">#bdc3c8</color>
-    <color name="attache_gray_light">#ebedee</color>
-    <color name="attache_gray_dark">#939598</color>
+  <color name="attache_green_active">#239f85</color>
 
-    <color name="attache_navy_light">#34485e</color>
-    <color name="attache_navy_dark">#2d3e50</color>
+  <color name="attache_feed_separator">#939598</color>
+  <color name="light_grayish_blue">#f2f3f4</color>
+  <color name="attache_white_80">#80f2f2f3</color>
+  <color name="attache_white_60">#60f2f2f3</color>
+  <color name="attache_white_40">#40f2f2f3</color>
 
-    <color name="attache_blue_light">#5165a1</color>
-    <color name="attache_blue_light_40">#40b5beda</color>
-    <color name="attache_blue_light_80">#ccb5beda</color>
-    <color name="attache_blue_dark">#394c81</color>
+  <color name="life_gray_light">#e5e5e5</color>
+  <color name="attache_gray">#bdc3c8</color>
+  <color name="attache_gray_light">#ebedee</color>
+  <color name="attache_gray_dark">#939598</color>
 
-    <color name="attache_beautiful_orange">#ffcb08</color>
-    <color name="attache_beautiful_orange_80">#80ffcb08</color>
-    <color name="attache_beautiful_orange_60">#60ffcb08</color>
-    <color name="attache_beautiful_orange_40">#40ffcb08</color>
-    <color name="attache_beautiful_orange_20">#20ffcb08</color>
+  <color name="attache_navy_light">#34485e</color>
+  <color name="attache_navy_dark">#2d3e50</color>
 
-    <color name="attache_orange">#fcaf17</color>
-    <color name="attache_orange_active">#dd9403</color>
+  <color name="attache_blue_light">#5165a1</color>
+  <color name="attache_blue_light_40">#40b5beda</color>
+  <color name="attache_blue_light_80">#ccb5beda</color>
+  <color name="attache_blue_dark">#394c81</color>
 
-    <color name="red">#ff0000</color>
-    <color name="dark_grayish_blue">#a7a9ac</color>
+  <color name="attache_beautiful_orange">#ffcb08</color>
+  <color name="attache_beautiful_orange_80">#80ffcb08</color>
+  <color name="attache_beautiful_orange_60">#60ffcb08</color>
+  <color name="attache_beautiful_orange_40">#40ffcb08</color>
+  <color name="attache_beautiful_orange_20">#20ffcb08</color>
 
-    <color name="white">#ffffff</color>
+  <color name="attache_orange">#fcaf17</color>
+  <color name="attache_orange_active">#dd9403</color>
 
-    <color name="line_green">#5aba47</color>
-    <color name="line_green_dark">#489638</color>
-    <color name="life_link_color_2">#a8f07a</color>
+  <color name="red">#ff0000</color>
+  <color name="dark_grayish_blue">#a7a9ac</color>
 
-    <color name="navdrawer_background">#ffffffff</color>
+  <color name="line_green">#5aba47</color>
+  <color name="line_green_dark">#489638</color>
+  <color name="read_color_true">#FFF3FDED</color>
 
-    <color name="username0">#e21400</color>
-    <color name="username1">#91580f</color>
-    <color name="username2">#f8a700</color>
-    <color name="username3">#f78b00</color>
-    <color name="username4">#58dc00</color>
-    <color name="username5">#287b00</color>
-    <color name="username6">#a8f07a</color>
-    <color name="username7">#4ae8c4</color>
-    <color name="username8">#3b88eb</color>
-    <color name="username9">#3824aa</color>
-    <color name="username10">#a700ff</color>
-    <color name="username11">#d300e7</color>
+  <color name="navdrawer_background">#ffffffff</color>
 
-    <color name="bright_red">#ea5444</color>
-    <color name="bright_red_cc">#ccea5444</color>
-    <color name="vivid_red">#e63421</color>
+  <color name="pure_red">#e21400</color>
+  <color name="dark_orange_brown">#91580f</color>
+  <color name="pure_orange">#f8a700</color>
+  <color name="pure_orange_2">#f78b00</color>
+  <color name="pure_green">#58dc00</color>
+  <color name="dark_green">#287b00</color>
+  <color name="soft_green">#a8f07a</color>
+  <color name="soft_cyan">#4ae8c4</color>
 
-    <array name="username_colors">
-        <item>@color/username0</item>
-        <item>@color/username1</item>
-        <item>@color/username2</item>
-        <item>@color/username3</item>
-        <item>@color/username4</item>
-        <item>@color/username5</item>
-        <item>@color/username6</item>
-        <item>@color/username7</item>
-        <item>@color/username8</item>
-        <item>@color/username9</item>
-        <item>@color/username10</item>
-        <item>@color/username11</item>
-    </array>
+  <color name="bright_red">#ea5444</color>
+  <color name="bright_red_cc">#ccea5444</color>
+  <color name="vivid_red">#e63421</color>
 
-    <!-- Event detail button colors -->
-    <color name="event_button_reserve">#EA5444</color>
-    <color name="event_button_attend">#47BB3C</color>
-    <color name="event_button_attended">#ABAAAA</color>
+  <!-- Event detail button colors -->
+  <color name="event_button_reserve">#EA5444</color>
+  <color name="event_button_attend">#47BB3C</color>
+  <color name="event_button_attended">#ABAAAA</color>
 
-    <color name="ripple_light">#99ffffff</color>
 </resources>

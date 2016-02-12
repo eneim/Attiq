@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+  <im.ene.lab.attiq.ui.widgets.FixedSwipeToRefreshLayout
+      android:id="@+id/swipe_refresh_layout"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+
+    <im.ene.lab.attiq.ui.widgets.NonEmptyRecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:padding="@dimen/recycler_view_padding"
+        android:scrollbarFadeDuration="250"
+        android:scrollbars="vertical"
+        />
+
+  </im.ene.lab.attiq.ui.widgets.FixedSwipeToRefreshLayout>
+
+  <TextView
+      android:id="@+id/view_error_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="top"
+      android:layout_margin="@dimen/activity_vertical_margin"
+      android:drawablePadding="@dimen/activity_vertical_margin"
+      android:drawableTop="@drawable/ic_network_error"
+      android:gravity="center"
+      android:padding="@dimen/activity_vertical_margin"
+      android:text="@string/response_error"
+      android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+      />
+
+  <TextView
+      android:id="@+id/view_empty_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="top"
+      android:layout_margin="@dimen/activity_vertical_margin"
+      android:drawablePadding="@dimen/activity_vertical_margin"
+      android:drawableTop="@drawable/ic_empty"
+      android:gravity="center"
+      android:padding="@dimen/activity_vertical_margin"
+      android:text="@string/response_empty"
+      android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+      />
+
+  <RelativeLayout
+      android:id="@+id/loading_container"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="?attr/colorPrimary"
+      >
+
+    <ProgressBar
+        android:layout_width="?attr/actionBarSize"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_centerInParent="true"
+        style="?attr/progressBarStyle"
+        />
+
+  </RelativeLayout>
+</FrameLayout>

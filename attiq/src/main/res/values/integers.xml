@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="realm_version">1</integer>
+  <integer name="realm_version">1</integer>
 
-    <integer name="detail_title_max_line">3</integer>
-    <integer name="detail_subtitle_max_line">2</integer>
+  <integer name="detail_title_max_line">3</integer>
+  <integer name="detail_subtitle_max_line">2</integer>
 
-    <item name="feed_view_id_mentioned_item" type="id"/>
-    <item name="feed_view_id_tag" type="id"/>
-    <item name="feed_view_id_info" type="id"/>
+  <item name="feed_view_id_mentioned_item" type="id"/>
+  <item name="feed_view_id_tag" type="id"/>
+  <item name="feed_view_id_info" type="id"/>
+  <item name="profile_info_tags" type="id"/>
+
+  <!-- Description IDs -->
+  <item name="profile_info_contribution" type="id"/>
+  <item name="profile_info_description" type="id"/>
+  <item name="profile_info_organization" type="id"/>
 </resources>

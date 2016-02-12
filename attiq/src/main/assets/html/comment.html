@@ -1,15 +1,30 @@
 <div class="comment-box">
-    <div class="comment-body">
-        <div class="user user-description">
-            <p>
-                <a href="http://qiita.com/{user_name}">{user_name}</a> さんが
-                <a href="http://qiita.com/{user_name}/items/{article_uuid}#comment-{comment_id}">{comment_time}</a>
-                にコメントしました。
-            </p>
-        </div>
+    <div class="user user-icon">
+        <a href="http://qiita.com/{user_name}">
+            <img class="img-circle" src="{user_icon_url}">
+        </a>
+    </div>
 
-        <div class="message">
-
+    <div class="user user-description">
+        <div class="user-name">
+            <a href="http://qiita.com/{user_name}">{user_name}</a>
         </div>
+        <div class="comment-time">
+            <a href="http://qiita.com/{user_name}/items/{article_uuid}#comment-{comment_id}">{comment_time}</a>
+        </div>
+    </div>
+
+    <div class="message">
+
+    </div>
+
+    <div id="comment_{comment_id}_{user_name}">
+        <p> --- </p>
+        <a class="user user-description url_small" href="attiq://qiita.com/comments/patch?id={comment_id}">
+            EDIT
+        </a>
+        <a class="user user-description url_small" href="attiq://qiita.com/comments/delete?id={comment_id}">
+            DELETE
+        </a>
     </div>
 </div>

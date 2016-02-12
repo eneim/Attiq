@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+  <ImageView
+      android:id="@+id/icon"
+      android:layout_width="@dimen/social_button_size_full"
+      android:layout_height="@dimen/social_button_size_full"
+      android:layout_margin="@dimen/social_button_margin"
+      android:scaleType="centerInside"
+      android:src="@drawable/ic_tag"
+      />
+
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/tags"
+      android:layout_width="match_parent"
+      android:layout_height="56dp"
+      android:layout_alignTop="@id/icon"
+      android:layout_centerVertical="true"
+      android:layout_marginLeft="@dimen/activity_horizontal_margin"
+      android:layout_marginStart="@dimen/activity_horizontal_margin"
+      android:layout_marginTop="@dimen/social_button_margin"
+      android:layout_toEndOf="@id/icon"
+      android:layout_toRightOf="@id/icon"
+      android:gravity="center_vertical|start"
+      />
+</RelativeLayout>

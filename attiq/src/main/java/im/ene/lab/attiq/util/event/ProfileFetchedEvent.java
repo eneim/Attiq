@@ -2,17 +2,18 @@ package im.ene.lab.attiq.util.event;
 
 import android.support.annotation.Nullable;
 
-import im.ene.lab.attiq.data.two.Profile;
+import im.ene.lab.attiq.data.model.two.User;
 
 /**
  * Created by eneim on 12/14/15.
  */
 public class ProfileFetchedEvent extends Event {
 
-  public final Profile profile;
+  public final User user;
 
-  public ProfileFetchedEvent(boolean isSuccess, @Nullable Error error, Profile profile) {
-    super(isSuccess, error);
-    this.profile = profile;
+  public ProfileFetchedEvent(@Nullable String tag, boolean success, @Nullable Error error,
+                             User user) {
+    super(tag, success, error);
+    this.user = user;
   }
 }

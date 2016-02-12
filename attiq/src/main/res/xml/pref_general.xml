@@ -1,0 +1,51 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <PreferenceCategory
+      android:key="pref_general_settings"
+      android:title="@string/pref_general">
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <ListPreference
+        android:defaultValue="LIGHT"
+        android:entries="@array/pref_app_themes"
+        android:entryValues="@array/pref_app_themes_values"
+        android:key="attiq_preference_app_theme"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_app_themes"/>
+
+    <CheckBoxPreference
+        android:key="attiq_preference_mathjax"
+        android:summaryOff="@string/setting_mathjax_off"
+        android:summaryOn="@string/setting_mathjax_on"
+        android:title="@string/setting_mathjax"
+        />
+  </PreferenceCategory>
+
+  <PreferenceCategory
+      android:key="pref_other_settings"
+      android:title="@string/pref_others">
+
+    <Preference android:title="@string/prefs_eula">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="attiq://helper.qiita.com/terms"/>
+    </Preference>
+
+    <Preference android:title="@string/prefs_privacy">
+      <intent
+          android:action="android.intent.action.VIEW"
+          android:data="attiq://helper.qiita.com/privacy"/>
+    </Preference>
+
+    <Preference
+        android:key="pref_open_source"
+        android:title="@string/title_licenses"/>
+
+    <Preference
+        android:key="pref_other_resources"
+        android:title="@string/title_licenses_others"/>
+
+  </PreferenceCategory>
+</PreferenceScreen>

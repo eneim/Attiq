@@ -1,36 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
-    android:id="@+id/drawer_layout"
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:openDrawer="end">
+    android:gravity="bottom"
+    app:umanoDragView="@+id/comment_composer_container"
+    app:umanoFadeColor="#20000000"
+    app:umanoOverlay="false"
+    app:umanoPanelHeight="@dimen/tab_layout_height"
+    app:umanoShadowHeight="1dp"
+    >
+
+  <android.support.v4.widget.DrawerLayout
+      android:id="@+id/drawer_layout"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:fitsSystemWindows="true"
+      tools:openDrawer="end"
+      >
 
     <include layout="@layout/item_detail_content_main"/>
 
-    <im.ene.lab.attiq.widgets.NotBadNavView
+    <im.ene.lab.attiq.ui.widgets.NotBadNavView
         android:layout_width="@dimen/menu_container_width"
         android:layout_height="match_parent"
         android:layout_gravity="end|right"
-        android:background="#e5e5e5"
-        android:fitsSystemWindows="true">
+        android:background="?attr/colorPrimary"
+        android:fitsSystemWindows="true"
+        >
 
-        <android.support.v4.widget.NestedScrollView
+      <android.support.v4.widget.NestedScrollView
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          >
+
+        <LinearLayout
+            android:id="@+id/html_headers_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingTop="?attr/actionBarSize"
+            >
 
-            <LinearLayout
-                android:id="@+id/html_headers_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:orientation="vertical"
-                android:paddingTop="?attr/actionBarSize">
+        </LinearLayout>
+      </android.support.v4.widget.NestedScrollView>
+    </im.ene.lab.attiq.ui.widgets.NotBadNavView>
 
-            </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
-    </im.ene.lab.attiq.widgets.NotBadNavView>
+  </android.support.v4.widget.DrawerLayout>
 
-</android.support.v4.widget.DrawerLayout>
+  <RelativeLayout
+      android:id="@id/comment_composer_container"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+
+    <RelativeLayout
+        android:id="@+id/comment_composer_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/white"
+        >
+
+      <ImageView
+          android:id="@+id/handle"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentLeft="true"
+          android:layout_alignParentStart="true"
+          android:layout_centerVertical="true"
+          android:minWidth="?attr/actionBarSize"
+          android:scaleType="center"
+          android:src="@drawable/ic_action_comment"
+          />
+
+      <LinearLayout
+          android:id="@+id/editor_buttons"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentEnd="true"
+          android:layout_alignParentRight="true"
+          android:layout_centerVertical="true"
+          android:orientation="horizontal"
+          >
+
+        <ImageButton
+            android:id="@+id/btn_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:minHeight="@dimen/tab_layout_height"
+            android:minWidth="@dimen/tab_layout_height"
+            android:src="@drawable/ic_check_24dp"
+            />
+
+        <ImageButton
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:minHeight="@dimen/tab_layout_height"
+            android:minWidth="@dimen/tab_layout_height"
+            android:src="@drawable/ic_close_24dp"
+            />
+
+      </LinearLayout>
+
+      <android.support.design.widget.TabLayout
+          android:id="@+id/comment_composer_tabs"
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/tab_layout_height"
+          android:layout_centerVertical="true"
+          android:layout_toEndOf="@id/handle"
+          android:layout_toStartOf="@id/editor_buttons"
+          android:paddingEnd="8dp"
+          android:paddingLeft="8dp"
+          android:paddingRight="8dp"
+          android:paddingStart="8dp"
+          android:theme="@style/Theme.AppCompat.Light"
+          app:tabGravity="fill"
+          app:tabIndicatorColor="@android:color/black"
+          app:tabIndicatorHeight="0.5dp"
+          app:tabMode="scrollable"
+          />
+    </RelativeLayout>
+
+    <im.ene.lab.attiq.ui.widgets.CommentComposerView
+        android:id="@+id/comment_composer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/comment_composer_header"
+        android:background="#e5e5e5"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical"
+        android:padding="8dp"
+        />
+  </RelativeLayout>
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>

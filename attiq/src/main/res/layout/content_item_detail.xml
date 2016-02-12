@@ -2,13 +2,39 @@
 <android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/content_scrollview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="im.ene.support.design.widget.AppBarLayout$ScrollingViewBehavior">
+    app:layout_behavior="im.ene.lab.support.widget.AppBarLayout$ScrollingViewBehavior"
+    >
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical"
+      >
 
     <WebView
         android:id="@+id/item_content_web"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        />
+
+    <TextView
+        android:id="@+id/comments_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f5f5f5"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/colorPrimaryDark"
+        />
+
+    <WebView
+        android:id="@+id/item_comments_web"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+  </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

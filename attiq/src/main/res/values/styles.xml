@@ -1,61 +1,127 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="Attiq.Theme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <!--<item name="android:windowBackground">@drawable/attiq_icon</item>-->
-    </style>
+  <!-- BEGIN: Custom attributes -->
+  <attr format="color" name="textReadStatusColor"/>
+  <attr format="color" name="searchPanelScrim"/>
+  <!-- END: Custom attributes -->
 
-    <style name="Attiq.Theme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="toolbarNavigationButtonStyle">
-            @style/Attiq.Widget.Toolbar.Button.Navigation
-        </item>
-    </style>
+  <style name="Attiq"/>
 
-    <style name="Attiq.Theme.Profile" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="toolbarNavigationButtonStyle">
-            @style/Attiq.Widget.Toolbar.Button.Navigation
-        </item>
+  <style name="Attiq.Widget" parent="android:Widget"/>
 
-        <item name="colorPrimary">#F8E796</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowActionBarOverlay">true</item>
-    </style>
+  <style name="Attiq.Theme.Launch" parent="Theme.AppCompat.NoActionBar">
+    <item name="android:windowBackground">@drawable/launch_screen</item>
+    <!--<item name="android:windowEnterTransition">@android:transition/fade</item>-->
+    <!--<item name="android:windowReturnTransition">@android:transition/fade</item>-->
+  </style>
 
-    <style name="Attiq.Theme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+  <!-- Base application theme. -->
+  <style name="Attiq.Theme.Dark" parent="Theme.AppCompat">
+    <!-- Customize your theme here. -->
+    <item name="colorAccent">@color/red_accent_200</item>
+    <item name="android:windowActionBarOverlay">true</item>
+    <item name="android:background">@android:color/transparent</item>
+    <item name="textReadStatusColor">@color/text_link_color_dark</item>
+    <item name="alertDialogTheme">@style/Attiq.Theme.Dialog</item>
+    <item name="toolbarNavigationButtonStyle">
+      @style/Attiq.Widget.Toolbar.Button.Navigation
+    </item>
+    <item name="android:actionBarStyle">@style/Attiq.Widget.Toolbar</item>
+    <item name="searchPanelScrim">@color/scrim_dark</item>
+  </style>
 
-    <style name="Attiq.Theme.ActionBar" parent="Theme.AppCompat.Light">
-        <item name="toolbarNavigationButtonStyle">
-            @style/Attiq.Widget.Toolbar.Button.Navigation
-        </item>
-    </style>
+  <style name="Attiq.Theme.Light" parent="Theme.AppCompat.Light">
+    <item name="colorButtonNormal">@color/red_accent_400</item>
+    <item name="colorControlHighlight">@color/red_accent_200</item>
+    <item name="android:windowActionBarOverlay">true</item>
+    <item name="android:background">@android:color/transparent</item>
+    <item name="textReadStatusColor">@color/text_link_color_light</item>
+    <item name="alertDialogTheme">@style/Attiq.Theme.Dialog</item>
+    <item name="toolbarNavigationButtonStyle">
+      @style/Attiq.Widget.Toolbar.Button.Navigation
+    </item>
+    <item name="android:actionBarStyle">@style/Attiq.Widget.Toolbar</item>
+    <item name="searchPanelScrim">@color/scrim_light</item>
+  </style>
 
-    <style name="Attiq.Theme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+  <style name="Attiq.Theme.Light.NoActionBar">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+  </style>
 
-    <style name="Attiq.Widget.Toolbar.Subtitle"
-           parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
-        <item name="android:textStyle">normal</item>
-    </style>
+  <!-- -->
+  <style name="Attiq.Theme.Light.DarkActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+  </style>
 
-    <style name="Attiq.Widget.Toolbar.Button.Navigation"
-           parent="Widget.AppCompat.Toolbar.Button.Navigation">
-        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
-    </style>
+  <style name="Attiq.Theme.Dialog" parent="Theme.AppCompat.Light.Dialog.Alert">
 
-    <style name="Widget.Design.FloatingActionButton" parent="android:Widget">
-        <item name="android:background">@drawable/design_fab_background</item>
-        <item name="backgroundTint">?attr/colorAccent</item>
-        <item name="exFabSize">normal</item>
-        <item name="elevation">@dimen/design_fab_elevation</item>
-        <item name="pressedTranslationZ">@dimen/design_fab_translation_z_pressed</item>
-        <item name="rippleColor">?attr/colorControlHighlight</item>
-        <item name="borderWidth">@dimen/design_fab_border_width</item>
-    </style>
+  </style>
+
+  <style name="Attiq.Theme.Dark.Setting">
+
+  </style>
+
+  <style name="Attiq.Theme.Light.Setting">
+
+  </style>
+
+  <style name="Attiq.Theme.Dark.NoActionBar">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+    <item name="toolbarNavigationButtonStyle">
+      @style/Attiq.Widget.Toolbar.Button.Navigation
+    </item>
+  </style>
+
+  <style name="Attiq.Theme.Dark.NoActionBar.Profile">
+    <item name="toolbarNavigationButtonStyle">
+      @style/Attiq.Widget.Toolbar.Button.Navigation
+    </item>
+    <item name="android:windowActionBarOverlay">true</item>
+  </style>
+
+  <style name="Attiq.Theme.Light.NoActionBar.Profile">
+    <item name="toolbarNavigationButtonStyle">
+      @style/Attiq.Widget.Toolbar.Button.Navigation
+    </item>
+    <item name="android:windowActionBarOverlay">true</item>
+  </style>
+
+  <style name="Attiq.Theme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar"/>
+
+  <style name="Attiq.Theme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+  <style name="Attiq.Widget.Toolbar" parent="Widget.AppCompat.ActionBar">
+    <item name="elevation">4dp</item>
+  </style>
+
+  <style name="Attiq.Widget.Toolbar.Subtitle"
+      parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+    <item name="android:textStyle">normal</item>
+  </style>
+
+  <style name="Attiq.Widget.Toolbar.Button.Navigation"
+      parent="Widget.AppCompat.Toolbar.Button.Navigation">
+    <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+  </style>
+
+  <style name="Widget.Design.FloatingActionButton" parent="android:Widget">
+    <item name="android:background">@drawable/design_fab_background</item>
+    <item name="backgroundTint">?attr/colorAccent</item>
+    <item name="exFabSize">normal</item>
+    <item name="elevation">@dimen/design_fab_elevation</item>
+    <item name="pressedTranslationZ">@dimen/design_fab_translation_z_pressed</item>
+    <item name="rippleColor">?attr/colorControlHighlight</item>
+    <item name="borderWidth">@dimen/design_fab_border_width</item>
+  </style>
+
+  <style name="Attiq.Widget.Profile.Toolbar.Subtitle"
+      parent="Attiq.Widget.Toolbar.Subtitle">
+    <item name="android:paddingRight">@dimen/profile_image_size_margin</item>
+  </style>
+
+  <style name="TextAppearance.Attiq.ReadStatus" parent="TextAppearance.AppCompat.Small">
+    <item name="android:textColor">?attr/textReadStatusColor</item>
+  </style>
+
 </resources>
