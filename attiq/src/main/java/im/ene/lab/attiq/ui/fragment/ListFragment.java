@@ -93,7 +93,9 @@ public abstract class ListFragment<E> extends BaseFragment
   @Override public boolean handleMessage(Message msg) {
     // TODO consider using switch cases if we have more Messages to handle
     if (msg.what == MESSAGE_UPDATE_DATA) {
-      mAdapter.notifyDataSetChanged();
+      if (mAdapter != null) {
+        mAdapter.notifyDataSetChanged();
+      }
       return true;
     } else if (msg.what == MESSAGE_LOAD_RELOAD) {
       loadReload(false);
