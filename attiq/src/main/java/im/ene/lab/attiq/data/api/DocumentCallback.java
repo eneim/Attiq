@@ -26,6 +26,8 @@ import org.jsoup.nodes.Document;
 
 /**
  * Created by eneim on 1/14/16.
+ *
+ * Used after loading an website by OkHttp, then parsing it by Jsoup
  */
 public abstract class DocumentCallback implements okhttp3.Callback {
 

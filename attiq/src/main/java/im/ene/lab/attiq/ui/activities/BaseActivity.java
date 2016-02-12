@@ -84,9 +84,9 @@ public abstract class BaseActivity extends AppCompatActivity
   }
 
   @SuppressWarnings("unused") public void onEvent(AccessTokenEvent event) {
-    if (event.success && event.object != null) {
-      PrefUtil.setCurrentToken(event.object.getToken());
-      getMasterUser(event.object.getToken());
+    if (event.success && event.token != null) {
+      PrefUtil.setCurrentToken(event.token.getToken());
+      getMasterUser(event.token.getToken());
     }
   }
 

@@ -1,6 +1,5 @@
 package im.ene.lab.attiq.data.api;
 
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import im.ene.lab.attiq.Attiq;
@@ -45,7 +44,7 @@ public final class ApiClient {
 
   private static final Converter<ResponseBody, QiitaError> sErrorConverter;
 
-  public static final int DEFAULT_PAGE_LIMIT = 99; // save API calls...
+  public static final int DEFAULT_PAGE_LIMIT = 99; // save API calls..., may reduce performance
 
   static {
     sHttpClient = Attiq.httpClient().newBuilder().addInterceptor(PrefUtil.ok3Auth()).build();
@@ -59,6 +58,7 @@ public final class ApiClient {
     sOne = sRetrofit.create(Api.One.class);
     sTwo = sRetrofit.create(Api.Two.class);
 
+    // Convert Error from API to usable POJO
     sErrorConverter = sRetrofit.responseBodyConverter(QiitaError.class, new Annotation[0]);
   }
 
@@ -66,11 +66,12 @@ public final class ApiClient {
     try {
       return sErrorConverter.convert(response.errorBody());
     } catch (IOException e) {
-      return new QiitaError();
+      return QiitaError.unknown();
     }
   }
 
   public static String authCallback() {
+    // Directly access Application resource to get String
     return Attiq.creator()
         .getString(R.string.api_token_auth, Attiq.creator().getString(R.string.client_id),
             UUID.randomUUID().toString());
@@ -127,11 +128,12 @@ public final class ApiClient {
   }
 
   public static Call<AccessToken> accessToken(String code) {
-    Resources resources = Attiq.creator().getResources();
-    return sTwo.accessToken(new AccessTokenRequest(false, resources.getString(R.string.client_id),
-        resources.getString(R.string.client_secret), code));
+    return sTwo.accessToken(
+        new AccessTokenRequest(Attiq.creator().getString(R.string.client_id),
+            Attiq.creator().getString(R.string.client_secret), code));
   }
 
+  // Self profile
   public static Call<Profile> me() {
     return sTwo.me();
   }

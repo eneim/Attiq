@@ -65,7 +65,7 @@ import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.WebUtil;
 import im.ene.lab.attiq.util.event.DocumentEvent;
 import im.ene.lab.attiq.util.event.Event;
-import im.ene.lab.attiq.util.event.ProfileFetchedEvent;
+import im.ene.lab.attiq.util.event.UserFetchedEvent;
 import im.ene.lab.attiq.util.event.ProfileUpdatedEvent;
 import im.ene.lab.support.widget.AlphaForegroundColorSpan;
 import im.ene.lab.support.widget.AppBarLayout;
@@ -271,7 +271,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     User user = mRealm.where(User.class).equalTo("id", mUserId).findFirst();
     if (user != null) {
       EventBus.getDefault()
-          .post(new ProfileFetchedEvent(getClass().getSimpleName(), true, null, user));
+          .post(new UserFetchedEvent(getClass().getSimpleName(), true, null, user));
     }
   }
 
@@ -324,17 +324,17 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
           realm.close();
           EventBus.getDefault()
               .post(
-                  new ProfileFetchedEvent(ProfileActivity.class.getSimpleName(), true, null, user));
+                  new UserFetchedEvent(ProfileActivity.class.getSimpleName(), true, null, user));
         } else {
           EventBus.getDefault()
-              .post(new ProfileFetchedEvent(ProfileActivity.class.getSimpleName(), false,
+              .post(new UserFetchedEvent(ProfileActivity.class.getSimpleName(), false,
                   new Event.Error(response.code(), response.message()), null));
         }
       }
 
       @Override public void onFailure(Call<User> call, Throwable error) {
         EventBus.getDefault()
-            .post(new ProfileFetchedEvent(ProfileActivity.class.getSimpleName(), false,
+            .post(new UserFetchedEvent(ProfileActivity.class.getSimpleName(), false,
                 new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
       }
     };
@@ -420,7 +420,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     updateSocialButtons();
   }
 
-  @SuppressWarnings("unused") public void onEventMainThread(ProfileFetchedEvent event) {
+  @SuppressWarnings("unused") public void onEventMainThread(UserFetchedEvent event) {
     Log.d(TAG, "onEventMainThread() called with: " + "event = [" + event + "]");
     if (event.user != null) {
       mRealm.beginTransaction();

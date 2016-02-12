@@ -69,11 +69,8 @@ android {
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'),
           'proguard-rules-release.pro'
-      resValue "string", "attiq_mopub_add_id", "${attiq_mopub_ad_unit_id}"
-      resValue "string", "ga_track_id", "${attiq_ga_track_id_release}"
 
-      resValue "string", "batch_com_api_key", "${attiq_batch_com_api_key_live}"
-      resValue "string", "batch_com_scheme", "${attiq_batch_com_scheme}"
+      resValue "string", "app__name", "Attiq"
     }
 
     prerelease {
@@ -82,11 +79,8 @@ android {
       debuggable true
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-      resValue "string", "attiq_mopub_add_id", "6eaafa8a1f9d44d2961112d17f3fd168"
-      resValue "string", "ga_track_id", "${attiq_ga_track_id_debug}"
 
-      resValue "string", "batch_com_api_key", "${attiq_batch_com_api_key_dev}"
-      resValue "string", "batch_com_scheme", "${attiq_batch_com_scheme}"
+      resValue "string", "app__name", "Attiq Debug"
     }
 
     debug {
@@ -95,11 +89,8 @@ android {
       debuggable true
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-      resValue "string", "attiq_mopub_add_id", "6eaafa8a1f9d44d2961112d17f3fd168"
-      resValue "string", "ga_track_id", "${attiq_ga_track_id_debug}"
 
-      resValue "string", "batch_com_api_key", "${attiq_batch_com_api_key_dev}"
-      resValue "string", "batch_com_scheme", "${attiq_batch_com_scheme}"
+      resValue "string", "app__name", "Attiq Debug"
     }
   }
   productFlavors {
@@ -142,8 +133,8 @@ android {
           if (variant.buildType.minifyEnabled) {
             def copyTask = project.tasks.create("copy${variant.name.capitalize()}MappingText", Copy)
             def buildTypeName = variant.buildType.name
-            copyTask.from(file("build/outputs/proguard/${buildTypeName}").path)
-            copyTask.into(file("${variant.name}/proguard").getAbsolutePath())
+            copyTask.from(file("build/outputs/mapping/${buildTypeName}").path)
+            copyTask.into(file("${variant.name}/mapping").getAbsolutePath())
 
             copyTask.dependsOn variant.assemble
             task.dependsOn copyTask
@@ -188,7 +179,7 @@ dependencies {
   compile fileTree(include: ['*.jar'], dir: 'libs')
   testCompile 'junit:junit:4.12'
 
-  compile "com.google.android.gms:play-services-gcm:${service_version}"
+  // compile "com.google.android.gms:play-services-gcm:${service_version}"
   compile "com.google.android.gms:play-services-analytics:${service_version}"
   // compile "com.google.android.gms:play-services-ads:${service_version}"
   compile "com.google.android.gms:play-services-appindexing:${service_version}"
@@ -234,12 +225,6 @@ dependencies {
   compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.2@aar') {
     transitive = true;
   }
-
-  compile('com.mopub.sdk.android:mopub:4.2.0@aar') {
-    transitive = true;
-  }
-
-  // compile 'com.batch.android:batch-sdk:1.5.2'
 }
 
 apply plugin: 'com.google.gms.google-services'
