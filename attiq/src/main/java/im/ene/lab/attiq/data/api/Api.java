@@ -154,6 +154,21 @@ final class Api {
         @Query("per_page") int limit
     );
 
+    // Success code 204
+    @GET("/api/v2/tags/{tag_id}/following") Call<Void> getTagFollowState(
+        @Path("tag_id") String tagName
+    );
+
+    // Success code 204
+    @PUT("/api/v2/tags/{tag_id}/following") Call<Void> followTag(
+        @Path("tag_id") String tagName
+    );
+
+    // Success code 204
+    @DELETE("/api/v2/tags/{tag_id}/following") Call<Void> unFollowTag(
+        @Path("tag_id") String tagName
+    );
+
     @GET("/api/v2/users/{user_id}") Call<User> user(@Path("user_id") String userName);
 
     @GET("/api/v2/items/{item_id}/stock") Call<Void> getStock(

@@ -170,7 +170,7 @@ if (propFile.canRead()) {
 
 ext {
   support_libraries_version = '23.1.1'
-  okhttp3_version = "3.1.1"
+  okhttp3_version = "3.1.2"
   retrofit2_version = "2.0.0-beta4"
   service_version = "8.4.0"
 }
@@ -205,7 +205,7 @@ dependencies {
 
   compile 'com.sothree.slidinguppanel:library:3.2.1'
   compile 'com.wefika:flowlayout:0.4.1'
-  compile 'com.google.code.gson:gson:2.5'
+  compile 'com.google.code.gson:gson:2.6.1'
   compile 'org.jsoup:jsoup:1.8.3'
 
   compile 'io.github.gitbucket:markedj:1.0.6'

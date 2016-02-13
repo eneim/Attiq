@@ -221,7 +221,7 @@
 
     <FrameLayout
         android:id="@+id/text_action_follow_container"
-        android:layout_width="148dp"
+        android:layout_width="@dimen/follow_button_container_width"
         android:layout_height="@dimen/tab_layout_height"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"

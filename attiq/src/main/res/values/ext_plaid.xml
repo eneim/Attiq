@@ -170,26 +170,4 @@
     <item name="android:windowAnimationStyle">@style/SearchWindowAnimations</item>
   </style>
 
-  <attr format="dimension" name="lineHeightHint"/>
-  <attr format="dimension" name="topPaddingHint"/>
-
-  <attr format="string" name="font"/>
-
-  <declare-styleable name="FontTextAppearance">
-    <attr name="android:textSize"/>
-    <attr name="android:textColor"/>
-    <attr name="android:fontFamily"/>
-    <attr name="font"/>
-  </declare-styleable>
-
-  <declare-styleable name="BaselineGridTextView">
-    <attr format="float" name="lineHeightMultiplierHint"/>
-    <attr name="lineHeightHint"/>
-    <attr name="topPaddingHint"/>
-  </declare-styleable>
-
-  <declare-styleable name="FontTextView">
-    <attr name="font"/>
-    <attr name="android:textAppearance"/>
-  </declare-styleable>
 </resources>

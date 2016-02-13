@@ -128,9 +128,8 @@ public final class ApiClient {
   }
 
   public static Call<AccessToken> accessToken(String code) {
-    return sTwo.accessToken(
-        new AccessTokenRequest(Attiq.creator().getString(R.string.client_id),
-            Attiq.creator().getString(R.string.client_secret), code));
+    return sTwo.accessToken(new AccessTokenRequest(Attiq.creator().getString(R.string.client_id),
+        Attiq.creator().getString(R.string.client_secret), code));
   }
 
   // Self profile
@@ -188,5 +187,17 @@ public final class ApiClient {
 
   public static Call<Comment> patchComment(String commentId, String body) {
     return sTwo.patchComment(commentId, new PostCommentRequest(body));
+  }
+
+  public static Call<Void> getTagFollowState(String tagId) {
+    return sTwo.getTagFollowState(tagId);
+  }
+
+  public static Call<Void> followTag(String tagId) {
+    return sTwo.followTag(tagId);
+  }
+
+  public static Call<Void> unFollowTag(String tagId) {
+    return sTwo.unFollowTag(tagId);
   }
 }

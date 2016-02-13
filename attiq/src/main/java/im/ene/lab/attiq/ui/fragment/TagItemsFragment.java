@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
+import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.two.User;
 import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
@@ -62,8 +63,8 @@ public class TagItemsFragment extends ListFragment<Article> {
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-        DividerItemDecoration.VERTICAL_LIST));
+    mRecyclerView.addItemDecoration(
+        new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
 
     mOnItemClickListener = new ArticleListAdapter.OnArticleClickListener() {
       @Override public void onUserClick(User user) {
@@ -80,6 +81,29 @@ public class TagItemsFragment extends ListFragment<Article> {
     };
 
     mAdapter.setOnItemClickListener(mOnItemClickListener);
+  }
+
+  @Override public void onResume() {
+    super.onResume();
+    // Call following state
+    ApiClient.getTagFollowState(mTagId).enqueue(new retrofit2.Callback<Void>() {
+      @Override public void onResponse(Call<Void> call, Response<Void> response) {
+        if (mCallback != null) {
+          int code = response.code();
+          if (code == 401) {  // Unauthorized --> show nothing
+            mCallback.onTagFollowState(null);
+          } else {
+            mCallback.onTagFollowState(code == 204);
+          }
+        }
+      }
+
+      @Override public void onFailure(Call<Void> call, Throwable t) {
+        if (mCallback != null) {
+          mCallback.onTagFollowState(null);
+        }
+      }
+    });
   }
 
   @Override public void onDestroyView() {
@@ -101,5 +125,7 @@ public class TagItemsFragment extends ListFragment<Article> {
   public interface Callback {
 
     void onResponseHeaders(Headers headers);
+
+    void onTagFollowState(Boolean isFollowing);
   }
 }

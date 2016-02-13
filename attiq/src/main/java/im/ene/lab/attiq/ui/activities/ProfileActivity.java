@@ -48,8 +48,8 @@ import com.squareup.picasso.RequestCreator;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
-import im.ene.lab.attiq.data.api.DocumentCallback;
 import im.ene.lab.attiq.data.api.ApiClient;
+import im.ene.lab.attiq.data.api.DocumentCallback;
 import im.ene.lab.attiq.data.model.local.RProfile;
 import im.ene.lab.attiq.data.model.two.Profile;
 import im.ene.lab.attiq.data.model.two.User;
@@ -65,8 +65,8 @@ import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.WebUtil;
 import im.ene.lab.attiq.util.event.DocumentEvent;
 import im.ene.lab.attiq.util.event.Event;
-import im.ene.lab.attiq.util.event.UserFetchedEvent;
 import im.ene.lab.attiq.util.event.ProfileUpdatedEvent;
+import im.ene.lab.attiq.util.event.UserFetchedEvent;
 import im.ene.lab.support.widget.AlphaForegroundColorSpan;
 import im.ene.lab.support.widget.AppBarLayout;
 import im.ene.lab.support.widget.CollapsingToolbarLayout;
@@ -161,7 +161,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
   private RProfile mProfile;
   private Profile mRefUser;
   // private User mUser;
-  private State mState = new State();
+  // private State mState = new State();
   private String mUserId; // actually the User name
   private Callback<Void> mOnFollowStateCallback;
   private Callback<Void> mOnUnFollowStateCallback;
@@ -170,13 +170,13 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
   private Handler.Callback mHandlerCallback = new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
       if (msg.what == MESSAGE_ACTION_FOLLOW) {
-        if (!mState.isFollowing) {
-          mState.isFollowing = true;
+        if (!((State) mState).isFollowing) {
+          ((State) mState).isFollowing = true;
           EventBus.getDefault()
               .post(new StateEvent<>(ProfileActivity.class.getSimpleName(), true, null, mState));
           ApiClient.followUser(mUserId).enqueue(mOnFollowStateCallback);
         } else {
-          mState.isFollowing = false;
+          ((State) mState).isFollowing = false;
           EventBus.getDefault()
               .post(new StateEvent<>(ProfileActivity.class.getSimpleName(), true, null, mState));
           ApiClient.unFollowUser(mUserId).enqueue(mOnUnFollowStateCallback);
@@ -289,7 +289,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     // setup
     mOnFollowStateCallback = new Callback<Void>() {
       @Override public void onResponse(Call<Void> call, Response<Void> response) {
-        mState.isFollowing = response != null && response.code() == 204;
+        ((State) mState).isFollowing = response != null && response.code() == 204;
         EventBus.getDefault()
             .post(new StateEvent<>(ProfileActivity.class.getSimpleName(), true, null, mState));
       }
@@ -303,7 +303,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
 
     mOnUnFollowStateCallback = new Callback<Void>() {
       @Override public void onResponse(Call<Void> call, Response<Void> response) {
-        mState.isFollowing = response != null && !(response.code() == 204);
+        ((State) mState).isFollowing = response != null && !(response.code() == 204);
       }
 
       @Override public void onFailure(Call<Void> call, Throwable t) {
@@ -323,8 +323,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
           realm.commitTransaction();
           realm.close();
           EventBus.getDefault()
-              .post(
-                  new UserFetchedEvent(ProfileActivity.class.getSimpleName(), true, null, user));
+              .post(new UserFetchedEvent(ProfileActivity.class.getSimpleName(), true, null, user));
         } else {
           EventBus.getDefault()
               .post(new UserFetchedEvent(ProfileActivity.class.getSimpleName(), false,
@@ -689,12 +688,16 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
         }
 
         if (contribution != null) {
-          mState.contribution = contribution;
+          ((State) mState).contribution = contribution;
           EventBus.getDefault()
               .post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
         }
       }
     }
+  }
+
+  @Override protected void initState() {
+    mState = new State();
   }
 
   private static class State extends BaseState {
