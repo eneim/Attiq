@@ -91,16 +91,16 @@ public class TagItemsFragment extends ListFragment<Article> {
         if (mCallback != null) {
           int code = response.code();
           if (code == 401) {  // Unauthorized --> show nothing
-            mCallback.onTagFollowState(null);
+            mCallback.onTagFollowState(mTagId, null);
           } else {
-            mCallback.onTagFollowState(code == 204);
+            mCallback.onTagFollowState(mTagId, code == 204);
           }
         }
       }
 
       @Override public void onFailure(Call<Void> call, Throwable t) {
         if (mCallback != null) {
-          mCallback.onTagFollowState(null);
+          mCallback.onTagFollowState(mTagId, null);
         }
       }
     });
@@ -126,6 +126,6 @@ public class TagItemsFragment extends ListFragment<Article> {
 
     void onResponseHeaders(Headers headers);
 
-    void onTagFollowState(Boolean isFollowing);
+    void onTagFollowState(String tagName, Boolean isFollowing);
   }
 }

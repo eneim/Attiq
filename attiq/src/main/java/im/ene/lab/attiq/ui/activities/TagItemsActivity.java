@@ -23,10 +23,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -51,16 +54,98 @@ import retrofit2.Response;
  */
 public class TagItemsActivity extends BaseActivity implements TagItemsFragment.Callback {
 
+  private final int MESSAGE_FOLLOW_UNFOLLOW = 1;
+
   @Bind(R.id.toolbar) Toolbar mToolbar;
+
   private String mTagId; // actually the Tag name
   private View mBtnFollowContainer;
   private TextView mBtnFollow;
+  private Callback<Void> mFollowUnFollowCallback = new SuccessCallback<Void>() {
+    @Override public void onResponse(Call<Void> call, Response<Void> response) {
+      Boolean currentState = ((State) mState).isFollowing;
+      if (currentState != null && response.code() == 204) { // success
+        ((State) mState).isFollowing = !currentState; // state changed
+        EventBus.getDefault()
+            .post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
+      }
+    }
+  };
+  private Handler mHandler = new Handler(new Handler.Callback() {
+    @Override public boolean handleMessage(Message msg) {
+      if (msg.what == MESSAGE_FOLLOW_UNFOLLOW) {
+        // Follow/Unfollow current tag
+        Boolean isFollowing = ((State) mState).isFollowing;
+        if (isFollowing != null) {
+          if (isFollowing) {
+            ApiClient.unFollowTag(((State) mState).tagName).enqueue(mFollowUnFollowCallback);
+          } else {
+            ApiClient.followTag(((State) mState).tagName).enqueue(mFollowUnFollowCallback);
+          }
+        }
+        return true;
+      }
+      return false;
+    }
+  });
+  // Could not use ButterKnife for this action. This button is not included in View hierarchy
+  // from the beginning
+  private View.OnClickListener mOnFollowClick = new View.OnClickListener() {
+    @Override public void onClick(View v) {
+      if (mHandler != null) {
+        // Prevent 'stress pressing' by using handler
+        mHandler.removeMessages(MESSAGE_FOLLOW_UNFOLLOW);
+        mHandler.sendEmptyMessageDelayed(MESSAGE_FOLLOW_UNFOLLOW, 200);
+      }
+    }
+  };
 
   public static Intent createIntent(Context context, String tagName) {
     Intent intent = new Intent(context, TagItemsActivity.class);
     Uri data = Uri.parse(context.getString(R.string.data_tags_url, tagName));
     intent.setData(data);
     return intent;
+  }
+
+  private static final String TAG = "TagItemsActivity";
+
+  @Override protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    handleIntent(intent, false);
+  }
+
+  /**
+   * Process current intent
+   *
+   * @param intent The Intent to process
+   * @param coldStart first start of this Activity or be called from onNewIntent
+   */
+  private void handleIntent(Intent intent, boolean coldStart) {
+    if (intent != null) {
+      Uri data = intent.getData();
+      if (data != null) {
+        List<String> paths = data.getPathSegments();
+        if (!UIUtil.isEmpty(paths)) {
+          Iterator<String> iterator = paths.iterator();
+          while (iterator.hasNext()) {
+            if ("tags".equals(iterator.next())) {
+              mTagId = iterator.next();
+              break;
+            }
+          }
+        }
+      }
+
+      ((State) mState).tagName = mTagId;
+      FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      transaction.replace(R.id.container, TagItemsFragment.newInstance(mTagId));
+      // Add fragment to backstack only when that Fragment is added from current Activity
+      if (!coldStart) {
+        transaction.addToBackStack(null);
+      }
+
+      transaction.commit();
+    }
   }
 
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -72,26 +157,33 @@ public class TagItemsActivity extends BaseActivity implements TagItemsFragment.C
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    Uri data = getIntent().getData();
-    if (data != null) {
-      List<String> paths = data.getPathSegments();
-      if (!UIUtil.isEmpty(paths)) {
-        Iterator<String> iterator = paths.iterator();
-        while (iterator.hasNext()) {
-          if ("tags".equals(iterator.next())) {
-            mTagId = iterator.next();
-            break;
+    getSupportFragmentManager().addOnBackStackChangedListener(mBackStackListener);
+
+    handleIntent(getIntent(), true);
+  }
+
+  private FragmentManager.OnBackStackChangedListener mBackStackListener =
+      new FragmentManager.OnBackStackChangedListener() {
+        @Override public void onBackStackChanged() {
+          if (mState != null) {
+            ((State) mState).itemCount = 0;
+            EventBus.getDefault()
+                .post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
           }
         }
-      }
+      };
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    // Back-press will change the fragment backstack.
+    // But press navigate button should finish the activity
+    if (item.getItemId() == android.R.id.home) {
+      getSupportFragmentManager().popBackStackImmediate(null,
+          FragmentManager.POP_BACK_STACK_INCLUSIVE);
+      navigateUpOrBack(this, null);
+      return true;
     }
 
-    setTitle(getString(R.string.title_activity_tag, mTagId));
-    if (getSupportFragmentManager().findFragmentById(R.id.container) == null) {
-      getSupportFragmentManager().beginTransaction()
-          .replace(R.id.container, TagItemsFragment.newInstance(mTagId))
-          .commit();
-    }
+    return super.onOptionsItemSelected(item);
   }
 
   private void addFollowButton() {
@@ -116,6 +208,10 @@ public class TagItemsActivity extends BaseActivity implements TagItemsFragment.C
 
   @SuppressWarnings("unused") public void onEventMainThread(StateEvent<State> event) {
     if (event.state != null) {
+      if (event.state.tagName != null) {
+        setTitle(getString(R.string.title_activity_tag, event.state.tagName));
+      }
+
       if (event.state.itemCount != null) {
         mToolbar.setSubtitle(getResources().getQuantityString(R.plurals.title_activity_tag_quantity,
             event.state.itemCount, event.state.itemCount));
@@ -141,50 +237,8 @@ public class TagItemsActivity extends BaseActivity implements TagItemsFragment.C
     }
   }
 
-  // Could not use ButterKnife for this action. This button is not included in View hierarchy
-  // from the beginning
-  private View.OnClickListener mOnFollowClick = new View.OnClickListener() {
-    @Override public void onClick(View v) {
-      if (mHandler != null) {
-        // Prevent 'stress pressing' by using handler
-        mHandler.removeMessages(MESSAGE_FOLLOW_UNFOLLOW);
-        mHandler.sendEmptyMessageDelayed(MESSAGE_FOLLOW_UNFOLLOW, 200);
-      }
-    }
-  };
-
-  private final int MESSAGE_FOLLOW_UNFOLLOW = 1;
-
-  private Handler mHandler = new Handler(new Handler.Callback() {
-    @Override public boolean handleMessage(Message msg) {
-      if (msg.what == MESSAGE_FOLLOW_UNFOLLOW) {
-        // Follow/Unfollow current tag
-        Boolean isFollowing = ((State) mState).isFollowing;
-        if (isFollowing != null) {
-          if (isFollowing) {
-            ApiClient.unFollowTag(mTagId).enqueue(mFollowUnFollowCallback);
-          } else {
-            ApiClient.followTag(mTagId).enqueue(mFollowUnFollowCallback);
-          }
-        }
-        return true;
-      }
-      return false;
-    }
-  });
-
-  private Callback<Void> mFollowUnFollowCallback = new SuccessCallback<Void>() {
-    @Override public void onResponse(Call<Void> call, Response<Void> response) {
-      Boolean currentState = ((State) mState).isFollowing;
-      if (currentState != null && response.code() == 204) { // success
-        ((State) mState).isFollowing = !currentState; // state changed
-        EventBus.getDefault()
-            .post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
-      }
-    }
-  };
-
   @Override protected void onDestroy() {
+    getSupportFragmentManager().removeOnBackStackChangedListener(mBackStackListener);
     mHandler.removeCallbacksAndMessages(null);
     mFollowUnFollowCallback = null;
     super.onDestroy();
@@ -208,8 +262,9 @@ public class TagItemsActivity extends BaseActivity implements TagItemsFragment.C
     }
   }
 
-  @Override public void onTagFollowState(Boolean isFollowing) {
+  @Override public void onTagFollowState(String tagName, Boolean isFollowing) {
     ((State) mState).isFollowing = isFollowing;
+    ((State) mState).tagName = tagName;
     EventBus.getDefault().post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
   }
 
@@ -224,5 +279,7 @@ public class TagItemsActivity extends BaseActivity implements TagItemsFragment.C
     @Nullable private Boolean isFollowing;
 
     @Nullable private Integer itemCount;
+
+    @Nullable private String tagName;
   }
 }
