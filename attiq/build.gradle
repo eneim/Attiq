@@ -50,7 +50,7 @@ android {
     versionName VERSION_NAME
     manifestPlaceholders = [fabric_api_key: "${attiq_fabric_api_key}"]
     multiDexEnabled false
-    resValue "string", "attiq_gcm_sender_id", "${attiq_gcm_sender_id}"
+    // resValue "string", "attiq_gcm_sender_id", "${attiq_gcm_sender_id}"
   }
 
   packagingOptions {
@@ -104,7 +104,7 @@ android {
     abortOnError false
     disable 'InvalidPackage'
     disable 'PrivateResource'
-    disable 'MissingTranslation' // should un-comment later to improve App
+    disable 'MissingTranslation' // prevent build-lint check, should un-comment later to improve App
   }
 
   applicationVariants.all { variant ->
