@@ -43,7 +43,7 @@ import retrofit2.Response;
 /**
  * Created by eneim on 12/14/15.
  */
-public class PublicItemsAdapter extends RealmListAdapter<PublicPost> {
+public class PublicItemsAdapter extends AttiqRealmListAdapter<PublicPost> {
 
   private final RealmResults<PublicPost> mItems;
 

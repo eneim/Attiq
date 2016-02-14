@@ -24,7 +24,7 @@ import retrofit2.Response;
 /**
  * Created by eneim on 1/10/16.
  */
-public class UserTagsAdapter extends ListAdapter<PublicTag> {
+public class UserTagsAdapter extends AttiqListAdapter<PublicTag> {
 
   private final Object LOCK = new Object();
 

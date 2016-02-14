@@ -9,7 +9,7 @@ import butterknife.ButterKnife;
 /**
  * Created by eneim on 12/15/15.
  * <p/>
- * A less abstract Adapter, to simplify RecyclerView#Adapter implementation
+ * A less abstract Adapter with more power, to simplify RecyclerView#Adapter implementation
  */
 public abstract class BaseAdapter<VH extends BaseAdapter.ViewHolder>
     extends RecyclerView.Adapter<VH> {

@@ -30,7 +30,7 @@ import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.activities.ProfileActivity;
 import im.ene.lab.attiq.ui.adapters.FeedListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
-import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
+import im.ene.lab.attiq.ui.adapters.AttiqRealmListAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.PrefUtil;
@@ -122,7 +122,7 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     }
   }
 
-  @NonNull @Override protected RealmListAdapter<FeedItem> createRealmAdapter() {
+  @NonNull @Override protected AttiqRealmListAdapter<FeedItem> createRealmAdapter() {
     RealmResults<FeedItem> items =
         mRealm.where(FeedItem.class).findAllSorted("createdAtInUnixtime", Sort.DESCENDING);
     return new FeedListAdapter(items);

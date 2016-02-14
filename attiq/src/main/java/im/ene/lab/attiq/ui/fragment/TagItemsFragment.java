@@ -11,7 +11,7 @@ import im.ene.lab.attiq.data.model.two.User;
 import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.activities.ProfileActivity;
 import im.ene.lab.attiq.ui.adapters.ArticleListAdapter;
-import im.ene.lab.attiq.ui.adapters.ListAdapter;
+import im.ene.lab.attiq.ui.adapters.AttiqListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.TagItemsAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
@@ -111,7 +111,7 @@ public class TagItemsFragment extends ListFragment<Article> {
     super.onDestroyView();
   }
 
-  @NonNull @Override protected ListAdapter<Article> createAdapter() {
+  @NonNull @Override protected AttiqListAdapter<Article> createAdapter() {
     return new TagItemsAdapter(mTagId);
   }
 

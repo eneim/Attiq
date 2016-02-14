@@ -58,7 +58,7 @@ import retrofit2.Response;
 /**
  * Created by eneim on 12/25/15.
  */
-public class FeedListAdapter extends RealmListAdapter<FeedItem> {
+public class FeedListAdapter extends AttiqRealmListAdapter<FeedItem> {
 
   private static final int VIEW_TYPE_ITEM = 1 << 1;
   private static final int VIEW_TYPE_FOLLOW = 1 << 2;

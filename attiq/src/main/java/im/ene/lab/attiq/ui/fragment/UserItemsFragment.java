@@ -8,9 +8,9 @@ import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.two.User;
 import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.adapters.ArticleListAdapter;
-import im.ene.lab.attiq.ui.adapters.ListAdapter;
+import im.ene.lab.attiq.ui.adapters.AttiqListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
-import im.ene.lab.attiq.ui.adapters.UserArticlesAdapter;
+import im.ene.lab.attiq.ui.adapters.UserItemsAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 import im.ene.lab.attiq.util.PrefUtil;
 
@@ -37,8 +37,8 @@ public class UserItemsFragment extends ListFragment<Article> {
     return fragment;
   }
 
-  @NonNull @Override protected ListAdapter<Article> createAdapter() {
-    return new UserArticlesAdapter(mUserId);
+  @NonNull @Override protected AttiqListAdapter<Article> createAdapter() {
+    return new UserItemsAdapter(mUserId);
   }
 
   private OnItemClickListener mItemClickListener;

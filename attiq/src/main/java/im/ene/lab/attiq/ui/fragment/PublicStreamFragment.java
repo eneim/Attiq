@@ -11,7 +11,7 @@ import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.activities.ProfileActivity;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.PublicItemsAdapter;
-import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
+import im.ene.lab.attiq.ui.adapters.AttiqRealmListAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 import im.ene.lab.attiq.util.PrefUtil;
 import io.realm.RealmResults;
@@ -32,7 +32,7 @@ public class PublicStreamFragment extends RealmListFragment<PublicPost> {
     return new PublicStreamFragment();
   }
 
-  @NonNull @Override protected RealmListAdapter<PublicPost> createRealmAdapter() {
+  @NonNull @Override protected AttiqRealmListAdapter<PublicPost> createRealmAdapter() {
     RealmResults<PublicPost> items =
         mRealm.where(PublicPost.class).findAllSorted("createdAtAsSeconds", Sort.DESCENDING);
     return new PublicItemsAdapter(items);

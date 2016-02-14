@@ -32,7 +32,7 @@ import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.ui.adapters.ListAdapter;
+import im.ene.lab.attiq.ui.adapters.AttiqListAdapter;
 import im.ene.lab.attiq.ui.widgets.EndlessScrollListener;
 import im.ene.lab.attiq.ui.widgets.FixedSwipeToRefreshLayout;
 import im.ene.lab.attiq.ui.widgets.NonEmptyRecyclerView;
@@ -72,7 +72,7 @@ public abstract class ListFragment<E> extends BaseFragment
   // performance (comparing to its super class LinearLayoutManager), but this a reasonable trade
   // off
   protected GridLayoutManager mLayoutManager;
-  protected ListAdapter<E> mAdapter;
+  protected AttiqListAdapter<E> mAdapter;
   protected int mPage = DEFAULT_FIRST_PAGE;
   /**
    * UI components
@@ -190,7 +190,7 @@ public abstract class ListFragment<E> extends BaseFragment
     super.onDestroyView();
   }
 
-  @NonNull protected abstract ListAdapter<E> createAdapter();
+  @NonNull protected abstract AttiqListAdapter<E> createAdapter();
 
   @Override public void onRefresh() {
     if (mSwipeRefreshLayout != null) {

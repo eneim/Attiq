@@ -28,7 +28,7 @@ import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.activities.ProfileActivity;
 import im.ene.lab.attiq.ui.adapters.HistoryAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
-import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
+import im.ene.lab.attiq.ui.adapters.AttiqRealmListAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 import im.ene.lab.attiq.util.PrefUtil;
 import io.realm.RealmResults;
@@ -52,7 +52,7 @@ public class HistoryFragment extends RealmListFragment<ReadArticle> {
     }
   }
 
-  @NonNull @Override protected RealmListAdapter<ReadArticle> createRealmAdapter() {
+  @NonNull @Override protected AttiqRealmListAdapter<ReadArticle> createRealmAdapter() {
     RealmResults<ReadArticle> articles =
         mRealm.where(ReadArticle.class).findAllSorted(ReadArticle.FIELD_LAST_VIEW, Sort.DESCENDING);
     return new HistoryAdapter(articles);
