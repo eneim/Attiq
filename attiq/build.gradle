@@ -19,9 +19,6 @@ apply plugin: 'com.getkeepsafe.dexcount'
 
 repositories {
   maven { url 'https://maven.fabric.io/public' }
-  maven {
-    url "http://maven.batch.com/release"
-  }
 }
 
 def VERSION_CODE = 10000
