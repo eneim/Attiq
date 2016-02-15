@@ -21,8 +21,8 @@ repositories {
   maven { url 'https://maven.fabric.io/public' }
 }
 
-def VERSION_CODE = 10000
-def VERSION_NAME = "1.0.0"
+def VERSION_CODE = 10001
+def VERSION_NAME = "1.0.1"
 
 android {
   signingConfigs {
