@@ -55,7 +55,7 @@ import java.util.List;
 /**
  * Created by eneim on 1/10/16.
  */
-public class HistoryAdapter extends RealmListAdapter<ReadArticle> {
+public class HistoryAdapter extends AttiqRealmListAdapter<ReadArticle> {
 
   private final RealmResults<ReadArticle> mItems;
 

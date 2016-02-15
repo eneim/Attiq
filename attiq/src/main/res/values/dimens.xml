@@ -74,4 +74,6 @@
 
   <dimen name="tag_icon_size">16dp</dimen>
   <dimen name="tag_icon_size_half">8dp</dimen>
+
+  <dimen name="follow_button_container_width">148dp</dimen>
 </resources>

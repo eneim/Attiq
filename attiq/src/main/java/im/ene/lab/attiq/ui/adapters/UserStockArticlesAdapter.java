@@ -55,7 +55,7 @@ import retrofit2.Response;
 /**
  * Created by eneim on 1/10/16.
  */
-public class UserStockArticlesAdapter extends RealmListAdapter<StockArticle> {
+public class UserStockArticlesAdapter extends AttiqRealmListAdapter<StockArticle> {
 
   private final String mUserId;
 

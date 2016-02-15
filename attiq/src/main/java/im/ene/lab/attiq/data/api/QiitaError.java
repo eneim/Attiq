@@ -21,8 +21,8 @@ public class QiitaError {
     this.message = message;
   }
 
-  public QiitaError() {
-    this("unknown", "Unknown Error");
+  public static QiitaError unknown() {
+    return new QiitaError("unknown", "Unknown Error");
   }
 
 }

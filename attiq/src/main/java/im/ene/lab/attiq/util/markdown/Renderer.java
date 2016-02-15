@@ -1,16 +1,16 @@
 package im.ene.lab.attiq.util.markdown;
 
+import io.github.gitbucket.markedj.Options;
+import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
-
-import java.util.regex.Pattern;
 
 /**
  * Created by eneim on 1/18/16.
  * <p/>
  * An improvement for {@link io.github.gitbucket.markedj.Marked}, supposes to support Checkboxes.
- * Please note that Markedj is much slower than other Markdown libraries. But I have no better
- * choices for now.
+ * Please note that {@link io.github.gitbucket.markedj.Marked} is much slower than other Markdown
+ * libraries. But I have no better choices for now.
  */
 public class Renderer extends io.github.gitbucket.markedj.Renderer {
 
@@ -20,12 +20,11 @@ public class Renderer extends io.github.gitbucket.markedj.Renderer {
   private static final String CHECKBOX_OPEN_MARK = "[ ] ";
 
   private static final String CHECKBOX_CLOSE_REPLACEMENT =
-      "<input type=\"checkbox\" class=\"task-list-item-checkbox\" " +
-          "disabled=\"true\" checked=\"\">";
+      "<input type=\"checkbox\" class=\"task-list-item-checkbox\" "
+          + "disabled=\"true\" checked=\"\">";
 
   private static final String CHECKBOX_OPEN_REPLACEMENT =
-      "<input type=\"checkbox\" class=\"task-list-item-checkbox\"" +
-          "disabled=\"true\">";
+      "<input type=\"checkbox\" class=\"task-list-item-checkbox\"" + "disabled=\"true\">";
 
   public Renderer(Options options) {
     super(options);
@@ -34,7 +33,6 @@ public class Renderer extends io.github.gitbucket.markedj.Renderer {
   /**
    * Support checkbox parsing
    *
-   * @param text
    * @return expected list item html code
    */
   @Override public String listitem(String text) {
@@ -58,5 +56,4 @@ public class Renderer extends io.github.gitbucket.markedj.Renderer {
 
     return listItem;
   }
-
 }

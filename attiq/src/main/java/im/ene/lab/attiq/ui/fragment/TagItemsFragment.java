@@ -5,12 +5,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
+import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.two.User;
 import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.activities.ProfileActivity;
 import im.ene.lab.attiq.ui.adapters.ArticleListAdapter;
-import im.ene.lab.attiq.ui.adapters.ListAdapter;
+import im.ene.lab.attiq.ui.adapters.AttiqListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.TagItemsAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
@@ -62,8 +63,8 @@ public class TagItemsFragment extends ListFragment<Article> {
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-        DividerItemDecoration.VERTICAL_LIST));
+    mRecyclerView.addItemDecoration(
+        new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
 
     mOnItemClickListener = new ArticleListAdapter.OnArticleClickListener() {
       @Override public void onUserClick(User user) {
@@ -82,12 +83,35 @@ public class TagItemsFragment extends ListFragment<Article> {
     mAdapter.setOnItemClickListener(mOnItemClickListener);
   }
 
+  @Override public void onResume() {
+    super.onResume();
+    // Call following state
+    ApiClient.getTagFollowState(mTagId).enqueue(new retrofit2.Callback<Void>() {
+      @Override public void onResponse(Call<Void> call, Response<Void> response) {
+        if (mCallback != null) {
+          int code = response.code();
+          if (code == 401) {  // Unauthorized --> show nothing
+            mCallback.onTagFollowState(mTagId, null);
+          } else {
+            mCallback.onTagFollowState(mTagId, code == 204);
+          }
+        }
+      }
+
+      @Override public void onFailure(Call<Void> call, Throwable t) {
+        if (mCallback != null) {
+          mCallback.onTagFollowState(mTagId, null);
+        }
+      }
+    });
+  }
+
   @Override public void onDestroyView() {
     mOnItemClickListener = null;
     super.onDestroyView();
   }
 
-  @NonNull @Override protected ListAdapter<Article> createAdapter() {
+  @NonNull @Override protected AttiqListAdapter<Article> createAdapter() {
     return new TagItemsAdapter(mTagId);
   }
 
@@ -101,5 +125,7 @@ public class TagItemsFragment extends ListFragment<Article> {
   public interface Callback {
 
     void onResponseHeaders(Headers headers);
+
+    void onTagFollowState(String tagName, Boolean isFollowing);
   }
 }

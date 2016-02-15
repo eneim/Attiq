@@ -10,6 +10,8 @@
   <item name="feed_view_id_info" type="id"/>
   <item name="profile_info_tags" type="id"/>
 
+  <item name="tag_activity_action_follow" type="id"/>
+
   <!-- Description IDs -->
   <item name="profile_info_contribution" type="id"/>
   <item name="profile_info_description" type="id"/>

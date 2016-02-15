@@ -1,10 +1,13 @@
 package im.ene.lab.attiq.util.markdown;
 
 import io.github.gitbucket.markedj.Lexer;
+import io.github.gitbucket.markedj.Options;
 import io.github.gitbucket.markedj.Parser;
 
 /**
  * Created by eneim on 1/18/16.
+ *
+ * An extension of {@link io.github.gitbucket.markedj.Marked}, with better support for list items
  */
 public class Marked {
 

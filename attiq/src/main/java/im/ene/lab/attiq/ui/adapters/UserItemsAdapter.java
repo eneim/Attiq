@@ -32,11 +32,11 @@ import java.util.List;
 /**
  * Created by eneim on 1/6/16.
  */
-public class UserArticlesAdapter extends ArticleListAdapter {
+public class UserItemsAdapter extends ArticleListAdapter {
 
   private final String mUserId;
 
-  public UserArticlesAdapter(String userId) {
+  public UserItemsAdapter(String userId) {
     super();
     this.mUserId = userId;
   }
@@ -73,7 +73,7 @@ public class UserArticlesAdapter extends ArticleListAdapter {
         int position = viewHolder.getAdapterPosition();
         if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
           mOnItemClickListener.onItemClick(
-              UserArticlesAdapter.this, viewHolder, v, position, getItemId(position)
+              UserItemsAdapter.this, viewHolder, v, position, getItemId(position)
           );
         }
       }
