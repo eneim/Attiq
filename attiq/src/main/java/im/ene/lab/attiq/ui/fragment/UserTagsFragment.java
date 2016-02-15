@@ -17,7 +17,7 @@ import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.one.PublicTag;
 import im.ene.lab.attiq.ui.activities.TagItemsActivity;
-import im.ene.lab.attiq.ui.adapters.ListAdapter;
+import im.ene.lab.attiq.ui.adapters.AttiqListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.UserTagsAdapter;
 import im.ene.lab.attiq.util.PrefUtil;
@@ -60,7 +60,7 @@ public class UserTagsFragment extends BaseFragment
   private final State mState = new State();
   protected String mUserId;
   @Bind(R.id.tags) RecyclerView mRecyclerView;
-  private ListAdapter<PublicTag> mAdapter;
+  private AttiqListAdapter<PublicTag> mAdapter;
   // User a handler to prevent too frequently calling of methods. For example Realm may trigger
   // #onChange a lot of time, since it doesn't support type-specific change event now. So we
   // should queue the Change event up, and remove the duplicated ones to save resources
@@ -103,7 +103,7 @@ public class UserTagsFragment extends BaseFragment
     mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
   }
 
-  @NonNull protected ListAdapter<PublicTag> createAdapter() {
+  @NonNull protected AttiqListAdapter<PublicTag> createAdapter() {
     return new UserTagsAdapter(mUserId, mItems);
   }
 

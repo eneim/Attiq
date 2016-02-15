@@ -20,17 +20,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
-
 import im.ene.lab.attiq.util.UIUtil;
-
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by eneim on 12/15/15.
+ *
+ * @Deprecated Currently, each Activity will listen to its Uri by itself. There is no need to use
+ * this proxy class.
  */
-@Deprecated
-public class DeepLinkActivity extends AppCompatActivity {
+@Deprecated public class DeepLinkActivity extends AppCompatActivity {
 
   private static final String SCHEME_INTERNAL = "attiq";
 

@@ -24,8 +24,8 @@ import android.view.View;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.data.api.ApiClient;
-import im.ene.lab.attiq.ui.adapters.ListAdapter;
-import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
+import im.ene.lab.attiq.ui.adapters.AttiqListAdapter;
+import im.ene.lab.attiq.ui.adapters.AttiqRealmListAdapter;
 import im.ene.lab.attiq.util.UIUtil;
 import im.ene.lab.attiq.util.event.Event;
 import im.ene.lab.attiq.util.event.ItemsEvent;
@@ -78,11 +78,11 @@ public abstract class RealmListFragment<E extends RealmObject> extends ListFragm
     mAdapter.loadItems(isLoadingMore, mPage, DEFAULT_THRESHOLD, null, this);
   }
 
-  @NonNull @Override protected ListAdapter<E> createAdapter() {
+  @NonNull @Override protected AttiqListAdapter<E> createAdapter() {
     return createRealmAdapter();
   }
 
-  @NonNull protected abstract RealmListAdapter<E> createRealmAdapter();
+  @NonNull protected abstract AttiqRealmListAdapter<E> createRealmAdapter();
 
   @Override public void onRefresh() {
     if (mSwipeRefreshLayout != null) {

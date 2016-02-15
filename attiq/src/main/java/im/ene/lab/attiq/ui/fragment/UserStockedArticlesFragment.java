@@ -27,7 +27,7 @@ import im.ene.lab.attiq.data.model.two.User;
 import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.activities.ProfileActivity;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
-import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
+import im.ene.lab.attiq.ui.adapters.AttiqRealmListAdapter;
 import im.ene.lab.attiq.ui.adapters.UserStockArticlesAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 import im.ene.lab.attiq.util.PrefUtil;
@@ -53,7 +53,7 @@ public class UserStockedArticlesFragment extends RealmListFragment<StockArticle>
     return fragment;
   }
 
-  @NonNull @Override protected RealmListAdapter<StockArticle> createRealmAdapter() {
+  @NonNull @Override protected AttiqRealmListAdapter<StockArticle> createRealmAdapter() {
     RealmResults<StockArticle> articles = mRealm.where(StockArticle.class)
         .equalTo(StockArticle.FIELD_USER_ID, mUserId)
         .findAllSorted(StockArticle.FIELD_CREATED_AT, Sort.DESCENDING);

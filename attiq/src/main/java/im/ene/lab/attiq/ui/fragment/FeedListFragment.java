@@ -20,17 +20,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
-import com.mopub.common.MoPub;
-import com.mopub.nativeads.MoPubRecyclerAdapter;
-import com.mopub.nativeads.MoPubStaticNativeAdRenderer;
-import com.mopub.nativeads.RequestParameters;
-import com.mopub.nativeads.ViewBinder;
 import de.greenrobot.event.EventBus;
 import im.ene.lab.attiq.Attiq;
-import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.zero.FeedItem;
@@ -38,7 +30,7 @@ import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.activities.ProfileActivity;
 import im.ene.lab.attiq.ui.adapters.FeedListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
-import im.ene.lab.attiq.ui.adapters.RealmListAdapter;
+import im.ene.lab.attiq.ui.adapters.AttiqRealmListAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.PrefUtil;
@@ -73,8 +65,6 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
 
   private OnItemClickListener mOnItemClickListener;
 
-  private MoPubRecyclerAdapter mMopubAdapter;
-
   private Callback<Article> mOnArticleLoaded = new Callback<Article>() {
     @Override public void onResponse(Call<Article> call, Response<Article> response) {
       Article article = response.body();
@@ -95,25 +85,8 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     }
   };
 
-  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    MoPub.setLocationAwareness(MoPub.LocationAwareness.NORMAL);
-  }
-
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    mMopubAdapter = new MoPubRecyclerAdapter(getActivity(), mAdapter);
-    ViewBinder viewBinder =
-        new ViewBinder.Builder(NativeAdsView.LAYOUT_RES).titleId(NativeAdsView.AD_VIEW_TITLE)
-            .iconImageId(NativeAdsView.AD_VIEW_ICON)
-            .textId(NativeAdsView.AD_VIEW_TEXT)
-            .mainImageId(NativeAdsView.AD_VIEW_IMAGE)
-            .build();
-    MoPubStaticNativeAdRenderer adViewRenderer = new MoPubStaticNativeAdRenderer(viewBinder);
-    mMopubAdapter.registerAdRenderer(adViewRenderer);
-
-    // replace by mMopubAdapter
-    mRecyclerView.setAdapter(mMopubAdapter);
     mRecyclerView.addItemDecoration(
         new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
 
@@ -136,19 +109,7 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     mAdapter.setOnItemClickListener(mOnItemClickListener);
   }
 
-  @Override public void onResume() {
-    super.onResume();
-    // Optional targeting parameters
-    RequestParameters parameters = new RequestParameters.Builder()
-        //.keywords("your target words here")
-        .build();
-    // Request ads when the user returns to this activity
-    // TODO comment out to publish and apply for Mopub Native Ads
-    // mMopubAdapter.loadAds(getString(R.string.attiq_mopub_add_id), parameters);
-  }
-
   @Override public void onDestroyView() {
-    mMopubAdapter.destroy();
     mOnArticleLoaded = null;
     mOnItemClickListener = null;
     super.onDestroyView();
@@ -161,10 +122,10 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     }
   }
 
-  @NonNull @Override protected RealmListAdapter<FeedItem> createRealmAdapter() {
+  @NonNull @Override protected AttiqRealmListAdapter<FeedItem> createRealmAdapter() {
     RealmResults<FeedItem> items =
         mRealm.where(FeedItem.class).findAllSorted("createdAtInUnixtime", Sort.DESCENDING);
-    return new FeedListWithAdsAdapter(items);
+    return new FeedListAdapter(items);
   }
 
   @Override public void onFailure(Call<List<FeedItem>> call, Throwable t) {
@@ -204,43 +165,4 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     }
   }
 
-  /**
-   * Native Ads on Public timeline
-   */
-  private static class NativeAdsView {
-    private static final int LAYOUT_RES = R.layout.ads_item_view_public;
-
-    private static final int AD_VIEW_TITLE = R.id.ads_title;
-    private static final int AD_VIEW_ICON = R.id.ads_icon;
-    private static final int AD_VIEW_IMAGE = R.id.ads_image;
-    private static final int AD_VIEW_TEXT = R.id.ads_text;
-  }
-
-  private class FeedListWithAdsAdapter extends FeedListAdapter {
-
-    public FeedListWithAdsAdapter(RealmResults<FeedItem> items) {
-      super(items);
-    }
-
-    @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      final ViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);
-      viewHolder.setOnViewHolderClickListener(new View.OnClickListener() {
-        @Override public void onClick(View v) {
-          int position = viewHolder.getAdapterPosition();
-          if (mMopubAdapter != null) {
-            try {
-              position = mMopubAdapter.getOriginalPosition(position);
-              if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-                mOnItemClickListener.onItemClick(FeedListWithAdsAdapter.this, viewHolder, v,
-                    position, getItemId(position));
-              }
-            } catch (Exception er) {
-              er.printStackTrace();
-            }
-          }
-        }
-      });
-      return viewHolder;
-    }
-  }
 }

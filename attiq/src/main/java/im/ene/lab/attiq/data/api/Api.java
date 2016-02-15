@@ -46,6 +46,7 @@ final class Api {
         @Query("max_created_at") Long maxCreatedAt
     );
 
+    @SuppressWarnings("unused")
     @Headers({
         "Accept: application/json",
         "Content-Type: application/json"
@@ -57,9 +58,12 @@ final class Api {
 
   }
 
+  /**
+   * API V1
+   */
   interface One {
 
-    // No token only
+    // USAGE: No token only
     @GET("/api/v1/items") Call<List<PublicPost>> stream(
         @Query("page") int page,
         @Query("per_page") int limit
@@ -84,6 +88,9 @@ final class Api {
     );
   }
 
+  /**
+   * API V2
+   */
   interface Two {
 
     @POST("/api/v2/access_tokens") Call<AccessToken> accessToken(
@@ -145,6 +152,21 @@ final class Api {
         @Path("tag_id") String tagName,
         @Query("page") int page,
         @Query("per_page") int limit
+    );
+
+    // Success code 204
+    @GET("/api/v2/tags/{tag_id}/following") Call<Void> getTagFollowState(
+        @Path("tag_id") String tagName
+    );
+
+    // Success code 204
+    @PUT("/api/v2/tags/{tag_id}/following") Call<Void> followTag(
+        @Path("tag_id") String tagName
+    );
+
+    // Success code 204
+    @DELETE("/api/v2/tags/{tag_id}/following") Call<Void> unFollowTag(
+        @Path("tag_id") String tagName
     );
 
     @GET("/api/v2/users/{user_id}") Call<User> user(@Path("user_id") String userName);

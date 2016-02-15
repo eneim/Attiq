@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Created by eneim on 1/10/16.
  */
-public abstract class ArticleListAdapter extends ListAdapter<Article> {
+public abstract class ArticleListAdapter extends AttiqListAdapter<Article> {
 
   private final Object LOCK = new Object();
 

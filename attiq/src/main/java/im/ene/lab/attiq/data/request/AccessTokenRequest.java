@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by eneim on 12/13/15.
  */
-public class AccessTokenRequest extends Request {
+public class AccessTokenRequest {
 
   @SerializedName("client_id")
   @Expose
@@ -20,9 +20,8 @@ public class AccessTokenRequest extends Request {
   @Expose
   private String code;
 
-  public AccessTokenRequest(boolean isLoadingMore, String clientId, String clientSecret, String
+  public AccessTokenRequest(String clientId, String clientSecret, String
       code) {
-    super(isLoadingMore);
     this.clientId = clientId;
     this.clientSecret = clientSecret;
     this.code = code;
