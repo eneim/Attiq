@@ -3,7 +3,7 @@
 /slidinguppanel/build
 /attiq/src/test
 /attiq/src/androidTest
-/attiq/proguard-rules.pro
+!/attiq/proguard-rules.pro
 /attiq/build
 /Attiq.iml
 /.idea/compiler.xml
