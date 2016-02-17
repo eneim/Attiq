@@ -16,6 +16,7 @@
 /.idea/encodings.xml
 *.iml
 .gradle
+gradle.properties
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries

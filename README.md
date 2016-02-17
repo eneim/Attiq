@@ -45,6 +45,15 @@ A simple Materialized Android client for Qiita.com
 
 Wikiを作成しています。しばらくお待ちください
 
+
+#### Set up environment
+
+
+`$ cp ./gradle.properties-example ./gradle.properties`
+
+And replace placeholders with your api keys.
+
+
 ## LICENSE
 
 Copyright 2016 eneim@Eneim Labs, nam@ene.im
