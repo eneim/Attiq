@@ -109,7 +109,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ItemDetailActivity extends BaseActivity implements Callback<Article> {
+public class ItemDetailActivity extends BaseActivity {
 
   private static final String TAG = "ItemDetailActivity";
 
@@ -180,6 +180,41 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
       };
   private String mItemUuid;
   private okhttp3.Callback mDocumentCallback;
+
+  private Callback<Article> mArticleDetailCallback = new Callback<Article>() {
+    @Override public void onResponse(Call<Article> call, Response<Article> response) {
+      Article article = response.body();
+      if (article != null) {
+        ReadArticle history = mRealm.where(ReadArticle.class)
+            .equalTo(ReadArticle.FIELD_ARTICLE_ID, mItemUuid)
+            .findFirst();
+        mRealm.beginTransaction();
+        // mRealm.copyToRealmOrUpdate(article);
+        if (history == null) {
+          history = mRealm.createObject(ReadArticle.class);
+          history.setArticleId(mItemUuid);
+          history.setArticle(mRealm.copyToRealmOrUpdate(article));
+        }
+        history.setLastView(TimeUtil.nowSecond());
+        mRealm.copyToRealmOrUpdate(history);
+        // mRealm.beginTransaction();
+        // mRealm.copyToRealmOrUpdate(article);
+        mRealm.commitTransaction();
+        EventBus.getDefault()
+            .post(new ItemDetailEvent(getClass().getSimpleName(), true, null, article));
+      } else {
+        EventBus.getDefault()
+            .post(new ItemDetailEvent(getClass().getSimpleName(), false,
+                new Event.Error(response.code(), response.message()), null));
+      }
+    }
+
+    @Override public void onFailure(Call<Article> call, Throwable error) {
+      EventBus.getDefault()
+          .post(new ItemDetailEvent(getClass().getSimpleName(), false,
+              new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
+    }
+  };
 
   private Handler.Callback mHandlerCallback = new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
@@ -463,7 +498,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
   @Override protected void onResume() {
     super.onResume();
     if (mItemUuid != null) {
-      ApiClient.itemDetail(mItemUuid).enqueue(this);
+      ApiClient.itemDetail(mItemUuid).enqueue(mArticleDetailCallback);
 
       final String baseUrl = getString(R.string.item_url, mItemUuid);
 
@@ -511,6 +546,7 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     mCommentCallback = null;
     mStockStatusResponse = null;
     mDocumentCallback = null;
+    mArticleDetailCallback = null;
     mHandler.removeCallbacksAndMessages(null);
     mHandlerCallback = null;
     super.onDestroy();
@@ -567,33 +603,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     }
     ImeUtil.hideIme(mCommentComposer);
     mSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-  }
-
-  @Override public void onResponse(Call<Article> call, Response<Article> response) {
-    Article article = response.body();
-    if (article != null) {
-      ReadArticle history = mRealm.where(ReadArticle.class)
-          .equalTo(ReadArticle.FIELD_ARTICLE_ID, mItemUuid)
-          .findFirst();
-      mRealm.beginTransaction();
-      // mRealm.copyToRealmOrUpdate(article);
-      if (history == null) {
-        history = mRealm.createObject(ReadArticle.class);
-        history.setArticleId(mItemUuid);
-        history.setArticle(mRealm.copyToRealmOrUpdate(article));
-      }
-      history.setLastView(TimeUtil.nowSecond());
-      mRealm.copyToRealmOrUpdate(history);
-      // mRealm.beginTransaction();
-      // mRealm.copyToRealmOrUpdate(article);
-      mRealm.commitTransaction();
-      EventBus.getDefault()
-          .post(new ItemDetailEvent(getClass().getSimpleName(), true, null, article));
-    } else {
-      EventBus.getDefault()
-          .post(new ItemDetailEvent(getClass().getSimpleName(), false,
-              new Event.Error(response.code(), response.message()), null));
-    }
   }
 
   @SuppressWarnings("unused") @OnClick(R.id.item_stocks) void stockArticle() {
@@ -870,12 +879,6 @@ public class ItemDetailActivity extends BaseActivity implements Callback<Article
     } else {
       super.onBackPressed();
     }
-  }
-
-  @Override public void onFailure(Call<Article> call, Throwable error) {
-    EventBus.getDefault()
-        .post(new ItemDetailEvent(getClass().getSimpleName(), false,
-            new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), null));
   }
 
   /* API Callbacks */
