@@ -45,6 +45,7 @@ android {
   buildToolsVersion '23.0.2'
   publishNonDefault true
   defaultConfig {
+    vectorDrawables.useSupportLibrary = true
     applicationId "im.ene.lab.attiq"
     minSdkVersion 21
     targetSdkVersion 23
@@ -148,7 +149,7 @@ android {
 }
 
 ext {
-  support_libraries_version = '23.1.1'
+  support_libraries_version = '23.2.0'
   okhttp3_version = "3.1.2"
   retrofit2_version = "2.0.0-beta4"
   service_version = "8.4.0"

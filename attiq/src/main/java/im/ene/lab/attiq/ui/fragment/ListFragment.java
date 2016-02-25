@@ -155,7 +155,7 @@ public abstract class ListFragment<E> extends BaseFragment
         mHandler.sendEmptyMessageDelayed(MESSAGE_LOAD_RELOAD, 250);
       }
     };
-
+    mRecyclerView.setHasFixedSize(false);
     mRecyclerView.setLayoutManager(mLayoutManager);
     mRecyclerView.addOnScrollListener(mEndlessScrollListener);
 
