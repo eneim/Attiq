@@ -3,9 +3,9 @@ package im.ene.lab.attiq;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
-import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 import im.ene.lab.attiq.util.AnalyticsUtil;
 import im.ene.lab.attiq.util.TimeUtil;
@@ -74,5 +74,10 @@ public class Attiq extends Application {
         // .defaultBitmapConfig(Bitmap.Config.RGB_565)
         .downloader(new OkHttp3Downloader(mHttpClient))  // a separated client
         .build();
+  }
+
+  @Override public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    TimeUtil.init(this);  // On language change --> need update
   }
 }

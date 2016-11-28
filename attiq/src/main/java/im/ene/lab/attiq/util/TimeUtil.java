@@ -2,23 +2,19 @@ package im.ene.lab.attiq.util;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
-
 import com.jakewharton.threetenabp.AndroidThreeTen;
-
+import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import org.ocpsoft.prettytime.PrettyTime;
 import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.chrono.IsoChronology;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeFormatterBuilder;
 
-import java.util.Date;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
-
-
 public class TimeUtil {
 
-  private static final PrettyTime PRETTY_TIME = new PrettyTime();
+  private static PrettyTime PRETTY_TIME;
 
   private static final DateTimeFormatter API_V2_TIME_FORMAT =
       DateTimeFormatter.ISO_OFFSET_DATE_TIME;
@@ -27,11 +23,11 @@ public class TimeUtil {
       DateTimeFormatter.ofPattern("YYYY年M月dd日(EEE) HH:mm", Locale.getDefault());
   private static final DateTimeFormatter M_DD_EEE_HH_mm =
       DateTimeFormatter.ofPattern("M月dd日(EEE) HH:mm", Locale.getDefault());
-  private static final DateTimeFormatter API_V1_TIME_FORMAT =
-      new DateTimeFormatterBuilder()
-          .append(DateTimeFormatter.ofPattern("yyyy-M-dd HH:mm:ss ", Locale.getDefault()))
-          .appendOffsetId()
-          .toFormatter().withChronology(IsoChronology.INSTANCE);
+  private static final DateTimeFormatter API_V1_TIME_FORMAT = new DateTimeFormatterBuilder().append(
+      DateTimeFormatter.ofPattern("yyyy-M-dd HH:mm:ss ", Locale.getDefault()))
+      .appendOffsetId()
+      .toFormatter()
+      .withChronology(IsoChronology.INSTANCE);
 
   private TimeUtil() {
     throw new AssertionError("Illegal");
@@ -39,6 +35,7 @@ public class TimeUtil {
 
   public static void init(Application application) {
     AndroidThreeTen.init(application);
+    PRETTY_TIME = new PrettyTime();
   }
 
   public static String commentTime(String time) {
@@ -79,5 +76,4 @@ public class TimeUtil {
   private static String beautify(long time, @NonNull TimeUnit unit) {
     return PRETTY_TIME.format(new Date(unit.toMillis(time)));
   }
-
 }
