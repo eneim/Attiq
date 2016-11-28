@@ -13,7 +13,7 @@ public class Marked {
 
   public static String marked(String src) {
     Options options = new Options();
-    return marked(src, options, new Renderer(options));
+    return marked(src, options);
   }
 
   public static String marked(String src, Options options) {

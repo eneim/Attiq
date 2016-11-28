@@ -7,7 +7,6 @@ import android.content.res.Configuration;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.squareup.picasso.Picasso;
-import im.ene.lab.attiq.util.AnalyticsUtil;
 import im.ene.lab.attiq.util.TimeUtil;
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
@@ -49,8 +48,7 @@ public class Attiq extends Application {
     INSTANCE = this;
 
     mPreference = getSharedPreferences(getPackageName() + "_pref", Context.MODE_PRIVATE);
-    // Call only once
-    AnalyticsUtil.initialize(this);
+    // TODO Init Analytics
 
     // Fabric, Answer, Crashlytics, ...
     Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());

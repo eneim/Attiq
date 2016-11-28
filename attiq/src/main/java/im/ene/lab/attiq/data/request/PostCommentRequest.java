@@ -8,9 +8,8 @@ import com.google.gson.annotations.SerializedName;
  */
 public class PostCommentRequest {
 
-  @SerializedName("body")
-  @Expose
-  private final String body;
+  @SerializedName("body") //
+  @Expose private final String body;
 
   public PostCommentRequest(String body) {
     this.body = body;

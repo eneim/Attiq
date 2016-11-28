@@ -1,18 +1,13 @@
 package im.ene.lab.attiq.util;
 
+import android.content.res.AssetManager;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import android.content.res.AssetManager;
-
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.data.model.zero.FeedItem;
 import io.realm.RealmObject;
-import okio.BufferedSource;
-import okio.Okio;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -21,6 +16,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Iterator;
+import okio.BufferedSource;
+import okio.Okio;
 
 /**
  * Created by eneim on 12/13/15.
@@ -34,19 +31,15 @@ public class IOUtil {
   public static final String RESOURCES = "resources";
 
   static {
-    GSON = new GsonBuilder()
-        .setExclusionStrategies(new ExclusionStrategy() {
-          @Override
-          public boolean shouldSkipField(FieldAttributes f) {
-            return f.getDeclaringClass().equals(RealmObject.class);
-          }
+    GSON = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
+      @Override public boolean shouldSkipField(FieldAttributes f) {
+        return f.getDeclaringClass().equals(RealmObject.class);
+      }
 
-          @Override
-          public boolean shouldSkipClass(Class<?> clazz) {
-            return false;
-          }
-        })
-        .excludeFieldsWithoutExposeAnnotation().create();
+      @Override public boolean shouldSkipClass(Class<?> clazz) {
+        return false;
+      }
+    }).excludeFieldsWithoutExposeAnnotation().create();
   }
 
   public static Gson gson() {
@@ -86,19 +79,39 @@ public class IOUtil {
 
   // Since RealmObject doesn't support toString()
   public static String toString(FeedItem item) {
-    return "item{" +
-        ", f_image='" + item.getFollowableImageUrl() + '\'' +
-        ", f_name='" + item.getFollowableName() + '\'' +
-        ", f_type='" + item.getFollowableType() + '\'' +
-        ", f_url='" + item.getFollowableUrl() + '\'' +
-        ", m_body='" + item.getMentionedObjectBody() + '\'' +
-        ", m_comments=" + item.getMentionedObjectCommentsCount() +
-        ", m_image='" + item.getMentionedObjectImageUrl() + '\'' +
-        ", m_name='" + item.getMentionedObjectName() + '\'' +
-        ", m_stock=" + item.getMentionedObjectStocksCount() +
-        ", m_url='" + item.getMentionedObjectUrl() + '\'' +
-        ", track='" + item.getTrackableType() + '\'' +
-        '}';
+    return "item{"
+        + ", f_image='"
+        + item.getFollowableImageUrl()
+        + '\''
+        + ", f_name='"
+        + item.getFollowableName()
+        + '\''
+        + ", f_type='"
+        + item.getFollowableType()
+        + '\''
+        + ", f_url='"
+        + item.getFollowableUrl()
+        + '\''
+        + ", m_body='"
+        + item.getMentionedObjectBody()
+        + '\''
+        + ", m_comments="
+        + item.getMentionedObjectCommentsCount()
+        + ", m_image='"
+        + item.getMentionedObjectImageUrl()
+        + '\''
+        + ", m_name='"
+        + item.getMentionedObjectName()
+        + '\''
+        + ", m_stock="
+        + item.getMentionedObjectStocksCount()
+        + ", m_url='"
+        + item.getMentionedObjectUrl()
+        + '\''
+        + ", track='"
+        + item.getTrackableType()
+        + '\''
+        + '}';
   }
 
   private static final String TAG = "IOUtil";
@@ -109,18 +122,19 @@ public class IOUtil {
     result = 31 * result + item.getFollowableName().hashCode();
     result = 31 * result + item.getFollowableType().hashCode();
     result = 31 * result + item.getFollowableUrl().hashCode();
-    result = 31 * result + (item.getMentionedObjectImageUrl() != null ?
-        item.getMentionedObjectImageUrl().hashCode() : 0);
+    result =
+        31 * result + (item.getMentionedObjectImageUrl() != null ? item.getMentionedObjectImageUrl()
+            .hashCode() : 0);
     result = 31 * result + item.getMentionedObjectName().hashCode();
     result = 31 * result + item.getMentionedObjectUrl().hashCode();
-    result = 31 * result + (item.getMentionedObjectUuid() != null ?
-        item.getMentionedObjectUuid().hashCode() : 0);
+    result = 31 * result + (item.getMentionedObjectUuid() != null ? item.getMentionedObjectUuid()
+        .hashCode() : 0);
     result = 31 * result + item.getTrackableType().hashCode();
     return result;
   }
 
-  public static String sha1(String text) throws NoSuchAlgorithmException,
-      UnsupportedEncodingException {
+  public static String sha1(String text)
+      throws NoSuchAlgorithmException, UnsupportedEncodingException {
     MessageDigest digest = MessageDigest.getInstance("SHA-1");
     byte[] bytes = text.getBytes("UTF-8");
     digest.update(bytes, 0, bytes.length);

@@ -8,20 +8,16 @@ import com.google.gson.annotations.SerializedName;
  */
 public class AccessTokenRequest {
 
-  @SerializedName("client_id")
-  @Expose
-  private String clientId;
+  @SerializedName("client_id")  //
+  @Expose private final String clientId;
 
-  @SerializedName("client_secret")
-  @Expose
-  private String clientSecret;
+  @SerializedName("client_secret")  //
+  @Expose private final String clientSecret;
 
-  @SerializedName("code")
-  @Expose
-  private String code;
+  @SerializedName("code") //
+  @Expose private final String code;
 
-  public AccessTokenRequest(String clientId, String clientSecret, String
-      code) {
+  public AccessTokenRequest(String clientId, String clientSecret, String code) {
     this.clientId = clientId;
     this.clientSecret = clientSecret;
     this.code = code;
