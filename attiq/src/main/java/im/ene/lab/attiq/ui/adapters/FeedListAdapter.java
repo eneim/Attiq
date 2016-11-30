@@ -23,11 +23,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.TextViewCompat;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.BindDimen;
+import com.bumptech.glide.Glide;
 import com.google.android.flexbox.FlexboxLayout;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
@@ -230,45 +229,18 @@ public class FeedListAdapter extends AttiqRealmListAdapter<FeedItem> {
       mItemIdentity.removeAllViews();
 
       if (FeedItem.TRACKABLE_TYPE_TAG.equals(item.getTrackableType())) {
-        final TextView tagName =
-            (TextView) mInflater.inflate(R.layout.widget_tag_textview, mItemIdentity, false);
-        tagName.setClickable(true);
-        tagName.setMovementMethod(LinkMovementMethod.getInstance());
+        final View tagView = mInflater.inflate(R.layout.layout_post_tag, mItemTags, false);
+        final TextView tagName = (TextView) tagView.findViewById(R.id.post_tag_name);
+        mItemIdentity.addView(tagView);
 
-        tagName.setText(Html.fromHtml(itemView.getContext()
-            .getString(R.string.local_tag_url, item.getFollowableName() + "",
-                item.getFollowableName() + "")));
-
-        Attiq.picasso()
+        tagName.setText(item.getFollowableName());
+        ImageView tagIcon = (ImageView) tagView.findViewById(R.id.post_tag_icon);
+        Glide.with(mContext)
             .load(item.getFollowableImageUrl())
-            .placeholder(R.drawable.ic_lens_16dp)
-            .error(R.drawable.ic_lens_16dp)
-            .resize(0, mTagIconSize)
-            .transform(
-                new RoundedTransformation(mIconBorderWidth, mIconBorderColor, mTagIconSizeHalf))
-            .into(new TextViewTarget(tagName) {
-              @Override public void onBitmapLoaded(TextView textView, Bitmap bitmap,
-                  Picasso.LoadedFrom from) {
-                Log.d(TAG, "onBitmapLoaded() called with: "
-                    + "textView = ["
-                    + textView
-                    + "], "
-                    + "bitmap = ["
-                    + bitmap.getWidth()
-                    + " - "
-                    + bitmap.getHeight()
-                    + "], from = ["
-                    + from
-                    + "]");
-                RoundedBitmapDrawable drawable =
-                    RoundedBitmapDrawableFactory.create(itemView.getResources(), bitmap);
-                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView, drawable,
-                    null, null, null);
-              }
-            });
-        UIUtil.stripUnderlines(tagName);
-        mItemIdentity.addView(tagName);
-
+            .apply(requestOptions.clone()
+                .placeholder(R.drawable.ic_local_offer_black_24dp)
+                .error(R.drawable.ic_local_offer_black_24dp))
+            .into(tagIcon);
         final TextView infoText =
             (TextView) mInflater.inflate(R.layout.single_line_text_tiny, mItemIdentity, false);
         infoText.setText(R.string.tag_new_post);
@@ -322,6 +294,7 @@ public class FeedListAdapter extends AttiqRealmListAdapter<FeedItem> {
     static final int LAYOUT_RES = R.layout.feed_item_simple_view;
     private final LayoutInflater mInflater;
     @Bind(R.id.item_info) TextView mItemInfo;
+    @Bind(R.id.container) ViewGroup mContainer;
     // Others
     @BindDimen(R.dimen.item_icon_size_small) int mUserIconSize;
     @BindDimen(R.dimen.item_icon_size_small_half) int mUserIconSizeHalf;
@@ -348,15 +321,14 @@ public class FeedListAdapter extends AttiqRealmListAdapter<FeedItem> {
           .getString(R.string.user_follow, item.getFollowableName(), item.getFollowableName())));
       UIUtil.stripUnderlines(mItemInfo, null, false);
 
-      LinearLayoutCompat container = (LinearLayoutCompat) itemView;
       TextView itemName;
       if ((itemName = (TextView) itemView.findViewById(R.id.feed_view_id_mentioned_item)) != null) {
-        container.removeView(itemName);
+        mContainer.removeView(itemName);
       }
 
       // User follows new tag
       if (FeedItem.TRACKABLE_TYPE_FOLLOW_TAG.equals(item.getTrackableType())) {
-        itemName = (TextView) mInflater.inflate(R.layout.widget_tag_textview, container, false);
+        itemName = (TextView) mInflater.inflate(R.layout.widget_tag_textview, mContainer, false);
         itemName.setClickable(true);
         itemName.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -380,7 +352,7 @@ public class FeedListAdapter extends AttiqRealmListAdapter<FeedItem> {
             });
         UIUtil.stripUnderlines(itemName);
       } else {
-        itemName = (TextView) mInflater.inflate(R.layout.widget_user_textview, container, false);
+        itemName = (TextView) mInflater.inflate(R.layout.widget_user_textview, mContainer, false);
         itemName.setClickable(true);
         itemName.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -406,7 +378,7 @@ public class FeedListAdapter extends AttiqRealmListAdapter<FeedItem> {
       }
 
       itemName.setId(R.id.feed_view_id_mentioned_item);
-      container.addView(itemName);
+      mContainer.addView(itemName);
     }
   }
 

@@ -35,7 +35,6 @@
         android:label="@string/app_name"
         android:launchMode="singleTop"
         android:name=".ui.activities.HomeActivity"
-        android:screenOrientation="portrait"
         android:theme="@style/Attiq.Theme.Light.NoActionBar">
     </activity>
     <activity

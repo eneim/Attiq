@@ -32,8 +32,8 @@
   <dimen name="header_icon_radius">28dp</dimen>
   <dimen name="status_bar_height">24dp</dimen>
 
-  <dimen name="item_icon_size">48dp</dimen>
-  <dimen name="item_icon_size_half">24dp</dimen>
+  <dimen name="item_icon_size">40dp</dimen>
+  <dimen name="item_icon_size_half">20dp</dimen>
   <dimen name="item_icon_padding">4dp</dimen>
   <dimen name="item_icon_padding_half">2dp</dimen>
 
