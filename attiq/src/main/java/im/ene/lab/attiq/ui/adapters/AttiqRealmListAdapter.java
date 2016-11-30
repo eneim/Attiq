@@ -9,4 +9,9 @@ import io.realm.RealmObject;
  */
 public abstract class AttiqRealmListAdapter<T extends RealmObject> extends AttiqListAdapter<T> {
   // Force data of this Adapter be a RealmObject
+
+  public AttiqRealmListAdapter() {
+    super();
+    setHasStableIds(true);
+  }
 }

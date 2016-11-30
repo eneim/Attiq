@@ -12,22 +12,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.squareup.picasso.RequestCreator;
-
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
 import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.two.ItemTag;
+import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
-import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
+import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import java.util.List;
 
 /**
  * Created by eneim on 1/6/16.
@@ -41,9 +38,8 @@ public class UserItemsAdapter extends ArticleListAdapter {
     this.mUserId = userId;
   }
 
-  @Override
-  public void loadItems(final boolean isLoadingMore, int page, int pageLimit,
-                        @Nullable String query, final Callback<List<Article>> callback) {
+  @Override public void loadItems(final boolean isLoadingMore, int page, int pageLimit,
+      @Nullable String query, final Callback<List<Article>> callback) {
     isLoading = true;
     ApiClient.userItems(mUserId, page, pageLimit).enqueue(new Callback<List<Article>>() {
       @Override public void onResponse(Call<List<Article>> call, Response<List<Article>> response) {
@@ -64,17 +60,15 @@ public class UserItemsAdapter extends ArticleListAdapter {
     });
   }
 
-  @Override
-  public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     final ViewHolder viewHolder =
         new ViewHolder(super.onCreateViewHolder(parent, viewType).itemView, mUserId);
     viewHolder.setOnViewHolderClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         int position = viewHolder.getAdapterPosition();
-        if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-          mOnItemClickListener.onItemClick(
-              UserItemsAdapter.this, viewHolder, v, position, getItemId(position)
-          );
+        if (position != RecyclerView.NO_POSITION && clickListener != null) {
+          clickListener.onItemClick(UserItemsAdapter.this, viewHolder, v, position,
+              getItemId(position));
         }
       }
     });
@@ -90,18 +84,16 @@ public class UserItemsAdapter extends ArticleListAdapter {
     public ViewHolder(View view, String userId) {
       super(view);
       mContext = view.getContext();
-      mIgnoredUrl = Spannable.Factory.getInstance().newSpannable(
-          Html.fromHtml(mContext.getString(R.string.user_name, userId, userId))
-      );
+      mIgnoredUrl = Spannable.Factory.getInstance()
+          .newSpannable(Html.fromHtml(mContext.getString(R.string.user_name, userId, userId)));
     }
 
     @Override public void bind(Article item) {
       if (item.getUser() != null) {
         String userName = item.getUser().getId();
-        mItemUserInfo.setText(Html.fromHtml(mContext.getString(R.string.item_user_info,
-            userName, userName,
-            TimeUtil.beautify(item.getCreatedAt())
-        )));
+        mItemUserInfo.setText(Html.fromHtml(
+            mContext.getString(R.string.item_user_info_plain, userName,
+                TimeUtil.beautify(item.getCreatedAt()))));
         UIUtil.stripUnderlines(mItemUserInfo, mIgnoredUrl);
         mItemUserInfo.setVisibility(View.VISIBLE);
       } else {
@@ -116,12 +108,12 @@ public class UserItemsAdapter extends ArticleListAdapter {
         requestCreator = Attiq.picasso().load(R.drawable.blank_profile_icon_medium);
       }
 
-      requestCreator
-          .placeholder(R.drawable.blank_profile_icon_medium)
+      requestCreator.placeholder(R.drawable.blank_profile_icon_medium)
           .error(R.drawable.blank_profile_icon_medium)
-          .fit().centerInside()
-          .transform(new RoundedTransformation(
-              mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
+          .fit()
+          .centerInside()
+          .transform(
+              new RoundedTransformation(mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
           .into(mItemUserImage);
 
       mItemTags.removeAllViews();
@@ -131,8 +123,8 @@ public class UserItemsAdapter extends ArticleListAdapter {
               .inflate(R.layout.widget_tag_textview, mItemTags, false);
           tagName.setClickable(true);
           tagName.setMovementMethod(LinkMovementMethod.getInstance());
-          tagName.setText(Html.fromHtml(mContext.getString(R.string.local_tag_url,
-              tag.getName(), tag.getName())));
+          tagName.setText(Html.fromHtml(
+              mContext.getString(R.string.local_tag_url, tag.getName(), tag.getName())));
 
           TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(tagName,
               ContextCompat.getDrawable(mContext, R.drawable.ic_lens_16dp), null, null, null);

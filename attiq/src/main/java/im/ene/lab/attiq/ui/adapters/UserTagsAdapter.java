@@ -108,8 +108,8 @@ public class UserTagsAdapter extends AttiqListAdapter<PublicTag> {
     viewHolder.setOnViewHolderClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         int adapterPos = viewHolder.getAdapterPosition();
-        if (mOnItemClickListener != null) {
-          mOnItemClickListener.onItemClick(
+        if (clickListener != null) {
+          clickListener.onItemClick(
               UserTagsAdapter.this, viewHolder, v, adapterPos, getItemId(adapterPos)
           );
         }

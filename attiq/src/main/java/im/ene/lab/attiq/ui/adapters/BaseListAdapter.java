@@ -4,6 +4,7 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.view.View;
 
+import com.bumptech.glide.request.RequestOptions;
 import java.util.List;
 
 /**
@@ -59,6 +60,7 @@ public abstract class BaseListAdapter<T> extends BaseAdapter<BaseListAdapter.Vie
 
     // I think it's not bad to have an shallow copy of current Data
     protected T mItem;
+    protected final RequestOptions requestOptions = new RequestOptions();
 
     public ViewHolder(@NonNull View itemView) {
       super(itemView);

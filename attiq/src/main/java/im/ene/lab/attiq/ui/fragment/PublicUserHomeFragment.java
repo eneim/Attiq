@@ -25,10 +25,9 @@ import im.ene.lab.attiq.data.model.one.PublicUser;
 import im.ene.lab.attiq.data.model.zero.PublicPost;
 import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.activities.ProfileActivity;
+import im.ene.lab.attiq.ui.adapters.AttiqRealmListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.PublicItemsAdapter;
-import im.ene.lab.attiq.ui.adapters.AttiqRealmListAdapter;
-import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 import im.ene.lab.attiq.util.PrefUtil;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -67,10 +66,10 @@ public class PublicUserHomeFragment extends RealmListFragment<PublicPost> {
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-        DividerItemDecoration.VERTICAL_LIST));
+    //mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+    //    DividerItemDecoration.VERTICAL_LIST));
 
-    mItemClickListener = new PublicItemsAdapter.OnPublicItemClickListener() {
+    mItemClickListener = new PublicItemsAdapter.ClickListenerImpl() {
       @Override public void onUserClick(PublicUser user) {
         if (PrefUtil.checkNetwork(getContext())) {
           startActivity(ProfileActivity.createIntent(getContext(), user.getUrlName()));

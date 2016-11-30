@@ -20,16 +20,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
-
 import im.ene.lab.attiq.data.model.local.StockArticle;
 import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.two.User;
 import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.activities.ProfileActivity;
-import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.AttiqRealmListAdapter;
+import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
 import im.ene.lab.attiq.ui.adapters.UserStockArticlesAdapter;
-import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 import im.ene.lab.attiq.util.PrefUtil;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -71,8 +69,8 @@ public class UserStockedArticlesFragment extends RealmListFragment<StockArticle>
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-        DividerItemDecoration.VERTICAL_LIST));
+    //mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+    //    DividerItemDecoration.VERTICAL_LIST));
 
     OnItemClickListener onArticleClickListener =
         new UserStockArticlesAdapter.OnArticleClickListener() {

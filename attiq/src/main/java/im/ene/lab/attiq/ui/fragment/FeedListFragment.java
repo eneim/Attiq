@@ -65,7 +65,7 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
 
   private OnItemClickListener mOnItemClickListener;
 
-  private Callback<Article> mOnArticleLoaded = new Callback<Article>() {
+  Callback<Article> mOnArticleLoaded = new Callback<Article>() {
     @Override public void onResponse(Call<Article> call, Response<Article> response) {
       Article article = response.body();
       if (article != null) {

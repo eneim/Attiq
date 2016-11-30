@@ -17,10 +17,10 @@ public abstract class BaseAdapter<VH extends BaseAdapter.ViewHolder>
   /**
    * This custom onClick event listener should be set by the Adapter
    */
-  protected OnItemClickListener mOnItemClickListener;
+  protected OnItemClickListener clickListener;
 
   public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-    this.mOnItemClickListener = onItemClickListener;
+    this.clickListener = onItemClickListener;
   }
 
   /**

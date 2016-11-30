@@ -28,13 +28,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.squareup.picasso.RequestCreator;
-import com.wefika.flowlayout.FlowLayout;
-
 import butterknife.Bind;
 import butterknife.BindColor;
 import butterknife.BindDimen;
+import com.google.android.flexbox.FlexboxLayout;
+import com.squareup.picasso.RequestCreator;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.model.local.ReadArticle;
@@ -45,12 +43,11 @@ import im.ene.lab.attiq.ui.widgets.RoundedTransformation;
 import im.ene.lab.attiq.util.TimeUtil;
 import im.ene.lab.attiq.util.UIUtil;
 import io.realm.RealmResults;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by eneim on 1/10/16.
@@ -65,15 +62,14 @@ public class HistoryAdapter extends AttiqRealmListAdapter<ReadArticle> {
     setHasStableIds(true);
   }
 
-  @Override
-  public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     final ViewHolder viewHolder = ViewHolder.createViewHolder(parent, viewType);
     viewHolder.setOnViewHolderClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         int position = viewHolder.getAdapterPosition();
-        if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-          mOnItemClickListener.onItemClick(
-              HistoryAdapter.this, viewHolder, view, position, getItemId(position));
+        if (position != RecyclerView.NO_POSITION && clickListener != null) {
+          clickListener.onItemClick(HistoryAdapter.this, viewHolder, view, position,
+              getItemId(position));
         }
       }
     });
@@ -95,8 +91,8 @@ public class HistoryAdapter extends AttiqRealmListAdapter<ReadArticle> {
   }
 
   @Override
-  public void loadItems(boolean isLoadingMore, int page, int pageLimit,
-                        @Nullable String query, Callback<List<ReadArticle>> callback) {
+  public void loadItems(boolean isLoadingMore, int page, int pageLimit, @Nullable String query,
+      Callback<List<ReadArticle>> callback) {
     // do nothing
     if (callback != null) {
       List<ReadArticle> emptyList = Collections.emptyList();
@@ -107,9 +103,8 @@ public class HistoryAdapter extends AttiqRealmListAdapter<ReadArticle> {
   public static abstract class OnArticleClickListener implements OnItemClickListener {
 
     @Override
-    public void onItemClick(BaseAdapter adapter,
-                            BaseAdapter.ViewHolder viewHolder,
-                            View view, int adapterPos, long itemId) {
+    public void onItemClick(BaseAdapter adapter, BaseAdapter.ViewHolder viewHolder, View view,
+        int adapterPos, long itemId) {
       final ReadArticle item;
       if (adapter instanceof BaseListAdapter) {
         item = (ReadArticle) ((BaseListAdapter) adapter).getItem(adapterPos);
@@ -129,7 +124,6 @@ public class HistoryAdapter extends AttiqRealmListAdapter<ReadArticle> {
     public abstract void onUserClick(User user);
 
     public abstract void onItemContentClick(Article item);
-
   }
 
   public static class ViewHolder extends BaseListAdapter.ViewHolder<ReadArticle> {
@@ -137,8 +131,8 @@ public class HistoryAdapter extends AttiqRealmListAdapter<ReadArticle> {
     static final int LAYOUT_RES = R.layout.post_item_view;
 
     public static ViewHolder createViewHolder(ViewGroup parent, int viewType) {
-      View view = LayoutInflater.from(parent.getContext())
-          .inflate(ViewHolder.LAYOUT_RES, parent, false);
+      View view =
+          LayoutInflater.from(parent.getContext()).inflate(ViewHolder.LAYOUT_RES, parent, false);
       return new ViewHolder(view);
     }
 
@@ -147,7 +141,7 @@ public class HistoryAdapter extends AttiqRealmListAdapter<ReadArticle> {
     // Views
     @Bind(R.id.item_user_icon) ImageView mItemUserImage;
     @Bind(R.id.item_title) TextView mItemTitle;
-    @Bind(R.id.item_tags) FlowLayout mItemTags;
+    @Bind(R.id.item_tags) FlexboxLayout mItemTags;
     @Bind(R.id.item_info) TextView mItemInfo;
     @Bind(R.id.item_posted_info) TextView mItemUserInfo;
     @Bind(R.id.item_read_status) TextView mReadStatus;
@@ -183,10 +177,9 @@ public class HistoryAdapter extends AttiqRealmListAdapter<ReadArticle> {
 
       if (item.getUser() != null) {
         String userName = item.getUser().getId();
-        mItemUserInfo.setText(Html.fromHtml(mContext.getString(R.string.item_user_info,
-            userName, userName,
-            TimeUtil.beautify(item.getCreatedAt())
-        )));
+        mItemUserInfo.setText(Html.fromHtml(
+            mContext.getString(R.string.item_user_info_plain, userName,
+                TimeUtil.beautify(item.getCreatedAt()))));
         UIUtil.stripUnderlines(mItemUserInfo, null, false);
         mItemUserInfo.setVisibility(View.VISIBLE);
       } else {
@@ -201,23 +194,23 @@ public class HistoryAdapter extends AttiqRealmListAdapter<ReadArticle> {
         requestCreator = Attiq.picasso().load(R.drawable.blank_profile_icon_medium);
       }
 
-      requestCreator
-          .placeholder(R.drawable.blank_profile_icon_medium)
+      requestCreator.placeholder(R.drawable.blank_profile_icon_medium)
           .error(R.drawable.blank_profile_icon_medium)
-          .fit().centerInside()
-          .transform(new RoundedTransformation(
-              mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
+          .fit()
+          .centerInside()
+          .transform(
+              new RoundedTransformation(mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
           .into(mItemUserImage);
 
       mItemTags.removeAllViews();
       if (!UIUtil.isEmpty(item.getTags())) {
         for (ItemTag tag : item.getTags()) {
-          final TextView tagName = (TextView) mInflater
-              .inflate(R.layout.widget_tag_textview, mItemTags, false);
+          final TextView tagName =
+              (TextView) mInflater.inflate(R.layout.widget_tag_textview, mItemTags, false);
           tagName.setClickable(true);
           tagName.setMovementMethod(LinkMovementMethod.getInstance());
-          tagName.setText(Html.fromHtml(mContext.getString(R.string.local_tag_url,
-              tag.getName(), tag.getName())));
+          tagName.setText(Html.fromHtml(
+              mContext.getString(R.string.local_tag_url, tag.getName(), tag.getName())));
 
           TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(tagName,
               ContextCompat.getDrawable(mContext, R.drawable.ic_lens_16dp), null, null, null);

@@ -37,9 +37,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.BindDimen;
+import com.google.android.flexbox.FlexboxLayout;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
-import com.wefika.flowlayout.FlowLayout;
 import im.ene.lab.attiq.Attiq;
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.data.api.ApiClient;
@@ -85,8 +85,8 @@ public class FeedListAdapter extends AttiqRealmListAdapter<FeedItem> {
     viewHolder.setOnViewHolderClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         int position = viewHolder.getAdapterPosition();
-        if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-          mOnItemClickListener.onItemClick(FeedListAdapter.this, viewHolder, view, position,
+        if (position != RecyclerView.NO_POSITION && clickListener != null) {
+          clickListener.onItemClick(FeedListAdapter.this, viewHolder, view, position,
               getItemId(position));
         }
       }
@@ -157,7 +157,7 @@ public class FeedListAdapter extends AttiqRealmListAdapter<FeedItem> {
     // Views
     @Bind(R.id.item_user_icon) ImageView mItemUserImage;
     @Bind(R.id.item_title) TextView mItemTitle;
-    @Bind(R.id.item_tags) FlowLayout mItemTags;
+    @Bind(R.id.item_tags) FlexboxLayout mItemTags;
     @Bind(R.id.item_info) TextView mItemInfo;
     @Bind(R.id.item_posted_info) TextView mItemUserInfo;
     @Bind(R.id.feed_item_identity) LinearLayout mItemIdentity;
@@ -178,7 +178,8 @@ public class FeedListAdapter extends AttiqRealmListAdapter<FeedItem> {
       mItemUserInfo.setVisibility(View.GONE);
 
       TypedValue typedValue = new TypedValue();
-      itemView.getContext().getTheme()
+      itemView.getContext()
+          .getTheme()
           .resolveAttribute(android.R.attr.colorAccent, typedValue, true);
       mIconBorderColor = typedValue.resourceId;
     }
@@ -248,9 +249,17 @@ public class FeedListAdapter extends AttiqRealmListAdapter<FeedItem> {
             .into(new TextViewTarget(tagName) {
               @Override public void onBitmapLoaded(TextView textView, Bitmap bitmap,
                   Picasso.LoadedFrom from) {
-                Log.d(TAG, "onBitmapLoaded() called with: " + "textView = [" + textView + "], " +
-                    "bitmap = [" + bitmap.getWidth() + " - " + bitmap.getHeight() +
-                    "], from = [" + from + "]");
+                Log.d(TAG, "onBitmapLoaded() called with: "
+                    + "textView = ["
+                    + textView
+                    + "], "
+                    + "bitmap = ["
+                    + bitmap.getWidth()
+                    + " - "
+                    + bitmap.getHeight()
+                    + "], from = ["
+                    + from
+                    + "]");
                 RoundedBitmapDrawable drawable =
                     RoundedBitmapDrawableFactory.create(itemView.getResources(), bitmap);
                 TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(textView, drawable,
@@ -296,9 +305,8 @@ public class FeedListAdapter extends AttiqRealmListAdapter<FeedItem> {
         infoText.setMovementMethod(LinkMovementMethod.getInstance());
 
         String userName = item.getFollowableName();
-        infoText.setText(Html.fromHtml(
-            mContext.getString(R.string.item_user_info, userName, userName,
-                TimeUtil.beautify(item.getCreatedAtInUnixtime()))));
+        infoText.setText(Html.fromHtml(mContext.getString(R.string.item_user_info_plain, userName,
+            TimeUtil.beautify(item.getCreatedAtInUnixtime()))));
 
         infoText.setId(R.id.feed_view_id_info);
         UIUtil.stripUnderlines(infoText, null, false);
@@ -329,15 +337,15 @@ public class FeedListAdapter extends AttiqRealmListAdapter<FeedItem> {
       mItemInfo.setMovementMethod(LinkMovementMethod.getInstance());
 
       TypedValue typedValue = new TypedValue();
-      itemView.getContext().getTheme()
+      itemView.getContext()
+          .getTheme()
           .resolveAttribute(android.R.attr.colorAccent, typedValue, true);
       mIconBorderColor = typedValue.resourceId;
     }
 
     @Override public void bind(FeedItem item) {
       mItemInfo.setText(Html.fromHtml(itemView.getContext()
-              .getString(R.string.user_follow, item.getFollowableName(),
-                  item.getFollowableName())));
+          .getString(R.string.user_follow, item.getFollowableName(), item.getFollowableName())));
       UIUtil.stripUnderlines(mItemInfo, null, false);
 
       LinearLayoutCompat container = (LinearLayoutCompat) itemView;

@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:padding="@dimen/recycler_view_padding"
+        android:paddingTop="8dp"
         android:scrollbarFadeDuration="250"
         android:scrollbars="vertical"
         />

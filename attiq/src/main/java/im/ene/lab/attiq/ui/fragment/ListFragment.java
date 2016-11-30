@@ -85,7 +85,7 @@ public abstract class ListFragment<E> extends BaseFragment
   // User a handler to prevent too frequently calling of methods. For example Realm may trigger
   // #onChange a lot of time, since it doesn't support type-specific change event now. So we
   // should queue the Change event up, and remove the duplicated ones to save resources
-  private Handler mHandler = new Handler(this);
+  Handler mHandler = new Handler(this);
   // This object requires a LayoutManager, so it must be initialized after we create our
   // LayoutManager.
   private EndlessScrollListener mEndlessScrollListener;

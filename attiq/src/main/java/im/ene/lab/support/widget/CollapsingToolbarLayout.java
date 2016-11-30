@@ -790,14 +790,14 @@ public class CollapsingToolbarLayout extends FrameLayout {
       super(c, attrs);
 
       TypedArray a = c.obtainStyledAttributes(attrs,
-          android.support.design.R.styleable.CollapsingAppBarLayout_LayoutParams);
+          android.support.design.R.styleable.CollapsingToolbarLayout_Layout);
       mCollapseMode = a.getInt(
           android.support.design.R.styleable
-              .CollapsingAppBarLayout_LayoutParams_layout_collapseMode,
+              .CollapsingToolbarLayout_Layout_layout_collapseMode,
           COLLAPSE_MODE_OFF);
       setParallaxMultiplier(a.getFloat(
           android.support.design.R.styleable
-              .CollapsingAppBarLayout_LayoutParams_layout_collapseParallaxMultiplier,
+              .CollapsingToolbarLayout_Layout_layout_collapseParallaxMultiplier,
           DEFAULT_PARALLAX_MULTIPLIER));
       a.recycle();
     }

@@ -9,22 +9,24 @@
   <string name="tab_home_public">All Posts</string>
 
   <string name="item_posted_info">%1$s posted %2$s ago</string>
-    <string name="item_user_info">
-        &lt;a href="attiq://qiita.com/users/%1$s">%2$s&lt;/a> posted %3$s
-    </string>
+  <string name="item_user_info">
+        &lt;a href="attiq://qiita.com/users/%1$s">%2$s&lt;/a>・%3$s
+  </string>
 
-  <string name="item_info_one">%1$d stocked, 1 comment</string>
-  <string name="item_info_many">%1$d stocked, %2$d comments</string>
+  <string name="item_user_info_plain"><![CDATA[<b>%1$s</b>・%2$s]]></string>
+
+  <string name="item_info_one">%1$d stocked・1 comment</string>
+  <string name="item_info_many">%1$d stocked・%2$d comments</string>
 
   <string name="share_content">%1$s</string>
 
-    <string name="user_stocked">
+  <string name="user_stocked">
         &lt;a href="attiq://qiita.com/users/%1$s">%2$s&lt;/a> stocked</string>
-    <string name="user_follow">
+  <string name="user_follow">
         &lt;a href="attiq://qiita.com/users/%1$s">%2$s&lt;/a> followed</string>
-    <string name="user_commented">
+  <string name="user_commented">
         &lt;a href="attiq://qiita.com/users/%1$s">%2$s&lt;/a> commented</string>
-    <string name="user_name">
+  <string name="user_name">
         &lt;a href="attiq://qiita.com/users/%1$s">%2$s&lt;/a>
     </string>
   <string name="tag_new_post">has new post</string>
@@ -99,7 +101,7 @@
   <string name="pref_header_general">General</string>
 
   <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
+  <string name="pref_description_social_recommendations">Recommendations for people to contact
         based on your message history
     </string>
 
@@ -130,12 +132,12 @@
   <string name="editor_comment">Comment</string>
   <string name="article_comment_hint"># Compose in Markdown</string>
   <string name="notify_comment_saved">Your comment has been saved</string>
-    <string name="icon_error_description" translatable="false">
+  <string name="icon_error_description" translatable="false">
         https://www.iconfinder.com/icons/183558/cloud_rain_icon#size=512
     </string>
   <string name="response_error">There\'s problem here v__v</string>
   <string name="response_empty">There\'s nothing here〜</string>
-    <string name="icon_empty_description" translatable="false">
+  <string name="icon_empty_description" translatable="false">
         https://www.iconfinder.com/icons/183438/cloud_sun_icon#size=512
     </string>
   <string name="article_read_status">last viewed: %1$s</string>

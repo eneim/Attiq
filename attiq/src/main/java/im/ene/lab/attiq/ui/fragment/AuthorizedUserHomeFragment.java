@@ -75,8 +75,8 @@ public class AuthorizedUserHomeFragment extends BaseFragment {
     mViewPager = (ViewPager) view.findViewById(R.id.view_pager);
     mViewPager.setOffscreenPageLimit(3);
     MainPagerAdapter pagerAdapter = new MainPagerAdapter(mUserId, getChildFragmentManager());
-
     mViewPager.setAdapter(pagerAdapter);
+
     if (mCallback != null) {
       mCallback.onUserHomeCreated(mViewPager);
     }

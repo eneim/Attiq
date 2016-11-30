@@ -40,7 +40,7 @@ public class TagItemsAdapter extends ArticleListAdapter {
 
   @Override
   public void loadItems(boolean isLoadingMore, int page, int pageLimit, @Nullable String query,
-                        final Callback<List<Article>> callback) {
+      final Callback<List<Article>> callback) {
     isLoading = true;
     ApiClient.tagItems(mTagId, page, pageLimit).enqueue(new Callback<List<Article>>() {
       @Override public void onResponse(Call<List<Article>> call, Response<List<Article>> response) {
@@ -59,17 +59,15 @@ public class TagItemsAdapter extends ArticleListAdapter {
     });
   }
 
-  @Override
-  public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     final ViewHolder viewHolder =
         new ViewHolder(super.onCreateViewHolder(parent, viewType).itemView, mTagId);
     viewHolder.setOnViewHolderClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         int position = viewHolder.getAdapterPosition();
-        if (position != RecyclerView.NO_POSITION && mOnItemClickListener != null) {
-          mOnItemClickListener.onItemClick(
-              TagItemsAdapter.this, viewHolder, v, position, getItemId(position)
-          );
+        if (position != RecyclerView.NO_POSITION && clickListener != null) {
+          clickListener.onItemClick(TagItemsAdapter.this, viewHolder, v, position,
+              getItemId(position));
         }
       }
     });
@@ -85,18 +83,16 @@ public class TagItemsAdapter extends ArticleListAdapter {
     public ViewHolder(View view, String tagId) {
       super(view);
       mContext = view.getContext();
-      mIgnoredUrl = Spannable.Factory.getInstance().newSpannable(
-          Html.fromHtml(mContext.getString(R.string.local_tag_url, tagId, tagId))
-      );
+      mIgnoredUrl = Spannable.Factory.getInstance()
+          .newSpannable(Html.fromHtml(mContext.getString(R.string.local_tag_url, tagId, tagId)));
     }
 
     @Override public void bind(Article item) {
       if (item.getUser() != null) {
         String userName = item.getUser().getId();
-        mItemUserInfo.setText(Html.fromHtml(mContext.getString(R.string.item_user_info,
-            userName, userName,
-            TimeUtil.beautify(item.getCreatedAt())
-        )));
+        mItemUserInfo.setText(Html.fromHtml(
+            mContext.getString(R.string.item_user_info_plain, userName,
+                TimeUtil.beautify(item.getCreatedAt()))));
         UIUtil.stripUnderlines(mItemUserInfo, null, false);
         mItemUserInfo.setVisibility(View.VISIBLE);
       } else {
@@ -111,12 +107,12 @@ public class TagItemsAdapter extends ArticleListAdapter {
         requestCreator = Attiq.picasso().load(R.drawable.blank_profile_icon_medium);
       }
 
-      requestCreator
-          .placeholder(R.drawable.blank_profile_icon_medium)
+      requestCreator.placeholder(R.drawable.blank_profile_icon_medium)
           .error(R.drawable.blank_profile_icon_medium)
-          .fit().centerInside()
-          .transform(new RoundedTransformation(
-              mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
+          .fit()
+          .centerInside()
+          .transform(
+              new RoundedTransformation(mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
           .into(mItemUserImage);
 
       mItemTags.removeAllViews();
@@ -126,8 +122,8 @@ public class TagItemsAdapter extends ArticleListAdapter {
               .inflate(R.layout.widget_tag_textview, mItemTags, false);
           tagName.setClickable(true);
           tagName.setMovementMethod(LinkMovementMethod.getInstance());
-          tagName.setText(Html.fromHtml(mContext.getString(R.string.local_tag_url,
-              tag.getName(), tag.getName())));
+          tagName.setText(Html.fromHtml(
+              mContext.getString(R.string.local_tag_url, tag.getName(), tag.getName())));
 
           TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(tagName,
               ContextCompat.getDrawable(mContext, R.drawable.ic_lens_16dp), null, null, null);

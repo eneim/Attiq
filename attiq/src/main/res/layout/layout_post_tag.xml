@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="1dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardBackgroundColor="#437194"
+    app:cardElevation="1.0dp"
+    app:cardUseCompatPadding="true"
+    app:contentPaddingLeft="2dp"
+    app:contentPaddingRight="4dp"
+    >
+
+  <android.support.v7.widget.AppCompatImageView
+      android:id="@+id/post_tag_icon"
+      android:layout_width="14dp"
+      android:layout_height="14dp"
+      android:layout_gravity="center_vertical"
+      android:layout_margin="2dp"
+      android:scaleType="centerInside"
+      />
+
+  <android.support.v7.widget.AppCompatTextView
+      android:id="@+id/post_tag_name"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_margin="2dp"
+      android:maxLines="1"
+      android:paddingLeft="18dp"
+      android:paddingStart="18dp"
+      android:textAppearance="@style/TextAppearance.AppCompat.Small"
+      android:textSize="11sp"
+      />
+
+</android.support.v7.widget.CardView>
