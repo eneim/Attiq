@@ -19,13 +19,12 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import im.ene.lab.attiq.R;
 import im.ene.lab.attiq.util.markdown.Marked;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import okhttp3.HttpUrl;
 
 /**
  * Created by eneim on 12/14/15.
@@ -60,13 +59,12 @@ public class UIUtil {
   }
 
   // Won't use this
-  @Deprecated
-  public static int getActionBarHeight(@NonNull Context context) {
+  @Deprecated public static int getActionBarHeight(@NonNull Context context) {
     int actionBarHeight;
     TypedValue tv = new TypedValue();
     if (context.getTheme().resolveAttribute(R.attr.actionBarSize, tv, true)) {
-      actionBarHeight = TypedValue.complexToDimensionPixelSize(
-          tv.data, context.getResources().getDisplayMetrics());
+      actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,
+          context.getResources().getDisplayMetrics());
     } else {
       actionBarHeight = 0;
     }
@@ -79,7 +77,19 @@ public class UIUtil {
   }
 
   public static boolean isEmpty(Collection list) {
-    return list == null || list.size() == 0;
+    return list == null || list.isEmpty();
+  }
+
+  public static String fixUrl(String origin) {
+    if (origin == null) {
+      return null;
+    }
+
+    if (HttpUrl.parse(origin) == null) {
+      return "https://" + origin;
+    }
+
+    return origin;
   }
 
   public static int getDimen(Context context, @DimenRes int dimenId) {
@@ -133,9 +143,9 @@ public class UIUtil {
   /**
    * Strip an URL Spannable
    *
-   * @param textView   to be stripped
+   * @param textView to be stripped
    * @param ignoredUrl to be ignored, in case we don't want to enable click event on specific URL
-   * @param strip      true if we want to remove the underline, false otherwise
+   * @param strip true if we want to remove the underline, false otherwise
    */
   public static void stripUnderlines(TextView textView, Spannable ignoredUrl, boolean strip) {
     Spannable s = (Spannable) textView.getText();
@@ -153,7 +163,7 @@ public class UIUtil {
   /**
    * Strip an URL Spannable. Remove underline by default
    *
-   * @param textView   to be stripped
+   * @param textView to be stripped
    * @param ignoredUrl to be ignored, in case we don't want to enable click event on specific URL
    */
   public static void stripUnderlines(TextView textView, Spannable ignoredUrl) {
@@ -192,8 +202,8 @@ public class UIUtil {
         return;
       }
 
-      URLSpan[] spans = ignoredUrl != null ? ignoredUrl.getSpans(0, ignoredUrl.length(),
-          URLSpan.class) : null;
+      URLSpan[] spans =
+          ignoredUrl != null ? ignoredUrl.getSpans(0, ignoredUrl.length(), URLSpan.class) : null;
       boolean isClickable = true; // true at first
       if (spans == null) {
         isClickable = true;       // no reference, then true
@@ -214,23 +224,21 @@ public class UIUtil {
     }
   }
 
-  public static final Property<View, Integer> BACKGROUND_COLOR
-      = new AnimUtil.IntProperty<View>("backgroundColor") {
+  public static final Property<View, Integer> BACKGROUND_COLOR =
+      new AnimUtil.IntProperty<View>("backgroundColor") {
 
-    @Override
-    public void setValue(View view, int value) {
-      view.setBackgroundColor(value);
-    }
+        @Override public void setValue(View view, int value) {
+          view.setBackgroundColor(value);
+        }
 
-    @Override
-    public Integer get(View view) {
-      Drawable d = view.getBackground();
-      if (d instanceof ColorDrawable) {
-        return ((ColorDrawable) d).getColor();
-      }
-      return Color.TRANSPARENT;
-    }
-  };
+        @Override public Integer get(View view) {
+          Drawable d = view.getBackground();
+          if (d instanceof ColorDrawable) {
+            return ((ColorDrawable) d).getColor();
+          }
+          return Color.TRANSPARENT;
+        }
+      };
 
   public enum Themes {
 

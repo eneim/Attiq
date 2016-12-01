@@ -82,7 +82,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ProfileActivity extends BaseActivity implements RealmChangeListener {
+public class ProfileActivity extends BaseActivity implements RealmChangeListener<Realm> {
 
   private static final int MESSAGE_ACTION_FOLLOW = 1;
 
@@ -136,12 +136,12 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
   // private int mFollowTextPositive;
   // private int mFollowTextNegative;
 
-  private ProfileViewPagerAdapter mPagerAdapter;
+  ProfileViewPagerAdapter mPagerAdapter;
   // Title support
   private AlphaForegroundColorSpan mTitleColorSpan;
   private SpannableString mSpannableTitle;
   private SpannableString mSpannableSubtitle;
-  private int mToolbarLayoutOffset;
+  int mToolbarLayoutOffset;
   private AppBarLayout.OnOffsetChangedListener mOffsetChangedListener =
       new AppBarLayout.OnOffsetChangedListener() {
         @Override public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
@@ -158,15 +158,15 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
         }
       };
   private Realm mRealm;
-  private RProfile mProfile;
+  RProfile mProfile;
   private Profile mRefUser;
   // private User mUser;
   // private State mState = new State();
-  private String mUserId; // actually the User name
-  private Callback<Void> mOnFollowStateCallback;
-  private Callback<Void> mOnUnFollowStateCallback;
-  private Callback<User> mOnUserCallback;
-  private DocumentCallback mDocumentCallback;
+  String mUserId; // actually the User name
+  Callback<Void> mOnFollowStateCallback;
+  Callback<Void> mOnUnFollowStateCallback;
+  Callback<User> mOnUserCallback;
+  DocumentCallback mDocumentCallback;
   private Handler.Callback mHandlerCallback = new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
       if (msg.what == MESSAGE_ACTION_FOLLOW) {
@@ -184,9 +184,8 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
 
         return true;
       } else if (msg.what == MESSAGE_DATA_UPDATE) {
-        EventBus.getDefault()
-            .post(new ProfileUpdatedEvent(ProfileActivity.class.getSimpleName(), true, null,
-                mProfile));
+        EventBus.getDefault().post( //
+            new ProfileUpdatedEvent(ProfileActivity.class.getSimpleName(), true, null, mProfile));
       }
 
       return false;
@@ -623,7 +622,7 @@ public class ProfileActivity extends BaseActivity implements RealmChangeListener
     mHandler.sendEmptyMessageDelayed(MESSAGE_ACTION_FOLLOW, HANDLER_DELAY);
   }
 
-  @Override public void onChange() {
+  @Override public void onChange(Realm realm) {
     mHandler.removeMessages(MESSAGE_DATA_UPDATE);
     mHandler.sendEmptyMessageDelayed(MESSAGE_DATA_UPDATE, HANDLER_DELAY);
   }

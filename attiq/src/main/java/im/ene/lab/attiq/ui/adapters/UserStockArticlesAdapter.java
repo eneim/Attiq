@@ -98,7 +98,7 @@ public class UserStockArticlesAdapter extends AttiqRealmListAdapter<StockArticle
     if (shouldCleanup) {
       Realm realm = Attiq.realm();
       realm.beginTransaction();
-      realm.clear(StockArticle.class);
+      realm.delete(StockArticle.class);
       realm.commitTransaction();
       realm.close();
     }

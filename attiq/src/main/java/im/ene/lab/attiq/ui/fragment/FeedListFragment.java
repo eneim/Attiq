@@ -28,9 +28,9 @@ import im.ene.lab.attiq.data.model.two.Article;
 import im.ene.lab.attiq.data.model.zero.FeedItem;
 import im.ene.lab.attiq.ui.activities.ItemDetailActivity;
 import im.ene.lab.attiq.ui.activities.ProfileActivity;
+import im.ene.lab.attiq.ui.adapters.AttiqRealmListAdapter;
 import im.ene.lab.attiq.ui.adapters.FeedListAdapter;
 import im.ene.lab.attiq.ui.adapters.OnItemClickListener;
-import im.ene.lab.attiq.ui.adapters.AttiqRealmListAdapter;
 import im.ene.lab.attiq.ui.widgets.DividerItemDecoration;
 import im.ene.lab.attiq.util.IOUtil;
 import im.ene.lab.attiq.util.PrefUtil;
@@ -143,26 +143,24 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
     } else {
       final List<FeedItem> items = response.body();
       if (!UIUtil.isEmpty(items)) {
-        mTransactionTask = Attiq.realm().executeTransaction(new Realm.Transaction() {
+        mTransactionTask = Attiq.realm().executeTransactionAsync(new Realm.Transaction() {
           @Override public void execute(Realm realm) {
             for (FeedItem item : items) {
               item.setId(IOUtil.hashCode(item));
             }
             realm.copyToRealmOrUpdate(items);
           }
-        }, new Realm.Transaction.Callback() {
+        }, new Realm.Transaction.OnSuccess() {
           @Override public void onSuccess() {
             EventBus.getDefault().post(new ItemsEvent(eventTag(), true, null, mPage));
           }
-
-          @Override public void onError(Exception e) {
-            EventBus.getDefault()
-                .post(new ItemsEvent(eventTag(), false,
-                    new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), mPage));
+        }, new Realm.Transaction.OnError() {
+          @Override public void onError(Throwable error) {
+            EventBus.getDefault().post(new ItemsEvent(eventTag(), false,  //
+                new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), mPage));
           }
         });
       }
     }
   }
-
 }

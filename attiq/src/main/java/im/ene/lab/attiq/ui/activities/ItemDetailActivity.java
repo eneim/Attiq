@@ -142,11 +142,11 @@ public class ItemDetailActivity extends BaseActivity {
   @BindDimen(R.dimen.app_bar_min_elevation) float mMinAppbarElevation;
 
   private int mCommentThreadColor;  // this must be R.attr.colorPrimary
-  private ArrayList<Comment> mComments = new ArrayList<>();
+  ArrayList<Comment> mComments = new ArrayList<>();
   private MenuItem mArticleHeaderMenu;
   private Article mArticle;
   private boolean mIsFirstTimeLoaded = false;
-  private Element mMenuAnchor;
+  Element mMenuAnchor;
   // Title support
   private AlphaForegroundColorSpan mTitleColorSpan;
   private SpannableString mSpannableTitle;
@@ -178,7 +178,7 @@ public class ItemDetailActivity extends BaseActivity {
           }
         }
       };
-  private String mItemUuid;
+  String mItemUuid;
   private okhttp3.Callback mDocumentCallback;
 
   private Callback<Article> mArticleDetailCallback = new Callback<Article>() {
@@ -191,8 +191,7 @@ public class ItemDetailActivity extends BaseActivity {
         mRealm.beginTransaction();
         // mRealm.copyToRealmOrUpdate(article);
         if (history == null) {
-          history = mRealm.createObject(ReadArticle.class);
-          history.setArticleId(mItemUuid);
+          history = mRealm.createObject(ReadArticle.class, mItemUuid);
           history.setArticle(mRealm.copyToRealmOrUpdate(article));
         }
         history.setLastView(TimeUtil.nowSecond());
@@ -789,7 +788,7 @@ public class ItemDetailActivity extends BaseActivity {
   @SuppressWarnings("unused") public void onEventMainThread(DocumentEvent event) {
     if (event.document != null) {
       ((State) mState).stockCount =
-          event.document.getElementsByClass("js-stocksCount").first().text();
+          event.document.getElementsByClass("js-likecount").first().text();
       EventBus.getDefault().post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
     }
   }
@@ -959,8 +958,8 @@ public class ItemDetailActivity extends BaseActivity {
 
   private static class State extends BaseState {
 
-    private boolean isStocked;
+    boolean isStocked;
 
-    private String stockCount;
+    String stockCount;
   }
 }

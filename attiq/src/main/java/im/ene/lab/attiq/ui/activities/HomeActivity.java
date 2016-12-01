@@ -252,10 +252,10 @@ public class HomeActivity extends BaseActivity
             }
 
             mRealm.beginTransaction();
-            mRealm.clear(Profile.class);
-            mRealm.clear(FeedItem.class);
-            mRealm.clear(StockArticle.class);
-            mRealm.clear(ReadArticle.class);
+            mRealm.delete(Profile.class);
+            mRealm.delete(FeedItem.class);
+            mRealm.delete(StockArticle.class);
+            mRealm.delete(ReadArticle.class);
             mRealm.commitTransaction();
 
             mMyProfile = null;

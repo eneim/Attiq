@@ -52,10 +52,10 @@ public abstract class RealmListFragment<E extends RealmObject> extends ListFragm
   // User a handler to prevent too frequently calling of methods. For example Realm may trigger
   // #onChange a lot of time, since it doesn't support type-specific change event now. So we
   // should queue the Change event up, and remove the duplicated ones to save resources
-  private Handler mHandler = new Handler(this);
+  Handler mHandler = new Handler(this);
 
-  private RealmChangeListener mDataChangeListener = new RealmChangeListener() {
-    @Override public void onChange() {
+  RealmChangeListener<Realm> mDataChangeListener = new RealmChangeListener<Realm>() {
+    @Override public void onChange(Realm element) {
       mHandler.removeMessages(MESSAGE_UPDATE_DATA);
       mHandler.sendEmptyMessageDelayed(MESSAGE_UPDATE_DATA, 200);
     }
@@ -100,19 +100,18 @@ public abstract class RealmListFragment<E extends RealmObject> extends ListFragm
     } else {
       final List<E> items = response.body();
       if (!UIUtil.isEmpty(items)) {
-        mTransactionTask = Attiq.realm().executeTransaction(new Realm.Transaction() {
+        mTransactionTask = Attiq.realm().executeTransactionAsync(new Realm.Transaction() {
           @Override public void execute(Realm realm) {
             realm.copyToRealmOrUpdate(items);
           }
-        }, new Realm.Transaction.Callback() {
+        }, new Realm.Transaction.OnSuccess() {
           @Override public void onSuccess() {
             EventBus.getDefault().post(new ItemsEvent(eventTag(), true, null, mPage));
           }
-
-          @Override public void onError(Exception e) {
-            EventBus.getDefault()
-                .post(new ItemsEvent(eventTag(), false,
-                    new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), mPage));
+        }, new Realm.Transaction.OnError() {
+          @Override public void onError(Throwable error) {
+            EventBus.getDefault().post(new ItemsEvent(eventTag(), false,  //
+                new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()), mPage));
           }
         });
       } else {

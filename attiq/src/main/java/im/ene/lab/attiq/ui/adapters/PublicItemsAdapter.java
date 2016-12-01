@@ -233,13 +233,10 @@ public class PublicItemsAdapter extends AttiqRealmListAdapter<PublicPost> {
           mItemTags.addView(tagView);
 
           Glide.with(mContext)
-              .load(tag.getIconUrl())
+              .load(UIUtil.fixUrl(tag.getIconUrl()))
               .apply(requestOptions.clone()
-                      .placeholder(R.drawable.ic_local_offer_black_24dp)
-                      .error(R.drawable.ic_local_offer_black_24dp)
-                  // .fitCenter(mContext)
-                  // .override(mTagIconSize)
-              )
+                  .placeholder(R.drawable.ic_local_offer_black_24dp)
+                  .error(R.drawable.ic_local_offer_black_24dp))
               .into(tagIcon);
         }
       } else {

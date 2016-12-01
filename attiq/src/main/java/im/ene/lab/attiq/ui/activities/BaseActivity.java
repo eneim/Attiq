@@ -113,7 +113,7 @@ public abstract class BaseActivity extends AppCompatActivity
   }
 
   // Utils
-  private RealmAsyncTask mTransactionTask;
+  RealmAsyncTask mTransactionTask;
 
   protected void getMasterUser(final String token) {
     ApiClient.me().enqueue(new Callback<Profile>() {
@@ -122,23 +122,21 @@ public abstract class BaseActivity extends AppCompatActivity
         if (mMyProfile != null) {
           mMyProfile.setToken(token);
           // save to Realm
-          mTransactionTask = Attiq.realm().executeTransaction(new Realm.Transaction() {
+          mTransactionTask = Attiq.realm().executeTransactionAsync(new Realm.Transaction() {
             @Override public void execute(Realm realm) {
               realm.copyToRealmOrUpdate(mMyProfile);
             }
-          }, new Realm.Transaction.Callback() {
+          }, new Realm.Transaction.OnSuccess() {
             @Override public void onSuccess() {
-              super.onSuccess();
-              EventBus.getDefault()
-                  .post(
-                      new ProfileEvent(HomeActivity.class.getSimpleName(), true, null, mMyProfile));
+              EventBus.getDefault().post( //
+                  new ProfileEvent(HomeActivity.class.getSimpleName(), true, null, mMyProfile));
             }
-
-            @Override public void onError(Exception e) {
-              super.onError(e);
+          }, new Realm.Transaction.OnError() {
+            @Override public void onError(Throwable error) {
               EventBus.getDefault()
                   .post(new ProfileEvent(HomeActivity.class.getSimpleName(), false,
-                      new Event.Error(Event.Error.ERROR_UNKNOWN, e.getLocalizedMessage()), null));
+                      new Event.Error(Event.Error.ERROR_UNKNOWN, error.getLocalizedMessage()),
+                      null));
             }
           });
         } else {

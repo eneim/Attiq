@@ -59,12 +59,12 @@ public class Attiq extends Application {
     // Date, Time, ...
     TimeUtil.init(this);
     // Realm
+    Realm.init(this);
     final RealmConfiguration config =
-        new RealmConfiguration.Builder(this).name(getString(R.string.realm_name))
+        new RealmConfiguration.Builder().name(getString(R.string.realm_name))
             .schemaVersion(getResources().getInteger(R.integer.realm_version_2_0_0))
             .deleteRealmIfMigrationNeeded()
             .build();
-
     Realm.setDefaultConfiguration(config);
 
     mHttpClient = new OkHttpClient();
