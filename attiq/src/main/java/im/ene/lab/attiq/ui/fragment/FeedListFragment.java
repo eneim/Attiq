@@ -137,9 +137,8 @@ public class FeedListFragment extends RealmListFragment<FeedItem> {
 
   @Override public void onResponse(Call<List<FeedItem>> call, Response<List<FeedItem>> response) {
     if (response.code() != 200) {
-      EventBus.getDefault()
-          .post(new ItemsEvent(eventTag(), false,
-              new Event.Error(response.code(), ApiClient.parseError(response).message), 1));
+      EventBus.getDefault().post(new ItemsEvent(eventTag(), false,  //
+          new Event.Error(response.code(), ApiClient.parseError(response).message), 1));
     } else {
       final List<FeedItem> items = response.body();
       if (!UIUtil.isEmpty(items)) {

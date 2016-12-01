@@ -108,6 +108,7 @@ android {
     abortOnError false
     disable 'InvalidPackage'
     disable 'PrivateResource'
+    disable "ResourceType"
     disable 'MissingTranslation' // prevent build-lint check, should un-comment later to improve App
   }
 

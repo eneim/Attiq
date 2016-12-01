@@ -18,13 +18,13 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
   <item
-      android:drawable="@color/very_dark_grayish_pink"/>
+      android:drawable="@color/background_light"/>
 
   <item
       android:gravity="center">
     <bitmap
         android:gravity="center"
-        android:src="@drawable/ic_soup_bowl"/>
+        android:src="@drawable/ic_triangle_border"/>
   </item>
 
 </layer-list>
