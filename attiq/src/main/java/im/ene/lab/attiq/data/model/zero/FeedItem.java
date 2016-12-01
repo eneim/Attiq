@@ -2,7 +2,6 @@ package im.ene.lab.attiq.data.model.zero;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
 import im.ene.lab.attiq.data.model.one.PublicTag;
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -59,9 +58,12 @@ public class FeedItem extends RealmObject {
   @SerializedName("mentioned_object_name")
   @Expose
   private String mentionedObjectName;
-  @SerializedName("mentioned_object_stocks_count")
+  @SerializedName("mentioned_object_public_likes_count")
   @Expose
   private Integer mentionedObjectStocksCount;
+  @SerializedName("mentioned_object_liked")
+  @Expose
+  private Boolean mentionedObjectLiked;
   @SerializedName("mentioned_object_tags")
   @Expose
   private RealmList<PublicTag> mentionedObjectTags = new RealmList<>();
@@ -206,4 +208,11 @@ public class FeedItem extends RealmObject {
     this.trackableType = trackableType;
   }
 
+  public Boolean getMentionedObjectLiked() {
+    return mentionedObjectLiked;
+  }
+
+  public void setMentionedObjectLiked(Boolean mentionedObjectLiked) {
+    this.mentionedObjectLiked = mentionedObjectLiked;
+  }
 }

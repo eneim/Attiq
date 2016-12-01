@@ -61,7 +61,7 @@ public class Attiq extends Application {
     // Realm
     final RealmConfiguration config =
         new RealmConfiguration.Builder(this).name(getString(R.string.realm_name))
-            .schemaVersion(R.integer.realm_version)
+            .schemaVersion(getResources().getInteger(R.integer.realm_version_2_0_0))
             .deleteRealmIfMigrationNeeded()
             .build();
 
