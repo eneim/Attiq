@@ -18,8 +18,6 @@ package im.ene.lab.attiq.ui.adapters;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -171,7 +169,7 @@ public class UserStockArticlesAdapter extends AttiqRealmListAdapter<StockArticle
 
   public static class ViewHolder extends BaseListAdapter.ViewHolder<StockArticle> {
 
-    static final int LAYOUT_RES = R.layout.post_item_view;
+    static final int LAYOUT_RES = R.layout.stock_item_view;
 
     public static ViewHolder createViewHolder(ViewGroup parent, int viewType) {
       View view =
@@ -185,7 +183,6 @@ public class UserStockArticlesAdapter extends AttiqRealmListAdapter<StockArticle
     @Bind(R.id.item_user_icon) ImageView mItemUserImage;
     @Bind(R.id.item_title) TextView mItemTitle;
     @Bind(R.id.item_tags) FlexboxLayout mItemTags;
-    @Bind(R.id.item_info) TextView mItemInfo;
     @Bind(R.id.item_posted_info) TextView mItemUserInfo;
 
     // Others
@@ -197,7 +194,6 @@ public class UserStockArticlesAdapter extends AttiqRealmListAdapter<StockArticle
       super(view);
       mContext = itemView.getContext();
       mInflater = LayoutInflater.from(mContext);
-      mItemInfo.setVisibility(View.GONE);
       mItemUserInfo.setClickable(true);
       mItemUserInfo.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -244,22 +240,20 @@ public class UserStockArticlesAdapter extends AttiqRealmListAdapter<StockArticle
               new RoundedTransformation(mIconBorderWidth, mIconBorderColor, mIconCornerRadius))
           .into(mItemUserImage);
 
-      mItemTags.removeAllViews();
       if (!UIUtil.isEmpty(item.getTags())) {
+        mItemTags.removeAllViews();
+        mItemTags.setVisibility(View.VISIBLE);
         for (ItemTag tag : item.getTags()) {
-          final TextView tagName =
-              (TextView) mInflater.inflate(R.layout.widget_tag_textview, mItemTags, false);
-          tagName.setClickable(true);
-          tagName.setMovementMethod(LinkMovementMethod.getInstance());
-          tagName.setText(Html.fromHtml(
-              mContext.getString(R.string.local_tag_url, tag.getName(), tag.getName())));
+          final View tagView = mInflater.inflate(R.layout.layout_post_tag, mItemTags, false);
+          final TextView tagName = (TextView) tagView.findViewById(R.id.post_tag_name);
+          tagName.setText(tag.getName());
+          ImageView tagIcon = (ImageView) tagView.findViewById(R.id.post_tag_icon);
+          mItemTags.addView(tagView);
 
-          TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(tagName,
-              ContextCompat.getDrawable(mContext, R.drawable.ic_lens_16dp), null, null, null);
-
-          UIUtil.stripUnderlines(tagName);
-          mItemTags.addView(tagName);
+          tagIcon.setImageResource(R.drawable.ic_local_offer_black_24dp);
         }
+      } else {
+        mItemTags.setVisibility(View.GONE);
       }
     }
   }
