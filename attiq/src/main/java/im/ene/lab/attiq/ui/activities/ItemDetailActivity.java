@@ -16,6 +16,7 @@
 
 package im.ene.lab.attiq.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -53,9 +54,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.CheckedTextView;
@@ -145,19 +146,20 @@ public class ItemDetailActivity extends BaseActivity {
   ArrayList<Comment> mComments = new ArrayList<>();
   private MenuItem mArticleHeaderMenu;
   private Article mArticle;
-  private boolean mIsFirstTimeLoaded = false;
+  boolean mIsFirstTimeLoaded = false;
   Element mMenuAnchor;
   // Title support
   private AlphaForegroundColorSpan mTitleColorSpan;
   private SpannableString mSpannableTitle;
   private SpannableString mSpannableSubtitle;
-  private int mToolbarLayoutOffset;
+  int mToolbarLayoutOffset;
   private AppBarLayout.OnOffsetChangedListener mOffsetChangedListener =
       new AppBarLayout.OnOffsetChangedListener() {
         @Override public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
           mToolbarLayoutOffset = verticalOffset;
-          float maxOffset = mToolBarLayout.getHeight() -
-              ViewCompat.getMinimumHeight(mToolBarLayout) - mToolBarLayout.getInsetTop();
+          float maxOffset = mToolBarLayout.getHeight()
+              - ViewCompat.getMinimumHeight(mToolBarLayout)
+              - mToolBarLayout.getInsetTop();
           if (maxOffset > 0) {
             float fraction = Math.abs(verticalOffset) / maxOffset;
             mOverLayView.setAlpha(1.f - fraction);
@@ -172,8 +174,9 @@ public class ItemDetailActivity extends BaseActivity {
         @Override public void onPageSelected(int position) {
           super.onPageSelected(position);
           View currentView;
-          if (mCommentComposer != null && mSlidingPanel != null &&
-              (currentView = mCommentComposer.getCurrentView()) != null) {
+          if (mCommentComposer != null
+              && mSlidingPanel != null
+              && (currentView = mCommentComposer.getCurrentView()) != null) {
             mSlidingPanel.setScrollableView(currentView);
           }
         }
@@ -228,7 +231,8 @@ public class ItemDetailActivity extends BaseActivity {
       return false;
     }
   };
-  private final Handler mHandler = new Handler(mHandlerCallback);
+
+  final Handler mHandler = new Handler(mHandlerCallback);
 
   public static Intent createIntent(Context context, String uuid) {
     Intent intent = new Intent(context, ItemDetailActivity.class);
@@ -334,6 +338,7 @@ public class ItemDetailActivity extends BaseActivity {
     // toggle.syncState();
   }
 
+  @SuppressLint({ "SetJavaScriptEnabled", "JavascriptInterface" })
   private void trySetupContentView() {
     mContentView.setVerticalScrollBarEnabled(false);
     mContentView.setHorizontalScrollBarEnabled(false);
@@ -348,7 +353,8 @@ public class ItemDetailActivity extends BaseActivity {
 
     mContentView.addJavascriptInterface(this, "Attiq");
     mContentView.setWebViewClient(new WebViewClient() {
-      @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
+      @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+        String url = request.getUrl().toString();
         if (url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
           startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
           return true;
@@ -368,8 +374,9 @@ public class ItemDetailActivity extends BaseActivity {
       @Override public void onPageFinished(final WebView view, String url) {
         super.onPageFinished(view, url);
         if (PrefUtil.isMathJaxEnabled()) {
-          view.evaluateJavascript("javascript:document.getElementById('content').innerHTML='" +
-              doubleEscapeTeX(mArticle.getRenderedBody()) + "';", null);
+          view.evaluateJavascript(
+              "javascript:document.getElementById('content').innerHTML='" + doubleEscapeTeX(
+                  mArticle.getRenderedBody()) + "';", null);
           view.evaluateJavascript("javascript:MathJax.Hub.Queue(['Typeset',MathJax.Hub]);",
               new ValueCallback<String>() {
                 @Override public void onReceiveValue(String value) {
@@ -517,24 +524,24 @@ public class ItemDetailActivity extends BaseActivity {
 
   @Override protected void onStart() {
     super.onStart();
-    Action viewAction = Action.newAction(Action.TYPE_VIEW,
-        getString(R.string.title_activity_item_detail),
-        // make sure this auto-generated web page URL is correct.
-        // Otherwise, set the URL to null.
-        Uri.parse("http://qiita.com"),
-        Uri.parse(getString(R.string.deep_link_article_detail, BuildConfig.APPLICATION_ID)));
+    Action viewAction =
+        Action.newAction(Action.TYPE_VIEW, getString(R.string.title_activity_item_detail),
+            // make sure this auto-generated web page URL is correct.
+            // Otherwise, set the URL to null.
+            Uri.parse("http://qiita.com"),
+            Uri.parse(getString(R.string.deep_link_article_detail, BuildConfig.APPLICATION_ID)));
     AppIndex.AppIndexApi.start(mGoogleApiClient, viewAction);
   }
 
   @Override protected void onStop() {
     // ATTENTION: This was auto-generated to implement the App Indexing API.
     // See https://g.co/AppIndexing/AndroidStudio for more information.
-    Action viewAction = Action.newAction(Action.TYPE_VIEW,
-        getString(R.string.title_activity_item_detail),
-        // make sure this auto-generated web page URL is correct.
-        // Otherwise, set the URL to null.
-        Uri.parse("http://qiita.com"),
-        Uri.parse(getString(R.string.deep_link_article_detail, BuildConfig.APPLICATION_ID)));
+    Action viewAction =
+        Action.newAction(Action.TYPE_VIEW, getString(R.string.title_activity_item_detail),
+            // make sure this auto-generated web page URL is correct.
+            // Otherwise, set the URL to null.
+            Uri.parse("http://qiita.com"),
+            Uri.parse(getString(R.string.deep_link_article_detail, BuildConfig.APPLICATION_ID)));
     AppIndex.AppIndexApi.end(mGoogleApiClient, viewAction);
     super.onStop();
   }
@@ -586,7 +593,7 @@ public class ItemDetailActivity extends BaseActivity {
     mIsPatchingComment = false;
   }
 
-  private boolean mIsPatchingComment = false;
+  boolean mIsPatchingComment = false;
   private String mPatchCommentId = null;
 
   @SuppressWarnings("unused") @OnClick(R.id.btn_submit) void summitComment() {
@@ -880,8 +887,7 @@ public class ItemDetailActivity extends BaseActivity {
     }
   }
 
-  /* API Callbacks */
-  private Callback<Void> mItemUnStockedResponse = new SuccessCallback<Void>() {
+  /* API Callbacks */ Callback<Void> mItemUnStockedResponse = new SuccessCallback<Void>() {
     @Override public void onResponse(Call<Void> call, Response<Void> response) {
       if (response.code() == 204) {
         ((State) mState).isStocked = false;
@@ -907,7 +913,7 @@ public class ItemDetailActivity extends BaseActivity {
       EventBus.getDefault().post(new StateEvent<>(getClass().getSimpleName(), true, null, mState));
     }
   };
-  private Callback<Void> mItemStockedResponse = new SuccessCallback<Void>() {
+  Callback<Void> mItemStockedResponse = new SuccessCallback<Void>() {
     @Override public void onResponse(Call<Void> call, Response<Void> response) {
       if (response.code() == 204) {
         ((State) mState).isStocked = true;
