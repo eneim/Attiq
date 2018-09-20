@@ -1,0 +1,133 @@
+/*
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'com.android.application'
+apply plugin: 'androidx.navigation.safeargs'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+  compileSdkVersion build_versions.compile_sdk
+
+  defaultConfig {
+    applicationId "${APP_ID}"
+    minSdkVersion build_versions.min_sdk
+    targetSdkVersion build_versions.target_sdk
+    versionCode build_versions.code
+    versionName build_versions.name
+
+    resValue "string", "client_id", qiita_client_id
+    buildConfigField("String", "BASE_URL", "\"https://qiita.com\"")
+
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+      buildConfigField("String", "DB_NAME", "\"attiq.db\"")
+    }
+
+    debug {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+      buildConfigField("String", "DB_NAME", "\"attiq.debug.db\"")
+    }
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+
+  dataBinding.enabled = true
+
+  lintOptions {
+    abortOnError false
+  }
+}
+
+dependencies {
+  implementation fileTree(include: ['*.jar'], dir: 'libs')
+  implementation deps.kotlin.stdlib
+
+  implementation deps.x.material
+  implementation deps.x.vector
+  implementation deps.x.recyclerview
+  implementation deps.x.cardview
+  implementation deps.x.constraint
+  implementation deps.x.core
+
+  implementation deps.archx.extensions
+  implementation deps.archx.reactivestreams
+  kapt deps.archx.compiler
+
+  implementation deps.moshi_kotlin
+  implementation deps.moshi_adapters
+
+  implementation deps.retrofit.runtime
+  implementation deps.retrofit.moshi
+  implementation "com.squareup.okhttp3:okhttp:3.11.0"
+
+  implementation deps.retrofit.rxadapter
+  implementation deps.okhttp_logging_interceptor
+
+  implementation deps.roomx.paging
+  implementation deps.roomx.core
+  implementation deps.roomx.rxjava2
+  implementation deps.roomx.paging
+  kapt deps.roomx.compiler
+
+  // implementation deps.rxbinding.core
+  // implementation deps.rxbinding.design
+
+  implementation deps.rxjava2
+  implementation deps.rx_android
+
+  implementation deps.dagger.runtime
+  implementation(deps.dagger.android, {
+    exclude group: 'com.android.support'
+  })
+
+  implementation (deps.dagger.android_support, {
+    exclude group: 'com.android.support'
+  })
+  kapt deps.dagger.compiler
+  kapt deps.dagger.android_support_compiler
+
+  testImplementation 'junit:junit:4.12'
+  androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
+  androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
+
+  // implementation 'ru.noties:markwon:1.0.4'
+  // implementation 'ru.noties:markwon-image-loader:1.0.4' // optional
+  // implementation 'ru.noties:markwon-view:1.0.4' // optional
+
+  // kapt "androidx.databinding:databinding-compiler:$versions.android_gradle_plugin"
+
+  implementation 'org.jsoup:jsoup:1.11.3'
+  implementation 'com.samskivert:jmustache:1.14'
+
+  implementation(deps.glide, {
+    exclude group: 'com.android.support'
+  })
+
+  kapt deps.glide_compiler
+}

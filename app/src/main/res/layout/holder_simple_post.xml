@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 Nam Nguyen, nam@ene.im
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+  <data>
+    <variable
+        name="item"
+        type="attiq.data.entity.Item"
+        />
+
+  </data>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/itemContainer"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="?android:colorBackground"
+      android:foreground="?attr/selectableItemBackground"
+      android:padding="8dp"
+      tools:ignore="UnusedAttribute"
+      >
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/spacing_default"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/spacing_default"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/spacing_default"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/spacing_default"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_horz_mid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="26dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_horz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="48dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_vert_mid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="44dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_vert_mid_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="52dp"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/itemUserIcon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toTopOf="@id/guide_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/guide_vert_mid"
+        app:layout_constraintStart_toEndOf="@id/guide_left"
+        app:userIcon="@{item.user}"
+        tools:src="@mipmap/ic_launcher_round"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/itemCreation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:fontFamily="@font/fira_sans_light"
+        app:itemCreation="@{item}"
+        app:layout_constraintBottom_toTopOf="@id/guide_horz_mid"
+        app:layout_constraintEnd_toEndOf="@id/guide_right"
+        app:layout_constraintStart_toEndOf="@id/guide_vert_mid_2"
+        tools:text="@sample/item.json/created_at"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/itemTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="@font/fira_sans_semi_bold"
+        android:maxLines="3"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:fontFamily="@font/fira_sans_semi_bold"
+        app:itemTitle="@{item}"
+        app:layout_constraintBottom_toTopOf="@id/guide_horz"
+        app:layout_constraintEnd_toEndOf="@id/guide_right"
+        app:layout_constraintStart_toStartOf="@id/guide_left"
+        app:layout_constraintTop_toTopOf="@id/guide_top"
+        tools:text="@sample/item.json/title"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/itemInfo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:fontFamily="@font/fira_sans_light"
+        app:itemInfo="@{item}"
+        app:layout_constraintEnd_toEndOf="@id/guide_right"
+        app:layout_constraintStart_toEndOf="@id/guide_vert_mid_2"
+        app:layout_constraintTop_toBottomOf="@id/guide_horz_mid"
+        tools:text="@sample/item.json/likes_count"
+        />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,197 @@
+/*
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Adapt from https://github.com/googlesamples/android-architecture-components
+ *
+ * Shared file between builds so that they can all use the same dependencies and
+ * maven repositories.
+ **/
+
+ext.deps = [:]
+def versions = [:]
+
+// App
+
+// Android Studio
+versions.android_gradle_plugin = '3.3.0-alpha10'
+
+// AOSP
+versions.support = "28.0.0-rc02"
+versions.arch_core = "1.1.1"
+versions.lifecycle = "1.1.1"
+versions.room = "1.1.1"
+versions.paging = "1.0.1"
+versions.constraint_layout = "2.0.0-alpha2"
+
+versions.kotlin = "1.2.70"
+
+versions.rxjava2 = "2.2.2"
+versions.rx_android = "2.1.0"
+versions.rxbinding = "2.1.1"
+
+versions.retrofit = "2.4.0"
+versions.okhttp = "3.11.0"
+
+versions.glide = "4.8.0"
+versions.dagger = "2.16"
+
+versions.timber = "4.7.1"
+versions.dexcount = "0.8.3"
+
+versions.androidx = "1.0.0-rc02"
+versions.archx = "2.0.0-rc01"
+versions.roomx = "2.0.0-rc01"
+
+// Dependencies
+def deps = [:]
+
+def support = [:]
+support.annotations = "com.android.support:support-annotations:$versions.support"
+support.compat = "com.android.support:appcompat-v7:$versions.support"
+support.recyclerview = "com.android.support:recyclerview-v7:$versions.support"
+support.cardview = "com.android.support:cardview-v7:$versions.support"
+support.design = "com.android.support:design:$versions.support"
+support.leanback = "com.android.support:leanback-v17:$versions.support"
+support.core_utils = "com.android.support:support-core-utils:$versions.support"
+support.vector = "com.android.support:support-vector-drawable:$versions.support"
+deps.support = support
+
+def room = [:]
+room.runtime = "android.arch.persistence.room:runtime:$versions.room"
+room.compiler = "android.arch.persistence.room:compiler:$versions.room"
+room.rxjava2 = "android.arch.persistence.room:rxjava2:$versions.room"
+room.testing = "android.arch.persistence.room:testing:$versions.room"
+deps.room = room
+
+def lifecycle = [:]
+lifecycle.runtime = "android.arch.lifecycle:runtime:$versions.lifecycle"
+lifecycle.extensions = "android.arch.lifecycle:extensions:$versions.lifecycle"
+lifecycle.reactive = "android.arch.lifecycle:reactivestreams:$versions.lifecycle"
+lifecycle.java8 = "android.arch.lifecycle:common-java8:$versions.lifecycle"
+lifecycle.compiler = "android.arch.lifecycle:compiler:$versions.lifecycle"
+deps.lifecycle = lifecycle
+
+def arch_core = [:]
+arch_core.testing = "android.arch.core:core-testing:$versions.arch_core"
+deps.arch_core = arch_core
+
+def retrofit = [:]
+retrofit.runtime = "com.squareup.retrofit2:retrofit:$versions.retrofit"
+retrofit.gson = "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+retrofit.moshi = "com.squareup.retrofit2:converter-moshi:$versions.retrofit"
+retrofit.mock = "com.squareup.retrofit2:retrofit-mock:$versions.retrofit"
+retrofit.rxadapter = "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+deps.retrofit = retrofit
+
+deps.okhttp_logging_interceptor = "com.squareup.okhttp3:logging-interceptor:${versions.okhttp}"
+
+def dagger = [:]
+dagger.runtime = "com.google.dagger:dagger:$versions.dagger"
+dagger.android = "com.google.dagger:dagger-android:$versions.dagger"
+dagger.compiler = "com.google.dagger:dagger-compiler:$versions.dagger"
+dagger.android_support = "com.google.dagger:dagger-android-support:$versions.dagger"
+dagger.android_support_compiler = "com.google.dagger:dagger-android-processor:$versions.dagger"
+
+deps.dagger = dagger
+
+def kotlin = [:]
+kotlin.stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
+kotlin.test = "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
+kotlin.plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+kotlin.reflect = "org.jetbrains.kotlin:kotlin-reflect:$versions.kotlin"
+
+deps.kotlin = kotlin
+
+def rxbinding = [:]
+rxbinding.core = "com.jakewharton.rxbinding2:rxbinding:$versions.rxbinding"
+rxbinding.support_v4 = "com.jakewharton.rxbinding2:rxbinding-support-v4:$versions.rxbinding"
+rxbinding.compat_v7 = "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:$versions.rxbinding"
+rxbinding.design = "com.jakewharton.rxbinding2:rxbinding-design:$versions.rxbinding"
+rxbinding.recyclerview = "com.jakewharton.rxbinding2:rxbinding-recyclerview-v7:$versions.rxbinding"
+
+deps.rxbinding = rxbinding
+
+deps.paging = "android.arch.paging:runtime:$versions.paging"
+deps.glide = "com.github.bumptech.glide:glide:$versions.glide"
+deps.glide_compiler = "com.github.bumptech.glide:compiler:$versions.glide"
+deps.constraint_layout =
+    "com.android.support.constraint:constraint-layout:$versions.constraint_layout"
+deps.constraint_layout_x =
+    "androidx.constraintlayout:constraintlayout:$versions.constraint_layout"
+deps.timber = "com.jakewharton.timber:timber:$versions.timber"
+deps.rxjava2 = "io.reactivex.rxjava2:rxjava:$versions.rxjava2"
+deps.rx_android = "io.reactivex.rxjava2:rxandroid:$versions.rx_android"
+deps.moshi_kotlin = "com.squareup.moshi:moshi-kotlin:1.6.0"
+deps.moshi_adapters = "com.squareup.moshi:moshi-adapters:1.6.0"
+
+deps.objbox = "io.objectbox:objectbox-gradle-plugin:1.4.4"
+deps.android_gradle_plugin = "com.android.tools.build:gradle:$versions.android_gradle_plugin"
+deps.dexcount = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:$versions.dexcount"
+
+def x = [:]
+x.core = "androidx.core:core-ktx:$versions.androidx"
+x.compat = "androidx.appcompat:appcompat:$versions.androidx"
+x.recyclerview = "androidx.recyclerview:recyclerview:$versions.androidx"
+x.material = "com.google.android.material:material:$versions.androidx"
+x.cardview = "androidx.cardview:cardview:$versions.androidx"
+x.vector = "androidx.vectordrawable:vectordrawable:$versions.androidx"
+x.constraint = "androidx.constraintlayout:constraintlayout:$versions.constraint_layout"
+x.viewpager = "androidx.viewpager:viewpager:$versions.androidx"
+deps.x = x
+
+def archx = [:]
+archx.extensions = "androidx.lifecycle:lifecycle-extensions:$versions.archx"
+archx.compiler = "androidx.lifecycle:lifecycle-compiler:$versions.archx"
+archx.reactivestreams = "androidx.lifecycle:lifecycle-reactivestreams:$versions.archx"
+deps.archx = archx
+
+def roomx = [:]
+roomx.core = "androidx.room:room-runtime:$versions.roomx"
+roomx.rxjava2 = "androidx.room:room-rxjava2:$versions.roomx"
+roomx.compiler = "androidx.room:room-compiler:$versions.roomx"
+roomx.paging = "androidx.paging:paging-runtime:$versions.roomx"
+roomx.paging_rxjava2 = "androidx.paging:paging-rxjava2:$versions.roomx"
+deps.roomx = roomx
+
+ext.versions = versions
+ext.deps = deps
+
+def build_versions = [:]
+build_versions.min_sdk = 21
+build_versions.compile_sdk = 28
+build_versions.target_sdk = 28
+
+build_versions.base = ['major': 1,
+                       'minor': 0,
+                       'patch': 0,
+                       'build': 0,]
+
+build_versions.name =
+    "${build_versions.base.major}.${build_versions.base.minor}.${build_versions.base.patch}"
+build_versions.code =
+    build_versions.base.major * 1000000 + build_versions.base.minor * 10000 + build_versions.base.patch * 100 + build_versions.base.build
+
+ext.build_versions = build_versions
+
+static def addRepos(RepositoryHandler handler) {
+  handler.google()
+  handler.jcenter()
+  handler.maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+  // handler.maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
+}
+
+ext.addRepos = this.&addRepos

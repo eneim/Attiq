@@ -1,0 +1,271 @@
+<html>
+ <head></head>
+ <body>
+  <h3> <span id="ソース" class="fragment"></span><a href="#%E3%82%BD%E3%83%BC%E3%82%B9"><i class="fa fa-link"></i></a>ソース</h3>
+  <p><a href="https://www.storyblok.com/docs/Delivery-Api/get-a-story" class="autolink" rel="nofollow noopener" target="_blank">https://www.storyblok.com/docs/Delivery-Api/get-a-story</a></p>
+  <h1> <span id="stories" class="fragment"></span><a href="#stories"><i class="fa fa-link"></i></a>Stories</h1>
+  <p>Storyblokで使われる殆どのエンドポイントは、低レイテンシと最適なアベイラビリティのために調整されています。</p>
+  <p>世界中で低いレイテンシを得るために、StoryblokはAPIにCDNを使っています。公式のStoryblok SDKは既にキャッシュの無効化に対応し、自分で実装する必要はありません。しかしAPIを手動で呼ぶのであれば、<code>cv</code>パラメータをコンテンツの最新版を取得するStory APIに追加する必要が出てきます。</p>
+  <h2> <span id="spaces-apiまたはタイムスタンプを用いたキャッシュ無効化" class="fragment"></span><a href="#spaces-api%E3%81%BE%E3%81%9F%E3%81%AF%E3%82%BF%E3%82%A4%E3%83%A0%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%97%E3%82%92%E7%94%A8%E3%81%84%E3%81%9F%E3%82%AD%E3%83%A3%E3%83%83%E3%82%B7%E3%83%A5%E7%84%A1%E5%8A%B9%E5%8C%96"><i class="fa fa-link"></i></a>spaces API、またはタイムスタンプを用いたキャッシュ無効化</h2>
+  <ol>
+   <li>まず、<code>/v1/cdn/spaces/me</code>を呼び<code>space.version</code>属性を取得します。この操作の代わりにタイムスタンプを生成することも出来ます。</li>
+   <li>そのspace.versionをその後の/v1/cdn/storiesの呼び出し全ての<code>cv</code>パラメータに使用します。</li>
+   <li>サーバーサイドアプリケーションでは、<code>space.version</code>をファイルに保存し、publishedイベントをリッスンしてファイルを更新することをオススメします。</li>
+  </ol>
+  <h2> <span id="storiesのリストを取得" class="fragment"></span><a href="#stories%E3%81%AE%E3%83%AA%E3%82%B9%E3%83%88%E3%82%92%E5%8F%96%E5%BE%97"><i class="fa fa-link"></i></a>storiesのリストを取得</h2>
+  <h3> <span id="エンドポイント" class="fragment"></span><a href="#%E3%82%A8%E3%83%B3%E3%83%89%E3%83%9D%E3%82%A4%E3%83%B3%E3%83%88"><i class="fa fa-link"></i></a>エンドポイント</h3>
+  <div class="code-frame" data-lang="text">
+   <div class="highlight">
+    <pre>GET /v1/cdn/stories
+</pre>
+   </div>
+  </div>
+  <h3> <span id="パラメーター" class="fragment"></span><a href="#%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF%E3%83%BC"><i class="fa fa-link"></i></a>パラメーター</h3>
+  <table>
+   <thead>
+    <tr>
+     <th style="text-align: left">名前</th>
+     <th style="text-align: left">説明</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <td style="text-align: left">token(必須)</td>
+     <td style="text-align: left">publishedだけ欲しければpublicトークン<br>draftも欲しければprivateトークン　</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">with_tag</td>
+     <td style="text-align: left">任意の(複数の)タグでフィルタ<br>カンマ区切りで複数タグ<br>例: with_tag=featured,home</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">is_startpage</td>
+     <td style="text-align: left">フォルダのスタートページでフィルタ<br>1でスタートページのみを返す<br>0でスタートページを除外して返す</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">starts_with</td>
+     <td style="text-align: left">slugでフィルタ<br>特定のフォルダの全エントリを取り出すのに使用可能<br>例: starts_wih=de,starts_with-en/news</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">by_uuids</td>
+     <td style="text-align: left">コンマ区切りのIDで(複数の)ストーリーを取得<br>例: by_uuids=52323-…,52323-…</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">excluding_ids</td>
+     <td style="text-align: left">コンマ区切りのIDで(複数の)ストーリーを除外<br>例: excluding_ids=5,8</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">excluding_fields</td>
+     <td style="text-align: left">コンマ区切りの名前で、コンテンツタイプから任意のフィールドを除外<br>例: excluding_fields=title,body</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">version</td>
+     <td style="text-align: left">Publishedもしくはdraftバージョン<br>値として'draft'と'published'だけを取る</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">cv</td>
+     <td style="text-align: left">キャッシュバージョン<br>重要: 最新のPublishedバージョンを取得したい場合に必須<br>詳しくはこのページの最初へ。</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">sort_by</td>
+     <td style="text-align: left">エントリーを任意の属性でソートし<code>content.YOUR_FIELD:asc</code>(昇順)<code>content.YOUR_FIELD.desc</code>(降順)で並び替える。<br>エントリの全てのルート属性をソートに使用でき、また区切り文字としてドットを使うことで<code>content</code>に入っているコンテンツタイプの全てのフィールドへアクセスして使用可能。<br>例: 'position:asc', 'content.your_custom_field:asc', 'created_at:desc'</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">search_term</td>
+     <td style="text-align: left">コンテンツアイテムの全文検索</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">filter_query</td>
+     <td style="text-align: left">コンテンツタイプの任意の属性でフィルタ<br>フィルタークエリーパラメータにクエリーオペレーションキーを格納する必要がある<br>複数の値でフィルタする場合、カンマ区切り<br><br><strong>filter_query[YOUR_ATTRIBUTE]</strong><br><strong>[OPERATION_KEY]-VALUE,VALUE</strong><br><br>以下のフィルターオペレーションの{OPERATION_KEY's}が在る<br><code>all</code>-文字列値の値全てを格納<br><code>in</code>-文字列値の値のうち1つを<br><code>exists</code>-アレイ値の値のうち1つを格納<br><code>gt-date</code>-日付が新しいもの(<strong>g</strong>reater <strong>t</strong>han) フォーマット: 2018-03-03 10:00<br><code>lt-date</code>-日付が古いもの(<strong>l</strong>ess <strong>t</strong>han)<br><code>gt-num</code>-数値が大きい<br><code>lt-num</code>-数値が小さい<br><br>例: <br>コンテンツタイプpageかつnews: filter_query[component][all]=page,news<br>コンテンツpageまたはnews: filter_query[component][in]=page,news<br>白いスタイル(styles is ['white','shiny']): filter_query[styles][exists]=white<br>より新しい: filter_query[custom_date][gt-date]=2018-03-03 10:00<br>レートが4以上: filter_query[rating][gt-num]=4</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">resolve_links</td>
+     <td style="text-align: left">resolve_link=1の場合、自動でマルチリンクフィールドタイプの内部リンクの解決が行われる<br>Storyごとの解決されたリンクの限度は50</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">resolve_relations</td>
+     <td style="text-align: left">マルチオプション、もしくはシングルオプションフィールドタイプの他のストーリーのリレーションシップを解決<br>フィールドのキーをカンマ区切りの文字列で渡すことで任意のフィールドを解決できる<br>例: authors,comments</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">page</td>
+     <td style="text-align: left">任意のページを取得</td>
+    </tr>
+   </tbody>
+  </table>
+  <h3> <span id="試してみる" class="fragment"></span><a href="#%E8%A9%A6%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B"><i class="fa fa-link"></i></a>試してみる</h3>
+  <p>Run in postman //todo</p>
+  <h3> <span id="リクエスト" class="fragment"></span><a href="#%E3%83%AA%E3%82%AF%E3%82%A8%E3%82%B9%E3%83%88"><i class="fa fa-link"></i></a>リクエスト</h3>
+  <p>クエリーパラメーター</p>
+  <div class="code-frame" data-lang="text">
+   <div class="highlight">
+    <pre>token=wANpEQEsMYGOwLxwXQ76Ggtt
+with_tag=red
+starts_with=de/
+excluding_ids=5,6
+excluding_fields=title
+version=published
+cv=1514926039
+sort_by=name:asc
+filter_query[component][all]=page
+per_page=10
+page=0
+</pre>
+   </div>
+  </div>
+  <p>cURL</p>
+  <div class="code-frame" data-lang="text">
+   <div class="highlight">
+    <pre>curl "https://api.storyblok.com/v1/cdn/stories?token=wANpEQEsMYGOwLxwXQ76Ggtt&amp;with_tag=red&amp;starts_with=de%2F&amp;excluding_ids=5%2C6&amp;excluding_fields=title&amp;version=published&amp;cv=1514926039&amp;sort_by=name%3Aasc&amp;filter_query[component][all]=page&amp;per_page=10&amp;page=0" -X GET \
+    -H "Accept: application/json" \
+    -H "Content-Type: application/json"
+</pre>
+   </div>
+  </div>
+  <h3> <span id="レスポンス" class="fragment"></span><a href="#%E3%83%AC%E3%82%B9%E3%83%9D%E3%83%B3%E3%82%B9"><i class="fa fa-link"></i></a>レスポンス</h3>
+  <p>ボディー</p>
+  <div class="code-frame" data-lang="json">
+   <div class="highlight">
+    <pre><span class="p">{</span><span class="w">
+  </span><span class="s2">"stories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Home2"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-01-02T20:47:18.945Z"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"published_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-01-02T20:47:18.953Z"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"alternates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+
+      </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1887</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"uuid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"45e4cf79-99ea-4771-a50d-58155a9a1d30"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"content"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"_uid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7b870b36-7512-40ef-bad3-e2cbb7513cba"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"body"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+
+        </span><span class="p">],</span><span class="w">
+        </span><span class="s2">"component"</span><span class="p">:</span><span class="w"> </span><span class="s2">"page"</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"de"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"full_slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"de/"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"sort_by_date"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"tag_list"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"spicy"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"red"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"is_startpage"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1886</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"meta_data"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"group_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7e44dd68-ef43-40e1-8814-aae4af7188b1"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre>
+   </div>
+  </div>
+  <h2> <span id="idでストーリーを取得" class="fragment"></span><a href="#id%E3%81%A7%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AA%E3%83%BC%E3%82%92%E5%8F%96%E5%BE%97"><i class="fa fa-link"></i></a>idでストーリーを取得</h2>
+  <p>このエンドポイントはStoryを1つ取得する場合に使われます。エンドポイントがパス(例えば: homeやariticle/blog-post-xy)やリクエストURL中のuuidを受け取ると、Storyオブジェクトが返さえます。</p>
+  <p>例:<br> /v1/cdn/stories/article/blog-post-xy<br> /v1/cdn/stories/90b2172-3e61-4a1a-822c-e06d381cce07?find_by=uuid</p>
+  <h3> <span id="エンドポイント-1" class="fragment"></span><a href="#%E3%82%A8%E3%83%B3%E3%83%89%E3%83%9D%E3%82%A4%E3%83%B3%E3%83%88-1"><i class="fa fa-link"></i></a>エンドポイント</h3>
+  <div class="code-frame" data-lang="text">
+   <div class="highlight">
+    <pre>GET /v1/cdn/stories/:story_id
+</pre>
+   </div>
+  </div>
+  <h3> <span id="パラメータ" class="fragment"></span><a href="#%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF"><i class="fa fa-link"></i></a>パラメータ</h3>
+  <table>
+   <thead>
+    <tr>
+     <th style="text-align: left">名前</th>
+     <th style="text-align: left">説明</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <td style="text-align: left">token(必須)</td>
+     <td style="text-align: left">publishedだけ欲しければpublicトークン<br>draftも欲しければprivateトークン</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">story_id</td>
+     <td style="text-align: left">文字列の場合full_slugを用いてStoryを１つ探す<br>数値の場合idを用いてStoryを1つ探す<br>find_byパラメータがuuidの場合、uuidでStoryを1つ探す</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">find_by</td>
+     <td style="text-align: left">値をuuidとして与えられたとき、story_idがidとfull_slugの代わりにuuidになる<br>例: find_by=uuid</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">version</td>
+     <td style="text-align: left">Publishedもしくはdraftバージョン<br>値として'draft'と'published'だけを取る</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">resolve_links</td>
+     <td style="text-align: left">resolve_link=1の場合、自動でマルチリンクフィールドタイプの内部リンクの解決が行われる<br>Storyごとの解決されたリンクの限度は50</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">resolve_relations</td>
+     <td style="text-align: left">マルチオプション、もしくはシングルオプションフィールドタイプの他のストーリーのリレーションシップを解決<br>フィールドのキーをカンマ区切りの文字列で渡すことで任意のフィールドを解決できる<br>例: authors,comments</td>
+    </tr>
+    <tr>
+     <td style="text-align: left">cv</td>
+     <td style="text-align: left">キャッシュバージョン<br>重要: 最新のPublishedバージョンを取得したい場合に必須<br>詳しくはこのページの最初へ。</td>
+    </tr>
+   </tbody>
+  </table>
+  <h3> <span id="試してみる-1" class="fragment"></span><a href="#%E8%A9%A6%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B-1"><i class="fa fa-link"></i></a>試してみる</h3>
+  <p>Run in Postman //todo</p>
+  <h3> <span id="リクエスト-1" class="fragment"></span><a href="#%E3%83%AA%E3%82%AF%E3%82%A8%E3%82%B9%E3%83%88-1"><i class="fa fa-link"></i></a>リクエスト</h3>
+  <p>クエリパラメーター</p>
+  <div class="code-frame" data-lang="text">
+   <div class="highlight">
+    <pre>token=wANpEQEsMYGOwLxwXQ76Ggtt
+</pre>
+   </div>
+  </div>
+  <p>cURL</p>
+  <div class="code-frame" data-lang="text">
+   <div class="highlight">
+    <pre>curl "https://api.storyblok.com/v1/cdn/stories/de?token=wANpEQEsMYGOwLxwXQ76Ggtt" -X GET \
+    -H "Accept: application/json" \
+    -H "Content-Type: application/json"
+</pre>
+   </div>
+  </div>
+  <h3> <span id="レスポンス-1" class="fragment"></span><a href="#%E3%83%AC%E3%82%B9%E3%83%9D%E3%83%B3%E3%82%B9-1"><i class="fa fa-link"></i></a>レスポンス</h3>
+  <p>ボディー</p>
+  <div class="code-frame" data-lang="json">
+   <div class="highlight">
+    <pre><span class="p">{</span><span class="w">
+  </span><span class="s2">"story"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Home2"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-07-20T08:34:41.426Z"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"published_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-07-20T08:34:41.451Z"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"alternates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+
+    </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1036</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"uuid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1f4b30ec-e6f4-48ff-a413-52f04e6da4d3"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"content"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"_uid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"f41b3dde-5216-44b4-b84a-faa3f16760a4"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"body"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+
+      </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">"c005fe81-9b55-4a5e-be05-ad05a070ebef"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"headline"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tom"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"component"</span><span class="p">:</span><span class="w"> </span><span class="s2">"page"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"de"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"full_slug"</span><span class="p">:</span><span class="w"> </span><span class="s2">"de/"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"sort_by_date"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"position"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"tag_list"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="s2">"spicy"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"red"</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"is_startpage"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"parent_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1035</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"meta_data"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"group_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"a0a7d221-2767-4592-81c7-40aaef133249"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre>
+   </div>
+  </div>
+ </body>
+</html>

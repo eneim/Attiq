@@ -1,0 +1,71 @@
+/*
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+  apply from: 'configs.gradle'
+  addRepos(repositories)
+
+  dependencies {
+    //noinspection GradleDependency
+    classpath deps.android_gradle_plugin
+    classpath deps.kotlin.plugin
+    classpath deps.dexcount
+    classpath "android.arch.navigation:navigation-safe-args-gradle-plugin:1.0.0-alpha05"
+  }
+
+  repositories {
+    google()
+  }
+}
+
+allprojects {
+  addRepos(repositories)
+
+  // Force all of the primary support libraries to use the same version.
+  configurations.all {
+    resolutionStrategy {
+      eachDependency { details ->
+        if (details.requested.group == 'com.android.support') {
+          details.useVersion versions.support
+        }
+      }
+    }
+  }
+
+  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+      jvmTarget = "1.8"
+    }
+  }
+}
+
+task clean(type: Delete) {
+  delete rootProject.buildDir
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '4.10'
+  //noinspection GroovyAccessibility
+  distributionType = 'ALL'
+}
+
+// Read from gradle.properties
+String prop(String propertyName, String defaultValue) {
+  def propertyValue = project.properties[propertyName]
+  return propertyValue != null ? propertyValue : defaultValue
+}

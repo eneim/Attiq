@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (c) 2018 Nam Nguyen, nam@ene.im
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html>
+<head lang="ja">
+    <meta charset="UTF-8"/>
+    <meta name='viewport' content='width=device-width, initial-scale=1'/>
+    <title>{{{ title }}}</title>
+    <!--<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css"/>-->
+    <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Fira+Sans" rel="stylesheet">
+    <link rel='stylesheet' href='file:///android_asset/web/post.css'/>
+    {{#need_mathjax}}
+
+    <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+              showMathMenu: false,
+              showProcessingMessages: false,
+              messageStyle: "none",
+              jax: ['input/TeX', 'output/HTML-CSS', 'output/CommonHTML'],
+              extensions: ['tex2jax.js'],
+              tex2jax: {
+                inlineMath: [['$', '$'],['\\(', '\\)']],
+                displayMath: [['$$', '$$']],
+                processEscapes: true,
+                skipTags: ['blockquote', 'script','noscript','style','textarea','pre','code','a','h1','h2','h3','h4','h5','h6']
+              },
+              "HTML-CSS": {
+                linebreaks: { automatic: true, width: "14.4em" }
+              },
+              SVG: {
+                availableFonts: ["TeX"],
+                linebreaks: { automatic: true, width: "15em" }
+              },
+              CommonHTML: {
+                linebreaks: { automatic: false, width: "14.4em" },
+                matchFontHeight: false
+              },
+              TeX: {
+                extensions: ['AMSmath.js', 'AMSsymbols.js', 'noUndefined.js']
+              }
+            });
+        </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    {{/need_mathjax}}
+
+</head>
+<body>
+<div id="attiq_content">{{{ bodyHtml }}}</div>
+</body>
+</html>
