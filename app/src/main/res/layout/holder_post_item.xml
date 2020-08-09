@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2020 Nam Nguyen, nam@ene.im
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_container"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+  <androidx.constraintlayout.widget.Guideline
+      android:id="@+id/guideline_top"
+      app:layout_constraintGuide_begin="@dimen/item_spacing"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:orientation="horizontal"
+      />
+
+  <androidx.constraintlayout.widget.Guideline
+      android:id="@+id/guideline_start"
+      app:layout_constraintGuide_begin="@dimen/item_spacing"
+      android:orientation="vertical"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      />
+
+  <androidx.constraintlayout.widget.Guideline
+      android:id="@+id/guideline_end"
+      app:layout_constraintGuide_end="@dimen/item_spacing"
+      android:orientation="vertical"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      />
+
+  <androidx.constraintlayout.widget.Guideline
+      android:id="@+id/guideline_bottom"
+      app:layout_constraintGuide_end="@dimen/item_spacing"
+      android:orientation="horizontal"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      />
+
+  <TextView
+      android:id="@+id/item_title"
+      android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+      app:layout_constraintStart_toEndOf="@id/guideline_start"
+      app:layout_constraintEnd_toStartOf="@id/guideline_end"
+      app:layout_constraintTop_toBottomOf="@id/guideline_top"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/item_margin_small"
+      android:fontFamily="@font/inter_semi_bold"
+      tools:text="@sample/article.json/title"
+      app:layout_constraintBottom_toTopOf="@id/user_icon"
+      />
+
+  <com.google.android.material.imageview.ShapeableImageView
+      android:id="@+id/user_icon"
+      app:layout_constraintStart_toEndOf="@id/guideline_start"
+      app:layout_constraintTop_toBottomOf="@id/item_title"
+      style="@style/Widget.UserIcon"
+      android:layout_width="@dimen/user_icon_size"
+      android:layout_height="@dimen/user_icon_size"
+      android:layout_marginEnd="@dimen/item_margin_small"
+      tools:srcCompat="@tools:sample/avatars"
+      app:layout_constraintBottom_toTopOf="@id/guideline_bottom"
+      app:layout_constraintVertical_bias="0"
+      />
+
+  <TextView
+      android:id="@+id/item_created_at"
+      app:layout_constraintEnd_toStartOf="@id/guideline_end"
+      app:layout_constraintStart_toEndOf="@id/user_icon"
+      app:layout_constraintTop_toTopOf="@id/user_icon"
+      app:layout_constraintBottom_toTopOf="@id/item_info"
+      android:layout_width="0dp"
+      android:fontFamily="@font/inter_regular"
+      app:layout_constraintVertical_chainStyle="packed"
+      android:includeFontPadding="false"
+      android:layout_marginStart="@dimen/item_margin_base"
+      android:layout_marginEnd="@dimen/item_margin_small"
+      android:layout_height="wrap_content"
+      tools:text="@sample/article.json/created_at"
+      android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+      />
+
+  <TextView
+      android:id="@+id/item_info"
+      app:layout_constraintEnd_toStartOf="@id/guideline_end"
+      app:layout_constraintStart_toEndOf="@id/user_icon"
+      app:layout_constraintTop_toBottomOf="@id/item_created_at"
+      android:layout_width="0dp"
+      android:fontFamily="@font/inter_regular"
+      android:layout_marginStart="@dimen/item_margin_base"
+      android:layout_marginEnd="@dimen/item_margin_small"
+      android:layout_height="wrap_content"
+      android:includeFontPadding="false"
+      tools:text="@sample/article.json/likes_count"
+      android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+      app:layout_constraintBottom_toBottomOf="@id/user_icon"
+      />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
