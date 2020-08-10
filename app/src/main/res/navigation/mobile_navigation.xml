@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2020 Nam Nguyen, nam@ene.im
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +24,21 @@
       android:id="@+id/navigation_home"
       android:name="app.attiq.ui.home.HomeFragment"
       android:label="@string/title_home"
-      tools:layout="@layout/fragment_home" />
+      tools:layout="@layout/fragment_home">
+
+    <action
+        android:id="@+id/open_article_action"
+        app:destination="@id/item_detail">
+      <argument
+          android:name="itemId"
+          app:argType="string" />
+
+      <argument
+          android:name="itemTitle"
+          app:argType="string" />
+    </action>
+
+  </fragment>
 
   <fragment
       android:id="@+id/navigation_dashboard"
@@ -44,5 +57,20 @@
       android:name="app.attiq.ui.profile.ProfileFragment"
       android:label="@string/title_profile"
       tools:layout="@layout/fragment_profile" />
+
+  <dialog
+      android:id="@+id/item_detail"
+      android:label="@string/title_article"
+      android:name="app.attiq.ui.article.ArticleReaderFragment"
+      tools:layout="@layout/fragment_article">
+
+    <argument
+        android:name="itemId"
+        app:argType="string" />
+
+    <argument
+        android:name="itemTitle"
+        app:argType="string" />
+  </dialog>
 
 </navigation>

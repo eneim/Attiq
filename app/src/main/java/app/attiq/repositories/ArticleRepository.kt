@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package app.attiq.common
+package app.attiq.repositories
 
-sealed class Resource<out E : Throwable, out T> {
+import app.attiq.data.QiitaApi
+import app.attiq.data.entity.Item
 
-  /**
-   * @param data The result of a success request.
-   */
-  data class Success<T>(val data: T) : Resource<Nothing, T>()
+interface ArticleRepository {
 
-  /**
-   * @param error The error of this failure.
-   * @param snapshot The last available data snapshot, or null.
-   */
-  data class Failure<out E : Throwable, out T>(val error: E, val snapshot: T?) : Resource<E, T>()
+  companion object {
+    operator fun invoke(api: QiitaApi): ArticleRepository =
+      ArticleRepositoryImpl(api)
+  }
 
-  /**
-   * @param snapshot The last available data snapshot, or null.
-   */
-  data class Loading<out T>(val snapshot: T?) : Resource<Nothing, T>()
+  suspend fun getArticle(itemId: String): Item
+}
+
+private class ArticleRepositoryImpl(private val api: QiitaApi) :
+  ArticleRepository {
+
+  override suspend fun getArticle(itemId: String): Item = api.itemDetail(itemId)
 }

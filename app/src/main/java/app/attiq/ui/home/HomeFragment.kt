@@ -18,11 +18,13 @@ package app.attiq.ui.home
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import app.attiq.R
+import app.attiq.common.BaseFragment
+import app.attiq.common.TimeUpdateObserver
 import app.attiq.databinding.FragmentHomeBinding
 import app.attiq.ui.home.adapter.ItemsAdapter
 import app.attiq.ui.home.adapter.LoadingStateAdapter
@@ -33,15 +35,25 @@ import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
 
 @FlowPreview
-class HomeFragment : Fragment(R.layout.fragment_home) {
+class HomeFragment : BaseFragment(R.layout.fragment_home) {
 
   private val homeViewModel: HomeViewModel by viewModels()
+
+  private lateinit var timeUpdateObserver: TimeUpdateObserver
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     val binding = FragmentHomeBinding.bind(view)
 
-    val itemsAdapter = ItemsAdapter()
+    val itemsAdapter = ItemsAdapter { _, article ->
+      val action = HomeFragmentDirections.openArticleAction(article.itemId, article.title)
+      findNavController().navigate(action)
+    }
+
+    timeUpdateObserver = TimeUpdateObserver(view.context) {
+      itemsAdapter.notifyItemRangeChanged(0, itemsAdapter.itemCount, ItemsAdapter.PAYLOAD_TIME)
+    }
+
     val retry: () -> Unit = { itemsAdapter.retry() }
     binding.items.adapter = itemsAdapter.withLoadStateHeaderAndFooter(
       header = LoadingStateAdapter(retry),
@@ -72,5 +84,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         .filter { it.refresh is LoadState.NotLoading }
         .collect { binding.items.scrollToPosition(0) }
     }
+  }
+
+  override fun onStart() {
+    super.onStart()
+    timeUpdateObserver.start()
+  }
+
+  override fun onStop() {
+    super.onStop()
+    timeUpdateObserver.stop()
   }
 }

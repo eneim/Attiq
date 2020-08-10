@@ -15,47 +15,25 @@
   ~ limitations under the License.
   -->
 
-<font-family
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
   <font
       app:font="@font/fira_sans_light"
       app:fontStyle="normal"
-      app:fontWeight="300"
-      android:font="@font/fira_sans_light"
-      android:fontStyle="normal"
-      android:fontWeight="300"
-      />
+      app:fontWeight="300" />
   <font
       app:font="@font/fira_sans_light_italic"
       app:fontStyle="italic"
-      app:fontWeight="300"
-      android:font="@font/fira_sans_light_italic"
-      android:fontStyle="italic"
-      android:fontWeight="300"
-      />
+      app:fontWeight="300" />
   <font
       app:font="@font/fira_sans_regular"
       app:fontStyle="normal"
-      app:fontWeight="400"
-      android:font="@font/fira_sans_regular"
-      android:fontStyle="normal"
-      android:fontWeight="400"
-      />
+      app:fontWeight="400" />
   <font
       app:font="@font/fira_sans_semi_bold"
       app:fontStyle="normal"
-      app:fontWeight="600"
-      android:font="@font/fira_sans_semi_bold"
-      android:fontStyle="normal"
-      android:fontWeight="600"
-      />
+      app:fontWeight="600" />
   <font
       app:font="@font/fira_sans_semi_bold_italic"
       app:fontStyle="italic"
-      app:fontWeight="600"
-      android:font="@font/fira_sans_semi_bold_italic"
-      android:fontStyle="italic"
-      android:fontWeight="600"
-      />
+      app:fontWeight="600" />
 </font-family>

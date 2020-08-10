@@ -16,29 +16,70 @@
 
 package app.attiq.ui.home.adapter
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import app.attiq.data.entity.Item
 import app.attiq.ui.home.view.ItemViewHolder
 
-class ItemsAdapter : PagingDataAdapter<Item, ItemViewHolder>(diffCallback = ITEM_COMPARATOR) {
+class ItemsAdapter(
+  val doOnItemClick: (View, Item) -> Unit
+) : PagingDataAdapter<Item, ItemViewHolder>(diffCallback = ITEM_COMPARATOR) {
 
-  private companion object {
-    val ITEM_COMPARATOR: DiffUtil.ItemCallback<Item> = object : DiffUtil.ItemCallback<Item>() {
-      override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean =
-        oldItem.itemId == newItem.itemId
+  companion object {
+    val PAYLOAD_TIME = Any()
 
-      override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean =
-        oldItem.createdAt.time == newItem.createdAt.time &&
-            oldItem.updatedAt.time == newItem.updatedAt.time
-    }
+    private val ITEM_COMPARATOR: DiffUtil.ItemCallback<Item> =
+      object : DiffUtil.ItemCallback<Item>() {
+        override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean =
+          oldItem.itemId == newItem.itemId
+
+        override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean =
+          oldItem.createdAt.time == newItem.createdAt.time &&
+              oldItem.updatedAt.time == newItem.updatedAt.time
+      }
   }
 
   override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
     holder.onBind(getItem(position))
   }
 
+  override fun onBindViewHolder(holder: ItemViewHolder, position: Int, payloads: MutableList<Any>) {
+    if (payloads.contains(PAYLOAD_TIME)) {
+      holder.tryRefreshTime()
+    } else {
+      super.onBindViewHolder(holder, position, payloads)
+    }
+  }
+
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder =
-    ItemViewHolder(parent)
+    ItemViewHolder(parent).also { holder ->
+      holder.itemView.setOnClickListener { view ->
+        val article = holder.article
+        if (article != null) {
+          doOnItemClick(view, article)
+        }
+      }
+    }
+
+  override fun onViewRecycled(holder: ItemViewHolder) {
+    super.onViewRecycled(holder)
+    holder.onRecycle()
+  }
+
+  override fun onFailedToRecycleView(holder: ItemViewHolder): Boolean {
+    holder.clearTransientStates()
+    return true
+  }
+
+  override fun onViewAttachedToWindow(holder: ItemViewHolder) {
+    super.onViewAttachedToWindow(holder)
+    holder.onAttached()
+  }
+
+  override fun onViewDetachedFromWindow(holder: ItemViewHolder) {
+    super.onViewDetachedFromWindow(holder)
+    holder.onDetached()
+  }
 }

@@ -29,4 +29,12 @@
     <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
     <!-- Customize your theme here. -->
   </style>
+
+  <style name="Theme.Attiq.Dialog.Infinity" parent="Theme.MaterialComponents.DialogWhenLarge">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+    <item name="android:windowAnimationStyle">
+      @style/Animation.MaterialComponents.BottomSheetDialog
+    </item>
+  </style>
 </resources>

@@ -14,25 +14,31 @@
  * limitations under the License.
  */
 
-package app.attiq.ui.home
+package app.attiq.ui.article
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.paging.PagingData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.switchMap
 import app.attiq.AttiqApp
 import app.attiq.data.createApi
 import app.attiq.data.entity.Item
-import app.attiq.repositories.ItemsRepository
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
+import app.attiq.repositories.ArticleRepository
 
-class HomeViewModel(application: Application) : AndroidViewModel(application) {
+class ArticleViewModel(application: Application) : AndroidViewModel(application) {
 
-  private val repository: ItemsRepository = run {
+  private val repository: ArticleRepository = run {
     val api = (application as AttiqApp).retrofit.createApi()
-    ItemsRepository(api, 25)
+    ArticleRepository(api)
   }
 
-  @FlowPreview
-  val items: Flow<PagingData<Item>> = repository.getItems()
+  val itemId: MutableLiveData<String> = MutableLiveData<String>()
+
+  val itemDetail: LiveData<Item> = itemId.switchMap { id ->
+    liveData {
+      emit(repository.getArticle(id))
+    }
+  }
 }

@@ -40,4 +40,12 @@
     <item name="android:layout_height">32dp</item>
     <item name="shapeAppearance">@style/ShapeAppearance.UserIcon</item>
   </style>
+
+  <style name="Theme.Attiq.Dialog.Infinity" parent="Theme.MaterialComponents.Light.DialogWhenLarge">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+    <item name="android:windowAnimationStyle">
+      @style/Animation.MaterialComponents.BottomSheetDialog
+    </item>
+  </style>
 </resources>

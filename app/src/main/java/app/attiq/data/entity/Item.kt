@@ -22,20 +22,20 @@ import java.util.Date
 
 @JsonClass(generateAdapter = true)
 data class Item(
-  @Json(name = "id") var itemId: String,
-  @Json(name = "title") var title: String,
-  @Json(name = "user") var user: User,
-  @Json(name = "body") var body: String,
-  @Json(name = "rendered_body") var renderedBody: String,
-  @Json(name = "coediting") var coediting: Boolean,
-  @Json(name = "comments_count") var commentsCount: Int,
-  @Json(name = "created_at") var createdAt: Date,
-  @Json(name = "group") var group: Group?,
-  @Json(name = "likes_count") var likesCount: Int,
-  @Json(name = "private") var private: Boolean,
-  @Json(name = "reactions_count") var reactionsCount: Int,
-  @Json(name = "tags") var tags: List<Tag>,
-  @Json(name = "updated_at") var updatedAt: Date,
-  @Json(name = "url") var url: String,
-  @Json(name = "page_views_count") var pageViewsCount: Int?
+  @Json(name = "id") val itemId: String,
+  @Json(name = "title") val title: String,
+  @Json(name = "user") val user: User,
+  @Json(name = "body") val body: String,
+  @Json(name = "rendered_body") val renderedBody: String,
+  @Json(name = "coediting") val coediting: Boolean,
+  @Json(name = "comments_count") val commentsCount: Int,
+  @Json(name = "created_at") val createdAt: Date,
+  @Json(name = "group") val group: Group?,
+  @Json(name = "likes_count") val likesCount: Int,
+  @Json(name = "private") val private: Boolean,
+  @Json(name = "reactions_count") val reactionsCount: Int,
+  @Json(name = "tags") val tags: List<Tag>,
+  @Json(name = "updated_at") val updatedAt: Date,
+  @Json(name = "url") val url: String,
+  @Json(name = "page_views_count") val pageViewsCount: Int?
 )

@@ -17,8 +17,10 @@
 package app.attiq.data
 
 import app.attiq.data.entity.Item
+import app.attiq.data.entity.User
 import retrofit2.Retrofit
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface QiitaApi {
@@ -29,6 +31,15 @@ interface QiitaApi {
     @Query("per_page") count: Int,
     @Query("query") query: String?
   ): List<Item>
+
+  @GET("/api/v2/authenticated_user")
+  suspend fun authUser(): User
+
+  @GET("/api/v2/items/{item_id}")
+  suspend fun itemDetail(@Path("item_id") itemId: String): Item
+
+  @GET("/api/v2/users/{user_name}")
+  suspend fun userDetail(@Path("user_name") userName: String): User
 }
 
 fun Retrofit.createApi(): QiitaApi = create(QiitaApi::class.java)

@@ -50,6 +50,7 @@ class PagedKeyPagingSource(
       nextKey = pageKey + 1
     )
   } catch (error: Exception) {
+    Log.e("Attiq", "load error: ${params.key}, ${params.loadSize} -> $error")
     LoadResult.Error(error)
   }
 }
